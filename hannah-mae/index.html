@@ -1067,7 +1067,7 @@ function exportClientDoc(){
     const btn=document.querySelector('.submit-btn');
     btn.disabled=true;btn.textContent='Submitting...';
     // POST to Power Automate — replace URL below with your actual flow endpoint
-    const PA_URL='POWER_AUTOMATE_URL_HERE';
+    const PA_URL='https://default141dc0adf2b54539836e80cbaa77fc.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/88d1bc3769b74644946a09a14a5bc2f5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=B-LxTafu-_ykEIHnNc6kqA29cG_VM0bQeHLiDfkUZ3M';
     fetch(PA_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .then(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';})
       .catch(()=>{
@@ -1446,25 +1446,18 @@ window.clearSig=function(){var c=document.getElementById('sigCanvas');if(c)c.get
 
 
 function emailClient(){
-  const vessel=document.getElementById('vfVessel').value||'Vessel';
-  const client=document.getElementById('vfClient').value||'Client';
-  const clientEmail=settings.clientEmail||'';
-  const managerName=settings.manager||'Abram';
-  const dateStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-
-  if(!clientEmail){
-    alert('Please add the client email address in Settings first.');
-    switchTab('settings');
-    return;
-  }
-
-  const authP=projects.filter(p=>p.include!==false&&p.status==='needs_auth');
-  const authList=authP.map((p,i)=>(i+1)+'. '+p.name).join('\n');
-
-  const subject=encodeURIComponent('Your Account Update — '+vessel+' — '+dateStr);
-  const body=encodeURIComponent('Hi '+client+',\n\n'+'Please find your account document attached for '+vessel+'.\n\n'+(authP.length>0?'The following projects are pending your authorization:\n\n'+authList+'\n\n'+'Please open the attached document in your browser, check the projects you wish to authorize, type your name, and click Send Authorization.\n\n':'Your account is up to date. Please review the attached document.\n\n')+'If you have any questions please don’t hesitate to reach out.\n\n'+'Best,\n'+managerName+'\n'+settings.company+'\n'+settings.email);
-
-  window.location.href='mailto:'+clientEmail+'?subject='+subject+'&body='+body;
+  const vessel=document.getElementById("vfVessel").value||"Vessel";
+  const slug=vessel.trim().toLowerCase().replace(/\s+/g,"-");
+  const url="https://client.turnpointmarine.com/"+slug;
+  navigator.clipboard.writeText(url).then(()=>{
+    const btn=document.querySelector("[onclick=\"emailClient()\"]");
+    const orig=btn.innerHTML;
+    btn.innerHTML="&#10003; Copied!";
+    btn.style.borderColor="#1D9E75";btn.style.color="#1D9E75";
+    setTimeout(()=>{btn.innerHTML=orig;btn.style.borderColor="#5dba99";btn.style.color="#5dba99";},2000);
+  }).catch(()=>{
+    prompt("Copy this URL and paste it into your email:",url);
+  });
 }
 
 function exportData(){
