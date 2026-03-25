@@ -804,207 +804,287 @@ function exportClientDoc(){
   const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
   const allM=actP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
 
-  // Task detail table - used for in-progress and auth detail
-  function ttNoChk(tasks){
+  // Bake project data into the doc for submit
+  const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
+
+  // ── HELPERS ──────────────────────────────────────────────────────────────
+  function taskTable(tasks){
+    if(!tasks||tasks.length===0)return'';
     let rows='';
-    tasks.forEach(task=>{
-      const labor=(RATES[task.cat]||0)*(task.hrs||0);
-      const ms=(task.mat||0)+(task.sub||0);
-      const isMS=task.cat==='M'||task.cat==='S';
-      rows+=`<tr>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top">${task.desc}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${CAT_LABELS[task.cat]}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?'\u2014':(task.hrs||0)+'h'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?'\u2014':'$'+(RATES[task.cat]||0)+'/hr'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?'\u2014':fd(labor)}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${ms>0?fd(ms):'\u2014'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">${fd(labor+ms)}</td>
-      </tr>`;
+    tasks.forEach(t=>{
+      const labor=(RATES[t.cat]||0)*(t.hrs||0);
+      const ms=(t.mat||0)+(t.sub||0);
+      const isMS=t.cat==='M'||t.cat==='S';
+      rows+=`<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">${t.desc||'\u2014'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${CAT_LABELS[t.cat]}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${isMS?'\u2014':(t.hrs||0)+'h'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">${fd(isMS?ms:labor+ms)}</td></tr>`;
     });
     const pL=tasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
     const pM=tasks.reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
-    return `<table style="width:100%;border-collapse:collapse;font-size:9pt">
+    return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
       <thead><tr style="background:#f8f8f8">
-        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Task / Scope</th>
-        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Cat</th>
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
         <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
-        <th class="hide-mobile" style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Rate</th>
-        <th class="hide-mobile" style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Labor</th>
-        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Mat/Sub</th>
-        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555;font-weight:700">Total</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
       </tr></thead>
       <tbody>${rows}
         <tr style="background:#f5f5f5">
-          <td colspan="4" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd">Project Total</td>
-          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd">${fd(pL)}</td>
-          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd">${pM>0?fd(pM):'\u2014'}</td>
-          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;color:#1D9E75">${fd(pL+pM)}</td>
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">${fd(pL+pM)}</td>
         </tr>
       </tbody></table>`;
   }
 
-
-  function tt(tasks){
-    let t='<table style="width:100%;border-collapse:collapse;font-size:9pt;font-family:Arial,sans-serif;margin-top:4px"><thead><tr style="background:#f8f8f8"><th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Task / Scope</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Cat</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Rate</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Labor</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Mat/Sub</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555;font-weight:700">Total</th></tr></thead><tbody>';
-    tasks.forEach(task=>{
-      const labor=(RATES[task.cat]||0)*(task.hrs||0);
-      const ms=(task.mat||0)+(task.sub||0);
-      const isMS=task.cat==='M'||task.cat==='S';
-      t+='<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top">'+task.desc+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+CAT_LABELS[task.cat]+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+(isMS?'\u2014':(task.hrs||0)+'h')+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+(isMS?'\u2014':'$'+(RATES[task.cat]||0)+'/hr')+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+(isMS?'\u2014':fd(labor))+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">'+(ms>0?fd(ms):'\u2014')+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">'+fd(labor+ms)+'</td></tr>';
-    });
-    const pL=tasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
-    const pM=tasks.reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
-    t+='<tr style="background:#f5f5f5"><td colspan="4" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd">Project Total</td><td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd">'+fd(pL)+'</td><td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd">'+(pM>0?fd(pM):'\u2014')+'</td><td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;color:#1D9E75">'+fd(pL+pM)+'</td></tr></tbody></table>';
-    return t;
+  function mergedTable(proj){
+    const scopeTasks=proj.scopeTasks||[];
+    const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
+    const postedTasks=postedTEs.map(te=>({cat:te.cat,desc:te.desc,hrs:te.cat==='M'||te.cat==='S'?0:te.hrs,mat:te.cat==='M'||te.cat==='S'?te.hrs:0,sub:0}));
+    const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
+    const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
+    let h='';
+    if(scopeTasks.length>0){h+='<div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div>'+taskTable(scopeTasks);}
+    if(postedTasks.length>0){h+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:10px;font-family:Arial,sans-serif">Actual to Date</div>'+taskTable(postedTasks);}
+    h+=`<div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">${fd(estT)}</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">${fd(actT)}</div>
+      </div>
+    </div>`;
+    return h;
   }
 
-  // Section header - full-width table, Word-safe
-  function secHdr(bg,title,count,total,noteBg,noteBorder,noteColor,noteText){
-    return '<table style="width:100%;border-collapse:collapse;margin-top:24px"><tr><td style="background:'+bg+';color:#fff;padding:14px 20px"><table style="width:100%;border-collapse:collapse"><tr><td style="color:#fff"><div style="font-size:14pt;font-weight:700;font-family:Arial,sans-serif">'+title+'</div><div style="font-size:9pt;opacity:0.85;margin-top:3px;font-family:Arial,sans-serif">'+count+' project'+(count!==1?'s':'')+' \u2014 '+noteText.split('\u2014')[0].trim()+'</div></td><td style="text-align:right;color:#fff;white-space:nowrap;vertical-align:middle"><div style="font-size:13pt;font-weight:700;font-family:Arial,sans-serif">'+total+'</div></td></tr></table></td></tr><tr><td style="background:'+noteBg+';border-left:4px solid '+bg+';padding:10px 16px;font-size:9pt;color:'+noteColor+';font-style:italic;font-family:Arial,sans-serif">'+noteText+'</td></tr></table>';
+  let uid=0;
+  function projBlock(proj,accentColor,showCheck,showCOs){
+    const pid='proj'+(uid++);
+    const total=projEstTotal(proj);
+    const cos=(proj.cos||[]);
+    let inner='';
+
+    // Scope detail
+    inner+=`<div id="${pid}_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe">`;
+    inner+=mergedTable(proj);
+    inner+='</div>';
+
+    // Change of scope subsections
+    if(showCOs&&cos.length>0){
+      cos.forEach((co,ci)=>{
+        const cid='co'+(uid++);
+        const coTotal=co.tasks.reduce((a,t)=>a+taskTotal(t),0);
+        inner+=`<div style="border-top:1px solid #f5c6c6;background:#fffbfb">
+          <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;cursor:pointer" onclick="document.getElementById('${cid}_d').style.display=document.getElementById('${cid}_d').style.display==='none'?'block':'none'">
+            ${showCheck?`<input type="checkbox" name="co_auth" value="${co.id}" data-proj="${proj.name}" data-co="${co.title}" style="width:16px;height:16px;accent-color:#c0392b;flex-shrink:0" ${co.authorized?'checked disabled':''}>`:''}
+            <span style="font-size:10pt;font-weight:700;color:#c0392b;flex:1;font-family:Arial,sans-serif">CO-${String(ci+1).padStart(3,'0')}: ${co.title}</span>
+            <span style="font-size:9pt;font-weight:700;color:#c0392b;font-family:Arial,sans-serif">${fd(coTotal)}</span>
+            <span style="font-size:10px;color:#bbb;margin-left:8px">&#9654;</span>
+          </div>
+          <div id="${cid}_d" style="display:none;padding:0 14px 10px">
+            ${taskTable(co.tasks)}
+          </div>
+        </div>`;
+      });
+    }
+
+    return `<div style="border:1px solid ${accentColor}22;border-left:5px solid ${accentColor};border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('${pid}_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
+        ${proj.notes?`<span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">${proj.notes}</span>`:''}
+        <span style="font-size:11pt;font-weight:700;color:${accentColor}">${fd(total)}</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      ${inner}
+    </div>`;
   }
 
-  // Get logo src from existing content
-  const logoSrc = (function(){
-    const imgs = document.querySelectorAll ? [] : [];
-    return '';
-  })();
+  function sectionHdr(color,label,count,total,note){
+    return `<div style="background:${color};color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
+      <div>
+        <div style="font-size:12pt;font-weight:700">${label}</div>
+        <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">${count} project${count!==1?'s':''} &mdash; ${note}</div>
+      </div>
+      <div style="font-size:13pt;font-weight:700">${total}</div>
+    </div>`;
+  }
 
-  let html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Client Account \u2014 '+vessel+'</title><style>*{box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;margin:0;padding:0}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}</style></head><body><div style="max-width:780px;margin:0 auto;padding:40px 48px">';
-
-  // Word instruction banner
-  html+='<div style="background:#1a1a1a;color:#fff;padding:10px 16px;text-align:center;font-size:9pt;margin-bottom:20px;font-family:Arial,sans-serif"><strong>Ready for Microsoft 365 eSignature</strong> &nbsp;&middot;&nbsp; In Word: File &rarr; Save As &rarr; .docx &nbsp;&middot;&nbsp; Then: Insert &rarr; Request Signatures</div>';
-
-  // Letterhead - logo small top left
+  // ── BUILD HTML ────────────────────────────────────────────────────────────
+  let html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Client Account &mdash; ${vessel}</title>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;margin:0;padding:0;background:#f5f5f3}
+    .wrap{max-width:800px;margin:0 auto;padding:32px 24px;background:#fff;min-height:100vh}
+    canvas{border:1px solid #ddd;border-radius:6px;cursor:crosshair;touch-action:none;display:block;width:100%;height:140px}
+    .sig-wrap{background:#fafafa;border:2px solid #1a1a1a;border-radius:8px;padding:12px;margin-top:12px}
+    .submit-btn{display:block;width:100%;padding:14px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif}
+    .submit-btn:hover{background:#178a65}
+    .submit-btn:disabled{background:#aaa;cursor:default}
+    @media print{body{background:#fff}.wrap{padding:20px}}
+  </style>
+  </head><body><div class="wrap">`;
 
   // Letterhead
-  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:24px">'
-    +'<tr><td style="text-align:right;padding-bottom:12px">'
-    +'<div style="font-size:9pt;color:#999;font-family:Arial,sans-serif">Updated '+dateStr+'</div>'
-    +'</td></tr>'
-    +'<tr><td style="border-top:2px solid #1a1a1a;padding:0"></td></tr>'
-    +'<tr>'
-    +'<td style="vertical-align:top;padding-top:14px;width:50%">'
-    +'<div style="font-size:8pt;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;font-family:Arial,sans-serif">Prepared for</div>'
-    +'<div style="font-size:18pt;font-weight:700;font-family:Arial,sans-serif;color:#1a1a1a">'+client+'</div>'
-    +'<div style="font-size:10pt;color:#444;margin-top:4px;font-family:Arial,sans-serif"><strong>Vessel:</strong> '+vessel+'</div>'
-    +'</td>'
-    +'<td style="text-align:right;vertical-align:top;padding-top:14px;width:50%">'
-    +'<div style="font-size:8pt;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:6px;font-family:Arial,sans-serif">Prepared by</div>'
-    +'<div style="font-size:11pt;font-weight:700;font-family:Arial,sans-serif">'+s.manager+'</div>'
-    +'<div style="font-size:9pt;color:#555;font-family:Arial,sans-serif">'+s.company+'</div>'
-    +'<div style="font-size:9pt;color:#1255a0;font-family:Arial,sans-serif">'+s.email+'</div>'
-    +'</td>'
-    +'</tr></table>';
+  html+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #1a1a1a">
+    <div>
+      <div style="font-size:8pt;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">${s.company}</div>
+      <div style="font-size:20pt;font-weight:700">${client}</div>
+      <div style="font-size:10pt;color:#555;margin-top:2px"><strong>Vessel:</strong> ${vessel}</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:8.5pt;color:#999">Updated ${dateStr}</div>
+      <div style="font-size:10pt;font-weight:700;margin-top:4px">${s.manager}</div>
+      <div style="font-size:9pt;color:#1255a0">${s.email}</div>
+    </div>
+  </div>`;
 
   // Summary bar
-  html+='<table style="width:100%;border-collapse:collapse;margin-bottom:28px"><tr><td style="background:#f5f5f5;padding:10px 14px;text-align:center;width:24%"><div style="font-size:8pt;color:#888;text-transform:uppercase;font-family:Arial,sans-serif">Open Projects</div><div style="font-size:16pt;font-weight:700;font-family:Arial,sans-serif">'+actP.length+'</div></td><td style="width:2%"></td><td style="background:#f5f5f5;padding:10px 14px;text-align:center;width:24%"><div style="font-size:8pt;color:#888;text-transform:uppercase;font-family:Arial,sans-serif">Active Total</div><div style="font-size:16pt;font-weight:700;font-family:Arial,sans-serif">'+fd(actTotal)+'</div></td><td style="width:2%"></td><td style="background:#f5f5f5;padding:10px 14px;text-align:center;width:24%"><div style="font-size:8pt;color:#888;text-transform:uppercase;font-family:Arial,sans-serif">Billed to Date</div><div style="font-size:16pt;font-weight:700;font-family:Arial,sans-serif">'+fd(billTotal)+'</div></td><td style="width:2%"></td><td style="background:#f5f5f5;padding:10px 14px;text-align:center;width:22%"><div style="font-size:8pt;color:#888;text-transform:uppercase;font-family:Arial,sans-serif">Outstanding</div><div style="font-size:16pt;font-weight:700;font-family:Arial,sans-serif">'+fd(actTotal)+'</div></td></tr></table>';
+  html+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px">
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Open Projects</div><div style="font-size:16pt;font-weight:700">${actP.length}</div></div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Active Total</div><div style="font-size:16pt;font-weight:700">${fd(actTotal)}</div></div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Billed to Date</div><div style="font-size:16pt;font-weight:700">${fd(billTotal)}</div></div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Outstanding</div><div style="font-size:16pt;font-weight:700">${fd(actTotal)}</div></div>
+  </div>`;
 
-  // ── AUTHORIZATION NEEDED ─────────────────────────────────────────────────
+  // ── NEEDS AUTH ─────────────────────────────────────────────────────────
   if(authP.length>0){
     const authTotal=authP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=secHdr('#5dba99','AUTHORIZATION NEEDED BEFORE PROCEEDING',authP.length,fd(authTotal),'#f0faf6','#5dba99','#155a3e','Please review each project. Check \u2610 to authorize, then sign at the bottom.');
-
-    // Each project: checkbox + name + amount + notes + task table
-    let idx=1;
-    authP.forEach(proj=>{
-      html+='<table style="width:100%;border-collapse:collapse;margin-top:6px;border:1px solid #c8e6d8">';
-      // Project header row with checkbox
-      html+='<tr><td style="border-left:5px solid #5dba99;background:#fff;padding:10px 14px">';
-      html+='<table style="width:100%;border-collapse:collapse"><tr>';
-      html+='<td style="width:24px;vertical-align:middle;font-size:15pt;color:#5dba99;font-family:Arial,sans-serif">&#9744;</td>';
-      html+='<td style="vertical-align:middle;padding-left:8px"><span style="font-size:11pt;font-weight:700;font-family:Arial,sans-serif">'+String(idx).padStart(2,'0')+'&nbsp;&nbsp;'+proj.name+'</span>';
-      if(proj.notes)html+='<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;font-family:Arial,sans-serif">'+proj.notes+'</div>';
-      html+='</td>';
-      html+='</tr></table></td></tr>';
-      // Task detail row
-      html+='<tr><td style="background:#fafffe;border-top:1px solid #e0f0ea;padding:8px 14px">'+ttMerged(proj)+'</td></tr>';
-      html+='</table>';
-      idx++;
-    });
-
-    // Signature block — always visible, no JS needed
-    html+='<table style="width:100%;border-collapse:collapse;margin-top:12px;border:2px solid #5dba99"><tr><td style="background:#f0faf6;padding:20px 24px">';
-    html+='<div style="font-size:10pt;font-weight:700;color:#155a3e;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;font-family:Arial,sans-serif">Authorization</div>';
-    html+='<div style="font-size:9pt;color:#555;margin-bottom:20px;line-height:1.5;font-family:Arial,sans-serif">'+s.authText+'</div>';
-    html+='<table style="width:100%;border-collapse:collapse"><tr>';
-    html+='<td style="width:42%;padding-right:20px;vertical-align:bottom"><div style="border-bottom:2px solid #1a1a1a;height:44px;margin-bottom:5px"></div><div style="font-size:8pt;color:#888;font-weight:600;text-transform:uppercase;font-family:Arial,sans-serif">Signature</div></td>';
-    html+='<td style="width:34%;padding-right:20px;vertical-align:bottom"><div style="font-size:10pt;padding-top:16px;font-family:Arial,sans-serif">'+client+'</div><div style="border-bottom:2px solid #1a1a1a;margin-bottom:5px"></div><div style="font-size:8pt;color:#888;font-weight:600;text-transform:uppercase;font-family:Arial,sans-serif">Printed Name</div></td>';
-    html+='<td style="width:24%;vertical-align:bottom"><div style="font-size:10pt;padding-top:16px;font-family:Arial,sans-serif">'+dateStr+'</div><div style="border-bottom:2px solid #1a1a1a;margin-bottom:5px"></div><div style="font-size:8pt;color:#888;font-weight:600;text-transform:uppercase;font-family:Arial,sans-serif">Date</div></td>';
-    html+='</tr></table>';
-    html+='<div style="margin-top:14px;font-size:8pt;color:#999;border-top:1px solid #a7d8c5;padding-top:10px;font-family:Arial,sans-serif">By signing above, you authorize '+s.company+' to proceed with all checked projects. Unchecked projects will not proceed. Governed by the E-SIGN Act.</div>';
-    html+='</td></tr></table>';
+    html+=sectionHdr('#1D9E75','AUTHORIZATION REQUIRED',authP.length,fd(authTotal),'Check each project to authorize, then sign below');
+    html+=`<div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">${s.authText}</div>`;
+    authP.forEach(proj=>{html+=projBlock(proj,'#1D9E75',true,true);});
   }
 
-  // ── IN PROGRESS ──────────────────────────────────────────────────────────
+  // ── IN PROGRESS ─────────────────────────────────────────────────────────
   if(inPP.length>0){
     const pt=inPP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=secHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'#f9fafb','#6b7280','#374151','Authorized work currently underway.');
-    let idx2=authP.length+1;
-    inPP.forEach(proj=>{
-      html+='<table style="width:100%;border-collapse:collapse;margin-top:6px;border:1px solid #d1d5db">';
-      html+='<tr><td style="border-left:5px solid #6b7280;background:#fff;padding:10px 14px">';
-      html+='<table style="width:100%;border-collapse:collapse"><tr>';
-      html+='<td><span style="font-size:11pt;font-weight:700;font-family:Arial,sans-serif">'+String(idx2).padStart(2,'0')+'&nbsp;&nbsp;'+proj.name+'</span>';
-      if(proj.notes)html+='<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;font-family:Arial,sans-serif">'+proj.notes+'</div>';
-      html+='</td>';
-      html+='<td style="text-align:right;white-space:nowrap;padding-left:12px;vertical-align:top"><span style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">'+fd(projEstTotal(proj))+'</span></td>';
-      html+='</tr></table></td></tr>';
-      html+='<tr><td style="background:#fafafa;border-top:1px solid #e5e7eb;padding:8px 14px">'+ttMerged(proj)+'</td></tr>';
-      html+='</table>';
-      idx2++;
-    });
+    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway');
+    inPP.forEach(proj=>{html+=projBlock(proj,'#6b7280',false,true);});
   }
 
-  // ── COMPLETED — READY FOR BILLING ────────────────────────────────────────
+  // ── COMPLETE ────────────────────────────────────────────────────────────
   if(compP.length>0){
     const ct=compP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=secHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(ct),'#eef3f2','#4a5e5a','#2d4a46','Work completed and ready to invoice.');
-    let idx3=authP.length+inPP.length+1;
-    compP.forEach(proj=>{
-      // Name + amount only — no task detail
-      html+='<table style="width:100%;border-collapse:collapse;margin-top:6px;border:1px solid #c5d4d1">';
-      html+='<tr><td style="border-left:5px solid #4a5e5a;background:#fff;padding:12px 14px">';
-      html+='<table style="width:100%;border-collapse:collapse"><tr>';
-      html+='<td><span style="font-size:11pt;font-weight:700;font-family:Arial,sans-serif">'+String(idx3).padStart(2,'0')+'&nbsp;&nbsp;'+proj.name+'</span>';
-      if(proj.notes)html+='<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;font-family:Arial,sans-serif">'+proj.notes+'</div>';
-      html+='</td>';
-      html+='<td style="text-align:right;white-space:nowrap;padding-left:12px;vertical-align:middle"><span style="font-size:11pt;font-weight:700;color:#4a5e5a;font-family:Arial,sans-serif">'+fd(projEstTotal(proj))+'</span></td>';
-      html+='</tr></table></td></tr>';
-      html+='</table>';
-      idx3++;
-    });
+    html+=sectionHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(ct),'Work complete, invoice pending');
+    compP.forEach(proj=>{html+=projBlock(proj,'#4a5e5a',false,false);});
   }
 
-  // ── BILLED ───────────────────────────────────────────────────────────────
+  // ── BILLED ──────────────────────────────────────────────────────────────
   if(billP.length>0){
     const bt=billP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+='<div style="page-break-before:always"></div>';
-    html+=secHdr('#374151','BILLED',billP.length,fd(bt),'#fafafa','#374151','#555','Invoiced \u2014 shown for your records.');
-    let idx4=authP.length+inPP.length+compP.length+1;
+    html+=sectionHdr('#374151','BILLED',billP.length,fd(bt),'Invoiced \u2014 shown for your records');
     billP.forEach(proj=>{
-      const inv=proj.invoiceNum||proj.invoiceDate?' <span style="font-size:9pt;color:#888;font-weight:400">'+(proj.invoiceNum?'Inv #'+proj.invoiceNum:'')+(proj.invoiceDate?' \u2014 '+new Date(proj.invoiceDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'')+'</span>':'';
-      html+='<table style="width:100%;border-collapse:collapse;margin-top:6px;border:1px solid #e5e7eb">';
-      html+='<tr><td style="border-left:5px solid #6b7280;background:#fff;padding:12px 14px">';
-      html+='<table style="width:100%;border-collapse:collapse"><tr>';
-      html+='<td><span style="font-size:11pt;font-weight:700;color:#555;font-family:Arial,sans-serif">'+String(idx4).padStart(2,'0')+'&nbsp;&nbsp;'+proj.name+' <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>'+inv+'</span></td>';
-      html+='<td style="text-align:right;white-space:nowrap;padding-left:12px;vertical-align:middle"><span style="font-size:11pt;font-weight:700;color:#9ca3af;font-family:Arial,sans-serif">'+fd(projEstTotal(proj))+'</span></td>';
-      html+='</tr></table></td></tr>';
-      html+='</table>';
-      idx4++;
+      const inv=proj.invoiceNum?` &mdash; Inv #${proj.invoiceNum}`:'';
+      html+=`<div style="border:1px solid #e5e7eb;border-left:5px solid #6b7280;border-radius:4px;margin-top:8px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif">
+        <span style="font-size:10pt;font-weight:700;color:#555">${proj.name} <span style="color:#1D9E75;font-weight:400">\u2713 Billed${inv}</span></span>
+        <span style="font-size:10pt;font-weight:700;color:#9ca3af">${fd(projEstTotal(proj))}</span>
+      </div>`;
     });
   }
 
-  // ── OUTSTANDING BALANCE ──────────────────────────────────────────────────
-  html+='<table style="width:100%;border-collapse:collapse;margin-top:24px;background:#1a1a1a"><tr><td style="padding:16px 20px"><table style="width:100%;border-collapse:collapse"><tr><td style="vertical-align:middle;color:#fff"><div style="font-size:13pt;font-weight:700;font-family:Arial,sans-serif">Outstanding Balance</div><div style="font-size:8pt;color:#888;margin-top:2px;font-family:Arial,sans-serif">Excludes billed &amp; invoiced projects</div></td><td style="text-align:right;white-space:nowrap;vertical-align:middle"><table style="border-collapse:collapse"><tr><td style="padding:0 16px;text-align:right"><div style="font-size:8pt;color:#888;font-family:Arial,sans-serif">Labor</div><div style="font-size:12pt;font-weight:700;color:#4ade80;font-family:Arial,sans-serif">'+fd(allL)+'</div></td><td style="padding:0 16px;text-align:right"><div style="font-size:8pt;color:#888;font-family:Arial,sans-serif">Materials / Sub</div><div style="font-size:12pt;font-weight:700;color:#4ade80;font-family:Arial,sans-serif">'+fd(allM)+'</div></td><td style="padding:0 0 0 16px;text-align:right"><div style="font-size:8pt;color:#888;font-family:Arial,sans-serif">Total Outstanding</div><div style="font-size:14pt;font-weight:700;color:#4ade80;font-family:Arial,sans-serif">'+fd(allL+allM)+'</div></td></tr></table></td></tr></table></td></tr></table>';
+  // ── OUTSTANDING BALANCE ─────────────────────────────────────────────────
+  html+=`<div style="background:#1a1a1a;color:#fff;border-radius:8px;padding:16px 20px;margin-top:28px;display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif">
+    <div>
+      <div style="font-size:13pt;font-weight:700">Outstanding Balance</div>
+      <div style="font-size:8pt;color:#888;margin-top:2px">Excludes billed &amp; invoiced projects</div>
+    </div>
+    <div style="display:flex;gap:24px">
+      <div style="text-align:right"><div style="font-size:8pt;color:#888">Labor</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allL)}</div></div>
+      <div style="text-align:right"><div style="font-size:8pt;color:#888">Materials / Sub</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allM)}</div></div>
+      <div style="text-align:right"><div style="font-size:8pt;color:#888">Total</div><div style="font-size:14pt;font-weight:700;color:#4ade80">${fd(allL+allM)}</div></div>
+    </div>
+  </div>`;
 
-  html+='<div style="margin-top:20px;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;border-top:1px solid #eee;padding-top:12px;font-family:Arial,sans-serif"><div>'+s.company+' &nbsp;|&nbsp; '+s.email+'</div><div>'+s.footer+'</div></div>';
+  // ── SIGNATURE & SUBMIT ──────────────────────────────────────────────────
+  if(authP.length>0){
+    html+=`<div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:28px;font-family:Arial,sans-serif">
+      <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
+      <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name</label>
+          <input id="sig_name" type="text" value="${client}" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        </div>
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
+          <input id="sig_date" type="text" value="${dateStr}" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        </div>
+      </div>
+      <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
+      <div class="sig-wrap">
+        <canvas id="sigCanvas"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button onclick="clearSig()" style="font-size:11px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;font-family:Arial,sans-serif">Clear Signature</button>
+        <span id="sigStatus" style="font-size:11px;color:#c0392b;align-self:center"></span>
+      </div>
+      <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
+      <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
+        ✓ Authorization submitted. Turn Point Marine has been notified.
+      </div>
+    </div>`;
+  }
+
+  // Footer
+  html+=`<div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
+    <div>${s.company} &nbsp;|&nbsp; ${s.email}</div>
+    <div>${s.footer}</div>
+  </div>`;
+
+  // Embedded JS
+  html+=`<script>
+  // Signature pad
+  const canvas=document.getElementById('sigCanvas');
+  let hasSig=false;
+  if(canvas){
+    const ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth*2;canvas.height=280;
+    ctx.scale(2,1);
+    ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round';
+    let drawing=false,lx=0,ly=0;
+    function pos(e){const r=canvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(canvas.width/2)/r.width,y:(t.clientY-r.top)*canvas.height/r.height};}
+    canvas.addEventListener('mousedown',e=>{drawing=true;const p=pos(e);lx=p.x;ly=p.y;});
+    canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;hasSig=true;});
+    canvas.addEventListener('mouseup',()=>drawing=false);
+    canvas.addEventListener('mouseleave',()=>drawing=false);
+    canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=pos(e);lx=p.x;ly=p.y;},{passive:false});
+    canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;hasSig=true;},{passive:false});
+    canvas.addEventListener('touchend',()=>drawing=false);
+  }
+  function clearSig(){if(canvas){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;}}
+
+  function submitAuth(){
+    if(!hasSig){document.getElementById('sigStatus').textContent='Please sign before submitting.';return;}
+    const checked=[...document.querySelectorAll('input[name="proj_auth"]:checked')].map(el=>el.dataset.name);
+    const coCk=[...document.querySelectorAll('input[name="co_auth"]:checked')].map(el=>({proj:el.dataset.proj,co:el.dataset.co}));
+    if(checked.length===0){document.getElementById('sigStatus').textContent='Please check at least one project to authorize.';return;}
+    document.getElementById('sigStatus').textContent='';
+    const sigImg=canvas?canvas.toDataURL('image/png'):'';
+    const name=document.getElementById('sig_name').value;
+    const date=document.getElementById('sig_date').value;
+    const payload={vessel:'${vessel}',client:'${client}',date,signedBy:name,authorizedProjects:checked,authorizedCOs:coCk,signature:sigImg,submittedAt:new Date().toISOString()};
+    const btn=document.querySelector('.submit-btn');
+    btn.disabled=true;btn.textContent='Submitting...';
+    // POST to Power Automate — replace URL below with your actual flow endpoint
+    const PA_URL='POWER_AUTOMATE_URL_HERE';
+    fetch(PA_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';})
+      .catch(()=>{
+        // If no PA URL yet, just show success locally
+        document.getElementById('submitMsg').style.display='block';btn.style.display='none';
+      });
+  }
+  <\/script>`;
+
   html+='</div></body></html>';
 
   const blob=new Blob([html],{type:'text/html'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download=vessel.replace(/\s+/g,'_')+'_ClientDoc_'+new Date().toISOString().split('T')[0]+'.doc';
+  a.download=vessel.replace(/\s+/g,'_')+'_ClientDoc_'+new Date().toISOString().split('T')[0]+'.html';
   a.click();URL.revokeObjectURL(a.href);
 }
+
 
 
 function showExportMenu(e){
