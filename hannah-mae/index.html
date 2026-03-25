@@ -745,6 +745,49 @@ function renderEstimate(){
   });
 }
 
+function ttMerged(proj){
+  const fd=n=>n===0?'\u2014':'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const scopeTasks=proj.scopeTasks||[];
+  const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
+  const postedTasks=postedTEs.map(te=>({
+    id:te.id,cat:te.cat,desc:te.desc,
+    hrs:te.cat==='M'||te.cat==='S'?0:te.hrs,
+    mat:te.cat==='M'||te.cat==='S'?te.hrs:0,
+    sub:0
+  }));
+  const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
+  const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
+  function ttInner(tasks){
+    let rows='';
+    tasks.forEach(task=>{
+      const labor=(RATES[task.cat]||0)*(task.hrs||0);
+      const ms=(task.mat||0)+(task.sub||0);
+      const isMS=task.cat==='M'||task.cat==='S';
+      rows+=`<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:4px;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:9pt">
+        <div>${task.desc||'—'}</div>
+        <div style="color:#888;white-space:nowrap">${CAT_LABELS[task.cat]}</div>
+        <div style="color:#888;white-space:nowrap">${isMS?'—':(task.hrs||0)+'h'}</div>
+        <div style="font-weight:600;white-space:nowrap">${fd(isMS?ms:labor+ms)}</div>
+      </div>`;
+    });
+    return rows;
+  }
+  let html='';
+  if(scopeTasks.length>0){
+    html+='<div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0 4px;margin-top:8px">Estimated</div>';
+    html+=ttInner(scopeTasks);
+  }
+  if(postedTasks.length>0){
+    html+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0 4px;margin-top:8px">Actual to Date</div>';
+    html+=ttInner(postedTasks);
+  }
+  html+='<div style="display:grid;grid-template-columns:repeat(2,1fr);margin-top:8px;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden">'
+    +'<div style="padding:8px 12px;background:#eef1ff;border-right:1px solid #e0e0e0"><div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em">Estimated</div><div style="font-size:11pt;font-weight:700;color:#3b4a6b">'+fd(estT)+'</div></div>'
+    +'<div style="padding:8px 12px;background:#f0faf6"><div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em">Actual to Date</div><div style="font-size:11pt;font-weight:700;color:#1D9E75">'+fd(actT)+'</div></div>'
+    +'</div>';
+  return html;
+}
+
 function exportClientDoc(){
   const vessel=document.getElementById('vfVessel').value||'Vessel';
   const client=document.getElementById('vfClient').value||'Client';
@@ -800,45 +843,7 @@ function exportClientDoc(){
       </tbody></table>`;
   }
 
-  function ttMerged(proj){
-    const scopeTasks=proj.scopeTasks||[];
-    const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
-    const postedTasks=postedTEs.map(te=>({
-      id:te.id,cat:te.cat,desc:te.desc,
-      hrs:te.cat==='M'||te.cat==='S'?0:te.hrs,
-      mat:te.cat==='M'||te.cat==='S'?te.hrs:0,
-      sub:0
-    }));
 
-    // Estimated total
-    const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
-    // Actual total
-    const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
-    const varT=actT-estT;
-    const isOver=varT>0;
-
-    let html='';
-
-    // Estimated section
-    if(scopeTasks.length>0){
-      html+='<div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0 4px;margin-top:8px">Estimated</div>';
-      html+=tt(scopeTasks);
-    }
-
-    // Actual section
-    if(postedTasks.length>0){
-      html+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:6px 0 4px;margin-top:8px">Actual to Date</div>';
-      html+=tt(postedTasks);
-    }
-
-    // Summary bar
-    html+='<div style="display:grid;grid-template-columns:repeat(2,1fr);margin-top:8px;border:1px solid #e0e0e0;border-radius:4px;overflow:hidden">'
-      +'<div style="padding:8px 12px;background:#eef1ff;border-right:1px solid #e0e0e0"><div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em">Estimated</div><div style="font-size:11pt;font-weight:700;color:#3b4a6b">'+fd(estT)+'</div></div>'
-      +'<div style="padding:8px 12px;background:#f0faf6"><div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em">Actual to Date</div><div style="font-size:11pt;font-weight:700;color:#1D9E75">'+fd(actT)+'</div></div>'
-      +'</div>';
-
-    return html;
-  }
   function tt(tasks){
     let t='<table style="width:100%;border-collapse:collapse;font-size:9pt;font-family:Arial,sans-serif;margin-top:4px"><thead><tr style="background:#f8f8f8"><th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Task / Scope</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Cat</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Rate</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Labor</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Mat/Sub</th><th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555;font-weight:700">Total</th></tr></thead><tbody>';
     tasks.forEach(task=>{
