@@ -1,0 +1,956 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Client Account &mdash; Undaunted</title>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:Arial,sans-serif;font-size:10pt;color:#1a1a1a;margin:0;padding:0;background:#f5f5f3}
+    .wrap{max-width:800px;margin:0 auto;padding:32px 24px;background:#fff;min-height:100vh}
+    canvas{border:1px solid #ddd;border-radius:6px;cursor:crosshair;touch-action:none;display:block;width:100%;height:140px}
+    .sig-wrap{background:#fafafa;border:2px solid #1a1a1a;border-radius:8px;padding:12px;margin-top:12px}
+    .submit-btn{display:block;width:100%;padding:14px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif}
+    .submit-btn:hover{background:#178a65}
+    .submit-btn:disabled{background:#aaa;cursor:default}
+    @media print{body{background:#fff}.wrap{padding:20px}}
+  </style>
+  </head><body><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #1a1a1a">
+    <div>
+      <div style="font-size:8pt;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Turn Point Marine</div>
+      <div style="font-size:20pt;font-weight:700">Wes Garner</div>
+      <div style="font-size:10pt;color:#555;margin-top:2px"><strong>Vessel:</strong> Undaunted</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:8.5pt;color:#999">Updated March 26, 2026</div>
+      <div style="font-size:10pt;font-weight:700;margin-top:4px">Abram Anderson</div>
+      <div style="font-size:9pt;color:#1255a0">abram@turnpointmarine.com</div>
+    </div>
+  </div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:24px">
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Open Projects</div><div style="font-size:16pt;font-weight:700">27</div></div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Active Total</div><div style="font-size:16pt;font-weight:700">$54,252.50</div></div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Billed to Date</div><div style="font-size:16pt;font-weight:700">—</div></div>
+    <div style="background:#f5f5f5;border-radius:6px;padding:10px 12px"><div style="font-size:8pt;color:#888;text-transform:uppercase">Outstanding</div><div style="font-size:16pt;font-weight:700">$54,252.50</div></div>
+  </div><div style="background:#1D9E75;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
+      <div>
+        <div style="font-size:12pt;font-weight:700">AUTHORIZATION REQUIRED</div>
+        <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">17 projects &mdash; Check each project to authorize, then sign below</div>
+      </div>
+      <div style="font-size:13pt;font-weight:700">$24,095.00</div>
+    </div><div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">Sign below to authorize all work in this project. Work does not proceed without your signature.</div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj0_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="3" data-name="Davit" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Davit</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Davit: replace rotational control valves & worn hydraulic lines, hydraulic fluid flush, add filter to hydraulic plumbing Clean up corrosion and paint</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,580.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj0_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Davit</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">8h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,580.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,580.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,580.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj1_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="6" data-name="Fuel Inlet Panels" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Fuel Inlet Panels</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Disconnect hoses and remove panels. Once coated rebed with 3M4200</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,080.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj1_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Fuel Inlet Panels</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">8h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,080.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,080.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,080.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj2_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="7" data-name="Trac Stabilizers" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Trac Stabilizers</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Starboard Hydraulic Ram, Rebuild $3,500 to replace and $1,000 to rebuild the existing ram</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$2,280.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj2_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Trac Stabilizers</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">8h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$2,280.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$2,280.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$2,280.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj3_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="8" data-name="Trac Stabilizers & Abt Thrusters" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Trac Stabilizers & Abt Thrusters</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Heat exchanger Pull/Clean/Replace Seals/Paint</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,155.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj3_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Trac Stabilizers & Abt Thrusters</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">8h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,155.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,155.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,155.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj4_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="12" data-name="Flybridge Captains Chairs Replace" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Flybridge Captains Chairs Replace</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Cost? CYA... Stidd, Pompanette, Bentley, Springfield…</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">—</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj4_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">—</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj5_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="14" data-name="B-Watermaker" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">B-Watermaker</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Pull brushes from 24v motor, replace Rotoflow meter, replace transducers for feed water pressure, install transducers on prefilter housings, order replacement check valves and seal kit. $2,750 in labor and parts. Estimate TBD.</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">—</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj5_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">—</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj6_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="15" data-name="Freshwater Pump Noise Dampen" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Freshwater Pump Noise Dampen</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Can build insulated box and install the pumps in it and run the plumbing into it.</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$935.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj6_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Freshwater Pump Noise Dampen</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">6h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$935.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$935.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$935.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj7_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="16" data-name="Victron Generator Start Battery Charger" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Victron Generator Start Battery Charger</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,175.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj7_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Victron Generator Start Battery Charger</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">5h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,175.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,175.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,175.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj8_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="19" data-name="Wax" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Wax</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$3,250.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj8_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Wax</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Buff & Wax</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">30h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$3,250.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$3,250.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$3,250.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj9_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="20" data-name="Paint Anchor Chain Markings" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Paint Anchor Chain Markings</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$720.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj9_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Paint Anchor Chain Markings</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Detail</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">6h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$720.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$720.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$720.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj10_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="23" data-name="External Stainless Polish" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">External Stainless Polish</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,425.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj10_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">External Stainless Polish</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Detail</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">15h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,425.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,425.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,425.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj11_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="24" data-name="Fuel Inlet Panels" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Fuel Inlet Panels</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Clean corrosion epoxy barrier coat then paint</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,040.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj11_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Fuel Inlet Panels</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Buff & Wax</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">8h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,040.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,040.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,040.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj12_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="27" data-name="Haul/Wash/Block" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Haul/Wash/Block</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$2,500.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj12_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Haul/Wash/Block</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">SBCNTRCT</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">—</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$2,500.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$2,500.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$2,500.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj13_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="28" data-name="Pull Starboard Propeller & Shaft" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Pull Starboard Propeller & Shaft</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. 3-5 thousand for a shaft if needed. 6-8 hours for replacing a cutlass bearing. 4-6 hours for installing new shaft and propeller. Estimate ~$10,000: 24hrs labor @ $135/hr = $4,000 with tax, $6,000 materials with tax.</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,350.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj13_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Pull Starboard Propeller & Shaft</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">10h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,350.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,350.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,350.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj14_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="29" data-name="Forward Scan Transducer Replace" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Forward Scan Transducer Replace</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Garmin Panoptix PS-51TH</span>
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$2,410.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj14_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Forward Scan Transducer Replace</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">6h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$2,410.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$2,410.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$2,410.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj15_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="30" data-name="Port Side Below Rub Rail Buff And Wax" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Port Side Below Rub Rail Buff And Wax</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,545.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj15_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Port Side Below Rub Rail Buff And Wax</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Buff & Wax</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">14h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,545.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,545.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,545.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #1D9E7522;border-left:5px solid #1D9E75;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj16_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <input type="checkbox" name="proj_auth" value="31" data-name="Wax Hull Below The Rub Rails" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Wax Hull Below The Rub Rails</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#1D9E75">$1,650.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj16_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Wax Hull Below The Rub Rails</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Buff & Wax</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">15h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,650.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,650.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,650.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
+      <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
+      <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name</label>
+          <input id="sig_name" type="text" value="Wes Garner" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        </div>
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
+          <input id="sig_date" type="text" value="March 26, 2026" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        </div>
+      </div>
+      <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
+      <div class="sig-wrap">
+        <canvas id="sigCanvas"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button onclick="clearSig()" style="font-size:11px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;font-family:Arial,sans-serif">Clear Signature</button>
+        <span id="sigStatus" style="font-size:11px;color:#c0392b;align-self:center"></span>
+      </div>
+      <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
+      <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
+        ✓ Authorization submitted. Turn Point Marine has been notified.
+      </div>
+    </div><div style="background:#4a5e5a;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
+      <div>
+        <div style="font-size:12pt;font-weight:700">COMPLETED — READY FOR BILLING</div>
+        <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">10 projects &mdash; Work complete, invoice pending</div>
+      </div>
+      <div style="font-size:13pt;font-weight:700">$30,157.50</div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj17_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">30 hours for install and full integration $3,600 (24V 100AH x2 batteries) $900 Victron Lynx BMS $200 Victron Lynx Distributor $758 Skylla-TG 24/100</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$10,050.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj17_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">30h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$10,050.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$10,050.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$10,050.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj18_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Alternators Upgrade</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Fabricate 2x J180 Mounts 35 hours design/build J180 alternator mounts, fit/install alternators, integrate charging profiles. $5,000 for two alternators</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$9,725.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj18_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Alternators Upgrade</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">35h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$9,725.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$9,725.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$9,725.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj19_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Furnace Service</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Replace fuel nozzle, photo eye and igniters, remove/clean burn chamber and reassemble. Replace hydronic coolant filter and check hydronic coolant levels.</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$1,505.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj19_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Furnace Service</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Detail</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">14h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,505.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,505.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,505.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj20_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Tender Outboard Service</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$1,255.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj20_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Tender Outboard Service</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">3h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,255.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,255.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,255.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj21_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Engine Services</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Main Engines/Transmissions, 20kw and 8kw Replace: oil, oil filters, clean oil screens, primary fuel filters, racors, water pump impellers and zincs. Clean Air filters</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$3,990.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj21_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Engine Services</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">24h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$3,990.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$3,990.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$3,990.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj22_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Masterflush Toilet, Both Heads, Duckbills Replace</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$732.50</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj22_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Masterflush Toilet, Both Heads, Duckbills Replace</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">4.5h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$732.50</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$732.50</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$732.50</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj23_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Blackwater Tank Evacuation Pump, Replace Duckbills</span>
+        
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$320.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj23_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Blackwater Tank Evacuation Pump, Replace Duckbills</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">2h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$320.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$320.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$320.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj24_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">A-Watermaker</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Replace with new 24v Spectra Newport 700, 30 gal/hr. 30 hours labor to remove old watermaker and install new. $21,000 cost of new watermaker. Estimate TBD.</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">—</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj24_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">—</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj25_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Victron Electronic Engine Controls Battery Charger</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$1,175.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj25_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Victron Electronic Engine Controls Battery Charger</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Technician</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">5h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,175.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,175.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,175.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="border:1px solid #4a5e5a22;border-left:5px solid #4a5e5a;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj26_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        
+        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Deck Chairs Teak Clean & Stainless Polish</span>
+        <span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">Removing teak from stainless and cleaning, polishing stainless and then reassemble 3.5 per chair</span>
+        <span style="font-size:11pt;font-weight:700;color:#4a5e5a">$1,405.00</span>
+        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      </div>
+      <div id="proj26_detail" style="display:none;padding:10px 14px;border-top:1px solid #e5e7eb;background:#fafffe"><div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div><table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
+      <thead><tr style="background:#f8f8f8">
+        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
+        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
+      </tr></thead>
+      <tbody><tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">Deck Chairs Teak Clean & Stainless Polish</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">Detail</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">14h</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">$1,405.00</td></tr>
+        <tr style="background:#f5f5f5">
+          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">$1,405.00</td>
+        </tr>
+      </tbody></table><div style="display:flex;gap:8px;margin-top:10px">
+      <div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px">
+        <div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div>
+        <div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">$1,405.00</div>
+      </div>
+      <div style="flex:1;padding:8px 12px;background:#f0faf6;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">—</div>
+      </div>
+    </div></div>
+    </div><div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
+    <div>Turn Point Marine &nbsp;|&nbsp; abram@turnpointmarine.com</div>
+    <div>Estimate Only - Subject to Change. Work does not proceed without signed authorization.</div>
+  </div><script>
+  // Signature pad
+  const canvas=document.getElementById('sigCanvas');
+  let hasSig=false;
+  if(canvas){
+    const ctx=canvas.getContext('2d');
+    canvas.width=canvas.offsetWidth*2;canvas.height=280;
+    ctx.scale(2,1);
+    ctx.strokeStyle='#1a1a1a';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round';
+    let drawing=false,lx=0,ly=0;
+    function pos(e){const r=canvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:(t.clientX-r.left)*(canvas.width/2)/r.width,y:(t.clientY-r.top)*canvas.height/r.height};}
+    canvas.addEventListener('mousedown',e=>{drawing=true;const p=pos(e);lx=p.x;ly=p.y;});
+    canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;hasSig=true;});
+    canvas.addEventListener('mouseup',()=>drawing=false);
+    canvas.addEventListener('mouseleave',()=>drawing=false);
+    canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=pos(e);lx=p.x;ly=p.y;},{passive:false});
+    canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;hasSig=true;},{passive:false});
+    canvas.addEventListener('touchend',()=>drawing=false);
+  }
+  function clearSig(){if(canvas){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;}}
+
+  function submitAuth(){
+    if(!hasSig){document.getElementById('sigStatus').textContent='Please sign before submitting.';return;}
+    const checked=[...document.querySelectorAll('input[name="proj_auth"]:checked')].map(el=>el.dataset.name);
+    const coCk=[...document.querySelectorAll('input[name="co_auth"]:checked')].map(el=>({proj:el.dataset.proj,co:el.dataset.co}));
+    if(checked.length===0){document.getElementById('sigStatus').textContent='Please check at least one project to authorize.';return;}
+    document.getElementById('sigStatus').textContent='';
+    const sigImg=canvas?canvas.toDataURL('image/png'):'';
+    const name=document.getElementById('sig_name').value;
+    const date=document.getElementById('sig_date').value;
+    const payload={vessel:'Undaunted',client:'Wes Garner',date,signedBy:name,authorizedProjects:checked,authorizedCOs:coCk,signature:sigImg,submittedAt:new Date().toISOString()};
+    const btn=document.querySelector('.submit-btn');
+    btn.disabled=true;btn.textContent='Submitting...';
+    // POST to Power Automate — replace URL below with your actual flow endpoint
+    const PA_URL='https://default141dc0adf2b54539836e80cbaa77fc.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/88d1bc3769b74644946a09a14a5bc2f5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=B-LxTafu-_ykEIHnNc6kqA29cG_VM0bQeHLiDfkUZ3M';
+    fetch(PA_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';})
+      .catch(()=>{
+        // If no PA URL yet, just show success locally
+        document.getElementById('submitMsg').style.display='block';btn.style.display='none';
+      });
+  }
+  </script></div></body></html>

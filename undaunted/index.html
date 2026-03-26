@@ -72,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tinp.r{text-align:right}
 .cat-sel{font-size:11px;padding:4px 6px;border:none;border-right:1px solid #f0f0ed;background:transparent;color:#555;font-family:inherit;width:100%}
 .cat-sel:focus{outline:none}
-.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
+.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#fff3e0}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
 .cell-r{padding:8px;text-align:right;font-size:12px;color:#444;white-space:nowrap}
 .cell-bold{padding:8px;text-align:right;font-size:12px;font-weight:700;white-space:nowrap}
 .del-btn{background:none;border:none;cursor:pointer;color:#ddd;font-size:16px;padding:6px 8px}
@@ -170,7 +170,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     <button class="btn btn-primary" onclick="addProject()">+ Add project</button>
   </div>
   <div class="grand" id="grandTotal"></div>
-  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:10px">Technician $135/hr &middot; Buff &amp; Wax $105/hr &middot; Detail $95/hr &middot; Estimate Only &mdash; Subject to Change</p>
+  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:10px">Technician $135/hr &middot; Buff &amp; Wax $105/hr &middot; Detail/Travel $95/hr &middot; Shop Fee 3% &middot; Tax 9.1% &middot; Estimate Only &mdash; Subject to Change</p>
 </div>
 <!-- TIME ENTRY -->
 <div class="page" id="page-timeentry">
@@ -251,9 +251,11 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
 <script>
 const ENGINE_VERSION=3;
 const PIN='1248';
-const RATES={T:135,B:105,D:95,M:0,S:0};
-const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',M:'Materials',S:'SBCNTRCT'};
-const CAT_CLS={T:'cT',B:'cB',D:'cD',M:'cM',S:'cS'};
+const RATES={T:135,B:105,D:95,V:95,M:0,S:0};
+const SHOP_FEE_RATE=0.03;
+const TAX_RATE=0.091;
+const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel Time',M:'Materials',S:'SBCNTRCT'};
+const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS'};
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v2';
 const SECTIONS=[
   {key:'needs_auth',label:'Authorization Needed',color:'#5dba99',textColor:'#fff',bg:'#f0faf6',border:'#a7d8c5',defaultOpen:true},
@@ -498,21 +500,13 @@ function renderSummary(){
   const tM=inc.reduce((a,p)=>a+projEstMat(p),0);
   const tS=inc.reduce((a,p)=>a+projEstSub(p),0);
   const tT=tL+tM+tS;
-  document.getElementById('sumProj').textContent=projects.length;
+  document.getElementById('sumProj').textContent=inc.length;
   document.getElementById('sumLabor').textContent=fmt(tL);
   document.getElementById('sumMat').textContent=fmt(tM);
   document.getElementById('sumSub').textContent=fmt(tS);
   document.getElementById('sumTotal').textContent=fmt(tT);
   const gt=document.getElementById('grandTotal');
-  if(gt){
-    const totEst=inc.reduce((a,p)=>a+projScopeTotal(p),0);
-    const totAct=inc.reduce((a,p)=>a+projActualTotal(p),0);
-    gt.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:0">'
-      +'<div style="font-size:14px;font-weight:700">Totals</div>'
-      +'<div style="text-align:right;padding:12px 8px;background:#eef1ff;border-radius:8px 0 0 8px"><div style="font-size:9px;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Estimated</div><div style="font-size:16px;font-weight:700;color:#3b4a6b">'+fmt(totEst)+'</div></div>'
-      +'<div style="text-align:right;padding:12px 8px;background:#f0faf6;border-radius:0 8px 8px 0"><div style="font-size:9px;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Actual to Date</div><div style="font-size:16px;font-weight:700;color:#1D9E75">'+fmt(totAct)+'</div></div>'
-      +'</div>';
-  }
+  if(gt){gt.innerHTML='';}
   saveData();
 }
 
@@ -742,6 +736,30 @@ function renderEstimate(){
       saveData();renderEstimate();
     };
     wrap.appendChild(body);list.appendChild(wrap);
+
+    // Inject estimate summary block between complete and billed
+    if(sec.key==='complete'){
+      const actInc=projects.filter(p=>p.include!==false&&(p.status==='needs_auth'||p.status==='in_progress'||p.status==='change_of_scope'));
+      const sL=actInc.reduce((a,p)=>a+projEstLabor(p),0);
+      const sM=actInc.reduce((a,p)=>a+projEstMat(p),0);
+      const sS=actInc.reduce((a,p)=>a+projEstSub(p),0);
+      const sT=sL+sM+sS;
+      const sShop=(sL+(sM-sS))*SHOP_FEE_RATE;
+      const sTax=(sT+sShop)*TAX_RATE;
+      const sGrand=sT+sShop+sTax;
+      const feeRow=(label,val)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:12px;color:#555">'+label+'</span><span style="font-size:12px;font-weight:600;color:#1a1a1a">'+fmt(val)+'</span></div>';
+      const sumDiv=document.createElement('div');
+      sumDiv.style.cssText='border:1px solid #e5e5e0;border-radius:10px;overflow:hidden;margin:16px 0';
+      sumDiv.innerHTML='<div style="padding:10px 16px;background:#1a1a1a"><span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.05em">Estimate Summary — Active Projects</span></div>'
+        +feeRow('Labor',sL)
+        +feeRow('Materials',sM-sS)
+        +feeRow('Subcontractors',sS)
+        +feeRow('Subtotal',sT)
+        +feeRow('Shop Fee (3% of labor & materials)',sShop)
+        +feeRow('Tax (9.1%)',sTax)
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#1D9E75"><span style="font-size:12px;font-weight:700;color:#fff">Total Estimate</span><span style="font-size:15px;font-weight:700;color:#fff">'+fmt(sGrand)+'</span></div>';
+      list.appendChild(sumDiv);
+    }
   });
 }
 
@@ -803,6 +821,11 @@ function exportClientDoc(){
   const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
   const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
   const allM=actP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
+  const allSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+  const allSubtotal=allL+allM;
+  const allShopFee=(allL+(allM-allSub))*SHOP_FEE_RATE;
+  const allTax=(allSubtotal+allShopFee)*TAX_RATE;
+  const allGrand=allSubtotal+allShopFee+allTax;
 
   // Bake project data into the doc for submit
   const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
@@ -997,6 +1020,7 @@ function exportClientDoc(){
     compP.forEach(proj=>{html+=projBlock(proj,'#4a5e5a',false,false);});
   }
 
+
   // ── BILLED ──────────────────────────────────────────────────────────────
   if(billP.length>0){
     const bt=billP.reduce((a,p)=>a+projEstTotal(p),0);
@@ -1010,18 +1034,7 @@ function exportClientDoc(){
     });
   }
 
-  // ── OUTSTANDING BALANCE ─────────────────────────────────────────────────
-  html+=`<div style="background:#1a1a1a;color:#fff;border-radius:8px;padding:16px 20px;margin-top:28px;display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif">
-    <div>
-      <div style="font-size:13pt;font-weight:700">Outstanding Balance</div>
-      <div style="font-size:8pt;color:#888;margin-top:2px">Excludes billed &amp; invoiced projects</div>
-    </div>
-    <div style="display:flex;gap:24px">
-      <div style="text-align:right"><div style="font-size:8pt;color:#888">Labor</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allL)}</div></div>
-      <div style="text-align:right"><div style="font-size:8pt;color:#888">Materials / Sub</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allM)}</div></div>
-      <div style="text-align:right"><div style="font-size:8pt;color:#888">Total</div><div style="font-size:14pt;font-weight:700;color:#4ade80">${fd(allL+allM)}</div></div>
-    </div>
-  </div>`;
+
 
 
   // Footer

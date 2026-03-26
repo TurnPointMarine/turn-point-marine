@@ -2,8 +2,8 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "engineVersion": 3,
-    "exportedAt": "2026-03-26"
+    "exportedAt": "2026-03-26T20:32:11.786Z",
+    "engineVersion": 3
   },
   "projects": [
     {
@@ -19,8 +19,8 @@
           "id": 100,
           "cat": "T",
           "desc": "24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries",
-          "hrs": 30.0,
-          "mat": 6000.0,
+          "hrs": 30,
+          "mat": 6000,
           "sub": 0
         }
       ],
@@ -40,8 +40,8 @@
           "id": 101,
           "cat": "T",
           "desc": "Alternators Upgrade",
-          "hrs": 35.0,
-          "mat": 5000.0,
+          "hrs": 35,
+          "mat": 5000,
           "sub": 0
         }
       ],
@@ -61,8 +61,8 @@
           "id": 102,
           "cat": "T",
           "desc": "Davit",
-          "hrs": 8.0,
-          "mat": 500.0,
+          "hrs": 8,
+          "mat": 500,
           "sub": 0
         }
       ],
@@ -82,8 +82,8 @@
           "id": 103,
           "cat": "D",
           "desc": "Furnace Service",
-          "hrs": 14.0,
-          "mat": 175.0,
+          "hrs": 14,
+          "mat": 175,
           "sub": 0
         }
       ],
@@ -103,9 +103,9 @@
           "id": 104,
           "cat": "T",
           "desc": "Tender Outboard Service",
-          "hrs": 3.0,
+          "hrs": 3,
           "mat": 0,
-          "sub": 850.0
+          "sub": 850
         }
       ],
       "tasks": [],
@@ -124,7 +124,7 @@
           "id": 105,
           "cat": "T",
           "desc": "Fuel Inlet Panels",
-          "hrs": 8.0,
+          "hrs": 8,
           "mat": 0,
           "sub": 0
         }
@@ -145,8 +145,8 @@
           "id": 106,
           "cat": "T",
           "desc": "Trac Stabilizers",
-          "hrs": 8.0,
-          "mat": 1200.0,
+          "hrs": 8,
+          "mat": 1200,
           "sub": 0
         }
       ],
@@ -166,8 +166,8 @@
           "id": 107,
           "cat": "T",
           "desc": "Trac Stabilizers & Abt Thrusters",
-          "hrs": 8.0,
-          "mat": 75.0,
+          "hrs": 8,
+          "mat": 75,
           "sub": 0
         }
       ],
@@ -187,8 +187,8 @@
           "id": 108,
           "cat": "T",
           "desc": "Engine Services",
-          "hrs": 24.0,
-          "mat": 750.0,
+          "hrs": 24,
+          "mat": 750,
           "sub": 0
         }
       ],
@@ -209,7 +209,7 @@
           "cat": "T",
           "desc": "Masterflush Toilet, Both Heads, Duckbills Replace",
           "hrs": 4.5,
-          "mat": 125.0,
+          "mat": 125,
           "sub": 0
         }
       ],
@@ -229,8 +229,8 @@
           "id": 110,
           "cat": "T",
           "desc": "Blackwater Tank Evacuation Pump, Replace Duckbills",
-          "hrs": 2.0,
-          "mat": 50.0,
+          "hrs": 2,
+          "mat": 50,
           "sub": 0
         }
       ],
@@ -241,7 +241,7 @@
       "id": 12,
       "name": "Flybridge Captains Chairs Replace",
       "status": "needs_auth",
-      "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield\u2026",
+      "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield…",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -286,8 +286,8 @@
           "id": 111,
           "cat": "T",
           "desc": "Freshwater Pump Noise Dampen",
-          "hrs": 6.0,
-          "mat": 125.0,
+          "hrs": 6,
+          "mat": 125,
           "sub": 0
         }
       ],
@@ -307,8 +307,8 @@
           "id": 112,
           "cat": "T",
           "desc": "Victron Generator Start Battery Charger",
-          "hrs": 5.0,
-          "mat": 500.0,
+          "hrs": 5,
+          "mat": 500,
           "sub": 0
         }
       ],
@@ -328,8 +328,8 @@
           "id": 113,
           "cat": "T",
           "desc": "Victron Electronic Engine Controls Battery Charger",
-          "hrs": 5.0,
-          "mat": 500.0,
+          "hrs": 5,
+          "mat": 500,
           "sub": 0
         }
       ],
@@ -361,8 +361,8 @@
           "id": 114,
           "cat": "B",
           "desc": "Wax",
-          "hrs": 30.0,
-          "mat": 100.0,
+          "hrs": 30,
+          "mat": 100,
           "sub": 0
         }
       ],
@@ -382,8 +382,8 @@
           "id": 115,
           "cat": "D",
           "desc": "Paint Anchor Chain Markings",
-          "hrs": 6.0,
-          "mat": 150.0,
+          "hrs": 6,
+          "mat": 150,
           "sub": 0
         }
       ],
@@ -403,8 +403,8 @@
           "id": 116,
           "cat": "D",
           "desc": "Davit",
-          "hrs": 20.0,
-          "mat": 250.0,
+          "hrs": 20,
+          "mat": 250,
           "sub": 0
         }
       ],
@@ -424,8 +424,8 @@
           "id": 117,
           "cat": "D",
           "desc": "Deck Chairs Teak Clean & Stainless Polish",
-          "hrs": 14.0,
-          "mat": 75.0,
+          "hrs": 14,
+          "mat": 75,
           "sub": 0
         }
       ],
@@ -445,7 +445,7 @@
           "id": 118,
           "cat": "D",
           "desc": "External Stainless Polish",
-          "hrs": 15.0,
+          "hrs": 15,
           "mat": 0,
           "sub": 0
         }
@@ -466,8 +466,8 @@
           "id": 119,
           "cat": "B",
           "desc": "Fuel Inlet Panels",
-          "hrs": 8.0,
-          "mat": 200.0,
+          "hrs": 8,
+          "mat": 200,
           "sub": 0
         }
       ],
@@ -487,8 +487,8 @@
           "id": 120,
           "cat": "B",
           "desc": "Mast Base Mount Clean Corrosion & Paint",
-          "hrs": 6.0,
-          "mat": 75.0,
+          "hrs": 6,
+          "mat": 75,
           "sub": 0
         }
       ],
@@ -541,7 +541,7 @@
           "id": 121,
           "cat": "T",
           "desc": "Pull Starboard Propeller & Shaft",
-          "hrs": 10.0,
+          "hrs": 10,
           "mat": 0,
           "sub": 0
         }
@@ -562,8 +562,8 @@
           "id": 122,
           "cat": "T",
           "desc": "Forward Scan Transducer Replace",
-          "hrs": 6.0,
-          "mat": 1600.0,
+          "hrs": 6,
+          "mat": 1600,
           "sub": 0
         }
       ],
@@ -583,8 +583,8 @@
           "id": 123,
           "cat": "B",
           "desc": "Port Side Below Rub Rail Buff And Wax",
-          "hrs": 14.0,
-          "mat": 75.0,
+          "hrs": 14,
+          "mat": 75,
           "sub": 0
         }
       ],
@@ -604,8 +604,8 @@
           "id": 124,
           "cat": "B",
           "desc": "Wax Hull Below The Rub Rails",
-          "hrs": 15.0,
-          "mat": 75.0,
+          "hrs": 15,
+          "mat": 75,
           "sub": 0
         }
       ],
@@ -627,7 +627,5 @@
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
     "showCompleteDetail": true
-  },
-  "vessel": "Undaunted",
-  "client": "Wes Garner"
+  }
 }

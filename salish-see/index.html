@@ -23,7 +23,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .pin-input{font-size:28px;letter-spacing:8px;text-align:center;width:100%;border:1px solid #ddd;border-radius:10px;padding:12px;font-family:monospace;margin-bottom:12px}
 .pin-input:focus{outline:none;border-color:#1a1a1a}
 .pin-error{font-size:12px;color:#c0392b;margin-bottom:12px;min-height:18px}
-.summary-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.summary-bar{display:grid;grid-template-columns:repeat(8,1fr);gap:10px;margin-bottom:16px}
 .scard{background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:12px 14px}
 .scard .slabel{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px}
 .scard .sval{font-size:18px;font-weight:700}
@@ -46,10 +46,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .sec-body.open{display:block;padding:0}
 .sec-empty{padding:14px 18px;font-size:12px;color:#aaa;font-style:italic}
 .project{background:#fff;overflow:hidden}
-.proj-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fafaf8;border-bottom:1px solid #e5e5e0;cursor:pointer;user-select:none}
-.proj-hdr:hover{background:#f3f3f0}
-.proj-num{font-size:11px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0}
-.proj-name-inp{flex:1;font-size:14px;font-weight:600;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text}
+.proj-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid #ebebE8;cursor:pointer;user-select:none}
+.proj-hdr:hover{background:#f8f8f6}
+.proj-num{font-size:10px;font-weight:600;color:#aaa;background:#f0f0ee;border-radius:4px;padding:2px 6px;flex-shrink:0}
+.proj-name-inp{flex:1;font-size:15px;font-weight:700;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text;letter-spacing:-0.01em}
 .proj-name-inp:focus{outline:none;background:#fff;border-radius:4px;padding:2px 6px;border:1px solid #ddd}
 .status-sel{font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-family:inherit;flex-shrink:0}
 .proj-badge{font-size:12px;font-weight:700;color:#1D9E75;flex-shrink:0;min-width:80px;text-align:right}
@@ -72,7 +72,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tinp.r{text-align:right}
 .cat-sel{font-size:11px;padding:4px 6px;border:none;border-right:1px solid #f0f0ed;background:transparent;color:#555;font-family:inherit;width:100%}
 .cat-sel:focus{outline:none}
-.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
+.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#fff3e0}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
 .cell-r{padding:8px;text-align:right;font-size:12px;color:#444;white-space:nowrap}
 .cell-bold{padding:8px;text-align:right;font-size:12px;font-weight:700;white-space:nowrap}
 .del-btn{background:none;border:none;cursor:pointer;color:#ddd;font-size:16px;padding:6px 8px}
@@ -113,14 +113,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     <span class="vessel" id="navVessel">Hannah Mae</span>
   </div>
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    <button class="btn" style="border-color:#c0392b;color:#c0392b;background:transparent" onclick="showClearConfirm()">Clear</button>
-    <div id="clearConfirmBar" style="display:none;position:fixed;top:0;left:0;right:0;background:#1a1a1a;border-bottom:2px solid #c0392b;padding:10px 20px;z-index:9999;display:none;align-items:center;gap:10px;font-family:Arial,sans-serif">
-      <span style="color:#fff;font-size:12px;font-weight:600">Type vessel name to confirm clear:</span>
-      <input id="clearConfirmInput" type="text" placeholder="Vessel name..." style="padding:5px 10px;border:1px solid #c0392b;border-radius:4px;font-size:12px;width:160px;font-family:inherit">
-      <button onclick="confirmClear()" style="padding:5px 14px;background:#c0392b;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Confirm Clear</button>
-      <button onclick="hideClearConfirm()" style="padding:5px 14px;background:transparent;color:#aaa;border:1px solid #555;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit">Cancel</button>
-      <span id="clearConfirmError" style="color:#f87171;font-size:11px"></span>
-    </div>
+    <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="clearForNewVessel()">Clear</button>
     <button class="btn" style="border-color:#888;color:#ccc;background:transparent" onclick="markAllTM()">Mark All T&amp;M</button>
     <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="exportData()">&#11015; Export Data</button>
     <label class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600;cursor:pointer">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)"></label>
@@ -159,11 +152,14 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     </div>
   </div>
   <div class="summary-bar">
-    <div class="scard"><div class="slabel">Projects</div><div class="sval" id="sumProj">0</div></div>
+    <div class="scard"><div class="slabel">Active Projects</div><div class="sval" id="sumProj">0</div></div>
     <div class="scard"><div class="slabel">Est. Labor</div><div class="sval green" id="sumLabor">&#8212;</div></div>
     <div class="scard"><div class="slabel">Est. Materials</div><div class="sval green" id="sumMat">&#8212;</div></div>
     <div class="scard"><div class="slabel">Est. SBCNTRCT</div><div class="sval green" id="sumSub">&#8212;</div></div>
     <div class="scard"><div class="slabel">Estimate Total</div><div class="sval green" id="sumTotal">&#8212;</div></div>
+    <div class="scard"><div class="slabel">Shop Fee (3%)</div><div class="sval" id="sumShop">&#8212;</div></div>
+    <div class="scard"><div class="slabel">Tax (9.1%)</div><div class="sval" id="sumTax">&#8212;</div></div>
+    <div class="scard" style="border-color:#1D9E75"><div class="slabel" style="color:#1D9E75">Total w/ Fees</div><div class="sval green" id="sumGrand">&#8212;</div></div>
   </div>
   <div id="projectList"></div>
   <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:12px">
@@ -177,7 +173,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     <button class="btn btn-primary" onclick="addProject()">+ Add project</button>
   </div>
   <div class="grand" id="grandTotal"></div>
-  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:10px">Technician $135/hr &middot; Buff &amp; Wax $105/hr &middot; Detail $95/hr &middot; Estimate Only &mdash; Subject to Change</p>
+  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:10px">Technician $135/hr &middot; Buff &amp; Wax $105/hr &middot; Detail/Travel $95/hr &middot; Shop Fee 3% &middot; Tax 9.1% &middot; Estimate Only &mdash; Subject to Change</p>
 </div>
 <!-- TIME ENTRY -->
 <div class="page" id="page-timeentry">
@@ -258,9 +254,11 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
 <script>
 const ENGINE_VERSION=3;
 const PIN='1248';
-const RATES={T:135,B:105,D:95,M:0,S:0};
-const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',M:'Materials',S:'SBCNTRCT'};
-const CAT_CLS={T:'cT',B:'cB',D:'cD',M:'cM',S:'cS'};
+const RATES={T:135,B:105,D:95,V:95,M:0,S:0};
+const SHOP_FEE_RATE=0.03;
+const TAX_RATE=0.091;
+const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT'};
+const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS'};
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v2';
 const SECTIONS=[
   {key:'needs_auth',label:'Authorization Needed',color:'#5dba99',textColor:'#fff',bg:'#f0faf6',border:'#a7d8c5',defaultOpen:true},
@@ -500,24 +498,40 @@ function applySettings(){
 }
 
 function renderSummary(){
-  const inc=projects.filter(p=>p.include!==false);
+  const inc=projects.filter(p=>p.include!==false&&(p.status==='needs_auth'||p.status==='in_progress'||p.status==='change_of_scope'));
   const tL=inc.reduce((a,p)=>a+projEstLabor(p),0);
   const tM=inc.reduce((a,p)=>a+projEstMat(p),0);
   const tS=inc.reduce((a,p)=>a+projEstSub(p),0);
   const tT=tL+tM+tS;
-  document.getElementById('sumProj').textContent=projects.length;
+  const activeCount=inc.length;
+  const shopFee=(tL+tM)*SHOP_FEE_RATE;
+  const tax=(tT+shopFee)*TAX_RATE;
+  const grand=tT+shopFee+tax;
+  document.getElementById('sumProj').textContent=activeCount;
   document.getElementById('sumLabor').textContent=fmt(tL);
   document.getElementById('sumMat').textContent=fmt(tM);
   document.getElementById('sumSub').textContent=fmt(tS);
   document.getElementById('sumTotal').textContent=fmt(tT);
+  document.getElementById('sumShop').textContent=fmt(shopFee);
+  document.getElementById('sumTax').textContent=fmt(tax);
+  document.getElementById('sumGrand').textContent=fmt(grand);
   const gt=document.getElementById('grandTotal');
   if(gt){
     const totEst=inc.reduce((a,p)=>a+projScopeTotal(p),0);
     const totAct=inc.reduce((a,p)=>a+projActualTotal(p),0);
-    gt.innerHTML='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;gap:0">'
-      +'<div style="font-size:14px;font-weight:700">Totals</div>'
-      +'<div style="text-align:right;padding:12px 8px;background:#eef1ff;border-radius:8px 0 0 8px"><div style="font-size:9px;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Estimated</div><div style="font-size:16px;font-weight:700;color:#3b4a6b">'+fmt(totEst)+'</div></div>'
-      +'<div style="text-align:right;padding:12px 8px;background:#f0faf6;border-radius:0 8px 8px 0"><div style="font-size:9px;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Actual to Date</div><div style="font-size:16px;font-weight:700;color:#1D9E75">'+fmt(totAct)+'</div></div>'
+    const shopFeeGT=(tL+tM)*SHOP_FEE_RATE;
+    const taxGT=(tT+shopFeeGT)*TAX_RATE;
+    const grandGT=tT+shopFeeGT+taxGT;
+    const row=(label,val,bold,green)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 16px;'+(bold?'background:#f0faf6;font-weight:700':'border-top:1px solid #f0f0ed')+'"><span style="font-size:11pt;color:'+(green?'#155a3e':'#555')+'">'+label+'</span><span style="font-size:11pt;font-weight:'+(bold?'700':'600')+';color:'+(green?'#1D9E75':'#1a1a1a')+'">'+fmt(val)+'</span></div>';
+    gt.innerHTML='<div style="border:1px solid #e5e5e0;border-radius:10px;overflow:hidden;margin-top:8px">'
+      +'<div style="padding:10px 16px;background:#1a1a1a"><span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.05em">Estimate Summary — Active Projects</span></div>'
+      +row('Labor',tL,false,false)
+      +row('Materials',tM,false,false)
+      +row('Subcontractors',tS,false,false)
+      +row('Subtotal',tT,false,false)
+      +row('Shop Fee (3% of labor & materials)',shopFeeGT,false,false)
+      +row('Tax (9.1%)',taxGT,false,false)
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#1D9E75"><span style="font-size:12pt;font-weight:700;color:#fff">Total Estimate</span><span style="font-size:14pt;font-weight:700;color:#fff">'+fmt(grandGT)+'</span></div>'
       +'</div>';
   }
   saveData();
@@ -810,6 +824,11 @@ function exportClientDoc(){
   const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
   const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
   const allM=actP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
+  const allSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+  const allSubtotal=allL+allM;
+  const allShopFee=(allL+(allM-allSub))*SHOP_FEE_RATE;
+  const allTax=(allSubtotal+allShopFee)*TAX_RATE;
+  const allGrand=allSubtotal+allShopFee+allTax;
 
   // Bake project data into the doc for submit
   const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
@@ -1018,16 +1037,16 @@ function exportClientDoc(){
   }
 
   // ── OUTSTANDING BALANCE ─────────────────────────────────────────────────
-  html+=`<div style="background:#1a1a1a;color:#fff;border-radius:8px;padding:16px 20px;margin-top:28px;display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif">
-    <div>
-      <div style="font-size:13pt;font-weight:700">Outstanding Balance</div>
-      <div style="font-size:8pt;color:#888;margin-top:2px">Excludes billed &amp; invoiced projects</div>
-    </div>
-    <div style="display:flex;gap:24px">
-      <div style="text-align:right"><div style="font-size:8pt;color:#888">Labor</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allL)}</div></div>
-      <div style="text-align:right"><div style="font-size:8pt;color:#888">Materials / Sub</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allM)}</div></div>
-      <div style="text-align:right"><div style="font-size:8pt;color:#888">Total</div><div style="font-size:14pt;font-weight:700;color:#4ade80">${fd(allL+allM)}</div></div>
-    </div>
+  const feeRow=(label,val)=>`<div style="display:flex;justify-content:space-between;padding:7px 16px;border-top:1px solid #2a2a2a"><span style="font-size:10pt;color:#aaa">${label}</span><span style="font-size:10pt;color:#fff;font-weight:600">${fd(val)}</span></div>`;
+  html+=`<div style="background:#1a1a1a;border-radius:8px;margin-top:28px;overflow:hidden;font-family:Arial,sans-serif">
+    <div style="padding:12px 16px;border-bottom:1px solid #2a2a2a"><span style="font-size:11px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:0.05em">Estimate Summary</span></div>
+    ${feeRow('Labor',allL)}
+    ${feeRow('Materials',allM-allSub)}
+    ${feeRow('Subcontractors',allSub)}
+    ${feeRow('Subtotal',allSubtotal)}
+    ${feeRow('Shop Fee (3% of labor & materials)',allShopFee)}
+    ${feeRow('Tax (9.1%)',allTax)}
+    <div style="display:flex;justify-content:space-between;padding:12px 16px;background:#1D9E75"><span style="font-size:12pt;font-weight:700;color:#fff">Total Estimate</span><span style="font-size:14pt;font-weight:700;color:#fff">${fd(allGrand)}</span></div>
   </div>`;
 
 
@@ -1699,24 +1718,12 @@ function markAllTM(){
   projects.forEach(p=>{p.isTM=true;p.estimateTotal=null;p.scopeTasks=[];});
   saveData();renderEstimate();
 }
-function showClearConfirm(){
-  const bar=document.getElementById('clearConfirmBar');
-  bar.style.display='flex';
-  document.getElementById('clearConfirmInput').value='';
-  document.getElementById('clearConfirmError').textContent='';
-  document.getElementById('clearConfirmInput').focus();
-}
-function hideClearConfirm(){
-  document.getElementById('clearConfirmBar').style.display='none';
-}
-function confirmClear(){
-  const cv=document.getElementById('vfVessel').value||'CLEAR';
-  const entered=document.getElementById('clearConfirmInput').value.trim();
-  if(entered!==cv){document.getElementById('clearConfirmError').textContent='Name did not match. Try again.';return;}
+function clearForNewVessel(){
+  const entered=prompt('Type "'+cv+'" to confirm clearing all data:');
+  if(!entered||entered.trim()!==cv){alert('Did not match. No data cleared.');return;}
   projects=[];timeEntries=[];nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;
-  openProjs.clear();document.getElementById('vfVessel').value='';document.getElementById('vfClient').value='';document.getElementById('navVessel').textContent='New Vessel';
+  openProjs.clear();document.getElementById('vfVessel').value='';document.getElementById('vfClient').value='';document.getElementById('navVessel').textContent='Hannah Mae';
   localStorage.removeItem(STORAGE_KEY);renderEstimate();populateTEDropdowns();renderProgress();
-  hideClearConfirm();
 }
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
