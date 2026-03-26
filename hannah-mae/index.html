@@ -1171,7 +1171,7 @@ function exportClientPDF(){
   authP.forEach((proj,pi)=>{
     authRows+=`<div style="margin-top:6px;border:1px solid #c8e6d8;border-left:5px solid #5dba99;background:#fff">
       <div style="padding:10px 14px;display:flex;align-items:flex-start;gap:10px">
-        <input type="checkbox" id="chk${pi}" class="auth-chk" style="width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#1D9E75;cursor:pointer">
+        <input type="checkbox" id="chk${pi}" name="proj_auth" class="auth-chk" data-name="${proj.name}" style="width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#1D9E75;cursor:pointer">
         <div style="flex:1" class="proj-toggle" data-pi="${pi}" style="cursor:pointer;touch-action:manipulation">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <span style="font-size:11pt;font-weight:700">${String(pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
@@ -1306,6 +1306,8 @@ ${authRows}
     </div>
   </div>
   <div style="margin-top:14px;font-size:8pt;color:#999;border-top:1px solid #a7d8c5;padding-top:10px">By signing above, you authorize ${s.company} to proceed with all checked projects. Governed by the E-SIGN Act.</div>
+  <button onclick="submitAuth()" style="display:block;width:100%;padding:14px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif">Submit Authorization</button>
+  <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">✓ Authorization submitted. Turn Point Marine has been notified.</div>
 </div>
 `:''}
 
