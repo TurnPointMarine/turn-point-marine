@@ -46,10 +46,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .sec-body.open{display:block;padding:0}
 .sec-empty{padding:14px 18px;font-size:12px;color:#aaa;font-style:italic}
 .project{background:#fff;overflow:hidden}
-.proj-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fafaf8;border-bottom:1px solid #e5e5e0;cursor:pointer;user-select:none}
-.proj-hdr:hover{background:#f3f3f0}
-.proj-num{font-size:11px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0}
-.proj-name-inp{flex:1;font-size:14px;font-weight:600;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text}
+.proj-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid #ebebE8;cursor:pointer;user-select:none}
+.proj-hdr:hover{background:#f8f8f6}
+.proj-num{font-size:10px;font-weight:600;color:#aaa;background:#f0f0ee;border-radius:4px;padding:2px 6px;flex-shrink:0}
+.proj-name-inp{flex:1;font-size:15px;font-weight:700;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text;letter-spacing:-0.01em}
 .proj-name-inp:focus{outline:none;background:#fff;border-radius:4px;padding:2px 6px;border:1px solid #ddd}
 .status-sel{font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-family:inherit;flex-shrink:0}
 .proj-badge{font-size:12px;font-weight:700;color:#1D9E75;flex-shrink:0;min-width:80px;text-align:right}
@@ -152,7 +152,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     </div>
   </div>
   <div class="summary-bar">
-    <div class="scard"><div class="slabel">Projects</div><div class="sval" id="sumProj">0</div></div>
+    <div class="scard"><div class="slabel">Active Projects</div><div class="sval" id="sumProj">0</div></div>
     <div class="scard"><div class="slabel">Est. Labor</div><div class="sval green" id="sumLabor">&#8212;</div></div>
     <div class="scard"><div class="slabel">Est. Materials</div><div class="sval green" id="sumMat">&#8212;</div></div>
     <div class="scard"><div class="slabel">Est. SBCNTRCT</div><div class="sval green" id="sumSub">&#8212;</div></div>
@@ -493,7 +493,7 @@ function applySettings(){
 }
 
 function renderSummary(){
-  const inc=projects.filter(p=>p.include!==false);
+  const inc=projects.filter(p=>p.include!==false&&(p.status==='needs_auth'||p.status==='in_progress'||p.status==='change_of_scope'));
   const tL=inc.reduce((a,p)=>a+projEstLabor(p),0);
   const tM=inc.reduce((a,p)=>a+projEstMat(p),0);
   const tS=inc.reduce((a,p)=>a+projEstSub(p),0);
