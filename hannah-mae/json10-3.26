@@ -1,0 +1,923 @@
+{
+  "_meta": {
+    "vessel": "Hannah Mae",
+    "client": "Beth and Keith Loveless",
+    "exportedAt": "2026-03-26T17:02:01.946Z",
+    "engineVersion": 3
+  },
+  "projects": [
+    {
+      "id": 1,
+      "name": "Inspect Cutlass Bearings",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 2,
+      "name": "Bottom Paint",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 3,
+      "name": "Zincs",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 4,
+      "name": "Buff & Wax Below the Rail",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 5,
+      "name": "Buff & Wax Above Deck",
+      "status": "complete",
+      "include": true,
+      "notes": "Trunk top and sides, above the windshield",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 6,
+      "name": "Thruster Oil Change",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 7,
+      "name": "Windlass Oil Check",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 8,
+      "name": "Engine Service",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 9,
+      "name": "Starboard Main Engine - Fuse / Start Circuit",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Fuse blowing on start circuit - intermittent. Monitor and diagnose.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 10,
+      "name": "Fuel Vent Leak - Generator",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Monitor for now. When it suits, rebuild the fuel pump.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 11,
+      "name": "Tender Service",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 12,
+      "name": "Generator Insulation",
+      "status": "complete",
+      "include": true,
+      "notes": "Replaced.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 13,
+      "name": "Flybridge Slider Door Repair",
+      "status": "complete",
+      "include": true,
+      "notes": "Installed UHMW slides. Teak strips sent to Brightside Restoration for varnish.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 14,
+      "name": "Rudder Lubrication",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 15,
+      "name": "Replace Duckbills - Macerator and Masterflush",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 16,
+      "name": "Stanchion Rail Repair",
+      "status": "complete",
+      "include": true,
+      "notes": "Sealant installed in seven locations on vessel.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 17,
+      "name": "Anchor Chain",
+      "status": "complete",
+      "include": true,
+      "notes": "Chain markings repainted with InterProtect epoxy and Omni paint.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    }
+  ],
+  "timeEntries": [
+    {
+      "id": 1,
+      "date": "2026-02-12",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Created list of supplies needed to service engines and ensure full set of spares onboard.",
+      "posted": true
+    },
+    {
+      "id": 2,
+      "date": "2026-02-12",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Removed forward tender latch on upper deck — mount interfering with latch.",
+      "posted": true
+    },
+    {
+      "id": 3,
+      "date": "2026-02-12",
+      "proj": "Buff & Wax Below the Rail",
+      "cat": "B",
+      "hrs": 7.5,
+      "desc": "Buffed gelcoat between cap rail and upper rub rail, port hull mid-salon to aft. Two to three passes fine compound. Applied coat of marine wax to entire hull.",
+      "posted": true
+    },
+    {
+      "id": 4,
+      "date": "2026-02-13",
+      "proj": "Buff & Wax Below the Rail",
+      "cat": "B",
+      "hrs": 0.25,
+      "desc": "Removed tape from vessel used for buff and wax.",
+      "posted": true
+    },
+    {
+      "id": 5,
+      "date": "2026-02-13",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Removed hardware to pull flybridge sliding hatch to replace broken rollers. Removed aft nav light for replacement.",
+      "posted": true
+    },
+    {
+      "id": 6,
+      "date": "2026-02-13",
+      "proj": "Anchor Chain",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Unloaded nearly 50ft of anchor chain, noticed paint markings needed touching up.",
+      "posted": true
+    },
+    {
+      "id": 7,
+      "date": "2026-02-13",
+      "proj": "Replace Duckbills - Macerator and Masterflush",
+      "cat": "T",
+      "hrs": 2.5,
+      "desc": "Installed new duckbills in overboard discharge pump and VacuFlush head using SuperLube. Labeled installation and disinfected work area.",
+      "posted": true
+    },
+    {
+      "id": 8,
+      "date": "2026-02-13",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 1.75,
+      "desc": "Loaded tie-down lines in buckets with Oxiclean and hot water to soak. Started pressure washing — marine growth would not come off, returned lines to soak.",
+      "posted": true
+    },
+    {
+      "id": 9,
+      "date": "2026-02-16",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Loaded tie-down lines in buckets with bleach and hot water — OxiClean did not fully remove marine growth.",
+      "posted": true
+    },
+    {
+      "id": 10,
+      "date": "2026-02-16",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Picked up new LED nav lights and adhesive remover from LFS.",
+      "posted": true
+    },
+    {
+      "id": 11,
+      "date": "2026-02-16",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Installed two new navigation LEDs above flybridge. Voltage testing found aft nav light powered through anchor light breaker. Reassembled all wiring access panels.",
+      "posted": true
+    },
+    {
+      "id": 12,
+      "date": "2026-02-16",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Recorded tender filter part numbers for outboard service.",
+      "posted": true
+    },
+    {
+      "id": 13,
+      "date": "2026-02-16",
+      "proj": "Generator Insulation",
+      "cat": "D",
+      "hrs": 3.5,
+      "desc": "Set up workstation, removed forward/aft/top genset enclosure panels with peeling insulation. Scraped old insulation, stripped remaining adhesive with 3M Adhesive Remover.",
+      "posted": true
+    },
+    {
+      "id": 14,
+      "date": "2026-02-16",
+      "proj": "Zincs",
+      "cat": "T",
+      "hrs": 2.25,
+      "desc": "Removed corrosion from all underwater zinc contact points using wire wheel, masked zincs for bottom paint, installed ensuring proper metal-to-metal contact.",
+      "posted": true
+    },
+    {
+      "id": 15,
+      "date": "2026-02-19",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Created haul estimate per Abe's request.",
+      "posted": true
+    },
+    {
+      "id": 16,
+      "date": "2026-02-19",
+      "proj": "Generator Insulation",
+      "cat": "D",
+      "hrs": 1.25,
+      "desc": "Cleaned panels with acetone. Cut and installed new insulation on aft panel, secured fraying seams with butyl tape.",
+      "posted": true
+    },
+    {
+      "id": 17,
+      "date": "2026-02-19",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 7,
+      "desc": "Removed engine oil and filters all engines, transmission oil and raw water zincs from main engines, installed new raw water impellers using SuperLube, removed and cleaned air filters.",
+      "posted": true
+    },
+    {
+      "id": 18,
+      "date": "2026-02-20",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Picked up new engine zincs and painting supplies from LFS.",
+      "posted": true
+    },
+    {
+      "id": 19,
+      "date": "2026-02-20",
+      "proj": "Bottom Paint",
+      "cat": "D",
+      "hrs": 0.5,
+      "desc": "Masked off bottom paint on vessel to prep for new coat.",
+      "posted": true
+    },
+    {
+      "id": 20,
+      "date": "2026-02-20",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 7.75,
+      "desc": "Installed new oil/fuel/crankcase vent filters all engines. New impeller in generator. Pumped new oil, topped off transmission. Tapped damaged zinc threads, installed new zincs. Labeled dates, cleaned with Simple Green.",
+      "posted": true
+    },
+    {
+      "id": 21,
+      "date": "2026-02-23",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Inspected circuit breaker lights — refrigeration and electronics dim, genset not functioning. Discussed priorities with Abe.",
+      "posted": true
+    },
+    {
+      "id": 22,
+      "date": "2026-02-23",
+      "proj": "Stanchion Rail Repair",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Inspected all stainless steel on vessel — cavil cleats and hawseholes needed attention.",
+      "posted": true
+    },
+    {
+      "id": 23,
+      "date": "2026-02-23",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Checked oil levels all engines, inspected belts, performed final engine service inspection.",
+      "posted": true
+    },
+    {
+      "id": 24,
+      "date": "2026-02-23",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Removed end cap from flybridge sliding doors, removed both doors to replace rollers.",
+      "posted": true
+    },
+    {
+      "id": 25,
+      "date": "2026-02-23",
+      "proj": "Anchor Chain",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Laid out additional 50ft of anchor chain, filled barrel with warm water, scrubbed painted chain markings, set out to dry.",
+      "posted": true
+    },
+    {
+      "id": 26,
+      "date": "2026-02-23",
+      "proj": "Generator Insulation",
+      "cat": "D",
+      "hrs": 4.5,
+      "desc": "Traced old insulation from top panel — five access ports. Cut and installed insulation on top and forward panels, reinstalled all panels, secured raw water hoses through top panel.",
+      "posted": true
+    },
+    {
+      "id": 27,
+      "date": "2026-02-24",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Disposed old engine oil at Squalicum Harbor, picked up painting supplies at LFS.",
+      "posted": true
+    },
+    {
+      "id": 28,
+      "date": "2026-02-24",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Applied oil to main engine air filters, installed filters, labeled inspection dates on all belts and air filters.",
+      "posted": true
+    },
+    {
+      "id": 29,
+      "date": "2026-02-24",
+      "proj": "Anchor Chain",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Hung painted chain markings on first 100ft. Mixed InterProtect 2000E epoxy with red coloring agent, applied coat to red markings.",
+      "posted": true
+    },
+    {
+      "id": 30,
+      "date": "2026-02-24",
+      "proj": "Bottom Paint",
+      "cat": "D",
+      "hrs": 6,
+      "desc": "Cleaned all bottom paint below waterline with acetone, applied new coat to approximately three-quarters of hull.",
+      "posted": true
+    },
+    {
+      "id": 31,
+      "date": "2026-02-25",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Discussed priorities with Abe, created new work list.",
+      "posted": true
+    },
+    {
+      "id": 32,
+      "date": "2026-02-25",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Laid doors on blanket, labeled teak strip locations, removed teak strips for Brightside Restoration. Removed nearly 50 fasteners.",
+      "posted": true
+    },
+    {
+      "id": 33,
+      "date": "2026-02-25",
+      "proj": "Bottom Paint",
+      "cat": "D",
+      "hrs": 4,
+      "desc": "Relocated vessel stands, applied bottom paint beneath them, transom, thru-hulls, thruster tunnel, rudders, and remaining quarter of hull. Removed all tape.",
+      "posted": true
+    },
+    {
+      "id": 34,
+      "date": "2026-02-25",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Dry-fitted new bow cradle mount bolts — too short, requiring replacement.",
+      "posted": true
+    },
+    {
+      "id": 35,
+      "date": "2026-02-25",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Replaced all engine oil absorbent pads, cleaned genset drain pan.",
+      "posted": true
+    },
+    {
+      "id": 36,
+      "date": "2026-02-25",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Loosened main engine fuel filters to bleed air accumulated during servicing — hand pumps not functioning.",
+      "posted": true
+    },
+    {
+      "id": 37,
+      "date": "2026-02-25",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Installed new freshwater filter, labeled installation.",
+      "posted": true
+    },
+    {
+      "id": 38,
+      "date": "2026-02-25",
+      "proj": "Anchor Chain",
+      "cat": "T",
+      "hrs": 1.75,
+      "desc": "Mixed yellow and red epoxy batches. Applied yellow to painted sections. Applied pink epoxy to insides of links on red-marked sections to seal chain.",
+      "posted": true
+    },
+    {
+      "id": 39,
+      "date": "2026-02-26",
+      "proj": "Anchor Chain",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Applied coat of red Omni paint to anchor chain markings.",
+      "posted": true
+    },
+    {
+      "id": 40,
+      "date": "2026-02-26",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Discussed priorities and port Tides Marine shaft seal with Abe.",
+      "posted": true
+    },
+    {
+      "id": 41,
+      "date": "2026-02-26",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 0.25,
+      "desc": "Buffing estimate for high UV areas, inspected cockpit teak sealant, recorded photos.",
+      "posted": true
+    },
+    {
+      "id": 42,
+      "date": "2026-02-26",
+      "proj": "Rudder Lubrication",
+      "cat": "T",
+      "hrs": 2.5,
+      "desc": "Removed port Tides Marine shaft seal, inspected and cleaned shaft — noted early pitting. Repositioned housing 1/2 inch forward, installed new shaft seal, reassembled housing.",
+      "posted": true
+    },
+    {
+      "id": 43,
+      "date": "2026-02-26",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 3.75,
+      "desc": "Buffed forward face of flybridge brow — three to four passes coarse compound.",
+      "posted": true
+    },
+    {
+      "id": 44,
+      "date": "2026-03-02",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 2,
+      "desc": "Buffed and waxed forward flybridge brow — two passes fine compound, one coat marine wax.",
+      "posted": true
+    },
+    {
+      "id": 45,
+      "date": "2026-03-02",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 5.75,
+      "desc": "Buffed top surface of hood forward of windshield — three passes coarse compound.",
+      "posted": true
+    },
+    {
+      "id": 46,
+      "date": "2026-03-03",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Fire extinguisher service by Pacific Rim Fire, assisted installing new mount.",
+      "posted": true
+    },
+    {
+      "id": 47,
+      "date": "2026-03-03",
+      "proj": "Windlass Oil Check",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Drained gear oil from windlass, removed and cleaned site glass, topped off with new oil. Consolidated used oil and old tender fuel for disposal.",
+      "posted": true
+    },
+    {
+      "id": 48,
+      "date": "2026-03-03",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 6.25,
+      "desc": "Buffed and waxed hood forward of windshield. Two passes fine compound, one coat marine wax on top. Buffed starboard side two passes fine compound.",
+      "posted": true
+    },
+    {
+      "id": 49,
+      "date": "2026-03-03",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 3,
+      "desc": "Installed UHMW slides, reinstalled teak strips and doors.",
+      "posted": true
+    },
+    {
+      "id": 50,
+      "date": "2026-03-03",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Repaired salon door — rubbing on buildup of varnish coats.",
+      "posted": true
+    },
+    {
+      "id": 51,
+      "date": "2026-03-03",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "Additional door installation and adjustment.",
+      "posted": true
+    },
+    {
+      "id": 52,
+      "date": "2026-03-04",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Supervised sealant and stainless polish work.",
+      "posted": true
+    },
+    {
+      "id": 53,
+      "date": "2026-03-04",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Acquired P-clamps to secure Fireboy wiring. Installed missing port pilothouse teak trim fastener.",
+      "posted": true
+    },
+    {
+      "id": 54,
+      "date": "2026-03-04",
+      "proj": "Thruster Oil Change",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Removed master cabin bed, checked bow thruster oil levels, vacuumed thruster compartment, installed lug cover on thruster wiring.",
+      "posted": true
+    },
+    {
+      "id": 55,
+      "date": "2026-03-04",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Removed and primed fuel filters on all engines after servicing.",
+      "posted": true
+    },
+    {
+      "id": 56,
+      "date": "2026-03-04",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Repositioned and secured starboard engine room A/C light — stripped fastener, relocated 1/2 inch aft.",
+      "posted": true
+    },
+    {
+      "id": 57,
+      "date": "2026-03-04",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Treated new tender fuel with Sta-Bil fuel stabilizer, reinstalled tank.",
+      "posted": true
+    },
+    {
+      "id": 58,
+      "date": "2026-03-04",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Removed rust from port main engine hard piping, applied Corroseal.",
+      "posted": true
+    },
+    {
+      "id": 59,
+      "date": "2026-03-04",
+      "proj": "Rudder Lubrication",
+      "cat": "T",
+      "hrs": 5.25,
+      "desc": "Removed contents from lazarette, removed rudders, cleaned rudder shafts and shaft logs with degreaser, lubricated shafts with Triple Guard waterproof grease, reinstalled rudders, vacuumed and degreased rudder compartment.",
+      "posted": true
+    },
+    {
+      "id": 60,
+      "date": "2026-03-05",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 0.5,
+      "desc": "Removed polishing tape, checked sealant prep.",
+      "posted": true
+    },
+    {
+      "id": 61,
+      "date": "2026-03-05",
+      "proj": "Flybridge Slider Door Repair",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Assisted installing flybridge sliding doors. Installed missing port salon teak deck trim fastener.",
+      "posted": true
+    },
+    {
+      "id": 62,
+      "date": "2026-03-05",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Coordinated vehicle access for vessel launch. Acquired tender fire extinguisher from Pacific Rim Fire.",
+      "posted": true
+    },
+    {
+      "id": 63,
+      "date": "2026-03-05",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 3.25,
+      "desc": "Delivered shuttle car to Squalicum Harbor. Installed tie-downs, removed tools and supplies, secured tender with temporary cradle mount, assisted launching vessel. Tested all systems, delivered to Squalicum Harbor.",
+      "posted": true
+    },
+    {
+      "id": 64,
+      "date": "2026-03-05",
+      "proj": "Buff & Wax Above Deck",
+      "cat": "B",
+      "hrs": 1.75,
+      "desc": "Buffed and waxed hood — two passes fine compound, one coat marine wax port/starboard/forward sides.",
+      "posted": true
+    },
+    {
+      "id": 65,
+      "date": "2026-03-05",
+      "proj": "Anchor Chain",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Unloaded 200ft of anchor chain, recorded markings after hearing they were painted incorrectly. Loaded chain back prior to launch.",
+      "posted": true
+    },
+    {
+      "id": 66,
+      "date": "2026-03-05",
+      "proj": "Stanchion Rail Repair",
+      "cat": "T",
+      "hrs": 2.75,
+      "desc": "Installed new sealant in seven locations on vessel. Cleaned all sections with acetone, removed tape, recorded photos.",
+      "posted": true
+    },
+    {
+      "id": 67,
+      "date": "2026-03-06",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Ran engines, checked fluid levels, topped off engine and transmission oil.",
+      "posted": true
+    },
+    {
+      "id": 68,
+      "date": "2026-03-06",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Applied InterProtect 2000E epoxy to port main engine hard piping cleared of corrosion.",
+      "posted": true
+    },
+    {
+      "id": 69,
+      "date": "2026-03-06",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Reinstalled Starlink and antennas post launch.",
+      "posted": true
+    },
+    {
+      "id": 70,
+      "date": "2026-03-06",
+      "proj": "Buff & Wax Below the Rail",
+      "cat": "B",
+      "hrs": 5,
+      "desc": "Picked up cleaning supplies at LFS. Cleaned lower deck and flybridge steps with TEKA cleaner — two-part solution.",
+      "posted": true
+    },
+    {
+      "id": 71,
+      "date": "2026-03-06",
+      "proj": "Buff & Wax Below the Rail",
+      "cat": "B",
+      "hrs": 2.25,
+      "desc": "Pressure washed nonskid decks, all canvas, and all marine growth. Sprayed flybridge deck with vinegar solution.",
+      "posted": true
+    },
+    {
+      "id": 72,
+      "date": "2026-03-07",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Picked up hardware for tender bow cradle mount at LFS.",
+      "posted": true
+    },
+    {
+      "id": 73,
+      "date": "2026-03-07",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Loaded all canvas aboard, recorded photos of recently installed sealant.",
+      "posted": true
+    },
+    {
+      "id": 74,
+      "date": "2026-03-07",
+      "proj": "Buff & Wax Below the Rail",
+      "cat": "B",
+      "hrs": 2.25,
+      "desc": "Washed the vessel.",
+      "posted": true
+    },
+    {
+      "id": 75,
+      "date": "2026-03-07",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Ran tender to flush fresh water through outboard, ran treated fuel through engine.",
+      "posted": true
+    },
+    {
+      "id": 76,
+      "date": "2026-03-07",
+      "proj": "Engine Service",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Cleaned salon windows, wiped countertops, vacuumed carpets to eliminate shop dust.",
+      "posted": true
+    },
+    {
+      "id": 77,
+      "date": "2026-03-07",
+      "proj": "Fuel Vent Leak - Generator",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Removed genset sea strainer lid, cleaned corrosion at seal, applied Super Lube to seal to prevent leaking.",
+      "posted": true
+    }
+  ],
+  "nextProjId": 18,
+  "nextTaskId": 200,
+  "nextCOId": 100,
+  "nextTEId": 1078,
+  "settings": {
+    "company": "Turn Point Marine",
+    "manager": "Abram Anderson",
+    "email": "abram@turnpointmarine.com",
+    "clientEmail": "",
+    "phone": "",
+    "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
+    "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
+    "showCompleteDetail": true
+  }
+}
