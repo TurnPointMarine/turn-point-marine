@@ -1,0 +1,24 @@
+{
+  "_meta": {
+    "vessel": "Undaunted",
+    "client": "Wes Garner",
+    "exportedAt": "2026-03-26T18:08:57.634Z",
+    "engineVersion": 3
+  },
+  "projects": [],
+  "timeEntries": [],
+  "nextProjId": 1,
+  "nextTaskId": 100,
+  "nextCOId": 100,
+  "nextTEId": 1000,
+  "settings": {
+    "company": "Turn Point Marine",
+    "manager": "Abram Anderson",
+    "email": "abram@turnpointmarine.com",
+    "clientEmail": "",
+    "phone": "",
+    "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
+    "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
+    "showCompleteDetail": true
+  }
+}
