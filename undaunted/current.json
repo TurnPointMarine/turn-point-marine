@@ -2,14 +2,14 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-26T20:32:11.786Z",
+    "exportedAt": "2026-03-26T21:18:46.133Z",
     "engineVersion": 3
   },
   "projects": [
     {
       "id": 1,
       "name": "24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries",
-      "status": "complete",
+      "status": "billed",
       "notes": "30 hours for install and full integration $3,600 (24V 100AH x2 batteries) $900 Victron Lynx BMS $200 Victron Lynx Distributor $758 Skylla-TG 24/100",
       "include": true,
       "isTM": false,
@@ -30,7 +30,7 @@
     {
       "id": 2,
       "name": "Alternators Upgrade",
-      "status": "complete",
+      "status": "billed",
       "notes": "Fabricate 2x J180 Mounts 35 hours design/build J180 alternator mounts, fit/install alternators, integrate charging profiles. $5,000 for two alternators",
       "include": true,
       "isTM": false,
@@ -72,7 +72,7 @@
     {
       "id": 4,
       "name": "Furnace Service",
-      "status": "complete",
+      "status": "billed",
       "notes": "Replace fuel nozzle, photo eye and igniters, remove/clean burn chamber and reassemble. Replace hydronic coolant filter and check hydronic coolant levels.",
       "include": true,
       "isTM": false,
@@ -93,7 +93,7 @@
     {
       "id": 5,
       "name": "Tender Outboard Service",
-      "status": "complete",
+      "status": "billed",
       "notes": "",
       "include": true,
       "isTM": false,
@@ -177,7 +177,7 @@
     {
       "id": 9,
       "name": "Engine Services",
-      "status": "complete",
+      "status": "billed",
       "notes": "Main Engines/Transmissions, 20kw and 8kw Replace: oil, oil filters, clean oil screens, primary fuel filters, racors, water pump impellers and zincs. Clean Air filters",
       "include": true,
       "isTM": false,
@@ -198,7 +198,7 @@
     {
       "id": 10,
       "name": "Masterflush Toilet, Both Heads, Duckbills Replace",
-      "status": "complete",
+      "status": "billed",
       "notes": "",
       "include": true,
       "isTM": false,
@@ -219,7 +219,7 @@
     {
       "id": 11,
       "name": "Blackwater Tank Evacuation Pump, Replace Duckbills",
-      "status": "complete",
+      "status": "billed",
       "notes": "",
       "include": true,
       "isTM": false,
@@ -242,7 +242,7 @@
       "name": "Flybridge Captains Chairs Replace",
       "status": "needs_auth",
       "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield…",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [],
@@ -252,7 +252,7 @@
     {
       "id": 13,
       "name": "A-Watermaker",
-      "status": "complete",
+      "status": "billed",
       "notes": "Replace with new 24v Spectra Newport 700, 30 gal/hr. 30 hours labor to remove old watermaker and install new. $21,000 cost of new watermaker. Estimate TBD.",
       "include": true,
       "isTM": false,
@@ -276,7 +276,7 @@
     {
       "id": 15,
       "name": "Freshwater Pump Noise Dampen",
-      "status": "needs_auth",
+      "status": "in_progress",
       "notes": "Can build insulated box and install the pumps in it and run the plumbing into it.",
       "include": true,
       "isTM": false,
@@ -318,7 +318,7 @@
     {
       "id": 17,
       "name": "Victron Electronic Engine Controls Battery Charger",
-      "status": "complete",
+      "status": "billed",
       "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.",
       "include": true,
       "isTM": false,
@@ -395,7 +395,7 @@
       "name": "Davit",
       "status": "needs_auth",
       "notes": "Clean up corrosion and paint",
-      "include": false,
+      "include": true,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -414,7 +414,7 @@
     {
       "id": 22,
       "name": "Deck Chairs Teak Clean & Stainless Polish",
-      "status": "complete",
+      "status": "billed",
       "notes": "Removing teak from stainless and cleaning, polishing stainless and then reassemble 3.5 per chair",
       "include": true,
       "isTM": false,
@@ -613,11 +613,21 @@
       "cos": []
     }
   ],
-  "timeEntries": [],
+  "timeEntries": [
+    {
+      "id": 1000,
+      "date": "2026-03-26",
+      "proj": "Davit",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "asfdasef",
+      "posted": false
+    }
+  ],
   "nextProjId": 32,
   "nextTaskId": 126,
   "nextCOId": 100,
-  "nextTEId": 1000,
+  "nextTEId": 1001,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
