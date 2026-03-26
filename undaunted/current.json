@@ -1,0 +1,800 @@
+{
+  "_meta": {
+    "vessel": "Undaunted",
+    "client": "Wes Garner",
+    "engineVersion": 2,
+    "exportedAt": "2026-03-26"
+  },
+  "projects": [
+    {
+      "id": 1,
+      "name": "24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries",
+      "status": "complete",
+      "notes": "30 hours for install and full integration $3,600 (24V 100AH x2 batteries) $900 Victron Lynx BMS $200 Victron Lynx Distributor $758 Skylla-TG 24/100",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 100,
+          "cat": "T",
+          "desc": "24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries",
+          "hrs": 30.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 101,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 6000.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 2,
+      "name": "Alternators Upgrade",
+      "status": "complete",
+      "notes": "Fabricate 2x J180 Mounts 35 hours design/build J180 alternator mounts, fit/install alternators, integrate charging profiles. $5,000 for two alternators",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 102,
+          "cat": "T",
+          "desc": "Alternators Upgrade",
+          "hrs": 35.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 103,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 5000.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 3,
+      "name": "Davit",
+      "status": "needs_auth",
+      "notes": "Davit: replace rotational control valves & worn hydraulic lines, hydraulic fluid flush, add filter to hydraulic plumbing Clean up corrosion and paint",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 104,
+          "cat": "T",
+          "desc": "Davit",
+          "hrs": 8.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 105,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 500.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 4,
+      "name": "Furnace Service",
+      "status": "complete",
+      "notes": "Replace fuel nozzle, photo eye and igniters, remove/clean burn chamber and reassemble. Replace hydronic coolant filter and check hydronic coolant levels.",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 106,
+          "cat": "D",
+          "desc": "Furnace Service",
+          "hrs": 14.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 107,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 175.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 5,
+      "name": "Tender Outboard Service",
+      "status": "complete",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 108,
+          "cat": "T",
+          "desc": "Tender Outboard Service",
+          "hrs": 3.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 109,
+          "cat": "S",
+          "desc": "Subcontractor",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 850.0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 6,
+      "name": "Fuel Inlet Panels",
+      "status": "needs_auth",
+      "notes": "Disconnect hoses and remove panels. Once coated rebed with 3M4200",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 110,
+          "cat": "T",
+          "desc": "Fuel Inlet Panels",
+          "hrs": 8.0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 7,
+      "name": "Trac Stabilizers",
+      "status": "needs_auth",
+      "notes": "Starboard Hydraulic Ram, Rebuild $3,500 to replace and $1,000 to rebuild the existing ram",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 111,
+          "cat": "T",
+          "desc": "Trac Stabilizers",
+          "hrs": 8.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 112,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 1200.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 8,
+      "name": "Trac Stabilizers & Abt Thrusters",
+      "status": "needs_auth",
+      "notes": "Heat exchanger Pull/Clean/Replace Seals/Paint",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 113,
+          "cat": "T",
+          "desc": "Trac Stabilizers & Abt Thrusters",
+          "hrs": 8.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 114,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 75.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 9,
+      "name": "Engine Services",
+      "status": "complete",
+      "notes": "Main Engines/Transmissions, 20kw and 8kw Replace: oil, oil filters, clean oil screens, primary fuel filters, racors, water pump impellers and zincs. Clean Air filters",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 115,
+          "cat": "T",
+          "desc": "Engine Services",
+          "hrs": 24.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 116,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 750.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 10,
+      "name": "Masterflush Toilet, Both Heads, Duckbills Replace",
+      "status": "complete",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 117,
+          "cat": "T",
+          "desc": "Masterflush Toilet, Both Heads, Duckbills Replace",
+          "hrs": 4.5,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 118,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 125.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 11,
+      "name": "Blackwater Tank Evacuation Pump, Replace Duckbills",
+      "status": "complete",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 119,
+          "cat": "T",
+          "desc": "Blackwater Tank Evacuation Pump, Replace Duckbills",
+          "hrs": 2.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 120,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 50.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 12,
+      "name": "Flybridge Captains Chairs Replace",
+      "status": "needs_auth",
+      "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield\u2026",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 13,
+      "name": "A-Watermaker",
+      "status": "complete",
+      "notes": "-Replace with new 24v Spectra Newport 700, 30 gallons/hour output -30 hours of labor to remove the old watermaker then install new machine -$21,000 Cost of New Watermaker",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 14,
+      "name": "B-Watermaker",
+      "status": "needs_auth",
+      "notes": "-Pull brushes from 24v motor and track down replacements through local shop. -Replace Rotoflow meter -Replace transducers for feed water pressure -Install transducers on prefilter housings for offset measurements -Order replacement check valves for watermaker as well as seal kit that was used rebuilding the Clarke Pump in AK. -$2,750 in labor and parts",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 15,
+      "name": "Freshwater Pump Noise Dampen",
+      "status": "needs_auth",
+      "notes": "Can build insulated box and install the pumps in it and run the plumbing into it.",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 121,
+          "cat": "T",
+          "desc": "Freshwater Pump Noise Dampen",
+          "hrs": 6.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 122,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 125.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 16,
+      "name": "Victron Generator Start Battery Charger",
+      "status": "needs_auth",
+      "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 123,
+          "cat": "T",
+          "desc": "Victron Generator Start Battery Charger",
+          "hrs": 5.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 124,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 500.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 17,
+      "name": "Victron Electronic Engine Controls Battery Charger",
+      "status": "complete",
+      "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 125,
+          "cat": "T",
+          "desc": "Victron Electronic Engine Controls Battery Charger",
+          "hrs": 5.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 126,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 500.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 18,
+      "name": "Detail",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 19,
+      "name": "Wax",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 127,
+          "cat": "B",
+          "desc": "Wax",
+          "hrs": 30.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 128,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 100.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 20,
+      "name": "Paint Anchor Chain Markings",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 129,
+          "cat": "D",
+          "desc": "Paint Anchor Chain Markings",
+          "hrs": 6.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 130,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 150.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 21,
+      "name": "Davit",
+      "status": "needs_auth",
+      "notes": "Clean up corrosion and paint",
+      "include": false,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 131,
+          "cat": "D",
+          "desc": "Davit",
+          "hrs": 20.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 132,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 250.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 22,
+      "name": "Deck Chairs Teak Clean & Stainless Polish",
+      "status": "complete",
+      "notes": "Removing teak from stainless and cleaning, polishing stainless and then reassemble 3.5 per chair",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 133,
+          "cat": "D",
+          "desc": "Deck Chairs Teak Clean & Stainless Polish",
+          "hrs": 14.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 134,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 75.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 23,
+      "name": "External Stainless Polish",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 135,
+          "cat": "D",
+          "desc": "External Stainless Polish",
+          "hrs": 15.0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 24,
+      "name": "Fuel Inlet Panels",
+      "status": "needs_auth",
+      "notes": "Clean corrosion epoxy barrier coat then paint",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 136,
+          "cat": "B",
+          "desc": "Fuel Inlet Panels",
+          "hrs": 8.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 137,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 200.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 25,
+      "name": "Mast Base Mount Clean Corrosion & Paint",
+      "status": "needs_auth",
+      "notes": "",
+      "include": false,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 138,
+          "cat": "B",
+          "desc": "Mast Base Mount Clean Corrosion & Paint",
+          "hrs": 6.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 139,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 75.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 26,
+      "name": "Haul Out",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 27,
+      "name": "Haul/Wash/Block",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 28,
+      "name": "Pull Starboard Propeller & Shaft",
+      "status": "needs_auth",
+      "notes": "4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. 3-5 thousand for a shaft if needed. 6-8 hours for replacing a cutlass bearing. 4-6 hours for installing new shaft and propeller. Estimate ~$10,000: 24hrs labor @ $135/hr = $4,000 with tax, $6,000 materials with tax.",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 140,
+          "cat": "T",
+          "desc": "Pull Starboard Propeller & Shaft",
+          "hrs": 10.0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 29,
+      "name": "Forward Scan Transducer Replace",
+      "status": "needs_auth",
+      "notes": "Garmin Panoptix PS-51TH",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 141,
+          "cat": "T",
+          "desc": "Forward Scan Transducer Replace",
+          "hrs": 6.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 142,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 1600.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 30,
+      "name": "Port Side Below Rub Rail Buff And Wax",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 143,
+          "cat": "B",
+          "desc": "Port Side Below Rub Rail Buff And Wax",
+          "hrs": 14.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 144,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 75.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 31,
+      "name": "Wax Hull Below The Rub Rails",
+      "status": "needs_auth",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 145,
+          "cat": "B",
+          "desc": "Wax Hull Below The Rub Rails",
+          "hrs": 15.0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 146,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 75.0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    }
+  ],
+  "timeEntries": [],
+  "nextProjId": 32,
+  "nextTaskId": 147,
+  "nextCOId": 100,
+  "nextTEId": 1000,
+  "settings": {
+    "company": "Turn Point Marine",
+    "manager": "Abram Anderson",
+    "email": "abram@turnpointmarine.com",
+    "clientEmail": "",
+    "phone": "",
+    "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
+    "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
+    "showCompleteDetail": true
+  },
+  "vessel": "Undaunted",
+  "client": "Wes Garner"
+}

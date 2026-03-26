@@ -113,14 +113,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     <span class="vessel" id="navVessel">Hannah Mae</span>
   </div>
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    <button class="btn" style="border-color:#c0392b;color:#c0392b;background:transparent" onclick="showClearConfirm()">Clear</button>
-    <div id="clearConfirmBar" style="display:none;position:fixed;top:0;left:0;right:0;background:#1a1a1a;border-bottom:2px solid #c0392b;padding:10px 20px;z-index:9999;display:none;align-items:center;gap:10px;font-family:Arial,sans-serif">
-      <span style="color:#fff;font-size:12px;font-weight:600">Type vessel name to confirm clear:</span>
-      <input id="clearConfirmInput" type="text" placeholder="Vessel name..." style="padding:5px 10px;border:1px solid #c0392b;border-radius:4px;font-size:12px;width:160px;font-family:inherit">
-      <button onclick="confirmClear()" style="padding:5px 14px;background:#c0392b;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit">Confirm Clear</button>
-      <button onclick="hideClearConfirm()" style="padding:5px 14px;background:transparent;color:#aaa;border:1px solid #555;border-radius:4px;font-size:12px;cursor:pointer;font-family:inherit">Cancel</button>
-      <span id="clearConfirmError" style="color:#f87171;font-size:11px"></span>
-    </div>
+    <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="clearForNewVessel()">Clear</button>
     <button class="btn" style="border-color:#888;color:#ccc;background:transparent" onclick="markAllTM()">Mark All T&amp;M</button>
     <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="exportData()">&#11015; Export Data</button>
     <label class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600;cursor:pointer">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)"></label>
@@ -1699,24 +1692,12 @@ function markAllTM(){
   projects.forEach(p=>{p.isTM=true;p.estimateTotal=null;p.scopeTasks=[];});
   saveData();renderEstimate();
 }
-function showClearConfirm(){
-  const bar=document.getElementById('clearConfirmBar');
-  bar.style.display='flex';
-  document.getElementById('clearConfirmInput').value='';
-  document.getElementById('clearConfirmError').textContent='';
-  document.getElementById('clearConfirmInput').focus();
-}
-function hideClearConfirm(){
-  document.getElementById('clearConfirmBar').style.display='none';
-}
-function confirmClear(){
-  const cv=document.getElementById('vfVessel').value||'CLEAR';
-  const entered=document.getElementById('clearConfirmInput').value.trim();
-  if(entered!==cv){document.getElementById('clearConfirmError').textContent='Name did not match. Try again.';return;}
+function clearForNewVessel(){
+  const entered=prompt('Type "'+cv+'" to confirm clearing all data:');
+  if(!entered||entered.trim()!==cv){alert('Did not match. No data cleared.');return;}
   projects=[];timeEntries=[];nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;
-  openProjs.clear();document.getElementById('vfVessel').value='';document.getElementById('vfClient').value='';document.getElementById('navVessel').textContent='New Vessel';
+  openProjs.clear();document.getElementById('vfVessel').value='';document.getElementById('vfClient').value='';document.getElementById('navVessel').textContent='Hannah Mae';
   localStorage.removeItem(STORAGE_KEY);renderEstimate();populateTEDropdowns();renderProgress();
-  hideClearConfirm();
 }
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
