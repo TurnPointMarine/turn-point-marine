@@ -147,6 +147,29 @@
         <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">$33.75</div>
       </div>
     </div></div>
+    </div><div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
+      <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
+      <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name</label>
+          <input id="sig_name" type="text" value="Beth and Keith Loveless" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        </div>
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
+          <input id="sig_date" type="text" value="March 26, 2026" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        </div>
+      </div>
+      <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
+      <div class="sig-wrap">
+        <canvas id="sigCanvas"></canvas>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:6px">
+        <button onclick="clearSig()" style="font-size:11px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;font-family:Arial,sans-serif">Clear Signature</button>
+        <span id="sigStatus" style="font-size:11px;color:#c0392b;align-self:center"></span>
+      </div>
+      <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
+      <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
+        ✓ Authorization submitted. Turn Point Marine has been notified.
+      </div>
     </div><div style="background:#4a5e5a;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
       <div>
         <div style="font-size:12pt;font-weight:700">COMPLETED — READY FOR BILLING</div>
@@ -1054,30 +1077,7 @@
       <div style="text-align:right"><div style="font-size:8pt;color:#888">Materials / Sub</div><div style="font-size:12pt;font-weight:700;color:#4ade80">$750.00</div></div>
       <div style="text-align:right"><div style="font-size:8pt;color:#888">Total</div><div style="font-size:14pt;font-weight:700;color:#4ade80">$27,553.75</div></div>
     </div>
-  </div><div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:28px;font-family:Arial,sans-serif">
-      <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
-      <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name</label>
-          <input id="sig_name" type="text" value="Beth and Keith Loveless" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
-        </div>
-        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
-          <input id="sig_date" type="text" value="March 26, 2026" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
-        </div>
-      </div>
-      <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
-      <div class="sig-wrap">
-        <canvas id="sigCanvas"></canvas>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <button onclick="clearSig()" style="font-size:11px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;font-family:Arial,sans-serif">Clear Signature</button>
-        <span id="sigStatus" style="font-size:11px;color:#c0392b;align-self:center"></span>
-      </div>
-      <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
-      <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
-        ✓ Authorization submitted. Turn Point Marine has been notified.
-      </div>
-    </div><div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
+  </div><div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
     <div>Turn Point Marine &nbsp;|&nbsp; abram@turnpointmarine.com</div>
     <div>Estimate Only - Subject to Change. Work does not proceed without signed authorization.</div>
   </div><script>
