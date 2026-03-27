@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-27T16:31:35.198Z",
+    "exportedAt": "2026-03-27T22:02:35.497Z",
     "engineVersion": 3
   },
   "projects": [
@@ -64,6 +64,14 @@
           "hrs": 8,
           "mat": 500,
           "sub": 0
+        },
+        {
+          "id": 149,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
         }
       ],
       "tasks": [],
@@ -114,7 +122,7 @@
     {
       "id": 6,
       "name": "Fuel Inlet Panels",
-      "status": "change_of_scope",
+      "status": "in_progress",
       "notes": "Disconnect hoses and remove panels. Once coated rebed with 3M4200",
       "include": true,
       "isTM": false,
@@ -123,30 +131,17 @@
         {
           "id": 105,
           "cat": "T",
-          "desc": "Fuel Inlet Panels",
+          "desc": "Disconnect hoses and remove panels.\nOnce coated rebed with 3M4200",
           "hrs": 8,
           "mat": 0,
           "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 7,
-      "name": "Trac Stabilizers",
-      "status": "needs_auth",
-      "notes": "Starboard Hydraulic Ram, Rebuild $3,500 to replace and $1,000 to rebuild the existing ram",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
+        },
         {
-          "id": 106,
-          "cat": "T",
-          "desc": "Trac Stabilizers",
-          "hrs": 8,
-          "mat": 1200,
+          "id": 150,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
           "sub": 0
         }
       ],
@@ -158,7 +153,7 @@
       "name": "Trac Stabilizers & Abt Thrusters",
       "status": "billed",
       "notes": "Heat exchanger Pull/Clean/Replace Seals/Paint",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -238,18 +233,6 @@
       "cos": []
     },
     {
-      "id": 12,
-      "name": "Flybridge Captains Chairs Replace",
-      "status": "needs_auth",
-      "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield…",
-      "include": false,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": []
-    },
-    {
       "id": 13,
       "name": "A-Watermaker",
       "status": "billed",
@@ -262,9 +245,213 @@
       "cos": []
     },
     {
+      "id": 27,
+      "name": "Haul/Wash/Block",
+      "status": "in_progress",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 125,
+          "cat": "S",
+          "desc": "Haul/Wash/Block",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 2500
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 28,
+      "name": "Pull Starboard Propeller & Shaft",
+      "status": "in_progress",
+      "notes": "I have put this forward to Todd at Pacific Marine Center as a working outline of expenses for the worst case scenario. Hopefully we can pull the propeller and shaft, repair the shaft and re-install. \nI am waiting for a response from him. Sounds like he went in for knee surgery this week. \n\nWORST CASE SCENARIO\n4-6 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n3-5 thousand for a shaft if needed. \n6-8 hours for replacing a cutlass bearing. \n4-6 hours for installing new shaft and propeller. \n\n    24hrs labor @ $145/hr = $4,000 with tax, \n   $6,000 materials with tax.\nEstimate of safe worst case scenario ~$10,000: \n\nGUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$900 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $900\n$3,200 with tax\n",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 121,
+          "cat": "T",
+          "desc": "Managing Project",
+          "hrs": 3,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 128,
+          "cat": "T",
+          "desc": "GUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$1,000 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $1,000\n$3,200 with tax",
+          "hrs": 14,
+          "mat": 1000,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 29,
+      "name": "Forward Scan Transducer Replace",
+      "status": "in_progress",
+      "notes": "Garmin Panoptix PS-51TH",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 122,
+          "cat": "T",
+          "desc": "Forward Scan Transducer Replace",
+          "hrs": 6,
+          "mat": 1600,
+          "sub": 0
+        },
+        {
+          "id": 129,
+          "cat": "V",
+          "desc": "Anacortes travel time",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 19,
+      "name": "Wax",
+      "status": "in_progress",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 114,
+          "cat": "B",
+          "desc": "Wax",
+          "hrs": 30,
+          "mat": 100,
+          "sub": 0
+        },
+        {
+          "id": 130,
+          "cat": "V",
+          "desc": "Anacortes travel for 4 days of buff/wax ",
+          "hrs": 4,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 24,
+      "name": "Fuel Inlet Panels",
+      "status": "in_progress",
+      "notes": "Clean corrosion epoxy barrier coat then paint\n*CHANGE OF SCOPE REQUEST IS THE SUBCONTRACTOR COST NOT QUOTED IN THE INITIAL ESTIMATE \n  $950\n*Stripping the fuel inlet panels required an acid dip for each panel, scraping and then vapor honing. The estimate did not include any subcontractor cost as at the time it was submitted. It was thought that the normal vapor honing once would get the panels stripped of coatings. ",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 119,
+          "cat": "D",
+          "desc": "Clean corrosion.  Epoxy barrier coat then paint with color matched enamel.",
+          "hrs": 8,
+          "mat": 200,
+          "sub": 0
+        },
+        {
+          "id": 140,
+          "cat": "S",
+          "desc": "Vapor Hone\nAcid dip and scrape.\nVapor Hone second time",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 975,
+          "co": true
+        },
+        {
+          "id": 151,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 31,
+      "name": "Wax Hull Below The Rub Rails",
+      "status": "in_progress",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 124,
+          "cat": "B",
+          "desc": "Wax Hull Below The Rub Rails",
+          "hrs": 15,
+          "mat": 75,
+          "sub": 0
+        },
+        {
+          "id": 152,
+          "cat": "V",
+          "desc": "4",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 30,
+      "name": "Port Side Below Rub Rail Buff And Wax",
+      "status": "in_progress",
+      "notes": "",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 123,
+          "cat": "B",
+          "desc": "Port Side Below Rub Rail Buff And Wax",
+          "hrs": 14,
+          "mat": 75,
+          "sub": 0
+        },
+        {
+          "id": 153,
+          "cat": "V",
+          "desc": "",
+          "hrs": 4,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
       "id": 14,
       "name": "B-Watermaker",
-      "status": "needs_auth",
+      "status": "in_progress",
       "notes": "Pull brushes from 24v motor, replace Rotoflow meter, replace transducers for feed water pressure, install transducers on prefilter housings, order replacement check valves and seal kit. $2,750 in labor and parts. Estimate TBD.",
       "include": true,
       "isTM": false,
@@ -289,6 +476,14 @@
           "hrs": 6,
           "mat": 125,
           "sub": 0
+        },
+        {
+          "id": 154,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
         }
       ],
       "tasks": [],
@@ -296,9 +491,9 @@
     },
     {
       "id": 16,
-      "name": "Victron Generator Start Battery Charger",
-      "status": "needs_auth",
-      "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.",
+      "name": "Generators Start Batteries Upgrade to Victron Charger",
+      "status": "in_progress",
+      "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.\n\n*CHANGE OF SCOPE needed for install of new cables. The old chargers cables won't integrate with the Victron chargers,\n2 hours and $50 of cables should get us there. ",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -309,6 +504,23 @@
           "desc": "Victron Generator Start Battery Charger",
           "hrs": 5,
           "mat": 500,
+          "sub": 0
+        },
+        {
+          "id": 131,
+          "cat": "T",
+          "desc": "Need to run new cables with the charger install",
+          "hrs": 2,
+          "mat": 50,
+          "sub": 0,
+          "co": true
+        },
+        {
+          "id": 155,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
           "sub": 0
         }
       ],
@@ -337,30 +549,9 @@
       "cos": []
     },
     {
-      "id": 19,
-      "name": "Wax",
-      "status": "needs_auth",
-      "notes": "",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 114,
-          "cat": "B",
-          "desc": "Wax",
-          "hrs": 30,
-          "mat": 100,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
       "id": 20,
       "name": "Paint Anchor Chain Markings",
-      "status": "needs_auth",
+      "status": "in_progress",
       "notes": "",
       "include": true,
       "isTM": false,
@@ -373,26 +564,13 @@
           "hrs": 6,
           "mat": 150,
           "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 21,
-      "name": "Davit (Early Summer Project)",
-      "status": "needs_auth",
-      "notes": "Clean up corrosion and paint",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
+        },
         {
-          "id": 116,
-          "cat": "D",
-          "desc": "Davit",
-          "hrs": 20,
-          "mat": 250,
+          "id": 126,
+          "cat": "V",
+          "desc": "Anacortes travel for 3/4 of a day's work",
+          "hrs": 0.75,
+          "mat": 0,
           "sub": 0
         }
       ],
@@ -421,19 +599,27 @@
       "cos": []
     },
     {
-      "id": 23,
-      "name": "External Stainless Polish",
-      "status": "needs_auth",
-      "notes": "",
+      "id": 32,
+      "name": "Stainless Polish",
+      "status": "in_progress",
       "include": true,
-      "isTM": false,
+      "notes": "",
       "estimateTotal": null,
+      "isTM": false,
       "scopeTasks": [
         {
-          "id": 118,
-          "cat": "D",
-          "desc": "External Stainless Polish",
+          "id": 132,
+          "cat": "B",
+          "desc": "Bow rails and High Exposure Areas on the Upper Deck Railings",
           "hrs": 15,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 156,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
           "mat": 0,
           "sub": 0
         }
@@ -442,20 +628,248 @@
       "cos": []
     },
     {
-      "id": 24,
-      "name": "Fuel Inlet Panels",
+      "id": 33,
+      "name": "Port Rail Varnish Strip & Install Cover",
       "status": "needs_auth",
-      "notes": "Clean corrosion epoxy barrier coat then paint",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 133,
+          "cat": "D",
+          "desc": "Port Rail Varnish Strip & Install Cover",
+          "hrs": 5,
+          "mat": 75,
+          "sub": 0
+        },
+        {
+          "id": 143,
+          "cat": "V",
+          "desc": "",
+          "hrs": 0.75,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 34,
+      "name": "Exterior Varnish Repairs & Refinish",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "This had been discussed yet it hadn't appeared on any Worklists yet. ",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 134,
+          "cat": "S",
+          "desc": "Russ pulled the canvas cap rail covers and gave me an estimate on varnish repairs. This includes varnish on the port rail (approximately 10 coats of varnish)",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 5200
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 35,
+      "name": "Oil Pressure Gauges Alarming",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Functional to AK and back through the Fall. \nNew sending units will be tested on her trip to Anacortes for haul out. My sense is that the present location of these exposes them to too much heat. If the new sending units resolve the issue as expected we can relocate the sending units where they will not be exposed to the heat exposure right there next to the engine block.\n\n**Will follow up with Change of Scope when we are clear that the new sending units work. ",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 135,
+          "cat": "T",
+          "desc": "",
+          "hrs": 1,
+          "mat": 150,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 21,
+      "name": "Davit (Early Summer Project)",
+      "status": "in_progress",
+      "notes": "Clean up corrosion and paint",
+      "include": false,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 116,
+          "cat": "D",
+          "desc": "Davit",
+          "hrs": 20,
+          "mat": 250,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 36,
+      "name": "Exterior Deep Clean After Haul Out",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 136,
+          "cat": "D",
+          "desc": "\tNon skid growth on upper decks, wipe out storage compartments\n",
+          "hrs": 8,
+          "mat": 15,
+          "sub": 0
+        },
+        {
+          "id": 144,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 37,
+      "name": "Preseason Commissioning Canvas",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "-Flybrige and Cap Rail Canvas, remove, dry & stow in dry storage\n-Put up Bimini rails and install bimini canvas",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 137,
+          "cat": "D",
+          "desc": "",
+          "hrs": 3,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 145,
+          "cat": "V",
+          "desc": "",
+          "hrs": 0.5,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 38,
+      "name": "PreSeason Commissioning",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "-Unwinterize aft and forward freshwater lines as well as the raw water washdown pump that was flushed of salt water for the off season.\n-Load Portuguese bridge lockers and foredeck lockers with their gear.\n-Deliver cockpit chairs/tables from dry storage. \n-Deliver bbq from dry storage and install. \n-Replace the winter dock lines with summer dock down lines.\n-Install interior carpets. ",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 138,
+          "cat": "D",
+          "desc": "",
+          "hrs": 7,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 146,
+          "cat": "V",
+          "desc": "",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 12,
+      "name": "Flybridge Captains Chairs Replace",
+      "status": "needs_auth",
+      "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield…",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 39,
+      "name": "Deliver Undaunted from Cap Sante to Haul Out",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "-Deliver Undaunted from Cap Sante to Haul Out\n-When on her stands hook up shore power and ensure everything is charging. \n-Stow all lines and fenders for duration of haul to prevent them from collecting yard dirt.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 139,
+          "cat": "D",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 147,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 148,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 7,
+      "name": "Trac Stabilizers (Need to Discuss this Estimate)",
+      "status": "needs_auth",
+      "notes": "*This issue got better with exercise last Summer.\nBefore I take this on I would want to discuss a plan. There are some costs of calibration on install that I would want done by S3. I would need to get back to you on a full plan here. \nStarboard Hydraulic Ram, Rebuild $3,500 to replace and $1,000 to rebuild the existing ram\n\n",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
         {
-          "id": 119,
-          "cat": "B",
-          "desc": "Fuel Inlet Panels",
+          "id": 106,
+          "cat": "T",
+          "desc": "Trac Stabilizers",
           "hrs": 8,
-          "mat": 200,
+          "mat": 1200,
           "sub": 0
         }
       ],
@@ -484,116 +898,28 @@
       "cos": []
     },
     {
-      "id": 26,
-      "name": "Haul Out",
+      "id": 40,
+      "name": "Outboard Raw Water Manifold Repair",
       "status": "needs_auth",
-      "notes": "",
       "include": false,
-      "isTM": false,
+      "notes": "I recommend leaving this repair for late Summer. It isn't going to affect functionality of the tender and should be done next time the tender is off the boat. This would prevent unnecessary costs of transporting the tender from and to Undaunted",
       "estimateTotal": null,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 27,
-      "name": "Haul/Wash/Block",
-      "status": "needs_auth",
-      "notes": "",
-      "include": true,
       "isTM": false,
-      "estimateTotal": null,
       "scopeTasks": [
         {
-          "id": 125,
+          "id": 141,
           "cat": "S",
-          "desc": "Haul/Wash/Block",
+          "desc": "Replace Honda Outboard Raw Water Manifold Gasket.",
           "hrs": 0,
           "mat": 0,
-          "sub": 2500
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 28,
-      "name": "Pull Starboard Propeller & Shaft",
-      "status": "needs_auth",
-      "notes": "4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. 3-5 thousand for a shaft if needed. 6-8 hours for replacing a cutlass bearing. 4-6 hours for installing new shaft and propeller. Estimate ~$10,000: 24hrs labor @ $135/hr = $4,000 with tax, $6,000 materials with tax.",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
+          "sub": 500
+        },
         {
-          "id": 121,
-          "cat": "T",
-          "desc": "Pull Starboard Propeller & Shaft",
-          "hrs": 10,
+          "id": 142,
+          "cat": "D",
+          "desc": "Transport from Undaunted to Honda Dealer on trailer. Transport back to Undaunted on trailer. ",
+          "hrs": 0,
           "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 29,
-      "name": "Forward Scan Transducer Replace",
-      "status": "needs_auth",
-      "notes": "Garmin Panoptix PS-51TH",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 122,
-          "cat": "T",
-          "desc": "Forward Scan Transducer Replace",
-          "hrs": 6,
-          "mat": 1600,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 30,
-      "name": "Port Side Below Rub Rail Buff And Wax",
-      "status": "needs_auth",
-      "notes": "",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 123,
-          "cat": "B",
-          "desc": "Port Side Below Rub Rail Buff And Wax",
-          "hrs": 14,
-          "mat": 75,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 31,
-      "name": "Wax Hull Below The Rub Rails",
-      "status": "needs_auth",
-      "notes": "",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 124,
-          "cat": "B",
-          "desc": "Wax Hull Below The Rub Rails",
-          "hrs": 15,
-          "mat": 75,
           "sub": 0
         }
       ],
@@ -612,8 +938,8 @@
       "posted": false
     }
   ],
-  "nextProjId": 32,
-  "nextTaskId": 126,
+  "nextProjId": 41,
+  "nextTaskId": 157,
   "nextCOId": 100,
   "nextTEId": 1001,
   "settings": {
