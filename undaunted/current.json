@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-26T21:18:46.133Z",
+    "exportedAt": "2026-03-27T15:59:16.259Z",
     "engineVersion": 3
   },
   "projects": [
@@ -11,7 +11,7 @@
       "name": "24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries",
       "status": "billed",
       "notes": "30 hours for install and full integration $3,600 (24V 100AH x2 batteries) $900 Victron Lynx BMS $200 Victron Lynx Distributor $758 Skylla-TG 24/100",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -32,7 +32,7 @@
       "name": "Alternators Upgrade",
       "status": "billed",
       "notes": "Fabricate 2x J180 Mounts 35 hours design/build J180 alternator mounts, fit/install alternators, integrate charging profiles. $5,000 for two alternators",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -51,7 +51,7 @@
     {
       "id": 3,
       "name": "Davit",
-      "status": "needs_auth",
+      "status": "in_progress",
       "notes": "Davit: replace rotational control valves & worn hydraulic lines, hydraulic fluid flush, add filter to hydraulic plumbing Clean up corrosion and paint",
       "include": true,
       "isTM": false,
@@ -74,7 +74,7 @@
       "name": "Furnace Service",
       "status": "billed",
       "notes": "Replace fuel nozzle, photo eye and igniters, remove/clean burn chamber and reassemble. Replace hydronic coolant filter and check hydronic coolant levels.",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -95,7 +95,7 @@
       "name": "Tender Outboard Service",
       "status": "billed",
       "notes": "",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -114,7 +114,7 @@
     {
       "id": 6,
       "name": "Fuel Inlet Panels",
-      "status": "needs_auth",
+      "status": "change_of_scope",
       "notes": "Disconnect hoses and remove panels. Once coated rebed with 3M4200",
       "include": true,
       "isTM": false,
@@ -179,7 +179,7 @@
       "name": "Engine Services",
       "status": "billed",
       "notes": "Main Engines/Transmissions, 20kw and 8kw Replace: oil, oil filters, clean oil screens, primary fuel filters, racors, water pump impellers and zincs. Clean Air filters",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -200,7 +200,7 @@
       "name": "Masterflush Toilet, Both Heads, Duckbills Replace",
       "status": "billed",
       "notes": "",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -221,7 +221,7 @@
       "name": "Blackwater Tank Evacuation Pump, Replace Duckbills",
       "status": "billed",
       "notes": "",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -254,7 +254,7 @@
       "name": "A-Watermaker",
       "status": "billed",
       "notes": "Replace with new 24v Spectra Newport 700, 30 gal/hr. 30 hours labor to remove old watermaker and install new. $21,000 cost of new watermaker. Estimate TBD.",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [],
@@ -320,7 +320,7 @@
       "name": "Victron Electronic Engine Controls Battery Charger",
       "status": "billed",
       "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -416,7 +416,7 @@
       "name": "Deck Chairs Teak Clean & Stainless Polish",
       "status": "billed",
       "notes": "Removing teak from stainless and cleaning, polishing stainless and then reassemble 3.5 per chair",
-      "include": true,
+      "include": false,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
