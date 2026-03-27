@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-27T15:59:16.259Z",
+    "exportedAt": "2026-03-27T16:26:11.254Z",
     "engineVersion": 3
   },
   "projects": [
@@ -156,7 +156,7 @@
     {
       "id": 8,
       "name": "Trac Stabilizers & Abt Thrusters",
-      "status": "needs_auth",
+      "status": "billed",
       "notes": "Heat exchanger Pull/Clean/Replace Seals/Paint",
       "include": true,
       "isTM": false,
@@ -392,7 +392,7 @@
     },
     {
       "id": 21,
-      "name": "Davit",
+      "name": "Davit (Early Summer Project)",
       "status": "needs_auth",
       "notes": "Clean up corrosion and paint",
       "include": true,
