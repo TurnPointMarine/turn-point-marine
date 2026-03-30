@@ -218,7 +218,8 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
         <div class="vf-group"><div class="vf-label">Company Name</div><input id="stCompany" value="Turn Point Marine" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
         <div class="vf-group"><div class="vf-label">Account Manager</div><input id="stManager" value="Abram Anderson" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
         <div class="vf-group"><div class="vf-label">Email</div><input id="stEmail" value="abram@turnpointmarine.com" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
-        <div class="vf-group"><div class="vf-label">Client Email</div><input id="stClientEmail" value="" placeholder="e.g. leslie@example.com" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
+        <div class="vf-group"><div class="vf-label">Client Email 1</div><input id="stClientEmail" value="" placeholder="e.g. leslie@example.com" oninput="settings.clientEmail=this.value;saveData()" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
+        <div class="vf-group"><div class="vf-label">Client Email 2</div><input id="stClientEmail2" value="" placeholder="e.g. partner@example.com" oninput="settings.clientEmail2=this.value;saveData()" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
         <div class="vf-group"><div class="vf-label">Phone</div><input id="stPhone" value="" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
       </div>
       <div class="vf-group"><div class="vf-label">Footer Note</div><input id="stFooter" value="Estimate Only - Subject to Change. Work does not proceed without signed authorization." style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
@@ -258,7 +259,7 @@ const SECTIONS=[
   {key:'complete',label:'Completed — Ready for Billing',color:'#4a5e5a',textColor:'#fff',bg:'#eff6ff',border:'#bfdbfe',defaultOpen:false},
   {key:'billed',label:'Billed',color:'#374151',textColor:'#fff',bg:'#f9fafb',border:'#e5e7eb',defaultOpen:false}
 ];
-let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@turnpointmarine.com',clientEmail:'',phone:'',footer:'Estimate Only - Subject to Change. Work does not proceed without signed authorization.',authText:'Sign below to authorize all work in this project. Work does not proceed without your signature.',showCompleteDetail:true};
+let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@turnpointmarine.com',clientEmail:'',clientEmail2:'',phone:'',footer:'Estimate Only - Subject to Change. Work does not proceed without signed authorization.',authText:'Sign below to authorize all work in this project. Work does not proceed without your signature.',showCompleteDetail:true};
 let unlocked=false;
 let secOpenState={needs_auth:true,in_progress:true,complete:false,billed:false};
 let openProjs=new Set();
@@ -377,6 +378,7 @@ function syncSettingsUI(){
     document.getElementById('stFooter').value=settings.footer||'';
     document.getElementById('stAuthText').value=settings.authText||'';
     try{document.getElementById('stClientEmail').value=settings.clientEmail||'';}catch(e){}
+    try{document.getElementById('stClientEmail2').value=settings.clientEmail2||'';}catch(e){}
     document.getElementById('stRateT').value=RATES.T||135;
     document.getElementById('stRateB').value=RATES.B||105;
     document.getElementById('stRateD').value=RATES.D||95;
@@ -391,6 +393,7 @@ function applySettings(){
   settings.footer=document.getElementById('stFooter').value;
   settings.authText=document.getElementById('stAuthText').value;
   try{settings.clientEmail=document.getElementById('stClientEmail').value;}catch(e){}
+  try{settings.clientEmail2=document.getElementById('stClientEmail2').value;}catch(e){}
   RATES.T=parseFloat(document.getElementById('stRateT').value)||135;
   RATES.B=parseFloat(document.getElementById('stRateB').value)||105;
   RATES.D=parseFloat(document.getElementById('stRateD').value)||95;
