@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-27T22:04:56.892Z",
+    "exportedAt": "2026-03-30T15:45:26.487Z",
     "engineVersion": 3
   },
   "projects": [
@@ -925,6 +925,37 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 41,
+      "name": "Dry Storage Monthly",
+      "status": "in_progress",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 157,
+          "cat": "M",
+          "desc": "February",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0,
+          "co": true
+        },
+        {
+          "id": 158,
+          "cat": "M",
+          "desc": "March",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0,
+          "co": true
+        }
+      ],
+      "tasks": [],
+      "cos": []
     }
   ],
   "timeEntries": [
@@ -938,8 +969,8 @@
       "posted": false
     }
   ],
-  "nextProjId": 41,
-  "nextTaskId": 157,
+  "nextProjId": 42,
+  "nextTaskId": 159,
   "nextCOId": 100,
   "nextTEId": 1001,
   "settings": {
