@@ -23,7 +23,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .pin-input{font-size:28px;letter-spacing:8px;text-align:center;width:100%;border:1px solid #ddd;border-radius:10px;padding:12px;font-family:monospace;margin-bottom:12px}
 .pin-input:focus{outline:none;border-color:#1a1a1a}
 .pin-error{font-size:12px;color:#c0392b;margin-bottom:12px;min-height:18px}
-.summary-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
 .scard{background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:12px 14px}
 .scard .slabel{font-size:10px;color:#999;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:3px}
 .scard .sval{font-size:18px;font-weight:700}
@@ -46,10 +45,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .sec-body.open{display:block;padding:0}
 .sec-empty{padding:14px 18px;font-size:12px;color:#aaa;font-style:italic}
 .project{background:#fff;overflow:hidden}
-.proj-hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid #ebebE8;cursor:pointer;user-select:none}
-.proj-hdr:hover{background:#f8f8f6}
-.proj-num{font-size:10px;font-weight:600;color:#aaa;background:#f0f0ee;border-radius:4px;padding:2px 6px;flex-shrink:0}
-.proj-name-inp{flex:1;font-size:15px;font-weight:700;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text;letter-spacing:-0.01em}
+.proj-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fafaf8;border-bottom:1px solid #e5e5e0;cursor:pointer;user-select:none}
+.proj-hdr:hover{background:#f3f3f0}
+.proj-num{font-size:11px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0}
+.proj-name-inp{flex:1;font-size:14px;font-weight:600;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text}
 .proj-name-inp:focus{outline:none;background:#fff;border-radius:4px;padding:2px 6px;border:1px solid #ddd}
 .status-sel{font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-family:inherit;flex-shrink:0}
 .proj-badge{font-size:12px;font-weight:700;color:#1D9E75;flex-shrink:0;min-width:80px;text-align:right}
@@ -72,7 +71,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tinp.r{text-align:right}
 .cat-sel{font-size:11px;padding:4px 6px;border:none;border-right:1px solid #f0f0ed;background:transparent;color:#555;font-family:inherit;width:100%}
 .cat-sel:focus{outline:none}
-.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#fff3e0}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
+.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#f5f0ff}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
 .cell-r{padding:8px;text-align:right;font-size:12px;color:#444;white-space:nowrap}
 .cell-bold{padding:8px;text-align:right;font-size:12px;font-weight:700;white-space:nowrap}
 .del-btn{background:none;border:none;cursor:pointer;color:#ddd;font-size:16px;padding:6px 8px}
@@ -89,7 +88,7 @@ tr.te-drag-over td{border-top:2px solid #5dba99}
 tr.task-drag-over td{border-top:2px solid #5dba99}
 .include-chk{width:15px;height:15px;cursor:pointer;flex-shrink:0;accent-color:#1D9E75}
 .project.excluded{opacity:0.4}
-.grand{background:#1a1a1a;color:#fff;border-radius:12px;padding:16px 20px;margin-top:8px}
+.grand{background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:16px 20px;margin-top:8px}
 .te-table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e5e0}
 .te-table th{padding:8px 10px;font-size:10px;font-weight:600;color:#999;text-transform:uppercase;background:#fafaf8;border-bottom:1px solid #e5e5e0;text-align:left}
 .te-table th.r{text-align:right}
@@ -110,7 +109,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
 <div class="topnav">
   <div style="display:flex;align-items:center;gap:8px">
     <h1>Turn Point Engine</h1>
-    <span class="vessel" id="navVessel">Hannah Mae</span>
+    <span class="vessel" id="navVessel"></span>
   </div>
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
     <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="clearForNewVessel()">Clear</button>
@@ -142,7 +141,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
 <div class="page active" id="page-estimate">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px">
     <div class="vessel-fields">
-      <div class="vf-group"><div class="vf-label">Vessel</div><input id="vfVessel" value="" oninput="updateNavVessel();saveData()" placeholder="Vessel name..." value="Hannah Mae"></div>
+      <div class="vf-group"><div class="vf-label">Vessel</div><input id="vfVessel" value="" oninput="updateNavVessel();saveData()" placeholder="Vessel name..." value=""></div>
       <div class="vf-group"><div class="vf-label">Client</div><input id="vfClient" value="" oninput="saveData()" placeholder="Client name..."></div>
       <div style="font-size:11px;color:#aaa;align-self:center">Updated <span id="updateDate"></span></div>
     </div>
@@ -151,13 +150,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
       <button class="btn-sm" onclick="lockEstimate()">&#128274; Lock</button>
     </div>
   </div>
-  <div class="summary-bar">
-    <div class="scard"><div class="slabel">Active Projects</div><div class="sval" id="sumProj">0</div></div>
-    <div class="scard"><div class="slabel">Est. Labor</div><div class="sval green" id="sumLabor">&#8212;</div></div>
-    <div class="scard"><div class="slabel">Est. Materials</div><div class="sval green" id="sumMat">&#8212;</div></div>
-    <div class="scard"><div class="slabel">Est. SBCNTRCT</div><div class="sval green" id="sumSub">&#8212;</div></div>
-    <div class="scard"><div class="slabel">Estimate Total</div><div class="sval green" id="sumTotal">&#8212;</div></div>
-  </div>
+
   <div id="projectList"></div>
   <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:12px">
     <input type="text" id="newProjName" placeholder="New project name..." style="flex:1;font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit">
@@ -170,7 +163,8 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     <button class="btn btn-primary" onclick="addProject()">+ Add project</button>
   </div>
   <div class="grand" id="grandTotal"></div>
-  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:10px">Technician $135/hr &middot; Buff &amp; Wax $105/hr &middot; Detail/Travel $95/hr &middot; Shop Fee 3% &middot; Tax 9.1% &middot; Estimate Only &mdash; Subject to Change</p>
+  <div id="billedList" style="margin-top:12px"></div>
+  <p style="font-size:11px;color:#aaa;text-align:center;margin-top:10px">Technician $135/hr &middot; Buff &amp; Wax $105/hr &middot; Detail $95/hr &middot; Travel $95/hr &middot; Estimate Only &mdash; Subject to Change</p>
 </div>
 <!-- TIME ENTRY -->
 <div class="page" id="page-timeentry">
@@ -180,7 +174,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
       <select id="teFilterProj" onchange="renderTimeEntry()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit"><option value="">All projects</option></select>
       <select id="teFilterCat" onchange="renderTimeEntry()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit">
         <option value="">All categories</option><option value="T">Technician</option><option value="B">Buff &amp; Wax</option>
-        <option value="D">Detail</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
+        <option value="D">Detail</option><option value="V">Travel</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
       </select>
     </div>
   </div>
@@ -191,7 +185,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
     <div class="vf-group"><div class="vf-label">Category</div>
       <select id="teCat" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;background:#fff;font-family:inherit">
         <option value="T">Technician</option><option value="B">Buff &amp; Wax</option><option value="D">Detail</option>
-        <option value="M">Materials</option><option value="S">SBCNTRCT</option>
+        <option value="V">Travel</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
       </select>
     </div>
     <div class="vf-group"><div class="vf-label">Hours / Amount</div><input type="number" id="teHrs" min="0" step="0.25" placeholder="0.0" style="width:90px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
@@ -233,6 +227,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
         <div class="vf-group"><div class="vf-label">Technician ($/hr)</div><input type="number" id="stRateT" value="135" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
         <div class="vf-group"><div class="vf-label">Buff &amp; Wax ($/hr)</div><input type="number" id="stRateB" value="105" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
         <div class="vf-group"><div class="vf-label">Detail ($/hr)</div><input type="number" id="stRateD" value="95" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
+        <div class="vf-group"><div class="vf-label">Travel ($/hr)</div><input type="number" id="stRateV" value="95" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%"></div>
       </div>
     </div>
     <div style="background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:20px;margin-bottom:14px">
@@ -252,151 +247,22 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
 const ENGINE_VERSION=3;
 const PIN='1248';
 const RATES={T:135,B:105,D:95,V:95,M:0,S:0};
-const SHOP_FEE_RATE=0.03;
-const TAX_RATE=0.091;
-const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel Time',M:'Materials',S:'SBCNTRCT'};
+const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT'};
 const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS'};
-const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v2';
+const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v3';
 const SECTIONS=[
   {key:'needs_auth',label:'Authorization Needed',color:'#5dba99',textColor:'#fff',bg:'#f0faf6',border:'#a7d8c5',defaultOpen:true},
-  {key:'change_of_scope',label:'Change of Scope — Needs Authorization',color:'#c0392b',textColor:'#fff',bg:'#fff5f5',border:'#f5c6c6',defaultOpen:true},
   {key:'in_progress',label:'In Progress',color:'#6b7280',textColor:'#fff',bg:'#f9fafb',border:'#d1d5db',defaultOpen:true},
   {key:'complete',label:'Completed — Ready for Billing',color:'#4a5e5a',textColor:'#fff',bg:'#eff6ff',border:'#bfdbfe',defaultOpen:false},
   {key:'billed',label:'Billed',color:'#374151',textColor:'#fff',bg:'#f9fafb',border:'#e5e7eb',defaultOpen:false}
 ];
 let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@turnpointmarine.com',clientEmail:'',phone:'',footer:'Estimate Only - Subject to Change. Work does not proceed without signed authorization.',authText:'Sign below to authorize all work in this project. Work does not proceed without your signature.',showCompleteDetail:true};
 let unlocked=false;
-let secOpenState={needs_auth:true,change_of_scope:true,in_progress:true,complete:false,billed:false};
+let secOpenState={needs_auth:true,in_progress:true,complete:false,billed:false};
 let openProjs=new Set();
-let nextProjId=16,nextTaskId=125,nextCOId=101,nextTEId=1000;
-let projects=[
-  {id:1,name:'Inspect Cutlass Bearings',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:1,cat:'T',desc:'Inspect cutlass bearings for wear and serviceability',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:2,name:'Bottom Paint',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:2,cat:'T',desc:'Remove corrosion from underwater zinc contact points, mask and install zincs',hrs:2.25,mat:0,sub:0},
-    {id:3,cat:'D',desc:'Mask off bottom paint for new coat',hrs:0.5,mat:0,sub:0},
-    {id:4,cat:'D',desc:'Clean bottom paint with acetone, apply new coat',hrs:6.0,mat:0,sub:0},
-    {id:5,cat:'D',desc:'Apply bottom paint under vessel stands, transom, thru-hulls, rudders, remaining hull. Remove tape.',hrs:4.0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:3,name:'Zincs',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:6,cat:'T',desc:'Remove, clean and reinstall vessel zincs',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:4,name:'Buff & Wax Below the Rail',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:7,cat:'B',desc:'Buff gelcoat and apply marine wax to hull below rub rail',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:5,name:'Buff & Wax Above Deck',status:'needs_auth',include:true,notes:'Trunk top and sides, above the windshield',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:8,cat:'B',desc:'Buff and wax trunk top and sides',hrs:0,mat:0,sub:0},
-    {id:9,cat:'B',desc:'Buff and wax above the windshield',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:6,name:'Thruster Oil Change',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:10,cat:'T',desc:'Check bow thruster oil levels, vacuum thruster compartment, service as required',hrs:0.75,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:7,name:'Windlass Oil Check',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:11,cat:'T',desc:'Drain gear oil, clean site glass, top off windlass with new oil',hrs:0.5,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:8,name:'Engine Service',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:12,cat:'T',desc:'Engine oil and filters, transmission oil, raw water zincs, impellers, air filters - main engines',hrs:7.0,mat:750,sub:0},
-    {id:13,cat:'T',desc:'Install oil/fuel/crankcase filters, impeller in generator, pump oil, tap zinc threads, install zincs',hrs:7.75,mat:0,sub:0},
-    {id:14,cat:'T',desc:'Check oil levels, inspect belts, final engine service inspection',hrs:0.75,mat:0,sub:0},
-    {id:15,cat:'T',desc:'Remove and prime fuel filters on all engines after servicing',hrs:0.5,mat:0,sub:0},
-    {id:16,cat:'T',desc:'Apply oil to air filters, install filters, label belts and filter dates',hrs:0.5,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:9,name:'Starboard Main Engine - Fuse / Start Circuit',status:'needs_auth',include:true,notes:'Fuse blowing on start circuit - intermittent. Monitor and diagnose.',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:17,cat:'T',desc:'Diagnose intermittent fuse blowing on start circuit - starboard main engine',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:10,name:'Fuel Vent Leak - Generator',status:'needs_auth',include:true,notes:'Monitor for now. When it suits, rebuild the fuel pump.',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:18,cat:'T',desc:'Monitor fuel vent leak on generator. Rebuild fuel pump when scheduled.',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:11,name:'Tender Service',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:19,cat:'T',desc:'Run tender, flush outboard with fresh water and treated fuel',hrs:0.5,mat:0,sub:0},
-    {id:20,cat:'T',desc:'Tender bow cradle mount - install and secure',hrs:0.25,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:12,name:'Generator Insulation',status:'complete',include:true,notes:'Replaced.',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:21,cat:'D',desc:'Remove genset enclosure panels, scrape old insulation, strip adhesive, install new insulation, reinstall panels',hrs:9.25,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:13,name:'Flybridge Slider Door Repair',status:'needs_auth',include:true,notes:'Slide function needs repair. Consider UHMW slides instead of inset wheels.',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:22,cat:'T',desc:'Remove end cap and both flybridge sliding doors, replace rollers',hrs:1.0,mat:0,sub:0},
-    {id:23,cat:'T',desc:'Install UHMW slides or repair slide mechanism, reinstall teak, reinstall doors',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:14,name:'Rudder Lubrication',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:24,cat:'T',desc:'Remove rudders, clean shafts, lubricate with Triple Guard waterproof grease, reinstall, degrease compartment',hrs:5.25,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:15,name:'Replace Duckbills - Macerator and Masterflush',status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:25,cat:'T',desc:'Replace duckbills in macerator pump',hrs:0,mat:0,sub:0},
-    {id:26,cat:'T',desc:'Replace duckbill in Masterflush toilet',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:16,name:'Stanchion Rail Repair',status:'needs_auth',include:true,notes:'Assess condition - repair TBD.',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:27,cat:'T',desc:'Inspect stanchion rail, assess and carry out repair as required',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-  {id:17,name:'Anchor Chain',status:'needs_auth',include:true,notes:'Confirm with client whether chain markings need repainting.',estimateTotal:null,isTM:false,scopeTasks:[
-    {id:28,cat:'T',desc:'Unload anchor chain, inspect markings',hrs:1.0,mat:0,sub:0},
-    {id:29,cat:'D',desc:'Repaint anchor chain markings if authorized',hrs:0,mat:0,sub:0}],tasks:[],cos:[]},
-];
-let timeEntries=[
-  {id:1,date:"2026-02-12",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Created list of supplies needed to service engines and ensure full set of spares onboard.",posted:false},
-  {id:2,date:"2026-02-12",proj:"Flybridge Slider Door Repair",cat:"T",hrs:0.25,desc:"Removed forward tender latch on upper deck — mount interfering with latch.",posted:false},
-  {id:3,date:"2026-02-12",proj:"Buff & Wax Below the Rail",cat:"B",hrs:7.5,desc:"Buffed gelcoat between cap rail and upper rub rail, port hull mid-salon to aft. Two to three passes fine compound. Applied coat of marine wax to entire hull.",posted:false},
-  {id:4,date:"2026-02-13",proj:"Buff & Wax Below the Rail",cat:"B",hrs:0.25,desc:"Removed tape from vessel used for buff and wax.",posted:false},
-  {id:5,date:"2026-02-13",proj:"Flybridge Slider Door Repair",cat:"T",hrs:0.5,desc:"Removed hardware to pull flybridge sliding hatch to replace broken rollers. Removed aft nav light for replacement.",posted:false},
-  {id:6,date:"2026-02-13",proj:"Anchor Chain",cat:"T",hrs:0.5,desc:"Unloaded nearly 50ft of anchor chain, noticed paint markings needed touching up.",posted:false},
-  {id:7,date:"2026-02-13",proj:"Replace Duckbills - Macerator and Masterflush",cat:"T",hrs:2.5,desc:"Installed new duckbills in overboard discharge pump and VacuFlush head using SuperLube. Labeled installation and disinfected work area.",posted:false},
-  {id:8,date:"2026-02-13",proj:"Tender Service",cat:"T",hrs:1.75,desc:"Loaded tie-down lines in buckets with Oxiclean and hot water to soak. Started pressure washing — marine growth would not come off, returned lines to soak.",posted:false},
-  {id:9,date:"2026-02-16",proj:"Tender Service",cat:"T",hrs:0.5,desc:"Loaded tie-down lines in buckets with bleach and hot water — OxiClean did not fully remove marine growth.",posted:false},
-  {id:10,date:"2026-02-16",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Picked up new LED nav lights and adhesive remover from LFS.",posted:false},
-  {id:11,date:"2026-02-16",proj:"Engine Service",cat:"T",hrs:1.5,desc:"Installed two new navigation LEDs above flybridge. Voltage testing found aft nav light powered through anchor light breaker. Reassembled all wiring access panels.",posted:false},
-  {id:12,date:"2026-02-16",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Recorded tender filter part numbers for outboard service.",posted:false},
-  {id:13,date:"2026-02-16",proj:"Generator Insulation",cat:"D",hrs:3.5,desc:"Set up workstation, removed forward/aft/top genset enclosure panels with peeling insulation. Scraped old insulation, stripped remaining adhesive with 3M Adhesive Remover.",posted:false},
-  {id:14,date:"2026-02-16",proj:"Zincs",cat:"T",hrs:2.25,desc:"Removed corrosion from all underwater zinc contact points using wire wheel, masked zincs for bottom paint, installed ensuring proper metal-to-metal contact.",posted:false},
-  {id:15,date:"2026-02-19",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Created haul estimate per Abe's request.",posted:false},
-  {id:16,date:"2026-02-19",proj:"Generator Insulation",cat:"D",hrs:1.25,desc:"Cleaned panels with acetone. Cut and installed new insulation on aft panel, secured fraying seams with butyl tape.",posted:false},
-  {id:17,date:"2026-02-19",proj:"Engine Service",cat:"T",hrs:7.0,desc:"Removed engine oil and filters all engines, transmission oil and raw water zincs from main engines, installed new raw water impellers using SuperLube, removed and cleaned air filters.",posted:false},
-  {id:18,date:"2026-02-20",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Picked up new engine zincs and painting supplies from LFS.",posted:false},
-  {id:19,date:"2026-02-20",proj:"Bottom Paint",cat:"D",hrs:0.5,desc:"Masked off bottom paint on vessel to prep for new coat.",posted:false},
-  {id:20,date:"2026-02-20",proj:"Engine Service",cat:"T",hrs:7.75,desc:"Installed new oil/fuel/crankcase vent filters all engines. New impeller in generator. Pumped new oil, topped off transmission. Tapped damaged zinc threads, installed new zincs. Labeled dates, cleaned with Simple Green.",posted:false},
-  {id:21,date:"2026-02-23",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Inspected circuit breaker lights — refrigeration and electronics dim, genset not functioning. Discussed priorities with Abe.",posted:false},
-  {id:22,date:"2026-02-23",proj:"Stanchion Rail Repair",cat:"T",hrs:0.25,desc:"Inspected all stainless steel on vessel — cavil cleats and hawseholes needed attention.",posted:false},
-  {id:23,date:"2026-02-23",proj:"Engine Service",cat:"T",hrs:0.75,desc:"Checked oil levels all engines, inspected belts, performed final engine service inspection.",posted:false},
-  {id:24,date:"2026-02-23",proj:"Flybridge Slider Door Repair",cat:"T",hrs:1.0,desc:"Removed end cap from flybridge sliding doors, removed both doors to replace rollers.",posted:false},
-  {id:25,date:"2026-02-23",proj:"Anchor Chain",cat:"T",hrs:1.0,desc:"Laid out additional 50ft of anchor chain, filled barrel with warm water, scrubbed painted chain markings, set out to dry.",posted:false},
-  {id:26,date:"2026-02-23",proj:"Generator Insulation",cat:"D",hrs:4.5,desc:"Traced old insulation from top panel — five access ports. Cut and installed insulation on top and forward panels, reinstalled all panels, secured raw water hoses through top panel.",posted:false},
-  {id:27,date:"2026-02-24",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Disposed old engine oil at Squalicum Harbor, picked up painting supplies at LFS.",posted:false},
-  {id:28,date:"2026-02-24",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Applied oil to main engine air filters, installed filters, labeled inspection dates on all belts and air filters.",posted:false},
-  {id:29,date:"2026-02-24",proj:"Anchor Chain",cat:"T",hrs:1.0,desc:"Hung painted chain markings on first 100ft. Mixed InterProtect 2000E epoxy with red coloring agent, applied coat to red markings.",posted:false},
-  {id:30,date:"2026-02-24",proj:"Bottom Paint",cat:"D",hrs:6.0,desc:"Cleaned all bottom paint below waterline with acetone, applied new coat to approximately three-quarters of hull.",posted:false},
-  {id:31,date:"2026-02-25",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Discussed priorities with Abe, created new work list.",posted:false},
-  {id:32,date:"2026-02-25",proj:"Flybridge Slider Door Repair",cat:"T",hrs:0.75,desc:"Laid doors on blanket, labeled teak strip locations, removed teak strips for Brightside Restoration. Removed nearly 50 fasteners.",posted:false},
-  {id:33,date:"2026-02-25",proj:"Bottom Paint",cat:"D",hrs:4.0,desc:"Relocated vessel stands, applied bottom paint beneath them, transom, thru-hulls, thruster tunnel, rudders, and remaining quarter of hull. Removed all tape.",posted:false},
-  {id:34,date:"2026-02-25",proj:"Tender Service",cat:"T",hrs:0.25,desc:"Dry-fitted new bow cradle mount bolts — too short, requiring replacement.",posted:false},
-  {id:35,date:"2026-02-25",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Replaced all engine oil absorbent pads, cleaned genset drain pan.",posted:false},
-  {id:36,date:"2026-02-25",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Loosened main engine fuel filters to bleed air accumulated during servicing — hand pumps not functioning.",posted:false},
-  {id:37,date:"2026-02-25",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Installed new freshwater filter, labeled installation.",posted:false},
-  {id:38,date:"2026-02-25",proj:"Anchor Chain",cat:"T",hrs:1.75,desc:"Mixed yellow and red epoxy batches. Applied yellow to painted sections. Applied pink epoxy to insides of links on red-marked sections to seal chain.",posted:false},
-  {id:39,date:"2026-02-26",proj:"Anchor Chain",cat:"T",hrs:0.75,desc:"Applied coat of red Omni paint to anchor chain markings.",posted:false},
-  {id:40,date:"2026-02-26",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Discussed priorities and port Tides Marine shaft seal with Abe.",posted:false},
-  {id:41,date:"2026-02-26",proj:"Buff & Wax Above Deck",cat:"B",hrs:0.25,desc:"Buffing estimate for high UV areas, inspected cockpit teak sealant, recorded photos.",posted:false},
-  {id:42,date:"2026-02-26",proj:"Rudder Lubrication",cat:"T",hrs:2.5,desc:"Removed port Tides Marine shaft seal, inspected and cleaned shaft — noted early pitting. Repositioned housing 1/2 inch forward, installed new shaft seal, reassembled housing.",posted:false},
-  {id:43,date:"2026-02-26",proj:"Buff & Wax Above Deck",cat:"B",hrs:3.75,desc:"Buffed forward face of flybridge brow — three to four passes coarse compound.",posted:false},
-  {id:44,date:"2026-03-02",proj:"Buff & Wax Above Deck",cat:"B",hrs:2.0,desc:"Buffed and waxed forward flybridge brow — two passes fine compound, one coat marine wax.",posted:false},
-  {id:45,date:"2026-03-02",proj:"Buff & Wax Above Deck",cat:"B",hrs:5.75,desc:"Buffed top surface of hood forward of windshield — three passes coarse compound.",posted:false},
-  {id:46,date:"2026-03-03",proj:"Engine Service",cat:"T",hrs:0.75,desc:"Fire extinguisher service by Pacific Rim Fire, assisted installing new mount.",posted:false},
-  {id:47,date:"2026-03-03",proj:"Windlass Oil Check",cat:"T",hrs:0.5,desc:"Drained gear oil from windlass, removed and cleaned site glass, topped off with new oil. Consolidated used oil and old tender fuel for disposal.",posted:false},
-  {id:48,date:"2026-03-03",proj:"Buff & Wax Above Deck",cat:"B",hrs:6.25,desc:"Buffed and waxed hood forward of windshield. Two passes fine compound, one coat marine wax on top. Buffed starboard side two passes fine compound.",posted:false},
-  {id:49,date:"2026-03-03",proj:"Flybridge Slider Door Repair",cat:"T",hrs:3.0,desc:"Installed UHMW slides, reinstalled teak strips and doors.",posted:false},
-  {id:50,date:"2026-03-03",proj:"Flybridge Slider Door Repair",cat:"T",hrs:1.0,desc:"Repaired salon door — rubbing on buildup of varnish coats.",posted:false},
-  {id:51,date:"2026-03-03",proj:"Flybridge Slider Door Repair",cat:"T",hrs:2.0,desc:"Additional door installation and adjustment.",posted:false},
-  {id:52,date:"2026-03-04",proj:"Engine Service",cat:"T",hrs:0.75,desc:"Supervised sealant and stainless polish work.",posted:false},
-  {id:53,date:"2026-03-04",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Acquired P-clamps to secure Fireboy wiring. Installed missing port pilothouse teak trim fastener.",posted:false},
-  {id:54,date:"2026-03-04",proj:"Thruster Oil Change",cat:"T",hrs:0.75,desc:"Removed master cabin bed, checked bow thruster oil levels, vacuumed thruster compartment, installed lug cover on thruster wiring.",posted:false},
-  {id:55,date:"2026-03-04",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Removed and primed fuel filters on all engines after servicing.",posted:false},
-  {id:56,date:"2026-03-04",proj:"Engine Service",cat:"T",hrs:0.75,desc:"Repositioned and secured starboard engine room A/C light — stripped fastener, relocated 1/2 inch aft.",posted:false},
-  {id:57,date:"2026-03-04",proj:"Tender Service",cat:"T",hrs:0.25,desc:"Treated new tender fuel with Sta-Bil fuel stabilizer, reinstalled tank.",posted:false},
-  {id:58,date:"2026-03-04",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Removed rust from port main engine hard piping, applied Corroseal.",posted:false},
-  {id:59,date:"2026-03-04",proj:"Rudder Lubrication",cat:"T",hrs:5.25,desc:"Removed contents from lazarette, removed rudders, cleaned rudder shafts and shaft logs with degreaser, lubricated shafts with Triple Guard waterproof grease, reinstalled rudders, vacuumed and degreased rudder compartment.",posted:false},
-  {id:60,date:"2026-03-05",proj:"Buff & Wax Above Deck",cat:"B",hrs:0.5,desc:"Removed polishing tape, checked sealant prep.",posted:false},
-  {id:61,date:"2026-03-05",proj:"Flybridge Slider Door Repair",cat:"T",hrs:0.25,desc:"Assisted installing flybridge sliding doors. Installed missing port salon teak deck trim fastener.",posted:false},
-  {id:62,date:"2026-03-05",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Coordinated vehicle access for vessel launch. Acquired tender fire extinguisher from Pacific Rim Fire.",posted:false},
-  {id:63,date:"2026-03-05",proj:"Tender Service",cat:"T",hrs:3.25,desc:"Delivered shuttle car to Squalicum Harbor. Installed tie-downs, removed tools and supplies, secured tender with temporary cradle mount, assisted launching vessel. Tested all systems, delivered to Squalicum Harbor.",posted:false},
-  {id:64,date:"2026-03-05",proj:"Buff & Wax Above Deck",cat:"B",hrs:1.75,desc:"Buffed and waxed hood — two passes fine compound, one coat marine wax port/starboard/forward sides.",posted:false},
-  {id:65,date:"2026-03-05",proj:"Anchor Chain",cat:"T",hrs:0.5,desc:"Unloaded 200ft of anchor chain, recorded markings after hearing they were painted incorrectly. Loaded chain back prior to launch.",posted:false},
-  {id:66,date:"2026-03-05",proj:"Stanchion Rail Repair",cat:"T",hrs:2.75,desc:"Installed new sealant in seven locations on vessel. Cleaned all sections with acetone, removed tape, recorded photos.",posted:false},
-  {id:67,date:"2026-03-06",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Ran engines, checked fluid levels, topped off engine and transmission oil.",posted:false},
-  {id:68,date:"2026-03-06",proj:"Engine Service",cat:"T",hrs:0.25,desc:"Applied InterProtect 2000E epoxy to port main engine hard piping cleared of corrosion.",posted:false},
-  {id:69,date:"2026-03-06",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Reinstalled Starlink and antennas post launch.",posted:false},
-  {id:70,date:"2026-03-06",proj:"Buff & Wax Below the Rail",cat:"B",hrs:5.0,desc:"Picked up cleaning supplies at LFS. Cleaned lower deck and flybridge steps with TEKA cleaner — two-part solution.",posted:false},
-  {id:71,date:"2026-03-06",proj:"Buff & Wax Below the Rail",cat:"B",hrs:2.25,desc:"Pressure washed nonskid decks, all canvas, and all marine growth. Sprayed flybridge deck with vinegar solution.",posted:false},
-  {id:72,date:"2026-03-07",proj:"Tender Service",cat:"T",hrs:0.25,desc:"Picked up hardware for tender bow cradle mount at LFS.",posted:false},
-  {id:73,date:"2026-03-07",proj:"Tender Service",cat:"T",hrs:0.5,desc:"Loaded all canvas aboard, recorded photos of recently installed sealant.",posted:false},
-  {id:74,date:"2026-03-07",proj:"Buff & Wax Below the Rail",cat:"B",hrs:2.25,desc:"Washed the vessel.",posted:false},
-  {id:75,date:"2026-03-07",proj:"Tender Service",cat:"T",hrs:0.5,desc:"Ran tender to flush fresh water through outboard, ran treated fuel through engine.",posted:false},
-  {id:76,date:"2026-03-07",proj:"Engine Service",cat:"T",hrs:0.5,desc:"Cleaned salon windows, wiped countertops, vacuumed carpets to eliminate shop dust.",posted:false},
-  {id:77,date:"2026-03-07",proj:"Fuel Vent Leak - Generator",cat:"T",hrs:0.25,desc:"Removed genset sea strainer lid, cleaned corrosion at seal, applied Super Lube to seal to prevent leaking."},
-];
-
+let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000;
+let projects=[];
+let timeEntries=[];
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function taskLabor(t){return(RATES[t.cat]||0)*(t.hrs||0);}
 function taskTotal(t){return taskLabor(t)+(t.mat||0)+(t.sub||0);}
@@ -428,9 +294,9 @@ function projActHrs(p){return timeEntries.filter(te=>te.proj===p.name&&te.cat!==
 // Check scope bump — auto flip to change_of_scope if actual exceeds estimate
 function checkScopeBump(p){
   if(p.isTM||!p.estimateTotal)return;
-  if(p.status==='complete'||p.status==='billed'||p.status==='needs_auth'||p.status==='change_of_scope')return;
+  if(p.status==='complete'||p.status==='billed'||p.status==='needs_auth')return;
   const actual=projActualTotal(p);
-  if(actual>p.estimateTotal){p.status='change_of_scope';saveData();}
+  // Scope bump noted but status not auto-changed — user adds CO manually
 }
 
 // Post/unpost time entry
@@ -477,6 +343,7 @@ function syncSettingsUI(){
     document.getElementById('stRateT').value=RATES.T||135;
     document.getElementById('stRateB').value=RATES.B||105;
     document.getElementById('stRateD').value=RATES.D||95;
+    document.getElementById('stRateV').value=RATES.V||95;
   }catch(e){}
 }
 function applySettings(){
@@ -490,37 +357,52 @@ function applySettings(){
   RATES.T=parseFloat(document.getElementById('stRateT').value)||135;
   RATES.B=parseFloat(document.getElementById('stRateB').value)||105;
   RATES.D=parseFloat(document.getElementById('stRateD').value)||95;
+  RATES.V=parseFloat(document.getElementById('stRateV').value)||95;
   const sv=document.getElementById('settingsSaved');sv.style.display='inline';setTimeout(()=>sv.style.display='none',2000);
   renderEstimate();saveData();
 }
 
 function renderSummary(){
-  const inc=projects.filter(p=>p.include!==false&&(p.status==='needs_auth'||p.status==='in_progress'||p.status==='change_of_scope'));
-  const tL=inc.reduce((a,p)=>a+projEstLabor(p),0);
-  const tM=inc.reduce((a,p)=>a+projEstMat(p),0);
-  const tS=inc.reduce((a,p)=>a+projEstSub(p),0);
-  const tT=tL+tM+tS;
-  document.getElementById('sumProj').textContent=inc.length;
-  document.getElementById('sumLabor').textContent=fmt(tL);
-  document.getElementById('sumMat').textContent=fmt(tM);
-  document.getElementById('sumSub').textContent=fmt(tS);
-  document.getElementById('sumTotal').textContent=fmt(tT);
+  const inc=projects.filter(p=>p.include!==false);
   const gt=document.getElementById('grandTotal');
-  if(gt){gt.innerHTML='';}
+  if(gt){
+    const actP=inc.filter(p=>p.status!=='billed');
+    const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
+    const gMat=actP.reduce((a,p)=>a+projEstMat(p),0);
+    const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+    const gSubtotal=gL+gMat+gSub;
+    const gShop=gSubtotal*0.03;
+    const gTax=(gSubtotal+gShop)*0.091;
+    const gTotal=gSubtotal+gShop+gTax;
+    const row=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:12px;color:'+(bold?'#1a1a1a':'#888')+'">'+label+'</span><span style="font-size:12px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
+    gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
+      +row('Labor',gL,false)
+      +row('Materials',gMat,false)
+      +row('Subcontractors',gSub,false)
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
+      +row('Shop Fee (3%)',gShop,false)
+      +row('Tax (9.1%)',gTax,false)
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px -16px;background:#1D9E75;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>';
+  }
   saveData();
 }
 
 function renderEstimate(){
+  // Safety net: migrate any change_of_scope status to in_progress
+  projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
   document.getElementById('updateDate').textContent=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   renderSummary();
   const list=document.getElementById('projectList');
   list.innerHTML='';
+  const billedList=document.getElementById('billedList');
+  billedList.innerHTML='';
   SECTIONS.forEach(sec=>{
+    const target=sec.key==='billed'?billedList:list;
     const secProjs=projects.filter(p=>p.status===sec.key);
     const secEstTotal=secProjs.filter(p=>p.include!==false).reduce((a,p)=>a+projScopeTotal(p),0);
     const secActTotal=secProjs.filter(p=>p.include!==false).reduce((a,p)=>a+projActualTotal(p),0);
     const isOpen=secOpenState[sec.key]!==undefined?secOpenState[sec.key]:sec.defaultOpen;
-    const wrap=document.createElement('div');wrap.className='sec-wrap';wrap.style.border='1px solid '+sec.border;
+    const wrap=document.createElement('div');wrap.className='sec-wrap';wrap.style.border='1px solid '+sec.border;wrap.dataset.sec=sec.key;
     const hdr=document.createElement('div');hdr.className='sec-hdr';hdr.style.cssText='background:'+sec.color+';color:'+sec.textColor;
     hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+secProjs.length+' project'+(secProjs.length!==1?'s':'')+'</span></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(secEstTotal>0?fmt(secEstTotal):'—')+' est</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+' actual</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
     hdr.onclick=()=>{secOpenState[sec.key]=!secOpenState[sec.key];renderEstimate();};
@@ -537,7 +419,7 @@ function renderEstimate(){
       const num=document.createElement('span');num.className='proj-num';num.textContent=String(pi+1).padStart(2,'0');
       const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.onchange=()=>{proj.name=nameInp.value;populateTEDropdowns();saveData();};nameInp.onclick=e=>e.stopPropagation();nameInp.onmousedown=e=>e.stopPropagation();nameInp.onfocus=e=>e.stopPropagation();
       const ssel=document.createElement('select');ssel.className='status-sel';
-      [{v:'needs_auth',l:'Needs Auth'},{v:'change_of_scope',l:'Change of Scope'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
+      [{v:'needs_auth',l:'Needs Auth'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
       ssel.onchange=()=>{proj.status=ssel.value;invWrap.style.display=ssel.value==='billed'?'flex':'none';renderSummary();renderEstimate();};ssel.onclick=e=>e.stopPropagation();
       const invWrap=document.createElement('div');invWrap.style.cssText='display:'+(proj.status==='billed'?'flex':'none')+';align-items:center;gap:5px;flex-shrink:0';
       const invLbl=document.createElement('span');invLbl.textContent='Inv:';invLbl.style.cssText='font-size:11px;color:#888';
@@ -546,12 +428,14 @@ function renderEstimate(){
       invWrap.appendChild(invLbl);invWrap.appendChild(invN);invWrap.appendChild(invD);
       const badge=document.createElement('span');badge.className='proj-badge';badge.textContent=fmt(pTotal);
       const chev=document.createElement('span');chev.className='chev'+(isProjOpen?' open':'');chev.innerHTML='&#9654;';
-      const dh=document.createElement('span');dh.className='drag-handle';dh.innerHTML='⠿';dh.title='Drag to reorder';dh.onmousedown=e=>e.stopPropagation();
-      pw.draggable=true;
+      const dh=document.createElement('span');dh.className='drag-handle';dh.innerHTML='⠿';dh.title='Drag to reorder';
+      dh.onmousedown=e=>{e.stopPropagation();pw.draggable=true;};
+      dh.onmouseup=()=>{pw.draggable=false;};
+      pw.draggable=false;
       pw.dataset.projId=String(proj.id);
       pw.dataset.secKey=sec.key;
-      pw.ondragstart=e=>{e.dataTransfer.setData('projId',proj.id);e.dataTransfer.setData('fromSec',sec.key);e.dataTransfer.effectAllowed='move';setTimeout(()=>pw.style.opacity='0.4',0);};
-      pw.ondragend=e=>{pw.style.opacity='1';document.querySelectorAll('.project.drag-over').forEach(el=>el.classList.remove('drag-over'));document.querySelectorAll('.sec-body.drag-over-section').forEach(el=>el.classList.remove('drag-over-section'));};
+      pw.ondragstart=e=>{if(!pw.draggable)return;e.dataTransfer.setData('projId',proj.id);e.dataTransfer.setData('fromSec',sec.key);e.dataTransfer.effectAllowed='move';setTimeout(()=>pw.style.opacity='0.4',0);};
+      pw.ondragend=e=>{pw.draggable=false;pw.style.opacity='1';document.querySelectorAll('.project.drag-over').forEach(el=>el.classList.remove('drag-over'));document.querySelectorAll('.sec-body.drag-over-section').forEach(el=>el.classList.remove('drag-over-section'));};
       pw.ondragover=e=>{e.preventDefault();e.dataTransfer.dropEffect='move';pw.classList.add('drag-over');};
       pw.ondragleave=e=>{pw.classList.remove('drag-over');};
       pw.ondrop=e=>{
@@ -602,10 +486,11 @@ function renderEstimate(){
         const tbody=document.createElement('tbody');
         tasks.forEach((task,ti)=>{
           const tr=document.createElement('tr');
+          if(task.co)tr.style.background='#fff8ed';
           if(editable){
-            tr.draggable=true;
-            tr.ondragstart=e=>{e.stopPropagation();e.dataTransfer.setData('taskProjId',String(proj.id));e.dataTransfer.setData('taskIdx',String(ti));e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
-            tr.ondragend=e=>{tr.style.opacity='1';document.querySelectorAll('tr.task-drag-over').forEach(el=>el.classList.remove('task-drag-over'));};
+            tr.draggable=false;
+            tr.ondragstart=e=>{if(!tr.draggable)return;e.stopPropagation();e.dataTransfer.setData('taskProjId',String(proj.id));e.dataTransfer.setData('taskIdx',String(ti));e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
+            tr.ondragend=e=>{tr.draggable=false;tr.style.opacity='1';document.querySelectorAll('tr.task-drag-over').forEach(el=>el.classList.remove('task-drag-over'));};
             tr.ondragover=e=>{e.preventDefault();e.stopPropagation();document.querySelectorAll('tr.task-drag-over').forEach(el=>el.classList.remove('task-drag-over'));tr.classList.add('task-drag-over');};
             tr.ondrop=e=>{
               e.preventDefault();e.stopPropagation();tr.classList.remove('task-drag-over');
@@ -617,7 +502,8 @@ function renderEstimate(){
               saveData();renderEstimate();
             };
           }
-          const dhtd=document.createElement('td');dhtd.style.cssText='width:20px;padding:0 4px;cursor:'+(editable?'grab':'default')+';color:#ccc;text-align:center;font-size:14px';dhtd.textContent=editable?'⠿':'';dhtd.onmousedown=e=>e.stopPropagation();
+          const dhtd=document.createElement('td');dhtd.style.cssText='width:20px;padding:0 4px;cursor:'+(editable?'grab':'default')+';color:#ccc;text-align:center;font-size:14px';dhtd.textContent=editable?'⠿':'';
+          if(editable){dhtd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};dhtd.onmouseup=()=>{tr.draggable=false;};}
           tr.appendChild(dhtd);
           const ctd=document.createElement('td');ctd.className=CAT_CLS[task.cat];
           if(editable){
@@ -640,8 +526,17 @@ function renderEstimate(){
           const mttd=mkn(task.mat,'r','number',0.01,editable?e=>{task.mat=parseFloat(e.target.value)||0;totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(mttd);
           const sbtd=mkn(task.sub,'r','number',0.01,editable?e=>{task.sub=parseFloat(e.target.value)||0;totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(sbtd);
           const totd=document.createElement('td');totd.className='cell-bold';totd.textContent=fmt(taskTotal(task));tr.appendChild(totd);
-          const dltd=document.createElement('td');
-          if(editable){const dlb=document.createElement('button');dlb.className='del-btn';dlb.textContent='×';dlb.onclick=()=>{tasks.splice(ti,1);renderEstimate();};dltd.appendChild(dlb);}
+          const dltd=document.createElement('td');dltd.style.whiteSpace='nowrap';
+          if(editable){
+            const coBtn=document.createElement('button');
+            coBtn.title='Flag as Change of Scope';
+            coBtn.style.cssText='background:none;border:none;cursor:pointer;font-size:13px;padding:4px 4px;opacity:'+(task.co?'1':'0.25');
+            coBtn.textContent='🔶';
+            coBtn.onclick=()=>{task.co=!task.co;saveData();renderEstimate();};
+            dltd.appendChild(coBtn);
+            const dlb=document.createElement('button');dlb.className='del-btn';dlb.textContent='×';dlb.onclick=()=>{tasks.splice(ti,1);renderEstimate();};
+            dltd.appendChild(dlb);
+          }
           tr.appendChild(dltd);
           tbody.appendChild(tr);
         });
@@ -702,16 +597,37 @@ function renderEstimate(){
       const sumBar=document.createElement('div');
       const actT=projActualTotal(proj);
       if(proj.isTM){
-        sumBar.style.cssText='display:grid;grid-template-columns:1fr;background:#f8f8f6;border-top:1px solid #e5e5e0';
-        sumBar.innerHTML='<div style="padding:8px 14px;display:flex;justify-content:space-between;align-items:center"><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.05em">Actual to Date</div><div style="font-size:13px;font-weight:700;color:#1D9E75">'+fmt(actT)+'</div></div>';
+        sumBar.style.cssText='display:grid;grid-template-columns:1fr;background:#f5f5f3;border-top:1px solid #e5e5e0';
+        sumBar.innerHTML='<div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Time & Materials — Actual to Date</div><div style="font-size:14px;font-weight:700;color:#1D9E75">'+fmt(actT)+'</div></div><span style="font-size:10px;color:#aaa;font-style:italic">T&M</span></div>';
       } else {
         const estT=projScopeTotal(proj);
-        sumBar.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);background:#f8f8f6;border-top:1px solid #e5e5e0';
+        sumBar.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);background:#f5f5f3;border-top:1px solid #e5e5e0';
         sumBar.innerHTML=
-          '<div style="padding:8px 14px;border-right:1px solid #e5e5e0"><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px">Estimated</div><div style="font-size:13px;font-weight:700;color:#3b4a6b">'+fmt(estT)+'</div></div>'
-          +'<div style="padding:8px 14px"><div style="font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:2px">Actual to Date</div><div style="font-size:13px;font-weight:700;color:#1D9E75">'+fmt(actT)+'</div></div>';
+          '<div style="padding:10px 14px;border-right:1px solid #e5e5e0"><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Estimated</div><div style="font-size:14px;font-weight:700;color:#3b4a6b">'+fmt(estT)+'</div></div>'
+          +'<div style="padding:10px 14px"><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Actual to Date</div><div style="font-size:14px;font-weight:700;color:#1D9E75">'+fmt(actT)+'</div></div>';
       }
       pb.appendChild(sumBar);
+
+      // Change of Scope sub-sections
+      const projCos=proj.cos||[];
+      if(projCos.length>0){
+        projCos.forEach((co,ci)=>{
+          const coTotal=co.tasks.reduce((a,t)=>a+taskTotal(t),0);
+          const coHdr=document.createElement('div');
+          coHdr.style.cssText='display:flex;align-items:center;gap:8px;padding:7px 16px;background:#fff8ed;border-top:2px solid #fbbf24;border-bottom:1px solid #fde68a';
+          coHdr.innerHTML='<span style="font-size:10px;font-weight:700;color:#d97706;text-transform:uppercase;letter-spacing:0.05em;flex:1">CO-'+String(ci+1).padStart(3,'0')+': '+co.title+'</span>'
+            +'<span style="font-size:12px;font-weight:700;color:#d97706">'+fmt(coTotal)+'</span>';
+          const coDelBtn=document.createElement('button');coDelBtn.className='btn-sm danger';coDelBtn.style.cssText='font-size:10px;margin-left:8px';coDelBtn.textContent='Delete CO';
+          coDelBtn.onclick=()=>{if(confirm('Delete CO "'+co.title+'"?')){proj.cos.splice(ci,1);saveData();renderEstimate();}};
+          coHdr.appendChild(coDelBtn);
+          pb.appendChild(coHdr);
+          pb.appendChild(buildTaskTable(co.tasks,true));
+          const coAddBtn=document.createElement('div');coAddBtn.style.cssText='padding:6px 16px;background:#fff8ed;border-bottom:1px solid #fde68a';
+          const coAdd=document.createElement('button');coAdd.className='btn-sm';coAdd.style.cssText='color:#d97706;border-color:#fbbf24;font-size:10px';coAdd.textContent='+ Add CO task';
+          coAdd.onclick=()=>{co.tasks.push({id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0});saveData();renderEstimate();};
+          coAddBtn.appendChild(coAdd);pb.appendChild(coAddBtn);
+        });
+      }
 
       const foot=document.createElement('div');foot.className='proj-footer';
       const ata=document.createElement('button');ata.className='btn-sm blue';ata.textContent='+ Add estimated task';ata.onclick=()=>{if(!proj.scopeTasks)proj.scopeTasks=[];proj.scopeTasks.push({id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0});openProjs.add(proj.id);renderEstimate();};
@@ -720,7 +636,20 @@ function renderEstimate(){
       const mdn=document.createElement('button');mdn.className='btn-sm';mdn.textContent='▼';mdn.title='Move down';
       mdn.onclick=(e)=>{e.stopPropagation();const idx=projects.indexOf(proj);if(idx<projects.length-1){projects.splice(idx,1);projects.splice(idx+1,0,proj);saveData();renderEstimate();}};
       const dpr=document.createElement('button');dpr.className='btn-sm danger';dpr.textContent='Delete project';dpr.onclick=()=>{if(confirm('Delete "'+proj.name+'"?')){projects.splice(pi,1);renderEstimate();}};
-      foot.appendChild(ata);foot.appendChild(mup);foot.appendChild(mdn);foot.appendChild(dpr);pb.appendChild(foot);
+      foot.appendChild(ata);
+      // Add CO button on all non-billed projects
+      if(proj.status!=='billed'){
+        const aco=document.createElement('button');aco.className='btn-sm';aco.style.cssText='color:#d97706;border-color:#fbbf24';aco.textContent='+ Add change of scope';
+        aco.onclick=()=>{
+          if(!proj.cos)proj.cos=[];
+          const title=prompt('Change of scope title:');
+          if(!title)return;
+          proj.cos.push({id:nextCOId++,title,tasks:[{id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0}]});
+          openProjs.add(proj.id);saveData();renderEstimate();
+        };
+        foot.appendChild(aco);
+      }
+      foot.appendChild(mup);foot.appendChild(mdn);foot.appendChild(dpr);pb.appendChild(foot);
       pw.appendChild(pb);body.appendChild(pw);
     });
     body.ondragover=e=>{e.preventDefault();body.classList.add('drag-over-section');};
@@ -735,32 +664,37 @@ function renderEstimate(){
       projects[fromIdx].status=sec.key;
       saveData();renderEstimate();
     };
-    wrap.appendChild(body);list.appendChild(wrap);
-
-    // Inject estimate summary block between complete and billed
-    if(sec.key==='complete'){
-      const actInc=projects.filter(p=>p.include!==false&&(p.status==='needs_auth'||p.status==='in_progress'||p.status==='change_of_scope'));
-      const sL=actInc.reduce((a,p)=>a+projEstLabor(p),0);
-      const sM=actInc.reduce((a,p)=>a+projEstMat(p),0);
-      const sS=actInc.reduce((a,p)=>a+projEstSub(p),0);
-      const sT=sL+sM+sS;
-      const sShop=(sL+(sM-sS))*SHOP_FEE_RATE;
-      const sTax=(sT+sShop)*TAX_RATE;
-      const sGrand=sT+sShop+sTax;
-      const feeRow=(label,val)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:12px;color:#555">'+label+'</span><span style="font-size:12px;font-weight:600;color:#1a1a1a">'+fmt(val)+'</span></div>';
-      const sumDiv=document.createElement('div');
-      sumDiv.style.cssText='border:1px solid #e5e5e0;border-radius:10px;overflow:hidden;margin:16px 0';
-      sumDiv.innerHTML='<div style="padding:10px 16px;background:#1a1a1a"><span style="font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.05em">Estimate Summary — Active Projects</span></div>'
-        +feeRow('Labor',sL)
-        +feeRow('Materials',sM-sS)
-        +feeRow('Subcontractors',sS)
-        +feeRow('Subtotal',sT)
-        +feeRow('Shop Fee (3% of labor & materials)',sShop)
-        +feeRow('Tax (9.1%)',sTax)
-        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#1D9E75"><span style="font-size:12px;font-weight:700;color:#fff">Total Estimate</span><span style="font-size:15px;font-weight:700;color:#fff">'+fmt(sGrand)+'</span></div>';
-      list.appendChild(sumDiv);
-    }
+    wrap.appendChild(body);target.appendChild(wrap);
   });
+
+  // Dynamic Change of Scope section — tasks flagged with co:true on any included non-billed project
+  const coProjs=projects.filter(p=>p.include!==false&&p.status!=='billed'&&(p.scopeTasks||[]).some(t=>t.co));
+  if(coProjs.length>0){
+    const coTotal=coProjs.reduce((a,p)=>(p.scopeTasks||[]).filter(t=>t.co).reduce((b,t)=>b+taskTotal(t),0)+a,0);
+    const isOpen=secOpenState['_cos']!==undefined?secOpenState['_cos']:true;
+    const coWrap=document.createElement('div');coWrap.className='sec-wrap';coWrap.style.border='1px solid #fde68a';coWrap.dataset.sec='_cos';
+    const coHdr=document.createElement('div');coHdr.className='sec-hdr';coHdr.style.cssText='background:#d97706;color:#fff';
+    coHdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">CHANGE OF SCOPE — NEEDS AUTHORIZATION</span></div>'
+      +'<div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(coTotal>0?fmt(coTotal):'—')+' est</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
+    coHdr.onclick=()=>{secOpenState['_cos']=!isOpen;renderEstimate();};
+    coWrap.appendChild(coHdr);
+    const coBody=document.createElement('div');coBody.className='sec-body'+(isOpen?' open':'');
+    coProjs.forEach(p=>{
+      const coTasks=(p.scopeTasks||[]).filter(t=>t.co);
+      const coT=coTasks.reduce((a,t)=>a+taskTotal(t),0);
+      const row=document.createElement('div');row.style.cssText='border-top:1px solid #fde68a;padding:10px 16px;background:#fff';
+      row.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
+        +'<div style="font-size:12px;font-weight:600;color:#1a1a1a">'+p.name+'</div>'
+        +'<span style="font-size:13px;font-weight:700;color:#d97706">'+fmt(coT)+'</span>'
+        +'</div>'
+        +coTasks.map(t=>'<div style="display:flex;justify-content:space-between;font-size:11px;color:#888;padding:1px 0 0 8px"><span>'+CAT_LABELS[t.cat]+(t.desc?' — '+t.desc:'')+'</span><span>'+fmt(taskTotal(t))+'</span></div>').join('');
+      coBody.appendChild(row);
+    });
+    coWrap.appendChild(coBody);
+    const inProgWrap=list.querySelector('[data-sec="in_progress"]');
+    if(inProgWrap)list.insertBefore(coWrap,inProgWrap);
+    else list.appendChild(coWrap);
+  }
 }
 
 function ttMerged(proj){
@@ -782,7 +716,7 @@ function ttMerged(proj){
       const ms=(task.mat||0)+(task.sub||0);
       const isMS=task.cat==='M'||task.cat==='S';
       rows+=`<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:4px;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:9pt">
-        <div>${task.desc||'—'}</div>
+        <div style="white-space:pre-wrap">${nl2br(task.desc)||'—'}</div>
         <div style="color:#888;white-space:nowrap">${CAT_LABELS[task.cat]}</div>
         <div style="color:#888;white-space:nowrap">${isMS?'—':(task.hrs||0)+'h'}</div>
         <div style="font-weight:600;white-space:nowrap">${fd(isMS?ms:labor+ms)}</div>
@@ -813,26 +747,23 @@ function exportClientDoc(){
   const s=settings;
   const fd=n=>n===0?'\u2014':'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const authP=projects.filter(p=>p.include!==false&&p.status==='needs_auth');
+  const coProjs=projects.filter(p=>p.include!==false&&p.status!=='billed'&&(p.scopeTasks||[]).some(t=>t.co));
   const inPP=projects.filter(p=>p.include!==false&&p.status==='in_progress');
   const compP=projects.filter(p=>p.include!==false&&p.status==='complete');
   const billP=projects.filter(p=>p.include!==false&&p.status==='billed');
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
   const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
-  // Summary totals: in_progress + change_of_scope + complete only
-  const summaryP=projects.filter(p=>p.include!==false&&(p.status==='in_progress'||p.status==='change_of_scope'||p.status==='complete'));
-  const allL=summaryP.reduce((a,p)=>a+projEstLabor(p),0);
-  const allM=summaryP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
-  const allSub=summaryP.reduce((a,p)=>a+projEstSub(p),0);
-  const allSubtotal=allL+allM;
-  const allShopFee=(allL+(allM-allSub))*SHOP_FEE_RATE;
-  const allTax=(allSubtotal+allShopFee)*TAX_RATE;
-  const allGrand=allSubtotal+allShopFee+allTax;
+  const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
+  const allMat=actP.reduce((a,p)=>a+projEstMat(p),0);
+  const allSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+  const allM=allMat+allSub;
 
   // Bake project data into the doc for submit
   const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
+  const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   function taskTable(tasks){
     if(!tasks||tasks.length===0)return'';
     let rows='';
@@ -840,7 +771,7 @@ function exportClientDoc(){
       const labor=(RATES[t.cat]||0)*(t.hrs||0);
       const ms=(t.mat||0)+(t.sub||0);
       const isMS=t.cat==='M'||t.cat==='S';
-      rows+=`<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">${t.desc||'\u2014'}</td>
+      rows+=`<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${CAT_LABELS[t.cat]}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${isMS?'\u2014':(t.hrs||0)+'h'}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">${fd(isMS?ms:labor+ms)}</td></tr>`;
@@ -916,12 +847,14 @@ function exportClientDoc(){
     }
 
     return `<div style="border:1px solid ${accentColor}22;border-left:5px solid ${accentColor};border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
-      <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('${pid}_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
-        ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
-        <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
-        ${proj.notes?`<span style="font-size:8.5pt;color:#999;font-style:italic;margin-right:8px">${proj.notes}</span>`:''}
-        <span style="font-size:11pt;font-weight:700;color:${accentColor}">${fd(total)}</span>
-        <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+      <div style="padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('${pid}_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+        <div style="display:flex;align-items:center;gap:10px">
+          ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
+          <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
+          <span style="font-size:11pt;font-weight:700;color:${accentColor};white-space:nowrap">${fd(total)}</span>
+          <span class="chev" style="font-size:11px;color:#bbb;margin-left:6px;transition:transform 0.2s">&#9654;</span>
+        </div>
+        ${proj.notes?`<div style="font-size:8.5pt;color:#888;font-style:italic;margin-top:5px;padding-left:${showCheck?'28px':'0'};white-space:pre-wrap;line-height:1.5">${nl2br(proj.notes)}</div>`:''}
       </div>
       ${inner}
     </div>`;
@@ -967,15 +900,34 @@ function exportClientDoc(){
     </div>
   </div>`;
 
-
-
   // ── NEEDS AUTH ─────────────────────────────────────────────────────────
-  if(authP.length>0){
-    const authTotal=authP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=sectionHdr('#1D9E75','AUTHORIZATION REQUIRED',authP.length,fd(authTotal),'Check each project to authorize, then sign below');
+  if(authP.length>0||coProjs.length>0){
+    const coTotal=coProjs.reduce((a,p)=>(p.scopeTasks||[]).filter(t=>t.co).reduce((b,t)=>b+taskTotal(t),0)+a,0);
+    const authTotal=authP.reduce((a,p)=>a+projEstTotal(p),0)+coTotal;
+    html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed');
     html+=`<div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">${s.authText}</div>`;
-    authP.forEach(proj=>{html+=projBlock(proj,'#1D9E75',true,true);});
-    // ── SIGNATURE & SUBMIT (inside auth section) ───────────────────────────
+    authP.forEach(proj=>{html+=projBlock(proj,'#1D9E75',true,false);});
+    if(coProjs.length>0){
+      html+=`<div style="background:#fff8ed;border-left:4px solid #d97706;padding:8px 14px;margin-top:14px;font-size:9pt;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">&#9888; Change of Scope &mdash; Authorization Required</div>`;
+      coProjs.forEach(p=>{
+        const coTasks=(p.scopeTasks||[]).filter(t=>t.co);
+        const coT=coTasks.reduce((a,t)=>a+taskTotal(t),0);
+        const cid='coexp_'+p.id;
+        html+=`<div style="border:1px solid #fde68a;border-left:5px solid #d97706;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+          <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fffbf0;cursor:pointer" onclick="var d=document.getElementById('${cid}');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+            <input type="checkbox" name="co_auth" value="${p.id}" data-proj="${p.name}" data-co="Change of Scope" style="width:18px;height:18px;accent-color:#d97706;flex-shrink:0" onclick="event.stopPropagation()">
+            <span style="flex:1;font-size:10pt;font-weight:700;color:#1a1a1a">${p.name} <span style="font-size:9pt;font-weight:400;color:#888">— Change of Scope</span></span>
+            <span style="font-size:10pt;font-weight:700;color:#d97706">${fd(coT)}</span>
+            <span class="chev" style="font-size:11px;color:#bbb;margin-left:10px;transition:transform 0.2s">&#9654;</span>
+          </div>
+          <div id="${cid}" style="display:none;padding:10px 14px;background:#fffbf0">
+            ${taskTable(coTasks)}
+          </div>
+        </div>`;
+      });
+    }
+
+    // ── SIGNATURE & SUBMIT ──────────────────────────────────────────────────
     html+=`<div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
       <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
       <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
@@ -988,9 +940,7 @@ function exportClientDoc(){
         </div>
       </div>
       <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
-      <div class="sig-wrap">
-        <canvas id="sigCanvas"></canvas>
-      </div>
+      <div class="sig-wrap"><canvas id="sigCanvas"></canvas></div>
       <div style="display:flex;gap:8px;margin-top:6px">
         <button onclick="clearSig()" style="font-size:11px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;font-family:Arial,sans-serif">Clear Signature</button>
         <span id="sigStatus" style="font-size:11px;color:#c0392b;align-self:center"></span>
@@ -1016,23 +966,56 @@ function exportClientDoc(){
     compP.forEach(proj=>{html+=projBlock(proj,'#4a5e5a',false,false);});
   }
 
-
   // ── ESTIMATE SUMMARY ────────────────────────────────────────────────────
-  html+=`<div style="border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;margin-top:24px;margin-bottom:8px;font-family:Arial,sans-serif">
-    <div style="padding:10px 16px;background:#1a1a1a"><span style="font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.05em">Estimate Summary — Work in Progress &amp; Complete</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Labor</span><span style="font-size:10pt;font-weight:600;color:#1a1a1a">${fd(allL)}</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Materials</span><span style="font-size:10pt;font-weight:600;color:#1a1a1a">${fd(allM-allSub)}</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Subcontractors</span><span style="font-size:10pt;font-weight:600;color:#1a1a1a">${fd(allSub)}</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Subtotal</span><span style="font-size:10pt;font-weight:600;color:#1a1a1a">${fd(allSubtotal)}</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Shop Fee (3% of labor &amp; materials)</span><span style="font-size:10pt;font-weight:600;color:#1a1a1a">${fd(allShopFee)}</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Tax (9.1%)</span><span style="font-size:10pt;font-weight:600;color:#1a1a1a">${fd(allTax)}</span></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#1D9E75"><span style="font-size:11pt;font-weight:700;color:#fff">Total</span><span style="font-size:13pt;font-weight:700;color:#fff">${fd(allGrand)}</span></div>
+  const _sub=allL+allM;
+  const _shop=_sub*0.03;
+  const _tax=(_sub+_shop)*0.091;
+  const _total=_sub+_shop+_tax;
+  html+=`<div style="margin-top:28px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
+    <div style="background:#f5f5f3;border-bottom:2px solid #e5e5e0;padding:12px 18px;font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#555">Estimate Summary &mdash; Work in Progress &amp; Complete</div>
+    <table style="width:100%;border-collapse:collapse">
+      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allL)}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allMat)}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
+      <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
+      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>
+    </table>
+    <div style="background:#1D9E75;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12pt;font-weight:700">Total</span>
+      <span style="font-size:14pt;font-weight:700">${fd(_total)}</span>
+    </div>
   </div>`;
 
-
-
-
-
+  // ── BILLED ──────────────────────────────────────────────────────────────
+  if(billP.length>0){
+    const bt=billP.reduce((a,p)=>a+projEstTotal(p),0);
+    let billRows='';
+    billP.forEach((proj,bi)=>{
+      const inv=proj.invoiceNum?` &mdash; Inv #${proj.invoiceNum}`:'';
+      const bid='billed_'+bi;
+      billRows+=`<div style="border-bottom:1px solid #f0f0ed;font-family:Arial,sans-serif">
+        <div onclick="var d=document.getElementById('${bid}');var c=document.getElementById('${bid}_chev');d.style.display=d.style.display==='none'?'block':'none';c.style.transform=d.style.display==='none'?'':'rotate(90deg)'" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;color:#888">
+          <span id="${bid}_chev" style="font-size:9px;color:#ccc;display:inline-block;transition:transform 0.15s">&#9654;</span>
+          <span style="flex:1;font-size:9.5pt;color:#999">${proj.name}<span style="color:#bbb;font-weight:400;font-size:8.5pt">${inv}</span></span>
+          <span style="font-size:9.5pt;color:#bbb">${fd(projEstTotal(proj))}</span>
+        </div>
+        <div id="${bid}" style="display:none;padding:0 14px 10px 32px;background:#fafafa">
+          ${ttMerged(proj)}
+        </div>
+      </div>`;
+    });
+    html+=`<div style="margin-top:20px;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;font-family:Arial,sans-serif">
+      <div onclick="var b=document.getElementById('billedBody');b.style.display=b.style.display==='none'?'block':'none';this.querySelector('.bchev').style.transform=b.style.display==='none'?'':'rotate(90deg)'" style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;cursor:pointer;background:#f9fafb">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="bchev" style="font-size:9px;color:#aaa;display:inline-block;transition:transform 0.15s">&#9654;</span>
+          <span style="font-size:9pt;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:0.05em">Billed &mdash; ${billP.length} project${billP.length!==1?'s':''}</span>
+        </div>
+        <span style="font-size:9pt;color:#bbb">${fd(bt)}</span>
+      </div>
+      <div id="billedBody" style="display:none">${billRows}</div>
+    </div>`;
+  }
 
   // Footer
   html+=`<div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
@@ -1041,7 +1024,7 @@ function exportClientDoc(){
   </div>`;
 
   // Embedded JS
-  html+=`<script>
+  html+=`<\x73cript>
   // Signature pad
   const canvas=document.getElementById('sigCanvas');
   let hasSig=false;
@@ -1123,14 +1106,8 @@ function exportClientPDF(){
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
   const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
-  const summaryPDF=projects.filter(p=>p.include!==false&&(p.status==='in_progress'||p.status==='change_of_scope'||p.status==='complete'));
-  const allL=summaryPDF.reduce((a,p)=>a+projEstLabor(p),0);
-  const allM=summaryPDF.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
-  const allSub=summaryPDF.reduce((a,p)=>a+projEstSub(p),0);
-  const allSubtotal=allL+allM;
-  const allShopFee=(allL+(allM-allSub))*SHOP_FEE_RATE;
-  const allTax=(allSubtotal+allShopFee)*TAX_RATE;
-  const allGrand=allSubtotal+allShopFee+allTax;
+  const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
+  const allM=actP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
 
   function tt(tasks){
     let rows='';
@@ -1191,7 +1168,7 @@ function exportClientPDF(){
             <span style="font-size:11pt;font-weight:700">${String(pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
             <span id="chev${pi}" style="font-size:18px;color:#5dba99;padding:4px 8px;flex-shrink:0">&#9654;</span>
           </div>
-          ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px">${proj.notes}</div>`:''}
+          ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
           ${projEstTotal(proj)>0?`<div style="font-size:11pt;font-weight:700;color:#1D9E75;margin-top:4px">${fd(projEstTotal(proj))}</div>`:''}
         </div>
       </div>
@@ -1205,7 +1182,7 @@ function exportClientPDF(){
     inProgRows+=`<div style="margin-top:6px;border:1px solid #d1d5db;border-left:5px solid #6b7280;background:#fff">
       <div style="padding:10px 14px">
         <span style="font-size:11pt;font-weight:700">${String(authP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
-        ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px">${proj.notes}</div>`:''}
+        ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
       </div>
       <div style="background:#fafafa;border-top:1px solid #e5e7eb;padding:8px 14px">${ttMerged(proj)}</div>
     </div>`;
@@ -1289,7 +1266,12 @@ input[type=text]:focus{border-color:#1D9E75;box-shadow:0 0 0 2px rgba(29,158,117
   </div>
 </div>
 
-
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:28px" class="summary-grid">
+  <div style="background:#f5f5f5;padding:10px 14px;text-align:center"><div style="font-size:8pt;color:#888;text-transform:uppercase">Open Projects</div><div style="font-size:16pt;font-weight:700">${actP.length}</div></div>
+  <div style="background:#f5f5f5;padding:10px 14px;text-align:center"><div style="font-size:8pt;color:#888;text-transform:uppercase">Active Total</div><div style="font-size:16pt;font-weight:700">${fd(actTotal)}</div></div>
+  <div style="background:#f5f5f5;padding:10px 14px;text-align:center"><div style="font-size:8pt;color:#888;text-transform:uppercase">Billed to Date</div><div style="font-size:16pt;font-weight:700">${fd(billTotal)}</div></div>
+  <div style="background:#f5f5f5;padding:10px 14px;text-align:center"><div style="font-size:8pt;color:#888;text-transform:uppercase">Outstanding</div><div style="font-size:16pt;font-weight:700">${fd(actTotal)}</div></div>
+</div>
 
 ${authP.length>0?`
 ${secHdr('#5dba99','AUTHORIZATION NEEDED BEFORE PROCEEDING',authP.length,fd(authP.reduce((a,p)=>a+projEstTotal(p),0)),'#f0faf6','#155a3e','Check the box next to each project you authorize, then type your name and click Send Authorization.')}
@@ -1328,16 +1310,22 @@ ${secHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(compP.re
 ${compRows}
 `:''}
 
+${billP.length>0?`
+<div style="page-break-before:always"></div>
+${secHdr('#374151','BILLED',billP.length,fd(billP.reduce((a,p)=>a+projEstTotal(p),0)),'#fafafa','#555','Invoiced \u2014 shown for your records.')}
+${billRows}
+`:''}
 
-<div style="border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;margin-top:24px;font-family:Arial,sans-serif">
-  <div style="padding:10px 16px;background:#1a1a1a"><span style="font-size:10px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:0.05em">Estimate Summary — Work in Progress &amp; Complete</span></div>
-  <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Labor</span><span style="font-size:10pt;font-weight:600">${fd(allL)}</span></div>
-  <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Materials</span><span style="font-size:10pt;font-weight:600">${fd(allM-allSub)}</span></div>
-  <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Subcontractors</span><span style="font-size:10pt;font-weight:600">${fd(allSub)}</span></div>
-  <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Subtotal</span><span style="font-size:10pt;font-weight:600">${fd(allSubtotal)}</span></div>
-  <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Shop Fee (3% of labor &amp; materials)</span><span style="font-size:10pt;font-weight:600">${fd(allShopFee)}</span></div>
-  <div style="display:flex;justify-content:space-between;padding:8px 16px;border-top:1px solid #e5e5e0"><span style="font-size:10pt;color:#555">Tax (9.1%)</span><span style="font-size:10pt;font-weight:600">${fd(allTax)}</span></div>
-  <div style="display:flex;justify-content:space-between;padding:10px 16px;background:#1D9E75"><span style="font-size:11pt;font-weight:700;color:#fff">Total</span><span style="font-size:13pt;font-weight:700;color:#fff">${fd(allGrand)}</span></div>
+<div style="background:#1a1a1a;color:#fff;padding:16px 20px;margin-top:24px;display:flex;justify-content:space-between;align-items:center">
+  <div>
+    <div style="font-size:13pt;font-weight:700">Outstanding Balance</div>
+    <div style="font-size:8pt;color:#888;margin-top:2px">Excludes billed &amp; invoiced projects</div>
+  </div>
+  <div style="display:flex;gap:24px;text-align:right">
+    <div><div style="font-size:8pt;color:#888">Labor</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allL)}</div></div>
+    <div><div style="font-size:8pt;color:#888">Materials / Sub</div><div style="font-size:12pt;font-weight:700;color:#4ade80">${fd(allM)}</div></div>
+    <div><div style="font-size:8pt;color:#888">Total Outstanding</div><div style="font-size:14pt;font-weight:700;color:#4ade80">${fd(allL+allM)}</div></div>
+  </div>
 </div>
 
 <div style="margin-top:20px;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;border-top:1px solid #eee;padding-top:12px">
@@ -1346,7 +1334,7 @@ ${compRows}
 </div>
 
 </div>
-<script>
+<\x73cript>
 var toggleTouchStartY=0;
 var toggleTouchMoved=false;
 document.addEventListener('touchstart',function(e){
@@ -1546,6 +1534,8 @@ function importData(event){
       if(d.nextCOId)nextCOId=d.nextCOId;
       if(d.nextTEId)nextTEId=d.nextTEId;
       if(d.settings)Object.assign(settings,d.settings);
+      // Migrate change_of_scope status to in_progress
+      projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
       if(d._meta){
         const vv=document.getElementById('vfVessel');
         const vc=document.getElementById('vfClient');
@@ -1719,6 +1709,8 @@ function loadData(){
     if(d.settings)Object.assign(settings,d.settings);
     if(d.vessel){const v=document.getElementById('vfVessel');const n=document.getElementById('navVessel');if(v)v.value=d.vessel;if(n)n.textContent=d.vessel;}
     if(d.client){const c=document.getElementById('vfClient');if(c)c.value=d.client;}
+    // Migrate any change_of_scope status projects to in_progress
+    projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
     return true;
   }catch(e){return false;}
 }
@@ -1727,9 +1719,6 @@ document.getElementById('updateDate').textContent=new Date().toLocaleDateString(
 document.getElementById('teDate').value=new Date().toISOString().split('T')[0];
 document.getElementById('newProjName').addEventListener('keydown',e=>{if(e.key==='Enter')addProject();});
 if(!loadData()){
-  document.getElementById('vfVessel').value='Hannah Mae';
-  document.getElementById('vfClient').value='';
-  document.getElementById('navVessel').textContent='Hannah Mae';
   saveData();
 }
 populateTEDropdowns();

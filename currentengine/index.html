@@ -86,6 +86,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .te-drag-handle:active{cursor:grabbing}
 tr.te-drag-over td{border-top:2px solid #5dba99}
 tr.task-drag-over td{border-top:2px solid #5dba99}
+tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 .include-chk{width:15px;height:15px;cursor:pointer;flex-shrink:0;accent-color:#1D9E75}
 .project.excluded{opacity:0.4}
 .grand{background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:16px 20px;margin-top:8px}
@@ -114,6 +115,7 @@ tr.task-drag-over td{border-top:2px solid #5dba99}
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
     <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="clearForNewVessel()">Clear</button>
     <button class="btn" style="border-color:#888;color:#ccc;background:transparent" onclick="markAllTM()">Mark All T&amp;M</button>
+    <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="reconcileTimeEntries()">&#9881; Reconcile</button>
     <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="exportData()">&#11015; Export Data</button>
     <label class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600;cursor:pointer">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)"></label>
     <button class="btn btn-green" onclick="exportCSV()">Export CSV</button>
@@ -275,6 +277,41 @@ function projScopeTotal(p){return projScopeLabor(p)+projScopeMat(p)+projScopeSub
 
 // Posted time entries (actual work)
 function projPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted);}
+
+function reconcileTimeEntries(){
+  const projectNames=projects.map(p=>p.name);
+  // Find TEs whose proj doesn't exactly match any project name
+  const orphaned=timeEntries.filter(te=>te.proj&&!projectNames.includes(te.proj));
+  if(orphaned.length===0){alert('✅ All time entries match their projects. No issues found.');return;}
+
+  // For each orphan, find the closest project name match
+  function similarity(a,b){
+    a=a.toLowerCase();b=b.toLowerCase();
+    if(b.includes(a)||a.includes(b))return 0.9;
+    const la=a.split(/\s+/),lb=b.split(/\s+/);
+    const shared=la.filter(w=>lb.some(w2=>w2.includes(w)||w.includes(w2)));
+    return shared.length/Math.max(la.length,lb.length);
+  }
+
+  let msg='Found '+orphaned.length+' unmatched time entr'+(orphaned.length!==1?'ies':'y')+':\n\n';
+  const fixes=[];
+  orphaned.forEach(te=>{
+    const scores=projectNames.map(n=>({name:n,score:similarity(te.proj,n)}));
+    scores.sort((a,b)=>b.score-a.score);
+    const best=scores[0];
+    fixes.push({te,suggested:best.score>0.3?best.name:null});
+    msg+='"'+te.proj+'" → suggested: "'+(best.score>0.3?best.name:'no match found')+'"\n';
+  });
+  msg+='\nApply suggested fixes?';
+  if(!confirm(msg))return;
+
+  let fixed=0;
+  fixes.forEach(({te,suggested})=>{
+    if(suggested){te.proj=suggested;fixed++;}
+  });
+  saveData();renderEstimate();renderTimeEntry();
+  alert('✅ Fixed '+fixed+' of '+orphaned.length+' entries.'+(fixed<orphaned.length?'\n⚠ '+(orphaned.length-fixed)+' could not be matched — check manually.':''));
+}
 function projActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projActualMat(p){return projPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
@@ -413,11 +450,20 @@ function renderEstimate(){
       const pi=projects.indexOf(proj);
       const isProjOpen=openProjs.has(proj.id);
       const pTotal=projEstTotal(proj);
-      const pw=document.createElement('div');pw.className='project'+(proj.include===false?' excluded':'');pw.style.cssText='border-top:1px solid '+sec.border+';margin:0';
+      const pw=document.createElement('div');pw.className='project'+(proj.include===false?' excluded':'');
+      pw.style.cssText='border:1px solid '+(isProjOpen?'#b0bec5':'#e5e5e0')+';border-radius:8px;margin:6px 0;overflow:hidden;transition:border-color 0.15s';
       const ph=document.createElement('div');ph.className='proj-hdr';
       const inclChk=document.createElement('input');inclChk.type='checkbox';inclChk.className='include-chk';inclChk.checked=proj.include!==false;inclChk.title='Include in export';inclChk.onclick=e=>e.stopPropagation();inclChk.onmousedown=e=>e.stopPropagation();inclChk.onchange=()=>{proj.include=inclChk.checked;pw.className='project'+(inclChk.checked?'':' excluded');renderSummary();};
       const num=document.createElement('span');num.className='proj-num';num.textContent=String(pi+1).padStart(2,'0');
-      const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.onchange=()=>{proj.name=nameInp.value;populateTEDropdowns();saveData();};nameInp.onclick=e=>e.stopPropagation();nameInp.onmousedown=e=>e.stopPropagation();nameInp.onfocus=e=>e.stopPropagation();
+      const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.onchange=()=>{
+        const oldName=proj.name;
+        const newName=nameInp.value.trim();
+        if(!newName||newName===oldName)return;
+        // Relink all time entries pointing to old name
+        timeEntries.forEach(te=>{if(te.proj===oldName)te.proj=newName;});
+        proj.name=newName;
+        populateTEDropdowns();saveData();
+      };nameInp.onclick=e=>e.stopPropagation();nameInp.onmousedown=e=>e.stopPropagation();nameInp.onfocus=e=>e.stopPropagation();
       const ssel=document.createElement('select');ssel.className='status-sel';
       [{v:'needs_auth',l:'Needs Auth'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
       ssel.onchange=()=>{proj.status=ssel.value;invWrap.style.display=ssel.value==='billed'?'flex':'none';renderSummary();renderEstimate();};ssel.onclick=e=>e.stopPropagation();
@@ -455,6 +501,19 @@ function renderEstimate(){
       };
       ph.appendChild(dh);ph.appendChild(inclChk);ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);ph.appendChild(badge);ph.appendChild(chev);
       ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);renderEstimate();});
+      // Drop target for TE drag-reassign
+      ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
+      ph.addEventListener('dragleave',()=>{ph.style.background='';});
+      ph.addEventListener('drop',e=>{
+        e.preventDefault();ph.style.background='';
+        const teId=parseInt(e.dataTransfer.getData('teId'));
+        const fromProjName=e.dataTransfer.getData('fromProjName');
+        if(!teId||fromProjName===proj.name)return;
+        const te=timeEntries.find(t=>t.id===teId);
+        if(!te)return;
+        te.proj=proj.name;
+        saveData();renderEstimate();
+      });
       pw.appendChild(ph);
       const pb=document.createElement('div');pb.className='proj-body'+(isProjOpen?' open':'');
 
@@ -559,7 +618,7 @@ function renderEstimate(){
       }
 
       // ACTUAL SECTION — posted time entries
-      const postedTEs=projPostedTEs(proj);
+      const postedTEs=projPostedTEs(proj).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
       const actualHdr=document.createElement('div');
       actualHdr.style.cssText='padding:5px 16px;background:#f0faf6;border-bottom:1px solid #a7d8c5;border-top:1px solid #a7d8c5;font-size:10px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center';
       const actualTotal=projActualTotal(proj);
@@ -570,18 +629,66 @@ function renderEstimate(){
         const actTbl=document.createElement('table');actTbl.className='ttable';
         actTbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:80px">Date</th><th class="r" style="width:50px">Hrs</th><th class="r" style="width:55px">Rate</th><th class="r" style="width:80px">Amount</th><th style="width:70px"></th></tr></thead>';
         const actBody=document.createElement('tbody');
+        let teDragSrcId=null;
         postedTEs.forEach(te=>{
           const rate=RATES[te.cat]||0;
           const amt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*rate;
           const tr=document.createElement('tr');tr.style.background='#fafffe';
-          tr.innerHTML='<td style="width:20px;padding:0 4px;color:#ccc;text-align:center">—</td>'
-            +'<td style="padding:6px 8px;font-size:11px;color:#155a3e">'+CAT_LABELS[te.cat]+'</td>'
-            +'<td style="padding:6px 8px;font-size:12px">'+te.desc+'</td>'
-            +'<td style="padding:6px 8px;text-align:right;font-size:11px;color:#888">'+te.date+'</td>'
-            +'<td style="padding:6px 8px;text-align:right;font-size:12px">'+(te.cat==='M'||te.cat==='S'?'—':te.hrs)+'</td>'
-            +'<td style="padding:6px 8px;text-align:right;font-size:12px">'+(te.cat==='M'||te.cat==='S'?'—':'$'+rate)+'</td>'
-            +'<td style="padding:6px 8px;text-align:right;font-size:12px;font-weight:700;color:#1D9E75">'+fmt(amt)+'</td>'
-            +'<td style="padding:4px 8px;text-align:right"><button class="btn-sm danger" style="font-size:10px" onclick="unpostTimeEntry('+te.id+')">Unpost</button></td>';
+          // Drag handle cell — supports both reorder (within project) and reassign (to other project)
+          const dhTd=document.createElement('td');dhTd.style.cssText='width:20px;padding:0 4px;color:#ccc;text-align:center;font-size:14px;cursor:grab';dhTd.textContent='⠿';
+          dhTd.title='Drag to reorder or drop on another project header to reassign';
+          dhTd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};
+          dhTd.onmouseup=()=>{tr.draggable=false;};
+          tr.draggable=false;
+          tr.ondragstart=e=>{if(!tr.draggable)return;teDragSrcId=te.id;e.dataTransfer.setData('teId',String(te.id));e.dataTransfer.setData('fromProjName',proj.name);e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
+          tr.ondragend=e=>{tr.draggable=false;tr.style.opacity='1';teDragSrcId=null;document.querySelectorAll('tr.te-proj-drag-over').forEach(el=>el.classList.remove('te-proj-drag-over'));};
+          tr.ondragover=e=>{e.preventDefault();e.stopPropagation();if(teDragSrcId===null||teDragSrcId===te.id)return;document.querySelectorAll('tr.te-proj-drag-over').forEach(el=>el.classList.remove('te-proj-drag-over'));tr.classList.add('te-proj-drag-over');};
+          tr.ondragleave=()=>tr.classList.remove('te-proj-drag-over');
+          tr.ondrop=e=>{
+            e.preventDefault();e.stopPropagation();tr.classList.remove('te-proj-drag-over');
+            const srcId=parseInt(e.dataTransfer.getData('teId'));
+            const fromProj=e.dataTransfer.getData('fromProjName');
+            if(!srcId||fromProj!==proj.name||srcId===te.id)return;
+            // Reorder within timeEntries array
+            const srcIdx=timeEntries.findIndex(t=>t.id===srcId);
+            const tgtIdx=timeEntries.findIndex(t=>t.id===te.id);
+            if(srcIdx<0||tgtIdx<0)return;
+            const moved=timeEntries.splice(srcIdx,1)[0];
+            timeEntries.splice(tgtIdx,0,moved);
+            saveData();renderEstimate();
+          };
+          tr.appendChild(dhTd);
+          // Category — editable select
+          const catTd=document.createElement('td');catTd.className=CAT_CLS[te.cat]||'';catTd.style.cssText='padding:4px 8px;font-size:11px;';
+          const catSel=document.createElement('select');catSel.className='cat-sel';catSel.style.cssText='font-size:11px;color:#155a3e;font-weight:600;';
+          Object.entries(CAT_LABELS).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===te.cat)o.selected=true;catSel.appendChild(o);});
+          catSel.onchange=()=>{te.cat=catSel.value;catTd.className=CAT_CLS[te.cat]||'';rateTd.textContent=te.cat==='M'||te.cat==='S'?'—':'$'+(RATES[te.cat]||0);const newAmt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);amtTd.textContent=fmt(newAmt);saveData();renderSummary();};
+          catTd.appendChild(catSel);tr.appendChild(catTd);
+          // Description — editable textarea
+          const descTa=document.createElement('textarea');descTa.className='tinp';descTa.value=te.desc||'';descTa.rows=1;descTa.style.cssText='resize:none;overflow:hidden;line-height:1.4;background:#fafffe;font-size:12px;';
+          descTa.oninput=()=>{te.desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
+          descTa.onchange=()=>{te.desc=descTa.value;saveData();};
+          if(te.desc)setTimeout(()=>{descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';},0);
+          const descTd=document.createElement('td');descTd.style.verticalAlign='top';descTd.appendChild(descTa);tr.appendChild(descTd);
+          // Date — editable input
+          const dateTd=document.createElement('td');dateTd.style.cssText='padding:0;text-align:right';
+          const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:120px;text-align:right';
+          dateInp.onchange=()=>{te.date=dateInp.value;saveData();};
+          dateTd.appendChild(dateInp);tr.appendChild(dateTd);
+          // Hrs — editable input
+          const hrsTd=document.createElement('td');hrsTd.style.cssText='padding:0;text-align:right';
+          const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
+          hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();};
+          hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
+          // Rate
+          const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent=te.cat==='M'||te.cat==='S'?'—':'$'+rate;tr.appendChild(rateTd);
+          // Amount
+          const amtTd=document.createElement('td');amtTd.className='cell-bold';amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);tr.appendChild(amtTd);
+          // Unpost button
+          const actTd=document.createElement('td');actTd.style.cssText='padding:4px 8px;text-align:right';
+          const unpostBtn=document.createElement('button');unpostBtn.className='btn-sm danger';unpostBtn.style.fontSize='10px';unpostBtn.textContent='Unpost';
+          unpostBtn.onclick=()=>unpostTimeEntry(te.id);
+          actTd.appendChild(unpostBtn);tr.appendChild(actTd);
           actBody.appendChild(tr);
         });
         // Actual subtotal
@@ -637,6 +744,16 @@ function renderEstimate(){
       mdn.onclick=(e)=>{e.stopPropagation();const idx=projects.indexOf(proj);if(idx<projects.length-1){projects.splice(idx,1);projects.splice(idx+1,0,proj);saveData();renderEstimate();}};
       const dpr=document.createElement('button');dpr.className='btn-sm danger';dpr.textContent='Delete project';dpr.onclick=()=>{if(confirm('Delete "'+proj.name+'"?')){projects.splice(pi,1);renderEstimate();}};
       foot.appendChild(ata);
+      // Add Time Entry button
+      if(proj.status!=='billed'){
+        const ate=document.createElement('button');ate.className='btn-sm blue';ate.textContent='+ Add time entry';
+        ate.onclick=()=>{
+          const today=new Date().toISOString().split('T')[0];
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'T',hrs:0,desc:'',posted:true});
+          openProjs.add(proj.id);saveData();renderEstimate();
+        };
+        foot.appendChild(ate);
+      }
       // Add CO button on all non-billed projects
       if(proj.status!=='billed'){
         const aco=document.createElement('button');aco.className='btn-sm';aco.style.cssText='color:#d97706;border-color:#fbbf24';aco.textContent='+ Add change of scope';
@@ -846,8 +963,8 @@ function exportClientDoc(){
       });
     }
 
-    return `<div style="border:1px solid ${accentColor}22;border-left:5px solid ${accentColor};border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
-      <div style="padding:11px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('${pid}_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
+    return `<div style="border:1px solid #e5e5e0;border-left:5px solid ${accentColor};border-radius:8px;margin:8px 0;overflow:hidden;font-family:Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div style="padding:12px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('${pid}_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
         <div style="display:flex;align-items:center;gap:10px">
           ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
           <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
@@ -913,7 +1030,7 @@ function exportClientDoc(){
         const coTasks=(p.scopeTasks||[]).filter(t=>t.co);
         const coT=coTasks.reduce((a,t)=>a+taskTotal(t),0);
         const cid='coexp_'+p.id;
-        html+=`<div style="border:1px solid #fde68a;border-left:5px solid #d97706;border-radius:4px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+        html+=`<div style="border:1px solid #e5e5e0;border-left:5px solid #d97706;border-radius:8px;margin:8px 0;overflow:hidden;font-family:Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
           <div style="display:flex;align-items:center;gap:10px;padding:11px 14px;background:#fffbf0;cursor:pointer" onclick="var d=document.getElementById('${cid}');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
             <input type="checkbox" name="co_auth" value="${p.id}" data-proj="${p.name}" data-co="Change of Scope" style="width:18px;height:18px;accent-color:#d97706;flex-shrink:0" onclick="event.stopPropagation()">
             <span style="flex:1;font-size:10pt;font-weight:700;color:#1a1a1a">${p.name} <span style="font-size:9pt;font-weight:400;color:#888">— Change of Scope</span></span>
@@ -1160,7 +1277,7 @@ function exportClientPDF(){
   // Build auth project rows
   let authRows='';
   authP.forEach((proj,pi)=>{
-    authRows+=`<div style="margin-top:6px;border:1px solid #c8e6d8;border-left:5px solid #5dba99;background:#fff">
+    authRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #5dba99;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:10px 14px;display:flex;align-items:flex-start;gap:10px">
         <input type="checkbox" id="chk${pi}" class="auth-chk" style="width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#1D9E75;cursor:pointer">
         <div style="flex:1" class="proj-toggle" data-pi="${pi}" style="cursor:pointer;touch-action:manipulation">
@@ -1179,7 +1296,7 @@ function exportClientPDF(){
   // Build in-progress rows
   let inProgRows='';
   inPP.forEach((proj,pi)=>{
-    inProgRows+=`<div style="margin-top:6px;border:1px solid #d1d5db;border-left:5px solid #6b7280;background:#fff">
+    inProgRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:10px 14px">
         <span style="font-size:11pt;font-weight:700">${String(authP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
         ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
@@ -1191,7 +1308,7 @@ function exportClientPDF(){
   // Build complete rows
   let compRows='';
   compP.forEach((proj,pi)=>{
-    compRows+=`<div style="margin-top:6px;border:1px solid #c5d4d1;border-left:5px solid #4a5e5a;background:#fff">
+    compRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #4a5e5a;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div class="proj-toggle comp-toggle" data-pi="comp${pi}" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
         <div style="display:flex;align-items:center;gap:8px;flex:1">
           <span id="compchev${pi}" style="font-size:11px;color:#4a5e5a;display:inline-block;transition:transform 0.2s">&#9654;</span>
@@ -1207,7 +1324,7 @@ function exportClientPDF(){
   let billRows='';
   billP.forEach((proj,pi)=>{
     const inv=proj.invoiceNum||proj.invoiceDate?' <span style="font-size:9pt;color:#888;font-weight:400">'+(proj.invoiceNum?'Inv #'+proj.invoiceNum:'')+(proj.invoiceDate?' \u2014 '+new Date(proj.invoiceDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'')+'</span>':'';
-    billRows+=`<div style="margin-top:6px;border:1px solid #e5e7eb;border-left:5px solid #6b7280;background:#fff">
+    billRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:11pt;font-weight:700;color:#555">${String(authP.length+inPP.length+compP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
         <div style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap;padding-left:12px">${fd(projEstTotal(proj))}</div>
@@ -1573,8 +1690,27 @@ function populateTEDropdowns(){
     const sel=document.getElementById(id);if(!sel)return;const cur=sel.value;
     sel.innerHTML=id==='teFilterProj'?'<option value="">All projects</option>':'';
     projects.forEach(p=>{const o=document.createElement('option');o.value=p.name;o.textContent=p.name;sel.appendChild(o);});
-    sel.value=cur;
+    if(id==='teProj'){
+      const newOpt=document.createElement('option');newOpt.value='__new__';newOpt.textContent='+ New project...';sel.appendChild(newOpt);
+    }
+    if(cur&&cur!=='__new__')sel.value=cur;
   });
+  const teProj=document.getElementById('teProj');
+  if(teProj){
+    teProj.onchange=()=>{
+      if(teProj.value!=='__new__')return;
+      const name=(prompt('New project name:')||'').trim();
+      if(name){
+        const id2=nextProjId++;
+        projects.push({id:id2,name,status:'needs_auth',include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[],tasks:[],cos:[]});
+        saveData();
+        populateTEDropdowns();
+        document.getElementById('teProj').value=name;
+      } else {
+        teProj.value='';
+      }
+    };
+  }
 }
 function moveTe(idx,dir){
   const newIdx=idx+dir;
