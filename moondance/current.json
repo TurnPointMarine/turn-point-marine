@@ -2,13 +2,357 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-03-26T18:13:40.586Z",
+    "exportedAt": "2026-03-31T17:22:49.382Z",
     "engineVersion": 3
   },
-  "projects": [],
+  "projects": [
+    {
+      "id": 1,
+      "name": "Exterior Deep Clean",
+      "status": "complete",
+      "include": false,
+      "notes": "",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 2,
+      "name": "GFI Outlet Replacement – Lazarette (Davit Charger)",
+      "status": "complete",
+      "include": false,
+      "notes": "GFI plug in the lazarette that the davit charger is plugged into keeps popping. If not monitored the davit battery runs down. Replace outlet.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 3,
+      "name": "Flybridge Outlet Cover Replacement",
+      "status": "complete",
+      "include": false,
+      "notes": "Cover on the outlet on the flybridge (side wall, right of the wheel) is worn out and no longer waterproof. Replace with weatherproof cover.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 4,
+      "name": "Watermaker – Troubleshoot & Repair",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Watermaker showed higher than normal / higher than okay water temperature on last use. Likely a sensor — troubleshoot and replace sensor or do whatever is necessary to fix.\n\n*Also check FW tank level; FW flushes from watermaker appear to be using too much water.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 5,
+      "name": "Watermaker Filter Replacement",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Replace watermaker filters.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 6,
+      "name": "Stanadyne – Topped Off Fuel Treatment",
+      "status": "complete",
+      "include": false,
+      "notes": "Add Stanadyne treatment for topped off fuel.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 7,
+      "name": "Kabola Furnace Service",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Full furnace service.\n\na. Flush hydronic loop to get heat into the towel racks in the heads.\nb. Engine heat portion of Kabola system not working — blowers run but air is cool. Diagnose and repair.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 8,
+      "name": "Water Heater – Remove 240V Label",
+      "status": "in_progress",
+      "include": false,
+      "notes": "No 240V element in the new water heater. Remove the label so as not to confuse anyone.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 9,
+      "name": "Tender Service",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Bring tender to gill net crane load to trailer and bring to shop. \nService outboard\n  -Replace engine oil & filter\n  -Replace lower gear oil\n  -Replace raw water pump Impeller\n  -Secondary fuel filter\n  -Replace primary fuel filter (fuel water separator) element\n  -Grease steering\n",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 11,
+      "name": "Windlass Service & Inspection",
+      "status": "in_progress",
+      "include": true,
+      "notes": "a. Oil change.\nb. Run windlass for functionality.\nc. Check brown staining under and inside.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 12,
+      "name": "Spigots – Function Check & Alignment",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Check all spigots for functionality. Clock the one spigot so it sits at a 45-degree angle matching the other one.",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 13,
+      "name": "Steering – Fluid Check",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Check steering fluids and pressure in reservoir in lazarette. ",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 14,
+      "name": "Thruster Fluid Check",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Gain access to thruster. Check thruster fluids reservoir and inspect thruster motor and thruster tube for any abnormalities. ",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 15,
+      "name": "Battery Status Check",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Assess battery status.\n",
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 111,
+          "cat": "T",
+          "desc": "    -Check voltage of thruster, start, davit batteries\n    -Load test the house battery bank from fully charged to 12v. ",
+          "hrs": 3,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "estimateTotal": 3
+    },
+    {
+      "id": 17,
+      "name": "Rust & Scratch Removal on Stainless Steel",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Remove rust and stubborn scratch marks from stainless steel throughout vessel.",
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 100,
+          "cat": "B",
+          "desc": "Foredeck railings — remove rust and stubborn scratch marks",
+          "hrs": 6,
+          "mat": 30,
+          "sub": 0
+        },
+        {
+          "id": 101,
+          "cat": "B",
+          "desc": "Portuguese bridge handrailing — remove rust and stubborn scratch marks",
+          "hrs": 2,
+          "mat": 10,
+          "sub": 0
+        },
+        {
+          "id": 102,
+          "cat": "B",
+          "desc": "Flybridge handrailing — remove rust and stubborn scratch marks",
+          "hrs": 4,
+          "mat": 25,
+          "sub": 0
+        },
+        {
+          "id": 103,
+          "cat": "B",
+          "desc": "Door hinges — remove rust and stubborn scratch marks",
+          "hrs": 4,
+          "mat": 25,
+          "sub": 0
+        },
+        {
+          "id": 110,
+          "cat": "B",
+          "desc": "Stainless plate on the bow pulpit beneath the windlass. ",
+          "hrs": 3.5,
+          "mat": 20,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 18,
+      "name": "General Polish/Seal Stainless Steel",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "General polish on stainless steel throughout vessel.",
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 104,
+          "cat": "B",
+          "desc": "Foredeck — general stainless polish",
+          "hrs": 3,
+          "mat": 20,
+          "sub": 0
+        },
+        {
+          "id": 105,
+          "cat": "B",
+          "desc": "Flybridge — general stainless polish",
+          "hrs": 4,
+          "mat": 25,
+          "sub": 0
+        },
+        {
+          "id": 106,
+          "cat": "B",
+          "desc": "Cockpit & transom — general stainless polish",
+          "hrs": 3.5,
+          "mat": 20,
+          "sub": 0
+        },
+        {
+          "id": 107,
+          "cat": "B",
+          "desc": "Hawseholes — general stainless polish",
+          "hrs": 3,
+          "mat": 20,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 19,
+      "name": "Pilothouse Windows – Exterior Cleaning (Waterspot Removal)",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "11 windows total including 2 aft flybridge windows.",
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 108,
+          "cat": "D",
+          "desc": "Remove stubborn watermarks and clean interior windows (11 windows incl. 2 aft flybridge)",
+          "hrs": 3.5,
+          "mat": 30,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 20,
+      "name": "Pilothouse Windows – Aquapel Exterior",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "11 windows total including 2 aft flybridge windows.",
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 109,
+          "cat": "D",
+          "desc": "Apply Aquapel rain repellent to exterior windows (11 windows incl. 2 aft flybridge)",
+          "hrs": 2,
+          "mat": 120,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 10,
+      "name": "Davit – Base Flange & Inspection",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Get estimate for fabricating a stainless flange for the cockpit sole that will secure the post from flexing at the level of the deck and then leaking water down onto the running gear platform in the lazarette. ",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 21,
+      "name": "Macerator",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Recommend having spare macerator on board. Would you like us to order one?",
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 22,
+      "name": "Davit Pre-Season Check",
+      "status": "in_progress",
+      "include": true,
+      "notes": "Run davit, check for corrosion and proper function.",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 112,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    }
+  ],
   "timeEntries": [],
-  "nextProjId": 1,
-  "nextTaskId": 100,
+  "nextProjId": 23,
+  "nextTaskId": 113,
   "nextCOId": 100,
   "nextTEId": 1000,
   "settings": {
@@ -16,6 +360,7 @@
     "manager": "Abram Anderson",
     "email": "abram@turnpointmarine.com",
     "clientEmail": "",
+    "clientEmail2": "",
     "phone": "",
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
