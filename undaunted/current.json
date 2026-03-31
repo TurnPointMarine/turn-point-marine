@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-30T15:45:26.487Z",
+    "exportedAt": "2026-03-31T16:24:17.302Z",
     "engineVersion": 3
   },
   "projects": [
@@ -978,6 +978,7 @@
     "manager": "Abram Anderson",
     "email": "abram@turnpointmarine.com",
     "clientEmail": "",
+    "clientEmail2": "",
     "phone": "",
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
