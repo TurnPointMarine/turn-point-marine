@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Hannah Mae",
     "client": "Beth and Keith Loveless",
-    "exportedAt": "2026-04-01T18:15:28.635Z",
+    "exportedAt": "2026-04-01T18:50:53.226Z",
     "engineVersion": 3
   },
   "projects": [
@@ -1444,12 +1444,21 @@
       "hrs": 2740.5,
       "desc": "Shop Lay Days $2.25/ft per day \n   $94.50/Day\n    2/5-3/6 = 29 days\n    $2740.50",
       "posted": true
+    },
+    {
+      "id": 1140,
+      "date": "2026-03-06",
+      "proj": "Main Engine & Generator Services",
+      "cat": "M",
+      "hrs": 94.08,
+      "desc": "Stanadyne Performance Formula All Season, \n  1 Gallon",
+      "posted": true
     }
   ],
   "nextProjId": 34,
   "nextTaskId": 210,
   "nextCOId": 100,
-  "nextTEId": 1140,
+  "nextTEId": 1141,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
