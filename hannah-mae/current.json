@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Hannah Mae",
     "client": "Beth and Keith Loveless",
-    "exportedAt": "2026-04-01T18:50:53.226Z",
+    "exportedAt": "2026-04-01T22:08:35.161Z",
     "engineVersion": 3
   },
   "projects": [
@@ -296,7 +296,7 @@
       "name": "Sealant Deterioration or New Sealant Bead Needed",
       "status": "complete",
       "include": true,
-      "notes": "",
+      "notes": "Areas with sealant touch up:\n1-Below the teak cap rails in the cockpit\n2-Transom above the varnished teak name board just inboard of the transom door.\n3-A small section around the teak eyebrow above the windshield\n4-Inside the transom door, inside edge around the frame to keep the door sealed up.\n5-All around the port aft europa stanchion.\n6-A few sections around the upper deck eyebrow on the transom \n\n\n",
       "estimateTotal": null,
       "isTM": true,
       "scopeTasks": [],
@@ -326,7 +326,7 @@
     },
     {
       "id": 28,
-      "name": "FW Filter Element Replace",
+      "name": "FW Filter Element Replaced",
       "status": "complete",
       "include": true,
       "notes": "",
@@ -1070,7 +1070,7 @@
     {
       "id": 1097,
       "date": "2026-02-11",
-      "proj": "FW Filter Element Replace",
+      "proj": "FW Filter Element Replaced",
       "cat": "T",
       "hrs": 0.5,
       "desc": "Replaced FW filter element. There were 2 spares aboard, used one of them.",
