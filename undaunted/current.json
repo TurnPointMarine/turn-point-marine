@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-03-31T16:24:17.302Z",
+    "exportedAt": "2026-04-01T12:01:49.768Z",
     "engineVersion": 3
   },
   "projects": [
@@ -879,7 +879,7 @@
     {
       "id": 25,
       "name": "Mast Base Mount Clean Corrosion & Paint",
-      "status": "needs_auth",
+      "status": "holding",
       "notes": "",
       "include": false,
       "isTM": false,
@@ -900,7 +900,7 @@
     {
       "id": 40,
       "name": "Outboard Raw Water Manifold Repair",
-      "status": "needs_auth",
+      "status": "holding",
       "include": false,
       "notes": "I recommend leaving this repair for late Summer. It isn't going to affect functionality of the tender and should be done next time the tender is off the boat. This would prevent unnecessary costs of transporting the tender from and to Undaunted",
       "estimateTotal": null,
@@ -956,6 +956,27 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 42,
+      "name": "Securing Anchors with the Windlass Capstan",
+      "status": "holding",
+      "include": false,
+      "notes": "Need to install fender lines on carabiners install on anchors and send Wes photos",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 159,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
     }
   ],
   "timeEntries": [
@@ -969,8 +990,8 @@
       "posted": false
     }
   ],
-  "nextProjId": 42,
-  "nextTaskId": 159,
+  "nextProjId": 43,
+  "nextTaskId": 160,
   "nextCOId": 100,
   "nextTEId": 1001,
   "settings": {
