@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-04-01T10:54:51.895Z",
+    "exportedAt": "2026-04-01T11:01:45.258Z",
     "engineVersion": 3
   },
   "projects": [
@@ -356,7 +356,7 @@
       "include": true,
       "notes": "The battery was super low and the battery should be replaced. With a new battery installed the charger functionality should be confirmed. ",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 113,
