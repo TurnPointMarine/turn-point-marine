@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-03-31T17:22:49.382Z",
+    "exportedAt": "2026-04-01T10:02:58.204Z",
     "engineVersion": 3
   },
   "projects": [
@@ -152,7 +152,7 @@
     {
       "id": 15,
       "name": "Battery Status Check",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Assess battery status.\n",
       "isTM": false,
@@ -173,7 +173,7 @@
     {
       "id": 17,
       "name": "Rust & Scratch Removal on Stainless Steel",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Remove rust and stubborn scratch marks from stainless steel throughout vessel.",
       "isTM": false,
@@ -225,7 +225,7 @@
     {
       "id": 18,
       "name": "General Polish/Seal Stainless Steel",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "General polish on stainless steel throughout vessel.",
       "isTM": false,
@@ -269,7 +269,7 @@
     {
       "id": 19,
       "name": "Pilothouse Windows – Exterior Cleaning (Waterspot Removal)",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "11 windows total including 2 aft flybridge windows.",
       "isTM": false,
@@ -289,7 +289,7 @@
     {
       "id": 20,
       "name": "Pilothouse Windows – Aquapel Exterior",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "11 windows total including 2 aft flybridge windows.",
       "isTM": false,
@@ -309,7 +309,7 @@
     {
       "id": 10,
       "name": "Davit – Base Flange & Inspection",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Get estimate for fabricating a stainless flange for the cockpit sole that will secure the post from flexing at the level of the deck and then leaking water down onto the running gear platform in the lazarette. ",
       "isTM": true,
@@ -320,7 +320,7 @@
     {
       "id": 21,
       "name": "Macerator",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Recommend having spare macerator on board. Would you like us to order one?",
       "isTM": true,
