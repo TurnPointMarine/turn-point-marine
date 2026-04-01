@@ -115,6 +115,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
     <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="clearForNewVessel()">Clear</button>
     <button class="btn" style="border-color:#888;color:#ccc;background:transparent" onclick="markAllTM()">Mark All T&amp;M</button>
+    <button class="btn" style="border-color:#60a5fa;color:#60a5fa;background:transparent;font-weight:600" onclick="openMaterialsImport()">&#11014; Import Materials</button>
     <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="reconcileTimeEntries()">&#9881; Reconcile</button>
     <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="exportData()">&#11015; Export Data</button>
     <label class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600;cursor:pointer">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)"></label>
@@ -157,6 +158,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   <div style="display:flex;gap:8px;margin-bottom:12px;align-items:center;background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:12px">
     <input type="text" id="newProjName" placeholder="New project name..." style="flex:1;font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit">
     <select id="newProjStatus" style="font-size:12px;padding:7px 8px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit">
+      <option value="holding">Holding Pattern</option>
       <option value="needs_auth">Needs Authorization</option>
       <option value="in_progress">In Progress</option>
       <option value="complete">Complete</option>
@@ -254,6 +256,7 @@ const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materia
 const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS'};
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v3';
 const SECTIONS=[
+  {key:'holding',label:'Holding Pattern',color:'#7c6f9f',textColor:'#fff',bg:'#f3f0fa',border:'#c9bfea',defaultOpen:true},
   {key:'needs_auth',label:'Authorization Needed',color:'#5dba99',textColor:'#fff',bg:'#f0faf6',border:'#a7d8c5',defaultOpen:true},
   {key:'in_progress',label:'In Progress',color:'#6b7280',textColor:'#fff',bg:'#f9fafb',border:'#d1d5db',defaultOpen:true},
   {key:'complete',label:'Completed — Ready for Billing',color:'#4a5e5a',textColor:'#fff',bg:'#eff6ff',border:'#bfdbfe',defaultOpen:false},
@@ -261,7 +264,7 @@ const SECTIONS=[
 ];
 let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@turnpointmarine.com',clientEmail:'',clientEmail2:'',phone:'',footer:'Estimate Only - Subject to Change. Work does not proceed without signed authorization.',authText:'Sign below to authorize all work in this project. Work does not proceed without your signature.',showCompleteDetail:true};
 let unlocked=false;
-let secOpenState={needs_auth:true,in_progress:true,complete:false,billed:false};
+let secOpenState={holding:true,needs_auth:true,in_progress:true,complete:false,billed:false};
 let openProjs=new Set();
 let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000;
 let projects=[];
@@ -406,7 +409,7 @@ function renderSummary(){
   const inc=projects.filter(p=>p.include!==false);
   const gt=document.getElementById('grandTotal');
   if(gt){
-    const actP=inc.filter(p=>p.status!=='billed');
+    const actP=inc.filter(p=>p.status!=='billed'&&p.status!=='holding');
     const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
     const gMat=actP.reduce((a,p)=>a+projEstMat(p),0);
     const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
@@ -468,7 +471,7 @@ function renderEstimate(){
         populateTEDropdowns();saveData();
       };nameInp.onclick=e=>e.stopPropagation();nameInp.onmousedown=e=>e.stopPropagation();nameInp.onfocus=e=>e.stopPropagation();
       const ssel=document.createElement('select');ssel.className='status-sel';
-      [{v:'needs_auth',l:'Needs Auth'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
+      [{v:'holding',l:'Holding Pattern'},{v:'needs_auth',l:'Needs Auth'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
       ssel.onchange=()=>{proj.status=ssel.value;invWrap.style.display=ssel.value==='billed'?'flex':'none';renderSummary();renderEstimate();};ssel.onclick=e=>e.stopPropagation();
       const invWrap=document.createElement('div');invWrap.style.cssText='display:'+(proj.status==='billed'?'flex':'none')+';align-items:center;gap:5px;flex-shrink:0';
       const invLbl=document.createElement('span');invLbl.textContent='Inv:';invLbl.style.cssText='font-size:11px;color:#888';
@@ -620,8 +623,12 @@ function renderEstimate(){
         pb.appendChild(estSubWrap);
       }
 
-      // ACTUAL SECTION — posted time entries
-      const postedTEs=projPostedTEs(proj).slice().sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+      // ACTUAL SECTION — posted time entries: labor first by date, then materials by date
+      const postedTEs=projPostedTEs(proj).slice().sort((a,b)=>{
+        const aIsM=a.cat==='M'||a.cat==='S';const bIsM=b.cat==='M'||b.cat==='S';
+        if(aIsM!==bIsM)return aIsM?1:-1;
+        return (a.date||'').localeCompare(b.date||'');
+      });
       const actualHdr=document.createElement('div');
       actualHdr.style.cssText='padding:5px 16px;background:#f0faf6;border-bottom:1px solid #a7d8c5;border-top:1px solid #a7d8c5;font-size:10px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center';
       const actualTotal=projActualTotal(proj);
@@ -665,7 +672,13 @@ function renderEstimate(){
           const catTd=document.createElement('td');catTd.className=CAT_CLS[te.cat]||'';catTd.style.cssText='padding:4px 8px;font-size:11px;';
           const catSel=document.createElement('select');catSel.className='cat-sel';catSel.style.cssText='font-size:11px;color:#155a3e;font-weight:600;';
           Object.entries(CAT_LABELS).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===te.cat)o.selected=true;catSel.appendChild(o);});
-          catSel.onchange=()=>{te.cat=catSel.value;catTd.className=CAT_CLS[te.cat]||'';rateTd.textContent=te.cat==='M'||te.cat==='S'?'—':'$'+(RATES[te.cat]||0);const newAmt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);amtTd.textContent=fmt(newAmt);saveData();renderSummary();};
+          catSel.onchange=()=>{
+            te.cat=catSel.value;
+            catTd.className=CAT_CLS[te.cat]||'';
+            const newAmt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);
+            amtTd.textContent=fmt(newAmt);
+            saveData();renderSummary();renderEstimate();
+          };
           catTd.appendChild(catSel);tr.appendChild(catTd);
           // Description — editable textarea
           const descTa=document.createElement('textarea');descTa.className='tinp';descTa.value=te.desc||'';descTa.rows=1;descTa.style.cssText='resize:none;overflow:hidden;line-height:1.4;background:#fafffe;font-size:12px;';
@@ -678,13 +691,21 @@ function renderEstimate(){
           const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:120px;text-align:right';
           dateInp.onchange=()=>{te.date=dateInp.value;saveData();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
-          // Hrs — editable input
+          // Hrs or Amount — hide hrs for M/S, show dollar input instead
+          const isMatCat=te.cat==='M'||te.cat==='S';
           const hrsTd=document.createElement('td');hrsTd.style.cssText='padding:0;text-align:right';
-          const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
-          hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();};
-          hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
-          // Rate
-          const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent=te.cat==='M'||te.cat==='S'?'—':'$'+rate;tr.appendChild(rateTd);
+          if(isMatCat){
+            hrsTd.setAttribute('colspan','2');
+            const amtInp=document.createElement('input');amtInp.type='number';amtInp.min=0;amtInp.step=0.01;amtInp.value=te.hrs||'';amtInp.placeholder='$0.00';amtInp.className='tinp r';amtInp.style.cssText='font-size:12px;width:90px;text-align:right';
+            amtInp.onchange=()=>{te.hrs=parseFloat(amtInp.value)||0;amtTd.textContent=fmt(te.hrs);saveData();renderSummary();};
+            hrsTd.appendChild(amtInp);tr.appendChild(hrsTd);
+          } else {
+            const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
+            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();};
+            hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
+            // Rate
+            const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent='$'+rate;tr.appendChild(rateTd);
+          }
           // Amount
           const amtTd=document.createElement('td');amtTd.className='cell-bold';amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);tr.appendChild(amtTd);
           // Unpost button
@@ -694,9 +715,17 @@ function renderEstimate(){
           actTd.appendChild(unpostBtn);tr.appendChild(actTd);
           actBody.appendChild(tr);
         });
-        // Actual subtotal
-        const actSubWrap2=document.createElement('tr');actSubWrap2.className='sub-row';
+        // Actual subtotal — split labor / materials
         const actL=projActualLabor(proj);const actM=projActualMat(proj);
+        if(actL>0&&actM>0){
+          const labSubRow=document.createElement('tr');labSubRow.className='sub-row';
+          labSubRow.innerHTML='<td colspan="6" style="text-align:right;color:#3b4a6b;padding:4px 8px;font-size:11px;font-weight:600">Labor Subtotal</td><td style="text-align:right;color:#3b4a6b;padding:4px 8px;font-weight:600">'+fmt(actL)+'</td><td></td>';
+          actBody.appendChild(labSubRow);
+          const matSubRow=document.createElement('tr');matSubRow.className='sub-row';
+          matSubRow.innerHTML='<td colspan="6" style="text-align:right;color:#059669;padding:4px 8px;font-size:11px;font-weight:600">Materials Subtotal</td><td style="text-align:right;color:#059669;padding:4px 8px;font-weight:600">'+fmt(actM)+'</td><td></td>';
+          actBody.appendChild(matSubRow);
+        }
+        const actSubWrap2=document.createElement('tr');actSubWrap2.className='sub-row';
         actSubWrap2.innerHTML='<td colspan="6" style="text-align:right;color:#155a3e;padding:6px 8px;font-size:11px;font-weight:600">Actual Subtotal</td><td style="text-align:right;color:#1D9E75;padding:6px 8px;font-weight:700">'+fmt(actL+actM)+'</td><td></td>';
         actBody.appendChild(actSubWrap2);actTbl.appendChild(actBody);pb.appendChild(actTbl);
       } else {
@@ -756,6 +785,13 @@ function renderEstimate(){
           openProjs.add(proj.id);saveData();renderEstimate();
         };
         foot.appendChild(ate);
+        const atm=document.createElement('button');atm.className='btn-sm';atm.style.cssText='color:#059669;border-color:#6ee7b7';atm.textContent='+ Add materials';
+        atm.onclick=()=>{
+          const today=new Date().toISOString().split('T')[0];
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:0,desc:'',posted:true});
+          openProjs.add(proj.id);saveData();renderEstimate();
+        };
+        foot.appendChild(atm);
       }
       // Add CO button on all non-billed projects
       if(proj.status!=='billed'){
@@ -867,11 +903,11 @@ function exportClientDoc(){
   const s=settings;
   const fd=n=>n===0?'\u2014':'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const authP=projects.filter(p=>p.include!==false&&p.status==='needs_auth');
-  const coProjs=projects.filter(p=>p.include!==false&&p.status!=='billed'&&(p.scopeTasks||[]).some(t=>t.co));
+  const coProjs=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding'&&(p.scopeTasks||[]).some(t=>t.co));
   const inPP=projects.filter(p=>p.include!==false&&p.status==='in_progress');
   const compP=projects.filter(p=>p.include!==false&&p.status==='complete');
   const billP=projects.filter(p=>p.include!==false&&p.status==='billed');
-  const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
+  const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
   const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
   const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
@@ -1854,6 +1890,88 @@ function loadData(){
   }catch(e){return false;}
 }
 
+function openMaterialsImport(){
+  document.getElementById('matImportOverlay').style.display='block';
+  document.getElementById('matImportText').value='';
+  document.getElementById('matLineItems').innerHTML='';
+  document.getElementById('matParseStatus').textContent='';
+  document.getElementById('matConfirmBar').style.display='none';
+}
+function closeMaterialsImport(){
+  document.getElementById('matImportOverlay').style.display='none';
+}
+function parseMaterialsText(){
+  const raw=document.getElementById('matImportText').value;
+  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  const parsed=[];
+  lines.forEach(line=>{
+    const dateMatch=line.match(/^(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})/);
+    const amountMatch=line.match(/([\d,]+\.\d{2})T?\s*$/);
+    if(!amountMatch)return;
+    const amount=parseFloat(amountMatch[1].replace(/,/g,''));
+    if(!amount||amount<=0)return;
+    // Convert MM/DD/YYYY to YYYY-MM-DD
+    let date='';
+    if(dateMatch){
+      const parts=dateMatch[1].split(/[\/\-]/);
+      if(parts.length===3){
+        const yr=parts[2].length===2?'20'+parts[2]:parts[2];
+        date=yr+'-'+parts[0].padStart(2,'0')+'-'+parts[1].padStart(2,'0');
+      }
+    }
+    let desc=line;
+    if(dateMatch)desc=desc.replace(dateMatch[0],'').trim();
+    desc=desc.replace(amountMatch[0],'').trim();
+    if(desc.length<2)return;
+    parsed.push({date,desc,amount});
+  });
+  document.getElementById('matParseStatus').textContent=parsed.length+' line'+(parsed.length!==1?'s':'')+' parsed';
+  renderMatLineItems(parsed);
+}
+let _matParsed=[];
+function renderMatLineItems(items){
+  _matParsed=items;
+  const container=document.getElementById('matLineItems');
+  if(items.length===0){container.innerHTML='<div style="color:#aaa;font-size:12px;font-style:italic">No line items found. Check your pasted text.</div>';return;}
+  const sortedProjects=[...projects].sort((a,b)=>a.name.localeCompare(b.name));
+  const projOptions=sortedProjects.map(p=>'<option value="'+p.name+'">'+p.name+'</option>').join('');
+  const skipOpt='<option value="__skip__">— Skip this line —</option>';
+  let html='<table style="width:100%;border-collapse:collapse;font-size:12px">'
+    +'<thead><tr style="background:#f5f5f3">'
+    +'<th style="padding:7px 10px;text-align:left;border-bottom:1px solid #e5e5e0;font-weight:600;color:#888;font-size:10px;text-transform:uppercase">Date</th>'
+    +'<th style="padding:7px 10px;text-align:left;border-bottom:1px solid #e5e5e0;font-weight:600;color:#888;font-size:10px;text-transform:uppercase">Description</th>'
+    +'<th style="padding:7px 10px;text-align:right;border-bottom:1px solid #e5e5e0;font-weight:600;color:#888;font-size:10px;text-transform:uppercase">Amount</th>'
+    +'<th style="padding:7px 10px;text-align:left;border-bottom:1px solid #e5e5e0;font-weight:600;color:#888;font-size:10px;text-transform:uppercase;min-width:200px">Assign to Project</th>'
+    +'</tr></thead><tbody>';
+  items.forEach((item,i)=>{
+    html+='<tr style="border-bottom:1px solid #f0f0ed">'
+      +'<td style="padding:7px 10px;color:#888;white-space:nowrap">'+item.date+'</td>'
+      +'<td style="padding:7px 10px">'+item.desc+'</td>'
+      +'<td style="padding:7px 10px;text-align:right;font-weight:600">$'+item.amount.toFixed(2)+'</td>'
+      +'<td style="padding:4px 8px"><select id="matProj_'+i+'" style="width:100%;font-size:11px;padding:5px 7px;border:1px solid #ddd;border-radius:6px;background:#fff;font-family:inherit">'+skipOpt+projOptions+'</select></td>'
+      +'</tr>';
+  });
+  html+='</tbody></table>';
+  container.innerHTML=html;
+  const bar=document.getElementById('matConfirmBar');
+  bar.style.display='flex';
+  document.getElementById('matConfirmCount').textContent=items.length+' items ready to assign';
+}
+function confirmMaterialsImport(){
+  let added=0,skipped=0;
+  const today=new Date().toISOString().split('T')[0];
+  _matParsed.forEach((item,i)=>{
+    const sel=document.getElementById('matProj_'+i);
+    if(!sel||sel.value==='__skip__'){skipped++;return;}
+    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:item.amount,desc:item.desc,posted:true});
+    added++;
+  });
+  saveData();
+  if(unlocked){renderEstimate();renderTimeEntry();}
+  closeMaterialsImport();
+  alert('✅ Added '+added+' material entr'+(added!==1?'ies':'y')+(skipped?' ('+skipped+' skipped)':'')+'.');
+}
+
 document.getElementById('updateDate').textContent=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
 document.getElementById('teDate').value=new Date().toISOString().split('T')[0];
 document.getElementById('newProjName').addEventListener('keydown',e=>{if(e.key==='Enter')addProject();});
@@ -1863,5 +1981,27 @@ if(!loadData()){
 populateTEDropdowns();
 try{syncSettingsUI();}catch(e){}
 </script>
+<!-- MATERIALS IMPORT MODAL -->
+<div id="matImportOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;overflow-y:auto">
+  <div style="background:#fff;border-radius:14px;max-width:820px;margin:40px auto;padding:28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-size:16px;font-weight:700">Import Materials</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Paste invoice text below — one item per line with date, description, and amount</div>
+      </div>
+      <button onclick="closeMaterialsImport()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1">&times;</button>
+    </div>
+    <textarea id="matImportText" placeholder="Paste invoice text here...&#10;&#10;Example:&#10;02/24/2026  MICRON CSC AF BLK GL (x2)  666.94T&#10;02/25/2026  Color agents, Interprotect primer  77.32T" style="width:100%;height:160px;font-size:12px;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:monospace;resize:vertical"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="parseMaterialsText()" class="btn btn-primary" style="font-size:12px">Parse Lines</button>
+      <span style="font-size:12px;color:#888;align-self:center" id="matParseStatus"></span>
+    </div>
+    <div id="matLineItems" style="margin-top:16px"></div>
+    <div id="matConfirmBar" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid #e5e5e0;display:none;gap:10px;align-items:center">
+      <button onclick="confirmMaterialsImport()" class="btn btn-green" style="font-size:13px;font-weight:700">✓ Add All to Engine</button>
+      <span style="font-size:12px;color:#888" id="matConfirmCount"></span>
+    </div>
+  </div>
+</div>
 </body>
 </html>

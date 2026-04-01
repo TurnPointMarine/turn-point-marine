@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-01T12:01:49.768Z",
+    "exportedAt": "2026-04-01T12:04:45.579Z",
     "engineVersion": 3
   },
   "projects": [
@@ -701,7 +701,7 @@
     {
       "id": 21,
       "name": "Davit (Early Summer Project)",
-      "status": "in_progress",
+      "status": "holding",
       "notes": "Clean up corrosion and paint",
       "include": false,
       "isTM": false,
@@ -927,37 +927,6 @@
       "cos": []
     },
     {
-      "id": 41,
-      "name": "Dry Storage Monthly",
-      "status": "in_progress",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 157,
-          "cat": "M",
-          "desc": "February",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0,
-          "co": true
-        },
-        {
-          "id": 158,
-          "cat": "M",
-          "desc": "March",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0,
-          "co": true
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
       "id": 42,
       "name": "Securing Anchors with the Windlass Capstan",
       "status": "holding",
@@ -968,6 +937,27 @@
       "scopeTasks": [
         {
           "id": 159,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 43,
+      "name": "add April may June dry storage",
+      "status": "holding",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 160,
           "cat": "T",
           "desc": "",
           "hrs": 0,
@@ -990,8 +980,8 @@
       "posted": false
     }
   ],
-  "nextProjId": 43,
-  "nextTaskId": 160,
+  "nextProjId": 44,
+  "nextTaskId": 161,
   "nextCOId": 100,
   "nextTEId": 1001,
   "settings": {
