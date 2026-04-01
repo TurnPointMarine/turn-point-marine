@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-04-01T10:02:58.204Z",
+    "exportedAt": "2026-04-01T10:54:51.895Z",
     "engineVersion": 3
   },
   "projects": [
@@ -348,11 +348,40 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 23,
+      "name": "Replace Start Battery in Tender",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "The battery was super low and the battery should be replaced. With a new battery installed the charger functionality should be confirmed. ",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 113,
+          "cat": "T",
+          "desc": "We found the start battery for the tender at 10v. The battery switch was off and the charger hooked up. I am unsure if it was an outlet not having power or if the plug had been tugged and not providing power to the charger. I wiggled the plug on the outlet when we found the battery dead and then checked the charger light was on. I should have checked the light was on before wiggling the plug in the outlet... We brought a Victron battery charger from the shop and charged the battery to get it sufficient juice to run the outboard over to the crane.",
+          "hrs": 0.75,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 114,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
     }
   ],
   "timeEntries": [],
-  "nextProjId": 23,
-  "nextTaskId": 113,
+  "nextProjId": 24,
+  "nextTaskId": 115,
   "nextCOId": 100,
   "nextTEId": 1000,
   "settings": {
