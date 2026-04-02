@@ -1,0 +1,71 @@
+{
+  "_meta": {
+    "vessel": "Whistler",
+    "client": "Greg Parker & Janet Snedecor",
+    "exportedAt": "2026-04-02T16:59:07.049Z",
+    "engineVersion": 3
+  },
+  "projects": [
+    {
+      "id": 1,
+      "name": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 100,
+          "cat": "T",
+          "desc": "Pull moisture from saturated interior paneling aft of starboard salon windows with a special dehumidifier and an oil heater to help the air hold more moisture. I will run both and see how quickly we can pull the moisture from the paneling. \n\nOnce interior paneling is dry we can attempt to leak test the water drainage area under the fiberglass bench seat. \n\n\nLeak testing will direct us to:\n\n1. Pull up the L bench and inspect\n2. Remove the davit structural support plate mounted to the flybridge deck just aft of the L bench.\n\n",
+          "hrs": 1.5,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 101,
+          "cat": "T",
+          "desc": "\n  1. Pull the fiberglass L bench up from the teak flybridge deck and assess the state of the decking and the fastener holes used for securing the bench to the deck. Clean the decking of sealant/debris and assess fastener holes. Open up fastener holes through the teak deck with a 3/8\" forstner bit & inspect the fiberglass deck for signs of either improperly bedded fasteners or simply failed fastener bedding/sealant. Then and report findings with suggested next steps toward resolution. \n\n3 hours should be time enough to get this done. ",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 102,
+          "cat": "T",
+          "desc": "  2. If leak testing indicates that the thru bolted plate for the davit is the cause we can pull the plate to inspect. The tricky thing with this option will be to secure/unweight the davit arm in order to remove the structural support plate for inspection. Then remove the plate, inspect and report back with suggested next steps toward resolution. \n\n3 hours should be time enough to get this done. ",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 103,
+          "cat": "T",
+          "desc": "Option 1 or Option 2.",
+          "hrs": 3,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    }
+  ],
+  "timeEntries": [],
+  "nextProjId": 2,
+  "nextTaskId": 104,
+  "nextCOId": 100,
+  "nextTEId": 1000,
+  "settings": {
+    "company": "Turn Point Marine",
+    "manager": "Abram Anderson",
+    "email": "abram@turnpointmarine.com",
+    "clientEmail": "",
+    "clientEmail2": "",
+    "phone": "",
+    "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
+    "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
+    "showCompleteDetail": true
+  }
+}
