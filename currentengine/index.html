@@ -669,8 +669,17 @@ function renderEstimate(){
         pb.appendChild(scopeHdr);
         pb.appendChild(buildTaskTable(proj.scopeTasks||[],true));
         const estSubWrap=document.createElement('div');
-        estSubWrap.style.cssText='display:grid;grid-template-columns:1fr repeat(3,110px);padding:6px 16px 6px 0;background:#eef1ff;border-bottom:2px solid #c5cef5;font-size:11px;font-weight:600;color:#3b4a6b;text-align:right';
-        estSubWrap.innerHTML='<div style="text-align:right;padding-right:8px">Estimated Subtotal</div><div>'+fmt(projScopeLabor(proj))+'</div><div>'+fmt(projScopeMat(proj)+projScopeSub(proj))+'</div><div style="font-size:12px;font-weight:700">'+fmt(scopeTotal)+'</div>';
+        // Grid matches task table: drag(20) cat(110) desc(1fr) hrs(50) rate(55) labor(80) mat(70) sub(75) total(80) del(28)
+        estSubWrap.style.cssText='display:grid;grid-template-columns:20px 110px 1fr 50px 55px 80px 70px 75px 80px 28px;padding:6px 0;background:#eef1ff;border-bottom:2px solid #c5cef5;font-size:11px;font-weight:600;color:#3b4a6b;text-align:right';
+        estSubWrap.innerHTML=
+          '<div></div><div></div>'+
+          '<div style="text-align:right;padding-right:8px;color:#3b4a6b">Estimated Subtotal</div>'+
+          '<div></div><div></div>'+
+          '<div style="padding-right:8px">'+fmt(projScopeLabor(proj))+'</div>'+
+          '<div style="padding-right:8px">'+fmt(projScopeMat(proj))+'</div>'+
+          '<div style="padding-right:8px">'+fmt(projScopeSub(proj))+'</div>'+
+          '<div style="padding-right:8px;font-size:12px;font-weight:700">'+fmt(scopeTotal)+'</div>'+
+          '<div></div>';
         pb.appendChild(estSubWrap);
       }
 
