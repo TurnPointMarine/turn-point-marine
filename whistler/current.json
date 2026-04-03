@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Whistler",
     "client": "Greg Parker & Janet Snedecor",
-    "exportedAt": "2026-04-02T17:28:41.042Z",
+    "exportedAt": "2026-04-03T13:58:21.329Z",
     "engineVersion": 3
   },
   "projects": [
@@ -66,6 +66,7 @@
     "phone": "",
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
-    "showCompleteDetail": true
+    "showCompleteDetail": true,
+    "taxExempt": true
   }
 }
