@@ -1141,6 +1141,15 @@ function exportClientDoc(){
     </div>
   </div>`;
 
+  // ── HOLDING PATTERN (selected projects) ─────────────────────────────────
+  const futureP=projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true);
+  if(futureP.length>0){
+    const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
+    html+=sectionHdr('#7c6f9f','PROJECTS IN HOLDING PATTERN',futureP.length,fd(futureTotal),'Upcoming projects — not yet authorized');
+    html+=`<div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
+    futureP.forEach(proj=>{html+=projBlock(proj,'#7c6f9f',false,false);});
+  }
+
   // ── NEEDS AUTH ─────────────────────────────────────────────────────────
   if(authP.length>0||coProjs.length>0){
     const coTotal=coProjs.reduce((a,p)=>(p.scopeTasks||[]).filter(t=>t.co).reduce((b,t)=>b+taskTotal(t),0)+a,0);
@@ -1264,15 +1273,6 @@ function exportClientDoc(){
   }
 
 
-  // ── PLANNED FUTURE WORK ─────────────────────────────────────────────────
-  const futureP=projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true);
-  if(futureP.length>0){
-    const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=sectionHdr('#7c6f9f','PLANNED FUTURE WORK',futureP.length,fd(futureTotal),'Upcoming projects — not yet authorized');
-    html+=`<div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
-    futureP.forEach(proj=>{html+=projBlock(proj,'#7c6f9f',false,false);});
-  }
-
   // Footer
   html+=`<div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
     <div>${s.company} &nbsp;|&nbsp; ${s.email}</div>
@@ -1309,10 +1309,18 @@ function exportClientDoc(){
     if(!email||!email.includes('@')){document.getElementById('sigStatus').textContent='Please enter a valid email address.';return;}
     const checked=[...document.querySelectorAll('input[name="proj_auth"]:checked')].map(el=>el.dataset.name);
     const coCk=[...document.querySelectorAll('input[name="co_auth"]:checked')].map(el=>({proj:el.dataset.proj,co:el.dataset.co}));
-    if(checked.length===0){document.getElementById('sigStatus').textContent='Please check at least one project to authorize.';return;}
+    if(checked.length===0&&coCk.length===0){document.getElementById('sigStatus').textContent='Please check at least one project or change of scope to authorize.';return;}
     document.getElementById('sigStatus').textContent='';
     const sigImg=canvas?canvas.toDataURL('image/png'):'';
     const date=document.getElementById('sig_date').value;
+    // Combine projects and COs into one readable list for email
+    const coLabels=coCk.map(c=>c.proj+' (Change of Scope)');
+    const allAuthorized=[...checked,...coLabels];
+    // Bake checkbox states and signature into DOM before snapshot
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb=>{cb.checked?cb.setAttribute('checked',''):cb.removeAttribute('checked');});
+    // Bake text input values into DOM attributes so they appear in snapshot
+    document.querySelectorAll('input[type="text"],input[type="email"]').forEach(inp=>{inp.setAttribute('value',inp.value);});
+    if(canvas){const img=document.createElement('img');img.src=sigImg;img.style.cssText='width:100%;height:140px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:block';canvas.parentNode.replaceChild(img,canvas);}
     // Snapshot the document at moment of signing, encode as base64
     const snapshot=document.documentElement.outerHTML;
     const snapshotB64=btoa(unescape(encodeURIComponent(snapshot)));
@@ -1322,7 +1330,7 @@ function exportClientDoc(){
       date,
       signedBy:name,
       signerEmail:email,
-      authorizedProjects:checked,
+      authorizedProjects:allAuthorized,
       authorizedCOs:coCk,
       signature:sigImg,
       submittedAt:new Date().toISOString(),

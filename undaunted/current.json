@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-03T18:58:24.342Z",
+    "exportedAt": "2026-04-03T20:35:49.266Z",
     "engineVersion": 3
   },
   "projects": [
@@ -677,7 +677,23 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [
+        {
+          "id": 100,
+          "title": "Travel Time",
+          "tasks": [
+            {
+              "id": 166,
+              "cat": "S",
+              "desc": "I spoke with the varnish pro regarding scheduling 4/2 and it looks like it makes sense to do all the varnish work while Undaunted is on the dock in Blaine. That adds travel time to Blaine in the amount of 1 hour per 7 hours of work to be done. 45 hours is approx 7 days of work. 7 days of work is 7 hours of travel time to and from Blaine. ",
+              "hrs": 0,
+              "mat": 0,
+              "sub": 700,
+              "co": true
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 35,
@@ -1034,6 +1050,28 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 45,
+      "name": "Flybridge Winter Canvas Snap Missing",
+      "status": "holding",
+      "include": true,
+      "notes": "Bring canvas to Oyster Creek to see about repair of the canvas to mount a snap on. Presently there is a ragged hole where the female snap was attached. ",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 167,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "showInDoc": true
     }
   ],
   "timeEntries": [
@@ -1056,9 +1094,9 @@
       "posted": false
     }
   ],
-  "nextProjId": 45,
-  "nextTaskId": 166,
-  "nextCOId": 100,
+  "nextProjId": 46,
+  "nextTaskId": 168,
+  "nextCOId": 101,
   "nextTEId": 1002,
   "settings": {
     "company": "Turn Point Marine",
