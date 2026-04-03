@@ -517,6 +517,18 @@ function renderEstimate(){
       pw.style.cssText='border:1px solid '+(isProjOpen?'#b0bec5':'#e5e5e0')+';border-radius:8px;margin:6px 0;overflow:hidden;transition:border-color 0.15s';
       const ph=document.createElement('div');ph.className='proj-hdr';
       const inclChk=document.createElement('input');inclChk.type='checkbox';inclChk.className='include-chk';inclChk.checked=proj.include!==false;inclChk.title='Include in export';inclChk.onclick=e=>e.stopPropagation();inclChk.onmousedown=e=>e.stopPropagation();inclChk.onchange=()=>{proj.include=inclChk.checked;pw.className='project'+(inclChk.checked?'':' excluded');renderSummary();};
+      // Show in client doc checkbox — only for holding pattern projects
+      let showDocChk=null;
+      if(proj.status==='holding'){
+        showDocChk=document.createElement('input');showDocChk.type='checkbox';showDocChk.checked=proj.showInDoc===true;
+        showDocChk.title='Show in client doc (Planned Future Work)';
+        showDocChk.style.cssText='margin-left:2px;accent-color:#7c6f9f;cursor:pointer';
+        showDocChk.onclick=e=>e.stopPropagation();showDocChk.onmousedown=e=>e.stopPropagation();
+        showDocChk.onchange=()=>{proj.showInDoc=showDocChk.checked;saveData();};
+        const showDocLbl=document.createElement('span');showDocLbl.textContent='Doc';showDocLbl.title='Show in client doc';
+        showDocLbl.style.cssText='font-size:9px;color:#7c6f9f;font-weight:600;margin-left:2px;cursor:pointer';
+        showDocLbl.onclick=e=>{e.stopPropagation();showDocChk.click();};
+      }
       const num=document.createElement('span');num.className='proj-num';num.textContent=String(pi+1).padStart(2,'0');
       const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.onchange=()=>{
         const oldName=proj.name;
@@ -562,7 +574,14 @@ function renderEstimate(){
         if(fromSec!==sec.key){moved.status=sec.key;}
         saveData();renderEstimate();
       };
-      ph.appendChild(dh);ph.appendChild(inclChk);ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);ph.appendChild(badge);ph.appendChild(chev);
+      ph.appendChild(dh);ph.appendChild(inclChk);
+      if(showDocChk){
+        const showDocLbl2=document.createElement('span');showDocLbl2.textContent='Doc';showDocLbl2.title='Show in client doc (Planned Future Work)';
+        showDocLbl2.style.cssText='font-size:9px;color:#7c6f9f;font-weight:600;margin-left:2px;cursor:pointer';
+        showDocLbl2.onclick=e=>{e.stopPropagation();showDocChk.click();};
+        ph.appendChild(showDocChk);ph.appendChild(showDocLbl2);
+      }
+      ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);ph.appendChild(badge);ph.appendChild(chev);
       ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);renderEstimate();});
       // Drop target for TE drag-reassign
       ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
@@ -1244,6 +1263,16 @@ function exportClientDoc(){
     </div>`;
   }
 
+
+  // ── PLANNED FUTURE WORK ─────────────────────────────────────────────────
+  const futureP=projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true);
+  if(futureP.length>0){
+    const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
+    html+=sectionHdr('#7c6f9f','PLANNED FUTURE WORK',futureP.length,fd(futureTotal),'Upcoming projects — not yet authorized');
+    html+=`<div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
+    futureP.forEach(proj=>{html+=projBlock(proj,'#7c6f9f',false,false);});
+  }
+
   // Footer
   html+=`<div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
     <div>${s.company} &nbsp;|&nbsp; ${s.email}</div>
@@ -1723,6 +1752,7 @@ function migrateData(d){
       ...p,
       status:statusMap[p.status]||p.status,
       include:p.include!==undefined?p.include:true,
+      showInDoc:p.showInDoc||false,
       cos:p.cos||[]
     }));
   }

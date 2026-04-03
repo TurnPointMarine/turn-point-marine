@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-01T12:04:45.579Z",
+    "exportedAt": "2026-04-03T16:44:57.794Z",
     "engineVersion": 3
   },
   "projects": [
@@ -703,7 +703,7 @@
       "name": "Davit (Early Summer Project)",
       "status": "holding",
       "notes": "Clean up corrosion and paint",
-      "include": false,
+      "include": true,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -717,7 +717,8 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 36,
@@ -881,7 +882,7 @@
       "name": "Mast Base Mount Clean Corrosion & Paint",
       "status": "holding",
       "notes": "",
-      "include": false,
+      "include": true,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
@@ -895,13 +896,14 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 40,
       "name": "Outboard Raw Water Manifold Repair",
       "status": "holding",
-      "include": false,
+      "include": true,
       "notes": "I recommend leaving this repair for late Summer. It isn't going to affect functionality of the tender and should be done next time the tender is off the boat. This would prevent unnecessary costs of transporting the tender from and to Undaunted",
       "estimateTotal": null,
       "isTM": false,
@@ -917,20 +919,21 @@
         {
           "id": 142,
           "cat": "D",
-          "desc": "Transport from Undaunted to Honda Dealer on trailer. Transport back to Undaunted on trailer. ",
-          "hrs": 0,
+          "desc": "When Undaunted is in Bellingham. Transport from Undaunted to Honda Dealer on trailer. Transport back to Undaunted on trailer. ",
+          "hrs": 2,
           "mat": 0,
           "sub": 0
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 42,
       "name": "Securing Anchors with the Windlass Capstan",
       "status": "holding",
-      "include": false,
+      "include": true,
       "notes": "Need to install fender lines on carabiners install on anchors and send Wes photos",
       "estimateTotal": null,
       "isTM": false,
@@ -938,19 +941,21 @@
         {
           "id": 159,
           "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
+          "desc": "Install and submit photos for approval",
+          "hrs": 0.5,
+          "mat": 100,
+          "sub": 0,
+          "co": true
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 43,
-      "name": "add April may June dry storage",
-      "status": "holding",
+      "name": "Dry Storage",
+      "status": "needs_auth",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -958,11 +963,70 @@
       "scopeTasks": [
         {
           "id": 160,
-          "cat": "T",
-          "desc": "",
+          "cat": "M",
+          "desc": "March",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0,
+          "co": true
+        },
+        {
+          "id": 161,
+          "cat": "M",
+          "desc": "April",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0,
+          "co": true
+        },
+        {
+          "id": 162,
+          "cat": "M",
+          "desc": "May",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0,
+          "co": true
+        },
+        {
+          "id": 163,
+          "cat": "M",
+          "desc": "June",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0,
+          "co": true
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 44,
+      "name": "Fire Suppression System Certifications",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Service and certify handheld fire extinguishers.\nTest Fireboy shut down and bypass functionality & Fireboy certification.",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 164,
+          "cat": "S",
+          "desc": "Basic certifications for Undaunted's systems",
           "hrs": 0,
           "mat": 0,
-          "sub": 0
+          "sub": 380,
+          "co": true
+        },
+        {
+          "id": 165,
+          "cat": "T",
+          "desc": "Removing all handheld fire extinguishers and deliver to the truck. \nWalk tech through Fireboy testing. \nReturn all certified fire extinguishers to their respective locations.",
+          "hrs": 1.5,
+          "mat": 0,
+          "sub": 0,
+          "co": true
         }
       ],
       "tasks": [],
@@ -978,12 +1042,21 @@
       "hrs": 2,
       "desc": "asfdasef",
       "posted": false
+    },
+    {
+      "id": 1001,
+      "date": "2026-04-03",
+      "proj": "Dry Storage",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "",
+      "posted": false
     }
   ],
-  "nextProjId": 44,
-  "nextTaskId": 161,
+  "nextProjId": 45,
+  "nextTaskId": 166,
   "nextCOId": 100,
-  "nextTEId": 1001,
+  "nextTEId": 1002,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
@@ -993,6 +1066,7 @@
     "phone": "",
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
-    "showCompleteDetail": true
+    "showCompleteDetail": true,
+    "taxExempt": true
   }
 }
