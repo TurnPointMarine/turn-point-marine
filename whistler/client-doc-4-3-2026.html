@@ -14,7 +14,7 @@
   </head><body><div class="wrap"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #1a1a1a">
     <div>
       <div style="font-size:8pt;color:#999;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">Turn Point Marine</div>
-      <div style="font-size:20pt;font-weight:700">Janet Snedecor & Greg Parker</div>
+      <div style="font-size:20pt;font-weight:700">Greg Parker & Janet Snedecor</div>
       <div style="font-size:10pt;color:#555;margin-top:2px"><strong>Vessel:</strong> Whistler</div>
     </div>
     <div style="text-align:right">
@@ -75,13 +75,18 @@
     </div><div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
       <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
       <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name</label>
-          <input id="sig_name" type="text" value="Janet Snedecor & Greg Parker" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name <span style="color:#c0392b">*</span></label>
+          <input id="sig_name" type="text" value="Greg Parker & Janet Snedecor" placeholder="Full name required" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
         </div>
         <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
           <input id="sig_date" type="text" value="April 3, 2026" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
         </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Email Address <span style="color:#c0392b">*</span></label>
+        <input id="sig_email" type="email" placeholder="your@email.com" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        <div style="font-size:8pt;color:#888;margin-top:3px">A confirmation will be sent to this address.</div>
       </div>
       <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
       <div class="sig-wrap"><canvas id="sigCanvas"></canvas></div>
@@ -91,7 +96,7 @@
       </div>
       <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
       <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
-        ✓ Authorization submitted. Turn Point Marine has been notified.
+        ✓ Authorization submitted. Turn Point Marine has been notified. A confirmation has been sent to your email.
       </div>
     </div><div style="margin-top:28px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
     <div style="background:#f5f5f3;border-bottom:2px solid #e5e5e0;padding:12px 18px;font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#555">Estimate Summary &mdash; Work in Progress &amp; Complete</div>
@@ -133,23 +138,36 @@
 
   function submitAuth(){
     if(!hasSig){document.getElementById('sigStatus').textContent='Please sign before submitting.';return;}
+    const name=document.getElementById('sig_name').value.trim();
+    if(!name){document.getElementById('sigStatus').textContent='Please enter your full name.';return;}
+    const email=document.getElementById('sig_email').value.trim();
+    if(!email||!email.includes('@')){document.getElementById('sigStatus').textContent='Please enter a valid email address.';return;}
     const checked=[...document.querySelectorAll('input[name="proj_auth"]:checked')].map(el=>el.dataset.name);
     const coCk=[...document.querySelectorAll('input[name="co_auth"]:checked')].map(el=>({proj:el.dataset.proj,co:el.dataset.co}));
     if(checked.length===0){document.getElementById('sigStatus').textContent='Please check at least one project to authorize.';return;}
     document.getElementById('sigStatus').textContent='';
     const sigImg=canvas?canvas.toDataURL('image/png'):'';
-    const name=document.getElementById('sig_name').value;
     const date=document.getElementById('sig_date').value;
-    const payload={vessel:'Whistler',client:'Janet Snedecor & Greg Parker',date,signedBy:name,authorizedProjects:checked,authorizedCOs:coCk,signature:sigImg,submittedAt:new Date().toISOString()};
+    // Snapshot the document at moment of signing, encode as base64
+    const snapshot=document.documentElement.outerHTML;
+    const snapshotB64=btoa(unescape(encodeURIComponent(snapshot)));
+    const payload={
+      vessel:'Whistler',
+      client:'Greg Parker & Janet Snedecor',
+      date,
+      signedBy:name,
+      signerEmail:email,
+      authorizedProjects:checked,
+      authorizedCOs:coCk,
+      signature:sigImg,
+      submittedAt:new Date().toISOString(),
+      snapshotB64:snapshotB64
+    };
     const btn=document.querySelector('.submit-btn');
     btn.disabled=true;btn.textContent='Submitting...';
-    // POST to Power Automate — replace URL below with your actual flow endpoint
     const PA_URL='https://default141dc0adf2b54539836e80cbaa77fc.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/88d1bc3769b74644946a09a14a5bc2f5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=B-LxTafu-_ykEIHnNc6kqA29cG_VM0bQeHLiDfkUZ3M';
     fetch(PA_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .then(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';})
-      .catch(()=>{
-        // If no PA URL yet, just show success locally
-        document.getElementById('submitMsg').style.display='block';btn.style.display='none';
-      });
+      .catch(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';});
   }
   </script></div></body></html>
