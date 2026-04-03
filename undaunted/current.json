@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-03T16:44:57.794Z",
+    "exportedAt": "2026-04-03T18:58:24.342Z",
     "engineVersion": 3
   },
   "projects": [
@@ -451,19 +451,20 @@
     {
       "id": 14,
       "name": "B-Watermaker",
-      "status": "in_progress",
+      "status": "holding",
       "notes": "Pull brushes from 24v motor, replace Rotoflow meter, replace transducers for feed water pressure, install transducers on prefilter housings, order replacement check valves and seal kit. $2,750 in labor and parts. Estimate TBD.",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 15,
       "name": "Freshwater Pump Noise Dampen",
-      "status": "in_progress",
+      "status": "holding",
       "notes": "Can build insulated box and install the pumps in it and run the plumbing into it.",
       "include": true,
       "isTM": false,
@@ -487,7 +488,8 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 16,
@@ -859,8 +861,8 @@
     {
       "id": 7,
       "name": "Trac Stabilizers (Need to Discuss this Estimate)",
-      "status": "needs_auth",
-      "notes": "*This issue got better with exercise last Summer.\nBefore I take this on I would want to discuss a plan. There are some costs of calibration on install that I would want done by S3. I would need to get back to you on a full plan here. \nStarboard Hydraulic Ram, Rebuild $3,500 to replace and $1,000 to rebuild the existing ram\n\n",
+      "status": "holding",
+      "notes": "*This issue got better with exercise last Summer.\nBefore I take this on I would want to discuss a plan. There are some costs of calibration on install that I would want done by S3. I would need to get back to you on a full plan here. \nStarboard Hydraulic Ram, Rebuild $3,500 to replace and $1,000 to rebuild the existing ram.\n\n",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -875,13 +877,14 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 25,
       "name": "Mast Base Mount Clean Corrosion & Paint",
       "status": "holding",
-      "notes": "",
+      "notes": "Mast Base Mount Clean Corrosion & Paint",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -932,7 +935,7 @@
     {
       "id": 42,
       "name": "Securing Anchors with the Windlass Capstan",
-      "status": "holding",
+      "status": "in_progress",
       "include": true,
       "notes": "Need to install fender lines on carabiners install on anchors and send Wes photos",
       "estimateTotal": null,
