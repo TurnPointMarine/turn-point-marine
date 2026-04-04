@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-03T20:35:49.266Z",
+    "exportedAt": "2026-04-04T00:00:59.179Z",
     "engineVersion": 3
   },
   "projects": [
@@ -376,7 +376,7 @@
           "hrs": 0,
           "mat": 0,
           "sub": 975,
-          "co": true
+          "co": false
         },
         {
           "id": 151,
@@ -515,7 +515,7 @@
           "hrs": 2,
           "mat": 50,
           "sub": 0,
-          "co": true
+          "co": false
         },
         {
           "id": 155,
@@ -964,7 +964,7 @@
           "hrs": 0.5,
           "mat": 100,
           "sub": 0,
-          "co": true
+          "co": false
         }
       ],
       "tasks": [],
@@ -974,7 +974,7 @@
     {
       "id": 43,
       "name": "Dry Storage",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -987,7 +987,7 @@
           "hrs": 0,
           "mat": 250,
           "sub": 0,
-          "co": true
+          "co": false
         },
         {
           "id": 161,
@@ -996,7 +996,7 @@
           "hrs": 0,
           "mat": 250,
           "sub": 0,
-          "co": true
+          "co": false
         },
         {
           "id": 162,
@@ -1005,7 +1005,7 @@
           "hrs": 0,
           "mat": 250,
           "sub": 0,
-          "co": true
+          "co": false
         },
         {
           "id": 163,
@@ -1014,7 +1014,7 @@
           "hrs": 0,
           "mat": 250,
           "sub": 0,
-          "co": true
+          "co": false
         }
       ],
       "tasks": [],
@@ -1023,7 +1023,7 @@
     {
       "id": 44,
       "name": "Fire Suppression System Certifications",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Service and certify handheld fire extinguishers.\nTest Fireboy shut down and bypass functionality & Fireboy certification.",
       "estimateTotal": null,
@@ -1036,7 +1036,7 @@
           "hrs": 0,
           "mat": 0,
           "sub": 380,
-          "co": true
+          "co": false
         },
         {
           "id": 165,
@@ -1045,7 +1045,7 @@
           "hrs": 1.5,
           "mat": 0,
           "sub": 0,
-          "co": true
+          "co": false
         }
       ],
       "tasks": [],
