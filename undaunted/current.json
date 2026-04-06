@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-04T00:00:59.179Z",
+    "exportedAt": "2026-04-06T14:19:25.094Z",
     "engineVersion": 3
   },
   "projects": [
@@ -52,7 +52,7 @@
       "id": 3,
       "name": "Davit",
       "status": "in_progress",
-      "notes": "Davit: replace rotational control valves & worn hydraulic lines, hydraulic fluid flush, add filter to hydraulic plumbing Clean up corrosion and paint",
+      "notes": "Davit: replace rotational control valves & worn hydraulic lines, hydraulic fluid flush, add filter to hydraulic plumbing.",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -520,7 +520,7 @@
         {
           "id": 155,
           "cat": "V",
-          "desc": "",
+          "desc": "Travel",
           "hrs": 1,
           "mat": 0,
           "sub": 0
@@ -829,11 +829,20 @@
       "id": 12,
       "name": "Flybridge Captains Chairs Replace",
       "status": "needs_auth",
-      "notes": "Cost? CYA... Stidd, Pompanette, Bentley, Springfield…",
+      "notes": "Springfield\n  a. 1040002: $431.83\n  b. 1042035-W: $1,379\nI should hear back from distributor about lead time on option B today/Monday. ",
       "include": true,
-      "isTM": false,
+      "isTM": true,
       "estimateTotal": null,
-      "scopeTasks": [],
+      "scopeTasks": [
+        {
+          "id": 174,
+          "cat": "M",
+          "desc": "Helm seat adjustable slider assembly",
+          "hrs": 0,
+          "mat": 160.69,
+          "sub": 0
+        }
+      ],
       "tasks": [],
       "cos": []
     },
@@ -1072,6 +1081,93 @@
       "tasks": [],
       "cos": [],
       "showInDoc": true
+    },
+    {
+      "id": 46,
+      "name": "Winter Wash February",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 168,
+          "cat": "D",
+          "desc": "Winter Wash",
+          "hrs": 3.5,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 171,
+          "cat": "V",
+          "desc": "Travel",
+          "hrs": 0.5,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 47,
+      "name": "Winter Wash March",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 169,
+          "cat": "D",
+          "desc": "Winter Wash",
+          "hrs": 3.5,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 170,
+          "cat": "V",
+          "desc": "Travel",
+          "hrs": 0.5,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 48,
+      "name": "House Battery Bank Cerbo Troubleshoot/Replace",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 172,
+          "cat": "M",
+          "desc": "",
+          "hrs": 0,
+          "mat": 273,
+          "sub": 0
+        },
+        {
+          "id": 173,
+          "cat": "T",
+          "desc": "Two hours to troubleshoot, replace and program/network new unit",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
     }
   ],
   "timeEntries": [
@@ -1092,12 +1188,21 @@
       "hrs": 0,
       "desc": "",
       "posted": false
+    },
+    {
+      "id": 1002,
+      "date": "2026-04-06",
+      "proj": "Generators Start Batteries Upgrade to Victron Charger",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "",
+      "posted": false
     }
   ],
-  "nextProjId": 46,
-  "nextTaskId": 168,
+  "nextProjId": 49,
+  "nextTaskId": 175,
   "nextCOId": 101,
-  "nextTEId": 1002,
+  "nextTEId": 1003,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
