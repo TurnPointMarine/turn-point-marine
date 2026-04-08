@@ -7,7 +7,32 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;color:#1a1a1a;background:#f5f5f3}
-.topnav{background:#1a1a1a;color:#fff;padding:0 12px;display:flex;align-items:center;justify-content:space-between;height:52px;flex-wrap:nowrap;gap:4px;overflow:hidden}
+.topnav{background:#1a1a1a;color:#fff;padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;gap:8px}
+.nav-btn-group{display:flex;gap:6px;align-items:center}
+.nav-btn{font-size:11px;padding:5px 10px;border-radius:7px;cursor:pointer;background:transparent;font-family:inherit;white-space:nowrap;border:1px solid}
+.nav-btn:hover{opacity:0.8}
+.nav-btn.dim{border-color:#444;color:#bbb}
+.nav-btn.amber{border-color:#f59e0b;color:#f59e0b;font-weight:600}
+.nav-btn.blue{border-color:#60a5fa;color:#60a5fa;font-weight:600}
+.nav-btn.green{border-color:#1D9E75;color:#1D9E75;font-weight:600}
+.nav-btn.solid-green{background:#1D9E75;border-color:#1D9E75;color:#fff;font-weight:600}
+.nav-btn.teal{border-color:#5dba99;color:#5dba99;font-weight:600}
+.nav-sep{width:1px;height:22px;background:#333;flex-shrink:0}
+.nav-drop{position:relative;display:inline-block}
+.nav-drop-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);background:#1e1e1e;border:1px solid #333;border-radius:8px;min-width:160px;z-index:500;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.4)}
+.nav-drop-menu.open{display:block}
+.nav-drop-item{padding:9px 14px;font-size:12px;cursor:pointer;color:#ccc;white-space:nowrap;font-family:inherit;background:transparent;border:none;width:100%;text-align:left}
+.nav-drop-item:hover{background:#2a2a2a;color:#fff}
+.nav-drop-item.label-file{display:block;cursor:pointer}
+.clear-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2000;align-items:center;justify-content:center}
+.clear-modal-overlay.open{display:flex}
+.clear-modal{background:#fff;border-radius:14px;padding:28px 28px 22px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.clear-modal h3{font-size:16px;font-weight:700;margin-bottom:6px}
+.clear-modal p{font-size:13px;color:#666;margin-bottom:14px;line-height:1.5}
+.clear-modal input{width:100%;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;margin-bottom:10px}
+.clear-modal input:focus{outline:none;border-color:#c0392b}
+.clear-modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.clear-modal-err{font-size:11px;color:#c0392b;min-height:16px;margin-bottom:6px}
 .topnav h1{font-size:15px;font-weight:700;white-space:nowrap}
 .topnav .vessel{font-size:12px;color:#888;margin-left:10px}
 .tab-bar{display:flex;background:#fff;border-bottom:1px solid #e5e5e0;padding:0 24px;overflow-x:auto}
@@ -112,17 +137,43 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <h1>Turn Point Engine</h1>
     <span class="vessel" id="navVessel"></span>
   </div>
-  <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-    <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="clearForNewVessel()">Clear</button>
-    <button class="btn" style="border-color:#888;color:#ccc;background:transparent" onclick="markAllTM()">Mark All T&amp;M</button>
-    <button class="btn" style="border-color:#60a5fa;color:#60a5fa;background:transparent;font-weight:600" onclick="openMaterialsImport()">&#11014; Import Materials</button>
-    <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="reconcileTimeEntries()">&#9881; Reconcile</button>
-    <button class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600" onclick="exportData()">&#11015; Export Data</button>
-    <label class="btn" style="border-color:#f59e0b;color:#f59e0b;background:transparent;font-weight:600;cursor:pointer">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event)"></label>
-    <button class="btn btn-green" onclick="exportCSV()">Export CSV</button>
-    <button class="btn" style="border-color:#1D9E75;color:#1D9E75;background:transparent;font-weight:600" onclick="exportClientDoc()">&#11015; Export Client Doc</button>
-    <button class="btn" style="border-color:#444;color:#ccc;background:transparent" onclick="window.print()">Print</button>
-    <button class="btn" style="border-color:#5dba99;color:#5dba99;background:transparent;font-weight:600" onclick="emailClient()">&#9993; Email Client</button>
+  <div class="nav-btn-group">
+    <button class="nav-btn dim" onclick="openClearModal()">Clear</button>
+    <button class="nav-btn dim" onclick="markAllTM()">Mark All T&amp;M</button>
+    <div class="nav-sep"></div>
+    <button class="nav-btn blue" onclick="openMaterialsImport()">&#11014; Materials</button>
+    <button class="nav-btn amber" onclick="reconcileTimeEntries()">&#9881; Reconcile</button>
+    <div class="nav-sep"></div>
+    <div class="nav-drop" id="dropData">
+      <button class="nav-btn amber" onclick="toggleDrop('dropData')">Data &#9660;</button>
+      <div class="nav-drop-menu" id="dropDataMenu">
+        <button class="nav-drop-item" onclick="exportData();closeDrop('dropData')">&#11015; Export Data</button>
+        <label class="nav-drop-item label-file">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event);closeDrop('dropData')"></label>
+        <button class="nav-drop-item" onclick="exportCSV();closeDrop('dropData')">Export CSV</button>
+        <button class="nav-drop-item" onclick="window.print();closeDrop('dropData')">Print</button>
+      </div>
+    </div>
+    <div class="nav-drop" id="dropClient">
+      <button class="nav-btn green" onclick="toggleDrop('dropClient')">&#11015; Client &#9660;</button>
+      <div class="nav-drop-menu" id="dropClientMenu">
+        <button class="nav-drop-item" onclick="exportClientDoc();closeDrop('dropClient')">&#11015; Export Client Doc</button>
+        <button class="nav-drop-item" onclick="emailClient();closeDrop('dropClient')">&#9993; Email Client</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Clear confirmation modal -->
+<div class="clear-modal-overlay" id="clearModalOverlay" onclick="closeClearModal(event)">
+  <div class="clear-modal">
+    <h3>Clear for new vessel?</h3>
+    <p>This will erase all projects and time entries. Type the vessel name to confirm.</p>
+    <input type="text" id="clearConfirmInput" placeholder="Type vessel name..." oninput="clearModalErr('')" onkeydown="if(event.key==='Enter')confirmClear()">
+    <div class="clear-modal-err" id="clearModalErr"></div>
+    <div class="clear-modal-btns">
+      <button class="btn" onclick="closeClearModalDirect()">Cancel</button>
+      <button class="btn" style="background:#c0392b;color:#fff;border-color:#c0392b" onclick="confirmClear()">Clear All Data</button>
+    </div>
   </div>
 </div>
 <div class="tab-bar">
@@ -236,7 +287,12 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
       </div>
     </div>
     <div style="background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:20px;margin-bottom:14px">
-      <div style="font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0ed">Authorization Text</div>
+      <div style="font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0ed">Billing</div>
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer">
+        <input type="checkbox" id="stTaxExempt" onchange="settings.taxExempt=this.checked;saveData();renderSummary()">
+        Tax exempt — suppress 9.1% tax line from estimates and client documents
+      </label>
+    </div>
       <div class="vf-group"><div class="vf-label">Appears on client doc</div>
         <textarea id="stAuthText" rows="2" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:100%;resize:vertical">Sign below to authorize all work in this project. Work does not proceed without your signature.</textarea>
       </div>
@@ -262,7 +318,7 @@ const SECTIONS=[
   {key:'complete',label:'Completed — Ready for Billing',color:'#4a5e5a',textColor:'#fff',bg:'#eff6ff',border:'#bfdbfe',defaultOpen:false},
   {key:'billed',label:'Billed',color:'#374151',textColor:'#fff',bg:'#f9fafb',border:'#e5e7eb',defaultOpen:false}
 ];
-let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@turnpointmarine.com',clientEmail:'',clientEmail2:'',phone:'',footer:'Estimate Only - Subject to Change. Work does not proceed without signed authorization.',authText:'Sign below to authorize all work in this project. Work does not proceed without your signature.',showCompleteDetail:true};
+let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@turnpointmarine.com',clientEmail:'',clientEmail2:'',phone:'',footer:'Estimate Only - Subject to Change. Work does not proceed without signed authorization.',authText:'Sign below to authorize all work in this project. Work does not proceed without your signature.',showCompleteDetail:true,taxExempt:false};
 let unlocked=false;
 let secOpenState={holding:true,needs_auth:true,in_progress:true,complete:false,billed:false};
 let openProjs=new Set();
@@ -386,6 +442,7 @@ function syncSettingsUI(){
     document.getElementById('stRateB').value=RATES.B||105;
     document.getElementById('stRateD').value=RATES.D||95;
     document.getElementById('stRateV').value=RATES.V||95;
+    try{document.getElementById('stTaxExempt').checked=settings.taxExempt||false;}catch(e){}
   }catch(e){}
 }
 function applySettings(){
@@ -415,7 +472,7 @@ function renderSummary(){
     const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
     const gSubtotal=gL+gMat+gSub;
     const gShop=gSubtotal*0.03;
-    const gTax=(gSubtotal+gShop)*0.091;
+    const gTax=settings.taxExempt?0:(gSubtotal+gShop)*0.091;
     const gTotal=gSubtotal+gShop+gTax;
     const row=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:12px;color:'+(bold?'#1a1a1a':'#888')+'">'+label+'</span><span style="font-size:12px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
     gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
@@ -424,7 +481,7 @@ function renderSummary(){
       +row('Subcontractors',gSub,false)
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
       +row('Shop Fee (3%)',gShop,false)
-      +row('Tax (9.1%)',gTax,false)
+      +(settings.taxExempt?'':row('Tax (9.1%)',gTax,false))
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px -16px;background:#1D9E75;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>';
   }
   saveData();
@@ -460,6 +517,18 @@ function renderEstimate(){
       pw.style.cssText='border:1px solid '+(isProjOpen?'#b0bec5':'#e5e5e0')+';border-radius:8px;margin:6px 0;overflow:hidden;transition:border-color 0.15s';
       const ph=document.createElement('div');ph.className='proj-hdr';
       const inclChk=document.createElement('input');inclChk.type='checkbox';inclChk.className='include-chk';inclChk.checked=proj.include!==false;inclChk.title='Include in export';inclChk.onclick=e=>e.stopPropagation();inclChk.onmousedown=e=>e.stopPropagation();inclChk.onchange=()=>{proj.include=inclChk.checked;pw.className='project'+(inclChk.checked?'':' excluded');renderSummary();};
+      // Show in client doc checkbox — only for holding pattern projects
+      let showDocChk=null;
+      if(proj.status==='holding'){
+        showDocChk=document.createElement('input');showDocChk.type='checkbox';showDocChk.checked=proj.showInDoc===true;
+        showDocChk.title='Show in client doc (Planned Future Work)';
+        showDocChk.style.cssText='margin-left:2px;accent-color:#7c6f9f;cursor:pointer';
+        showDocChk.onclick=e=>e.stopPropagation();showDocChk.onmousedown=e=>e.stopPropagation();
+        showDocChk.onchange=()=>{proj.showInDoc=showDocChk.checked;saveData();};
+        const showDocLbl=document.createElement('span');showDocLbl.textContent='Doc';showDocLbl.title='Show in client doc';
+        showDocLbl.style.cssText='font-size:9px;color:#7c6f9f;font-weight:600;margin-left:2px;cursor:pointer';
+        showDocLbl.onclick=e=>{e.stopPropagation();showDocChk.click();};
+      }
       const num=document.createElement('span');num.className='proj-num';num.textContent=String(pi+1).padStart(2,'0');
       const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.onchange=()=>{
         const oldName=proj.name;
@@ -505,7 +574,14 @@ function renderEstimate(){
         if(fromSec!==sec.key){moved.status=sec.key;}
         saveData();renderEstimate();
       };
-      ph.appendChild(dh);ph.appendChild(inclChk);ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);ph.appendChild(badge);ph.appendChild(chev);
+      ph.appendChild(dh);ph.appendChild(inclChk);
+      if(showDocChk){
+        const showDocLbl2=document.createElement('span');showDocLbl2.textContent='Doc';showDocLbl2.title='Show in client doc (Planned Future Work)';
+        showDocLbl2.style.cssText='font-size:9px;color:#7c6f9f;font-weight:600;margin-left:2px;cursor:pointer';
+        showDocLbl2.onclick=e=>{e.stopPropagation();showDocChk.click();};
+        ph.appendChild(showDocChk);ph.appendChild(showDocLbl2);
+      }
+      ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);ph.appendChild(badge);ph.appendChild(chev);
       ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);renderEstimate();});
       // Drop target for TE drag-reassign
       ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
@@ -618,8 +694,17 @@ function renderEstimate(){
         pb.appendChild(scopeHdr);
         pb.appendChild(buildTaskTable(proj.scopeTasks||[],true));
         const estSubWrap=document.createElement('div');
-        estSubWrap.style.cssText='display:grid;grid-template-columns:1fr repeat(3,110px);padding:6px 16px 6px 0;background:#eef1ff;border-bottom:2px solid #c5cef5;font-size:11px;font-weight:600;color:#3b4a6b;text-align:right';
-        estSubWrap.innerHTML='<div style="text-align:right;padding-right:8px">Estimated Subtotal</div><div>'+fmt(projScopeLabor(proj))+'</div><div>'+fmt(projScopeMat(proj)+projScopeSub(proj))+'</div><div style="font-size:12px;font-weight:700">'+fmt(scopeTotal)+'</div>';
+        // Grid matches task table: drag(20) cat(110) desc(1fr) hrs(50) rate(55) labor(80) mat(70) sub(75) total(80) del(28)
+        estSubWrap.style.cssText='display:grid;grid-template-columns:20px 110px 1fr 50px 55px 80px 70px 75px 80px 28px;padding:6px 0;background:#eef1ff;border-bottom:2px solid #c5cef5;font-size:11px;font-weight:600;color:#3b4a6b;text-align:right';
+        estSubWrap.innerHTML=
+          '<div></div><div></div>'+
+          '<div style="text-align:right;padding-right:8px;color:#3b4a6b">Estimated Subtotal</div>'+
+          '<div></div><div></div>'+
+          '<div style="padding-right:8px">'+fmt(projScopeLabor(proj))+'</div>'+
+          '<div style="padding-right:8px">'+fmt(projScopeMat(proj))+'</div>'+
+          '<div style="padding-right:8px">'+fmt(projScopeSub(proj))+'</div>'+
+          '<div style="padding-right:8px;font-size:12px;font-weight:700">'+fmt(scopeTotal)+'</div>'+
+          '<div></div>';
         pb.appendChild(estSubWrap);
       }
 
@@ -1056,6 +1141,15 @@ function exportClientDoc(){
     </div>
   </div>`;
 
+  // ── HOLDING PATTERN (selected projects) ─────────────────────────────────
+  const futureP=projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true);
+  if(futureP.length>0){
+    const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
+    html+=sectionHdr('#7c6f9f','PROJECTS IN HOLDING PATTERN',futureP.length,fd(futureTotal),'Upcoming projects — not yet authorized');
+    html+=`<div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
+    futureP.forEach(proj=>{html+=projBlock(proj,'#7c6f9f',false,false);});
+  }
+
   // ── NEEDS AUTH ─────────────────────────────────────────────────────────
   if(authP.length>0||coProjs.length>0){
     const coTotal=coProjs.reduce((a,p)=>(p.scopeTasks||[]).filter(t=>t.co).reduce((b,t)=>b+taskTotal(t),0)+a,0);
@@ -1087,13 +1181,18 @@ function exportClientDoc(){
     html+=`<div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
       <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
       <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
-        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name</label>
-          <input id="sig_name" type="text" value="${client}" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name <span style="color:#c0392b">*</span></label>
+          <input id="sig_name" type="text" value="${client}" placeholder="Full name required" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
         </div>
         <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
           <input id="sig_date" type="text" value="${dateStr}" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
         </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Email Address <span style="color:#c0392b">*</span></label>
+        <input id="sig_email" type="email" placeholder="your@email.com" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
+        <div style="font-size:8pt;color:#888;margin-top:3px">A confirmation will be sent to this address.</div>
       </div>
       <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
       <div class="sig-wrap"><canvas id="sigCanvas"></canvas></div>
@@ -1103,7 +1202,7 @@ function exportClientDoc(){
       </div>
       <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
       <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
-        ✓ Authorization submitted. Turn Point Marine has been notified.
+        ✓ Authorization submitted. Turn Point Marine has been notified. A confirmation has been sent to your email.
       </div>
     </div>`;
   }
@@ -1125,7 +1224,7 @@ function exportClientDoc(){
   // ── ESTIMATE SUMMARY ────────────────────────────────────────────────────
   const _sub=allL+allM;
   const _shop=_sub*0.03;
-  const _tax=(_sub+_shop)*0.091;
+  const _tax=settings.taxExempt?0:(_sub+_shop)*0.091;
   const _total=_sub+_shop+_tax;
   html+=`<div style="margin-top:28px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
     <div style="background:#f5f5f3;border-bottom:2px solid #e5e5e0;padding:12px 18px;font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#555">Estimate Summary &mdash; Work in Progress &amp; Complete</div>
@@ -1135,7 +1234,7 @@ function exportClientDoc(){
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
       <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
-      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>
+      ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>`}
     </table>
     <div style="background:#1D9E75;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
       <span style="font-size:12pt;font-weight:700">Total</span>
@@ -1173,6 +1272,7 @@ function exportClientDoc(){
     </div>`;
   }
 
+
   // Footer
   html+=`<div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
     <div>${s.company} &nbsp;|&nbsp; ${s.email}</div>
@@ -1203,24 +1303,45 @@ function exportClientDoc(){
 
   function submitAuth(){
     if(!hasSig){document.getElementById('sigStatus').textContent='Please sign before submitting.';return;}
+    const name=document.getElementById('sig_name').value.trim();
+    if(!name){document.getElementById('sigStatus').textContent='Please enter your full name.';return;}
+    const email=document.getElementById('sig_email').value.trim();
+    if(!email||!email.includes('@')){document.getElementById('sigStatus').textContent='Please enter a valid email address.';return;}
     const checked=[...document.querySelectorAll('input[name="proj_auth"]:checked')].map(el=>el.dataset.name);
     const coCk=[...document.querySelectorAll('input[name="co_auth"]:checked')].map(el=>({proj:el.dataset.proj,co:el.dataset.co}));
-    if(checked.length===0){document.getElementById('sigStatus').textContent='Please check at least one project to authorize.';return;}
+    if(checked.length===0&&coCk.length===0){document.getElementById('sigStatus').textContent='Please check at least one project or change of scope to authorize.';return;}
     document.getElementById('sigStatus').textContent='';
     const sigImg=canvas?canvas.toDataURL('image/png'):'';
-    const name=document.getElementById('sig_name').value;
     const date=document.getElementById('sig_date').value;
-    const payload={vessel:'${vessel}',client:'${client}',date,signedBy:name,authorizedProjects:checked,authorizedCOs:coCk,signature:sigImg,submittedAt:new Date().toISOString()};
+    // Combine projects and COs into one readable list for email
+    const coLabels=coCk.map(c=>c.proj+' (Change of Scope)');
+    const allAuthorized=[...checked,...coLabels];
+    // Bake checkbox states and signature into DOM before snapshot
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb=>{cb.checked?cb.setAttribute('checked',''):cb.removeAttribute('checked');});
+    // Bake text input values into DOM attributes so they appear in snapshot
+    document.querySelectorAll('input[type="text"],input[type="email"]').forEach(inp=>{inp.setAttribute('value',inp.value);});
+    if(canvas){const img=document.createElement('img');img.src=sigImg;img.style.cssText='width:100%;height:140px;object-fit:contain;border:1px solid #ddd;border-radius:6px;display:block';canvas.parentNode.replaceChild(img,canvas);}
+    // Snapshot the document at moment of signing, encode as base64
+    const snapshot=document.documentElement.outerHTML;
+    const snapshotB64=btoa(unescape(encodeURIComponent(snapshot)));
+    const payload={
+      vessel:'${vessel}',
+      client:'${client}',
+      date,
+      signedBy:name,
+      signerEmail:email,
+      authorizedProjects:allAuthorized,
+      authorizedCOs:coCk,
+      signature:sigImg,
+      submittedAt:new Date().toISOString(),
+      snapshotB64:snapshotB64
+    };
     const btn=document.querySelector('.submit-btn');
     btn.disabled=true;btn.textContent='Submitting...';
-    // POST to Power Automate — replace URL below with your actual flow endpoint
     const PA_URL='https://default141dc0adf2b54539836e80cbaa77fc.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/88d1bc3769b74644946a09a14a5bc2f5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=B-LxTafu-_ykEIHnNc6kqA29cG_VM0bQeHLiDfkUZ3M';
     fetch(PA_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
       .then(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';})
-      .catch(()=>{
-        // If no PA URL yet, just show success locally
-        document.getElementById('submitMsg').style.display='block';btn.style.display='none';
-      });
+      .catch(()=>{document.getElementById('submitMsg').style.display='block';btn.style.display='none';});
   }
   <\/script>`;
 
@@ -1639,6 +1760,7 @@ function migrateData(d){
       ...p,
       status:statusMap[p.status]||p.status,
       include:p.include!==undefined?p.include:true,
+      showInDoc:p.showInDoc||false,
       cos:p.cos||[]
     }));
   }
@@ -1862,13 +1984,36 @@ function markAllTM(){
   projects.forEach(p=>{p.isTM=true;p.estimateTotal=null;p.scopeTasks=[];});
   saveData();renderEstimate();
 }
-function clearForNewVessel(){
-  const entered=prompt('Type "'+cv+'" to confirm clearing all data:');
-  if(!entered||entered.trim()!==cv){alert('Did not match. No data cleared.');return;}
-  projects=[];timeEntries=[];nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;
-  openProjs.clear();document.getElementById('vfVessel').value='';document.getElementById('vfClient').value='';document.getElementById('navVessel').textContent='Hannah Mae';
-  localStorage.removeItem(STORAGE_KEY);renderEstimate();populateTEDropdowns();renderProgress();
+function openClearModal(){
+  document.getElementById('clearConfirmInput').value='';
+  document.getElementById('clearModalErr').textContent='';
+  document.getElementById('clearModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('clearConfirmInput').focus(),50);
 }
+function closeClearModal(e){if(e.target===document.getElementById('clearModalOverlay'))closeClearModalDirect();}
+function closeClearModalDirect(){document.getElementById('clearModalOverlay').classList.remove('open');}
+function clearModalErr(msg){document.getElementById('clearModalErr').textContent=msg;}
+function confirmClear(){
+  const vessel=(document.getElementById('vfVessel').value||'').trim();
+  const entered=(document.getElementById('clearConfirmInput').value||'').trim();
+  if(entered!==vessel){clearModalErr('Vessel name did not match. Try again.');return;}
+  projects=[];timeEntries=[];nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;
+  openProjs.clear();
+  document.getElementById('vfVessel').value='';
+  document.getElementById('vfClient').value='';
+  document.getElementById('navVessel').textContent='';
+  localStorage.removeItem(STORAGE_KEY);
+  closeClearModalDirect();
+  renderEstimate();populateTEDropdowns();renderProgress();
+}
+function toggleDrop(id){
+  const menu=document.getElementById(id+'Menu');
+  const isOpen=menu.classList.contains('open');
+  document.querySelectorAll('.nav-drop-menu').forEach(m=>m.classList.remove('open'));
+  if(!isOpen)menu.classList.add('open');
+}
+function closeDrop(id){document.getElementById(id+'Menu').classList.remove('open');}
+document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document.querySelectorAll('.nav-drop-menu').forEach(m=>m.classList.remove('open'));});
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){

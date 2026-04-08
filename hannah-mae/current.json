@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Hannah Mae",
     "client": "Beth and Keith Loveless",
-    "exportedAt": "2026-04-01T22:08:35.161Z",
+    "exportedAt": "2026-04-08T18:02:43.481Z",
     "engineVersion": 3
   },
   "projects": [
@@ -129,7 +129,7 @@
     {
       "id": 10,
       "name": "Fuel Vent Leak - Generator",
-      "status": "in_progress",
+      "status": "holding",
       "include": true,
       "notes": "*Monitor for now. When it suits, rebuild the fuel pump.",
       "estimateTotal": null,
@@ -201,9 +201,9 @@
     {
       "id": 17,
       "name": "Anchor Chain",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
-      "notes": "Chain markings repainted with InterProtect epoxy and Omni paint.\n\n\n**I would like to chat about this before I post any time entries here.**",
+      "notes": "Chain markings repainted with InterProtect epoxy and Omni paint.\n",
       "estimateTotal": null,
       "isTM": true,
       "scopeTasks": [],
@@ -505,9 +505,9 @@
       "date": "2026-02-13",
       "proj": "Anchor Chain",
       "cat": "D",
-      "hrs": 0.5,
-      "desc": "Unloaded nearly 50ft of anchor chain, noticed paint markings needed touching up.",
-      "posted": false
+      "hrs": 2.25,
+      "desc": "Unloaded 100' of anchor chain, inspecting chain paint markings and what needs painted. Filled barrel with warm fresh water, scrubbed the chain markings, set out to dry.\n",
+      "posted": true
     },
     {
       "id": 7,
@@ -623,7 +623,7 @@
       "proj": "Anchor Chain",
       "cat": "D",
       "hrs": 1,
-      "desc": "Laid out additional 50ft of anchor chain, filled barrel with warm water, scrubbed painted chain markings, set out to dry.",
+      "desc": "Laid out additional 50ft of anchor chain,",
       "posted": false
     },
     {
@@ -640,9 +640,9 @@
       "date": "2026-02-24",
       "proj": "Anchor Chain",
       "cat": "D",
-      "hrs": 1,
-      "desc": "Hung painted chain markings on first 100ft. Mixed InterProtect 2000E epoxy with red coloring agent, applied coat to red markings.",
-      "posted": false
+      "hrs": 2.75,
+      "desc": "Hung painted chain markings on first 100ft. Mixed InterProtect 2000E epoxy then split the paint into two batches. Added red coloring agent to one batch and applied it to the old red markings. Applied sunset yellow agent to the second batch and applied yellow where the yellow markings had been.",
+      "posted": true
     },
     {
       "id": 30,
@@ -686,8 +686,8 @@
       "proj": "Anchor Chain",
       "cat": "D",
       "hrs": 0.75,
-      "desc": "Applied coat of red Omni paint to anchor chain markings.",
-      "posted": false
+      "desc": "Applied coat of red Omni paint to the anchor chain markings that need to be red not pink.\n\n*My hope here is that you will notice toward the end of the season that the anchor chain markings aren't fading like enamel paints do. Fingers crossed. I have had good luck with this on other boats in the last year....",
+      "posted": true
     },
     {
       "id": 42,
@@ -1208,7 +1208,7 @@
       "proj": "Anchor Chain",
       "cat": "M",
       "hrs": 77.32,
-      "desc": "Color agents, Interprotect primer kit",
+      "desc": "Red Color Agents, \nInterprotect Epoxy Barrier Coat.",
       "posted": true
     },
     {
@@ -1217,7 +1217,7 @@
       "proj": "Anchor Chain",
       "cat": "M",
       "hrs": 31.55,
-      "desc": "Gloves, color agent sunset yellow x2",
+      "desc": "Color Agent Sunset Yellow ",
       "posted": true
     },
     {
@@ -1468,6 +1468,7 @@
     "phone": "",
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
-    "showCompleteDetail": true
+    "showCompleteDetail": true,
+    "taxExempt": true
   }
 }
