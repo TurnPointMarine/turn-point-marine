@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Hannah Mae",
     "client": "Beth and Keith Loveless",
-    "exportedAt": "2026-04-08T18:02:43.481Z",
+    "exportedAt": "2026-04-08T18:42:26.091Z",
     "engineVersion": 3
   },
   "projects": [
@@ -506,7 +506,7 @@
       "proj": "Anchor Chain",
       "cat": "D",
       "hrs": 2.25,
-      "desc": "Unloaded 100' of anchor chain, inspecting chain paint markings and what needs painted. Filled barrel with warm fresh water, scrubbed the chain markings, set out to dry.\n",
+      "desc": "Unloaded 150' of anchor chain, inspecting chain paint markings and what needs painted. Filled barrel with warm fresh water, scrubbed the chain markings, set out to dry.\n",
       "posted": true
     },
     {
@@ -641,7 +641,7 @@
       "proj": "Anchor Chain",
       "cat": "D",
       "hrs": 2.75,
-      "desc": "Hung painted chain markings on first 100ft. Mixed InterProtect 2000E epoxy then split the paint into two batches. Added red coloring agent to one batch and applied it to the old red markings. Applied sunset yellow agent to the second batch and applied yellow where the yellow markings had been.",
+      "desc": "Hung painted chain markings on first 150ft. Mixed InterProtect 2000E epoxy then split the paint into two batches. Added red coloring agent to one batch and applied it to the old red markings. Applied sunset yellow agent to the second batch and applied yellow where the yellow markings had been.",
       "posted": true
     },
     {
@@ -1469,6 +1469,6 @@
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
     "showCompleteDetail": true,
-    "taxExempt": true
+    "taxExempt": false
   }
 }
