@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-06T14:19:25.094Z",
+    "exportedAt": "2026-04-09T21:31:27.208Z",
     "engineVersion": 3
   },
   "projects": [
@@ -392,9 +392,9 @@
     },
     {
       "id": 31,
-      "name": "Wax Hull Below The Rub Rails",
-      "status": "in_progress",
-      "notes": "",
+      "name": "Buff/Wax During Haul Out",
+      "status": "needs_auth",
+      "notes": "Buff/wax \n1. Below the lower rub rail. \n2. Forward of the lower rub rail I suggest buffing waxing from the waterline up to the halfway mark between the waterline and the cap rail.  This will leave the rest of the bow and topsides accessible when she is back in the water. ",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -403,45 +403,24 @@
           "id": 124,
           "cat": "B",
           "desc": "Wax Hull Below The Rub Rails",
-          "hrs": 15,
+          "hrs": 33,
           "mat": 75,
           "sub": 0
         },
         {
           "id": 152,
           "cat": "V",
-          "desc": "4",
-          "hrs": 0,
+          "desc": "8",
+          "hrs": 8,
           "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 30,
-      "name": "Port Side Below Rub Rail Buff And Wax",
-      "status": "in_progress",
-      "notes": "",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 123,
-          "cat": "B",
-          "desc": "Port Side Below Rub Rail Buff And Wax",
-          "hrs": 14,
-          "mat": 75,
           "sub": 0
         },
         {
-          "id": 153,
-          "cat": "V",
-          "desc": "",
-          "hrs": 4,
-          "mat": 0,
+          "id": 175,
+          "cat": "M",
+          "desc": "Coarse Compound, 52.50\nFine Compound, 52.50\nWax, 30.00\nWool pads, 30.00",
+          "hrs": 0,
+          "mat": 160,
           "sub": 0
         }
       ],
@@ -603,7 +582,7 @@
     {
       "id": 32,
       "name": "Stainless Polish",
-      "status": "in_progress",
+      "status": "needs_auth",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -741,7 +720,7 @@
     {
       "id": 36,
       "name": "Exterior Deep Clean After Haul Out",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -770,7 +749,7 @@
     {
       "id": 37,
       "name": "Preseason Commissioning Canvas",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "-Flybrige and Cap Rail Canvas, remove, dry & stow in dry storage\n-Put up Bimini rails and install bimini canvas",
       "estimateTotal": null,
@@ -799,7 +778,7 @@
     {
       "id": 38,
       "name": "PreSeason Commissioning",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "-Unwinterize aft and forward freshwater lines as well as the raw water washdown pump that was flushed of salt water for the off season.\n-Load Portuguese bridge lockers and foredeck lockers with their gear.\n-Deliver cockpit chairs/tables from dry storage. \n-Deliver bbq from dry storage and install. \n-Replace the winter dock lines with summer dock down lines.\n-Install interior carpets. ",
       "estimateTotal": null,
@@ -828,7 +807,7 @@
     {
       "id": 12,
       "name": "Flybridge Captains Chairs Replace",
-      "status": "needs_auth",
+      "status": "in_progress",
       "notes": "Springfield\n  a. 1040002: $431.83\n  b. 1042035-W: $1,379\nI should hear back from distributor about lead time on option B today/Monday. ",
       "include": true,
       "isTM": true,
@@ -849,7 +828,7 @@
     {
       "id": 39,
       "name": "Deliver Undaunted from Cap Sante to Haul Out",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "-Deliver Undaunted from Cap Sante to Haul Out\n-When on her stands hook up shore power and ensure everything is charging. \n-Stow all lines and fenders for duration of haul to prevent them from collecting yard dirt.",
       "estimateTotal": null,
@@ -1085,7 +1064,7 @@
     {
       "id": 46,
       "name": "Winter Wash February",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1114,7 +1093,7 @@
     {
       "id": 47,
       "name": "Winter Wash March",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1143,7 +1122,7 @@
     {
       "id": 48,
       "name": "House Battery Bank Cerbo Troubleshoot/Replace",
-      "status": "needs_auth",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1197,12 +1176,21 @@
       "hrs": 0,
       "desc": "",
       "posted": false
+    },
+    {
+      "id": 1003,
+      "date": "2026-04-09",
+      "proj": "Buff/Wax During Haul Out",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "",
+      "posted": false
     }
   ],
   "nextProjId": 49,
-  "nextTaskId": 175,
+  "nextTaskId": 176,
   "nextCOId": 101,
-  "nextTEId": 1003,
+  "nextTEId": 1004,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
