@@ -1016,9 +1016,9 @@ function exportClientDoc(){
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
   const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
-  const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
-  const allMat=actP.reduce((a,p)=>a+projEstMat(p),0);
-  const allSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+  const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
+  const allMat=actP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)),0);
+  const allSub=actP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
   const allM=allMat+allSub;
 
   // Bake project data into the doc for submit
@@ -1409,8 +1409,8 @@ function exportClientPDF(){
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
   const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
-  const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
-  const allM=actP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
+  const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
+  const allM=actP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)+projScopeSub(p)),0);
 
   function tt(tasks){
     let rows='';
