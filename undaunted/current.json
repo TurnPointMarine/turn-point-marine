@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-09T21:31:27.208Z",
+    "exportedAt": "2026-04-10T20:55:42.456Z",
     "engineVersion": 3
   },
   "projects": [
@@ -308,7 +308,7 @@
           "cat": "T",
           "desc": "Forward Scan Transducer Replace",
           "hrs": 6,
-          "mat": 1600,
+          "mat": 1397.28,
           "sub": 0
         },
         {
@@ -677,7 +677,7 @@
     {
       "id": 35,
       "name": "Oil Pressure Gauges Alarming",
-      "status": "in_progress",
+      "status": "needs_auth",
       "include": true,
       "notes": "Functional to AK and back through the Fall. \nNew sending units will be tested on her trip to Anacortes for haul out. My sense is that the present location of these exposes them to too much heat. If the new sending units resolve the issue as expected we can relocate the sending units where they will not be exposed to the heat exposure right there next to the engine block.\n\n**Will follow up with Change of Scope when we are clear that the new sending units work. ",
       "estimateTotal": null,
@@ -686,10 +686,19 @@
         {
           "id": 135,
           "cat": "T",
-          "desc": "",
+          "desc": "Replace oil pressure sending units.",
           "hrs": 1,
           "mat": 150,
           "sub": 0
+        },
+        {
+          "id": 178,
+          "cat": "T",
+          "desc": "When the starboard main engine is heat soaked and at low idle we are getting 13psi of oil pressure with the mechanical gauge I installed Monday. At the same time the VDO gauge shows well under 10psi and the alarm is sounding.\nConsult with Tri County for information and propose next steps.",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0,
+          "co": true
         }
       ],
       "tasks": [],
@@ -808,17 +817,34 @@
       "id": 12,
       "name": "Flybridge Captains Chairs Replace",
       "status": "in_progress",
-      "notes": "Springfield\n  a. 1040002: $431.83\n  b. 1042035-W: $1,379\nI should hear back from distributor about lead time on option B today/Monday. ",
+      "notes": "Springfield\n  1040002: $431.83\n",
       "include": true,
-      "isTM": true,
+      "isTM": false,
       "estimateTotal": null,
       "scopeTasks": [
         {
           "id": 174,
           "cat": "M",
-          "desc": "Helm seat adjustable slider assembly",
+          "desc": "Helm seat adjustable slider assembly to mount on seat post",
           "hrs": 0,
           "mat": 160.69,
+          "sub": 0,
+          "co": true
+        },
+        {
+          "id": 181,
+          "cat": "M",
+          "desc": "Springfield Captains Chair",
+          "hrs": 0,
+          "mat": 431.83,
+          "sub": 0
+        },
+        {
+          "id": 182,
+          "cat": "T",
+          "desc": "Labor",
+          "hrs": 2,
+          "mat": 0,
           "sub": 0
         }
       ],
@@ -971,7 +997,7 @@
         {
           "id": 160,
           "cat": "M",
-          "desc": "March",
+          "desc": "Febr",
           "hrs": 0,
           "mat": 250,
           "sub": 0,
@@ -980,7 +1006,7 @@
         {
           "id": 161,
           "cat": "M",
-          "desc": "April",
+          "desc": "March",
           "hrs": 0,
           "mat": 250,
           "sub": 0,
@@ -989,7 +1015,7 @@
         {
           "id": 162,
           "cat": "M",
-          "desc": "May",
+          "desc": "April",
           "hrs": 0,
           "mat": 250,
           "sub": 0,
@@ -998,11 +1024,19 @@
         {
           "id": 163,
           "cat": "M",
-          "desc": "June",
+          "desc": "May",
           "hrs": 0,
           "mat": 250,
           "sub": 0,
           "co": false
+        },
+        {
+          "id": 180,
+          "cat": "M",
+          "desc": "June",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0
         }
       ],
       "tasks": [],
@@ -1064,7 +1098,7 @@
     {
       "id": 46,
       "name": "Winter Wash February",
-      "status": "in_progress",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1093,7 +1127,7 @@
     {
       "id": 47,
       "name": "Winter Wash March",
-      "status": "in_progress",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1122,7 +1156,7 @@
     {
       "id": 48,
       "name": "House Battery Bank Cerbo Troubleshoot/Replace",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1140,7 +1174,7 @@
           "id": 173,
           "cat": "T",
           "desc": "Two hours to troubleshoot, replace and program/network new unit",
-          "hrs": 0,
+          "hrs": 2,
           "mat": 0,
           "sub": 0
         }
@@ -1185,12 +1219,66 @@
       "hrs": 0,
       "desc": "",
       "posted": false
+    },
+    {
+      "id": 1004,
+      "date": "2026-04-10",
+      "proj": "Forward Scan Transducer Replace",
+      "cat": "P",
+      "hrs": 0,
+      "desc": "Garmin PANOPTIX PS51-TH TRANSDUCER 1.0\nREPLACEMENT \n*including special order shipping costs.",
+      "posted": false
+    },
+    {
+      "id": 1005,
+      "date": "2026-04-10",
+      "proj": "Forward Scan Transducer Replace",
+      "cat": "P",
+      "hrs": 1397.28,
+      "desc": "PANOPTIX PS51-TH TRANSDUCER 1.0\nREPLACEMENT\n*including special order shipping costs.",
+      "posted": true
+    },
+    {
+      "id": 1006,
+      "date": "2026-04-10",
+      "proj": "Winter Wash February",
+      "cat": "P",
+      "hrs": 0,
+      "desc": "Winter Wash",
+      "posted": false
+    },
+    {
+      "id": 1007,
+      "date": "2026-04-10",
+      "proj": "Dry Storage",
+      "cat": "P",
+      "hrs": 500,
+      "desc": "February and March",
+      "posted": true
+    },
+    {
+      "id": 1008,
+      "date": "2026-04-10",
+      "proj": "Winter Wash February",
+      "cat": "D",
+      "hrs": 0,
+      "desc": "Winter Wash Febr",
+      "posted": false
+    },
+    {
+      "id": 1009,
+      "date": "2026-04-10",
+      "proj": "Winter Wash February",
+      "cat": "T",
+      "hrs": 0,
+      "desc": "",
+      "posted": false
     }
   ],
   "nextProjId": 49,
-  "nextTaskId": 176,
+  "nextTaskId": 185,
   "nextCOId": 101,
-  "nextTEId": 1004,
+  "nextTEId": 1010,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",

@@ -96,7 +96,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tinp.r{text-align:right}
 .cat-sel{font-size:11px;padding:4px 6px;border:none;border-right:1px solid #f0f0ed;background:transparent;color:#555;font-family:inherit;width:100%}
 .cat-sel:focus{outline:none}
-.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#f5f0ff}.cM{background:#f5f5f5}.cS{background:#fdf0ff}
+.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#f5f0ff}.cM{background:#f5f5f5}.cS{background:#fdf0ff}.cP{background:#f0fff4}
+.paid-row td{opacity:0.6;text-decoration:line-through}.paid-badge{font-size:9px;font-weight:700;background:#1D9E75;color:#fff;border-radius:4px;padding:1px 5px;margin-left:4px;text-decoration:none;display:inline-block;vertical-align:middle}
 .cell-r{padding:8px;text-align:right;font-size:12px;color:#444;white-space:nowrap}
 .cell-bold{padding:8px;text-align:right;font-size:12px;font-weight:700;white-space:nowrap}
 .del-btn{background:none;border:none;cursor:pointer;color:#ddd;font-size:16px;padding:6px 8px}
@@ -229,7 +230,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
       <select id="teFilterProj" onchange="renderTimeEntry()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit"><option value="">All projects</option></select>
       <select id="teFilterCat" onchange="renderTimeEntry()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit">
         <option value="">All categories</option><option value="T">Technician</option><option value="B">Buff &amp; Wax</option>
-        <option value="D">Detail</option><option value="V">Travel</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
+        <option value="D">Detail</option><option value="V">Travel</option><option value="M">Materials</option><option value="S">SBCNTRCT</option><option value="P">Mat - Deposit Paid</option>
       </select>
     </div>
   </div>
@@ -240,7 +241,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <div class="vf-group"><div class="vf-label">Category</div>
       <select id="teCat" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;background:#fff;font-family:inherit">
         <option value="T">Technician</option><option value="B">Buff &amp; Wax</option><option value="D">Detail</option>
-        <option value="V">Travel</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
+        <option value="V">Travel</option><option value="M">Materials</option><option value="S">SBCNTRCT</option><option value="P">Mat - Deposit Paid</option>
       </select>
     </div>
     <div class="vf-group"><div class="vf-label">Hours / Amount</div><input type="number" id="teHrs" min="0" step="0.25" placeholder="0.0" style="width:90px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
@@ -307,9 +308,10 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 <script>
 const ENGINE_VERSION=3;
 const PIN='1248';
-const RATES={T:135,B:105,D:95,V:95,M:0,S:0};
-const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT'};
-const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS'};
+const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0};
+const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid'};
+const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP'};
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v3';
 const SECTIONS=[
   {key:'holding',label:'Holding Pattern',color:'#7c6f9f',textColor:'#fff',bg:'#f3f0fa',border:'#c9bfea',defaultOpen:true},
@@ -327,11 +329,12 @@ let projects=[];
 let timeEntries=[];
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function taskLabor(t){return(RATES[t.cat]||0)*(t.hrs||0);}
-function taskTotal(t){return taskLabor(t)+(t.mat||0)+(t.sub||0);}
+function taskTotal(t){if(t.cat==='P')return 0;return taskLabor(t)+(t.mat||0)+(t.sub||0);}
+function taskBillable(t){return taskTotal(t);}// alias for clarity
 
 // Scope tasks (manually entered estimate)
 function projScopeLabor(p){return(p.scopeTasks||[]).reduce((a,t)=>a+taskLabor(t),0);}
-function projScopeMat(p){return(p.scopeTasks||[]).reduce((a,t)=>a+(t.mat||0),0);}
+function projScopeMat(p){return(p.scopeTasks||[]).filter(t=>t.cat!=='P').reduce((a,t)=>a+(t.mat||0),0);}
 function projScopeSub(p){return(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0);}
 function projScopeTotal(p){return projScopeLabor(p)+projScopeMat(p)+projScopeSub(p);}
 
@@ -372,7 +375,7 @@ function reconcileTimeEntries(){
   saveData();renderEstimate();renderTimeEntry();
   alert('✅ Fixed '+fixed+' of '+orphaned.length+' entries.'+(fixed<orphaned.length?'\n⚠ '+(orphaned.length-fixed)+' could not be matched — check manually.':''));
 }
-function projActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
+function projActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S'&&te.cat!=='P').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projActualMat(p){return projPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
 
@@ -383,10 +386,10 @@ function projEstSub(p){return projScopeSub(p);}
 function projEstTotal(p){return projEstLabor(p)+projEstMat(p)+projEstSub(p);}
 function projEstHrs(p){
   const sh=(p.scopeTasks||[]).reduce((a,t)=>a+(t.hrs||0),0);
-  const ah=projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const ah=projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S'&&te.cat!=='P').reduce((a,te)=>a+(te.hrs||0),0);
   return sh+ah;
 }
-function projActHrs(p){return timeEntries.filter(te=>te.proj===p.name&&te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);}
+function projActHrs(p){return timeEntries.filter(te=>te.proj===p.name&&te.cat!=='M'&&te.cat!=='S'&&te.cat!=='P').reduce((a,te)=>a+(te.hrs||0),0);}
 
 // Check scope bump — auto flip to change_of_scope if actual exceeds estimate
 function checkScopeBump(p){
@@ -475,6 +478,11 @@ function renderSummary(){
     const gTax=settings.taxExempt?0:(gSubtotal+gShop)*0.091;
     const gTotal=gSubtotal+gShop+gTax;
     const row=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:12px;color:'+(bold?'#1a1a1a':'#888')+'">'+label+'</span><span style="font-size:12px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
+    // Sum all P entries (posted TEs + scope tasks) across active projects
+    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
+    const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+(t.mat||0),0),0);
+    const totalDeposits=gDepositsTEs+gDepositsScope;
+    const gOutstanding=gTotal-totalDeposits;
     gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
       +row('Labor',gL,false)
       +row('Materials',gMat,false)
@@ -482,7 +490,11 @@ function renderSummary(){
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
       +row('Shop Fee (3%)',gShop,false)
       +(settings.taxExempt?'':row('Tax (9.1%)',gTax,false))
-      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px -16px;background:#1D9E75;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>';
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px 0;background:#1D9E75"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>'
+      +(totalDeposits>0
+        ?'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 14px;margin:0 -20px 0;background:#e8f5ee;border-top:1px solid #c3e0cf"><span style="font-size:12px;color:#155a3e">Deposits Paid</span><span style="font-size:12px;font-weight:600;color:#155a3e">−'+fmt(totalDeposits)+'</span></div>'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:0 -20px -16px;background:#155a3e;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Estimated Outstanding</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gOutstanding)+'</span></div>'
+        :'<div style="border-radius:0 0 12px 12px;overflow:hidden;margin:0 -20px -16px;height:0"></div>');
   }
   saveData();
 }
@@ -649,8 +661,8 @@ function renderEstimate(){
           const ctd=document.createElement('td');ctd.className=CAT_CLS[task.cat];
           if(editable){
             const csel=document.createElement('select');csel.className='cat-sel';
-            Object.entries(CAT_LABELS).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===task.cat)o.selected=true;csel.appendChild(o);});
-            csel.onchange=()=>{task.cat=csel.value;ctd.className=CAT_CLS[task.cat];rtd.textContent=task.cat==='M'||task.cat==='S'?'—':'$'+(RATES[task.cat]||0);ltd.textContent=task.cat==='M'||task.cat==='S'?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();};
+            Object.entries(CAT_LABELS).forEach(([v,l])=>{if(v==='P')return;const o=document.createElement('option');o.value=v;o.textContent=l;if(v===task.cat)o.selected=true;csel.appendChild(o);});
+            csel.onchange=()=>{task.cat=csel.value;ctd.className=CAT_CLS[task.cat];rtd.textContent=task.cat==='M'||task.cat==='S'||task.cat==='P'?'—':'$'+(RATES[task.cat]||0);ltd.textContent=task.cat==='M'||task.cat==='S'||task.cat==='P'?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();};
             ctd.appendChild(csel);
           } else {
             ctd.style.cssText='padding:4px 8px;font-size:11px;color:#155a3e';ctd.textContent=CAT_LABELS[task.cat]||task.cat;
@@ -661,12 +673,13 @@ function renderEstimate(){
           if(task.desc)setTimeout(()=>{dta.style.height='auto';dta.style.height=dta.scrollHeight+'px';},0);
           const dtd=document.createElement('td');dtd.style.verticalAlign='top';dtd.appendChild(dta);tr.appendChild(dtd);
           const mkn=(val,cls,type,step,cb,ro)=>{const td=document.createElement('td');const inp=document.createElement('input');inp.className='tinp'+(cls?' '+cls:'');inp.value=val||'';if(type)inp.type=type;if(step)inp.step=step;if(type==='number')inp.min=0;inp.readOnly=ro||false;if(ro)inp.style.cssText='background:#fafffe;color:#444;';if(cb)inp.onchange=cb;td.appendChild(inp);return td;};
-          const htd=mkn(task.hrs,'r','number',0.25,editable?e=>{task.hrs=parseFloat(e.target.value)||0;ltd.textContent=task.cat==='M'||task.cat==='S'?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(htd);
-          const rtd=document.createElement('td');rtd.className='cell-r';rtd.textContent=task.cat==='M'||task.cat==='S'?'—':'$'+(RATES[task.cat]||0);tr.appendChild(rtd);
-          const ltd=document.createElement('td');ltd.className='cell-r';ltd.textContent=task.cat==='M'||task.cat==='S'?'—':fmt(taskLabor(task));tr.appendChild(ltd);
+          const htd=mkn(task.hrs,'r','number',0.25,editable?e=>{task.hrs=parseFloat(e.target.value)||0;ltd.textContent=task.cat==='M'||task.cat==='S'||task.cat==='P'?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(htd);
+          const rtd=document.createElement('td');rtd.className='cell-r';rtd.textContent=task.cat==='M'||task.cat==='S'||task.cat==='P'?'—':'$'+(RATES[task.cat]||0);tr.appendChild(rtd);
+          const ltd=document.createElement('td');ltd.className='cell-r';ltd.textContent=task.cat==='M'||task.cat==='S'||task.cat==='P'?'—':fmt(taskLabor(task));tr.appendChild(ltd);
           const mttd=mkn(task.mat,'r','number',0.01,editable?e=>{task.mat=parseFloat(e.target.value)||0;totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(mttd);
           const sbtd=mkn(task.sub,'r','number',0.01,editable?e=>{task.sub=parseFloat(e.target.value)||0;totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(sbtd);
           const totd=document.createElement('td');totd.className='cell-bold';totd.textContent=fmt(taskTotal(task));tr.appendChild(totd);
+          if(task.cat==='P'){tr.classList.add('paid-row');const badge=document.createElement('span');badge.className='paid-badge';badge.textContent='PAID';badge.style.textDecoration='none';totd.style.textDecoration='none';totd.innerHTML='<span style="text-decoration:line-through;color:#999">'+fmt(task.mat||0)+'</span> <span class="paid-badge">PAID</span>';}
           const dltd=document.createElement('td');dltd.style.whiteSpace='nowrap';
           if(editable){
             const coBtn=document.createElement('button');
@@ -727,7 +740,7 @@ function renderEstimate(){
         let teDragSrcId=null;
         postedTEs.forEach(te=>{
           const rate=RATES[te.cat]||0;
-          const amt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*rate;
+          const amt=te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:(te.hrs||0)*rate;
           const tr=document.createElement('tr');tr.style.background='#fafffe';
           // Drag handle cell — supports both reorder (within project) and reassign (to other project)
           const dhTd=document.createElement('td');dhTd.style.cssText='width:20px;padding:0 4px;color:#ccc;text-align:center;font-size:14px;cursor:grab';dhTd.textContent='⠿';
@@ -760,7 +773,7 @@ function renderEstimate(){
           catSel.onchange=()=>{
             te.cat=catSel.value;
             catTd.className=CAT_CLS[te.cat]||'';
-            const newAmt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);
+            const newAmt=te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);
             amtTd.textContent=fmt(newAmt);
             saveData();renderSummary();renderEstimate();
           };
@@ -777,7 +790,7 @@ function renderEstimate(){
           dateInp.onchange=()=>{te.date=dateInp.value;saveData();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
           // Hrs or Amount — hide hrs for M/S, show dollar input instead
-          const isMatCat=te.cat==='M'||te.cat==='S';
+          const isMatCat=te.cat==='M'||te.cat==='S'||te.cat==='P';
           const hrsTd=document.createElement('td');hrsTd.style.cssText='padding:0;text-align:right';
           if(isMatCat){
             hrsTd.setAttribute('colspan','2');
@@ -786,13 +799,20 @@ function renderEstimate(){
             hrsTd.appendChild(amtInp);tr.appendChild(hrsTd);
           } else {
             const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
-            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();};
+            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();};
             hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
             // Rate
             const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent='$'+rate;tr.appendChild(rateTd);
           }
           // Amount
-          const amtTd=document.createElement('td');amtTd.className='cell-bold';amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);tr.appendChild(amtTd);
+          const amtTd=document.createElement('td');amtTd.className='cell-bold';
+          if(te.cat==='P'){
+            tr.style.opacity='0.65';
+            amtTd.innerHTML='<span style="text-decoration:line-through;color:#999">'+fmt(amt)+'</span> <span class="paid-badge">PAID</span>';
+          } else {
+            amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);
+          }
+          tr.appendChild(amtTd);
           // Unpost button
           const actTd=document.createElement('td');actTd.style.cssText='padding:4px 8px;text-align:right';
           const unpostBtn=document.createElement('button');unpostBtn.className='btn-sm danger';unpostBtn.style.fontSize='10px';unpostBtn.textContent='Unpost';
@@ -944,8 +964,8 @@ function ttMerged(proj){
   const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
   const postedTasks=postedTEs.map(te=>({
     id:te.id,cat:te.cat,desc:te.desc,
-    hrs:te.cat==='M'||te.cat==='S'?0:te.hrs,
-    mat:te.cat==='M'||te.cat==='S'?te.hrs:0,
+    hrs:te.cat==='M'||te.cat==='S'||te.cat==='P'?0:te.hrs,
+    mat:te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:0,
     sub:0
   }));
   const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
@@ -955,7 +975,7 @@ function ttMerged(proj){
     tasks.forEach(task=>{
       const labor=(RATES[task.cat]||0)*(task.hrs||0);
       const ms=(task.mat||0)+(task.sub||0);
-      const isMS=task.cat==='M'||task.cat==='S';
+      const isMS=task.cat==='M'||task.cat==='S'||task.cat==='P';
       rows+=`<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:4px;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:9pt">
         <div style="white-space:pre-wrap">${nl2br(task.desc)||'—'}</div>
         <div style="color:#888;white-space:nowrap">${CAT_LABELS[task.cat]}</div>
@@ -1004,21 +1024,26 @@ function exportClientDoc(){
   const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
-  const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   function taskTable(tasks){
     if(!tasks||tasks.length===0)return'';
     let rows='';
     tasks.forEach(t=>{
       const labor=(RATES[t.cat]||0)*(t.hrs||0);
       const ms=(t.mat||0)+(t.sub||0);
-      const isMS=t.cat==='M'||t.cat==='S';
-      rows+=`<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${CAT_LABELS[t.cat]}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${isMS?'\u2014':(t.hrs||0)+'h'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">${fd(isMS?ms:labor+ms)}</td></tr>`;
+      const isMS=t.cat==='M'||t.cat==='S'||t.cat==='P';
+      const isPaid=t.cat==='P';
+      const rowStyle=isPaid?'opacity:0.6;':'';
+      const cellStyle=isPaid?'text-decoration:line-through;':'';
+      const amtDisplay=isPaid
+        ?`<span style="text-decoration:line-through;color:#999">${fd(t.mat||0)}</span> <span style="font-size:8px;font-weight:700;background:#1D9E75;color:#fff;border-radius:3px;padding:1px 4px;vertical-align:middle">PAID</span>`
+        :fd(isMS?ms:labor+ms);
+      rows+=`<tr style="${rowStyle}"><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt;${cellStyle}">${nl2br(t.desc)||'\u2014'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;${cellStyle}">${CAT_LABELS[t.cat]}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;${cellStyle}">${isMS||isPaid?'\u2014':(t.hrs||0)+'h'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">${amtDisplay}</td></tr>`;
     });
-    const pL=tasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
-    const pM=tasks.reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
+    const pL=tasks.filter(t=>t.cat!=='P').reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
+    const pM=tasks.filter(t=>t.cat!=='P').reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
     return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
       <thead><tr style="background:#f8f8f8">
         <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
@@ -1037,7 +1062,7 @@ function exportClientDoc(){
   function mergedTable(proj){
     const scopeTasks=proj.scopeTasks||[];
     const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
-    const postedTasks=postedTEs.map(te=>({cat:te.cat,desc:te.desc,hrs:te.cat==='M'||te.cat==='S'?0:te.hrs,mat:te.cat==='M'||te.cat==='S'?te.hrs:0,sub:0}));
+    const postedTasks=postedTEs.map(te=>({cat:te.cat,desc:te.desc,hrs:te.cat==='M'||te.cat==='S'||te.cat==='P'?0:te.hrs,mat:te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:0,sub:0}));
     const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
     const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
     let h='';
@@ -1391,7 +1416,7 @@ function exportClientPDF(){
     tasks.forEach(task=>{
       const labor=(RATES[task.cat]||0)*(task.hrs||0);
       const ms=(task.mat||0)+(task.sub||0);
-      const isMS=task.cat==='M'||task.cat==='S';
+      const isMS=task.cat==='M'||task.cat==='S'||task.cat==='P';
       rows+=`<tr>
 
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top">${task.desc}</td>
@@ -1835,7 +1860,7 @@ function exportCSV(){
   const rows=[['Type','Project','Category','Description','Est Hrs','Rate','Labor','Materials','SBCNTRCT','Task Total']];
   projects.forEach(p=>{(p.scopeTasks||[]).forEach(t=>rows.push(['Scope',p.name,CAT_LABELS[t.cat],t.desc,t.hrs,RATES[t.cat]||0,taskLabor(t),t.mat,t.sub,taskTotal(t)]));});
   rows.push([]);rows.push(['DATE','PROJECT','CATEGORY','DESCRIPTION','HOURS','AMOUNT']);
-  timeEntries.forEach(te=>{const amt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);rows.push([te.date,te.proj,CAT_LABELS[te.cat],te.desc,te.hrs,amt]);});
+  timeEntries.forEach(te=>{const amt=te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);rows.push([te.date,te.proj,CAT_LABELS[te.cat],te.desc,te.hrs,amt]);});
   const csv=rows.map(r=>r.map(v=>'"'+v+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='TPM_'+document.getElementById('vfVessel').value+'_'+new Date().toISOString().split('T')[0]+'.csv';a.click();
 }
@@ -1900,7 +1925,7 @@ function renderTimeEntry(){
     entries.forEach(te=>{
       const ri=timeEntries.indexOf(te);
       const rate=RATES[te.cat]||0;
-      const amt=te.cat==='M'||te.cat==='S'?te.hrs:(te.hrs||0)*rate;
+      const amt=te.cat==='M'||te.cat==='S'||te.cat==='P'?te.hrs:(te.hrs||0)*rate;
       const tr=document.createElement('tr');
       if(!isPosted)tr.style.background='#fffdf5';
       tr.innerHTML='<td><input class="te-inp" value="'+(te.date||'')+'" onchange="timeEntries['+ri+'].date=this.value;saveData()"></td>'
@@ -1957,7 +1982,7 @@ function addTimeEntry(){
 }
 function renderProgress(){
   const tEst=projects.reduce((a,p)=>a+projEstHrs(p),0);
-  const tAct=timeEntries.filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const tAct=timeEntries.filter(te=>te.cat!=='M'&&te.cat!=='S'&&te.cat!=='P').reduce((a,te)=>a+(te.hrs||0),0);
   const v=tAct-tEst;
   document.getElementById('progEstHrs').textContent=tEst.toFixed(2);
   document.getElementById('progActHrs').textContent=tAct.toFixed(2);
