@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Whistler",
     "client": "Greg Parker & Janet Snedecor",
-    "exportedAt": "2026-04-03T16:21:48.898Z",
+    "exportedAt": "2026-04-10T21:33:17.282Z",
     "engineVersion": 3
   },
   "projects": [
@@ -52,11 +52,66 @@
       "cos": []
     }
   ],
-  "timeEntries": [],
+  "timeEntries": [
+    {
+      "id": 1000,
+      "date": "2026-04-03",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Brought dehumidifier and second heater to vessel and set up to heat and dry the salon.",
+      "posted": true
+    },
+    {
+      "id": 1004,
+      "date": "2026-04-06",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 0,
+      "desc": "Found the wall panel was not exhibiting a dry zone I could measure a leak against yet. Will circle back tomorrow morning. ",
+      "posted": true
+    },
+    {
+      "id": 1001,
+      "date": "2026-04-07",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Found expanding dry spot in the paneling behind the salon window amidst the damp panel. \n\nCleared drains in the flybridge fiberglass cowling wrap around. Found water exiting the aft ouboard corner drain of the flybridge fiberglass wrap around cowling. I needed to keep clearing it as there was sediment that was clogging the drain. There wasn't a lot of water and it seemed to be old water. The sealant that was blocking it up looked to be from bedding the teak trim. I will keep an eye out for water presenting here as I continue to leak test. \n\nSet a hose up and ran water through the bench seat and due to the drain channel what turned out to be forward a bit under the starboard bench seat. Tracked where the water was pooling and channeling. Made sure the davit support bracket was not being exposed to water. After 6 hours of water exposure found no signs of moisture in the salon paneling. Left water off overnight to see if water needed to soak its way down into the wall paneling. ",
+      "posted": true
+    },
+    {
+      "id": 1002,
+      "date": "2026-04-08",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Found no new moisture in the salon wall paneling. Set up a hose and ran fresh water over the davit support plate. After over 6 hours of exposure to water inspected salon panel and found no new moisture. Inspected the plugs on the underside of the overhang that hides the davit support plate thru bolts. Found moisture here yet it seemed more like condensation than an active leak. Will circle back tomorrow morning to check the salon wall paneling.",
+      "posted": true
+    },
+    {
+      "id": 1003,
+      "date": "2026-04-09",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Found no new moisture in the salon wall paneling. Pulled up contents of the flybridge bench seat on the starboard side to inspect where moisture is pooling when there is water flowing on the starboard side of the deck. Due to the moisture found up above the plugs ran water across the davit plate for another 4 hour stretch of time at a higher flow rate to simulate heavy rain. When I circled back to check the salon wall panel I found no new moisture. Will circle back in the morning to check for any sign of soaking down into the wall panels. ",
+      "posted": true
+    },
+    {
+      "id": 1005,
+      "date": "2026-04-10",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Found no new moisture in the salon wall paneling. Ran water at a higher flow rate into the L bench. Circled back in a few hours and found water ingress in the salon above the window the leak has been showing up just aft of. Also found water has been exiting the midship drain of the flybridge wraparound cowling. The aft corner drain where moisture was found on 4/7 looked like it was showing signs of draining water yet it is tough to say as the main water channel passes here. \n\nI am pretty sure I have located the location of the water ingress to under the bench seat (not the L bench). When in the boathouse I will be able to zero in on exactly where the water is getting in by introducing water in an isolated corner under the bench seat. ",
+      "posted": true
+    }
+  ],
   "nextProjId": 2,
   "nextTaskId": 104,
   "nextCOId": 100,
-  "nextTEId": 1000,
+  "nextTEId": 1006,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
