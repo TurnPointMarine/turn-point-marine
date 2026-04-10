@@ -22,18 +22,18 @@
       <div style="font-size:10pt;font-weight:700;margin-top:4px">Abram Anderson</div>
       <div style="font-size:9pt;color:#1255a0">abram@turnpointmarine.com</div>
     </div>
-  </div><div style="background:#1D9E75;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
+  </div><div style="background:#6b7280;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
       <div>
-        <div style="font-size:12pt;font-weight:700">AUTHORIZATION NEEDED</div>
-        <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">1 project &mdash; Please review each project and sign below to proceed</div>
+        <div style="font-size:12pt;font-weight:700">IN PROGRESS</div>
+        <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">1 project &mdash; Authorized work currently underway</div>
       </div>
-      <div style="font-size:13pt;font-weight:700">$1,181.25</div>
-    </div><div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">Sign below to authorize all work in this project. Work does not proceed without your signature.</div><div style="border:1px solid #e5e5e0;border-left:5px solid #1D9E75;border-radius:8px;margin:8px 0;overflow:hidden;font-family:Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
+      <div style="font-size:13pt;font-weight:700">$573.75</div>
+    </div><div style="border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;margin:8px 0;overflow:hidden;font-family:Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:12px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('proj0_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
         <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" name="proj_auth" value="1" data-name="Repair Water Leak Showing Up in Salon Starboard Aft of Window" style="width:18px;height:18px;accent-color:#1D9E75;flex-shrink:0" onclick="event.stopPropagation()">
+          
           <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">Repair Water Leak Showing Up in Salon Starboard Aft of Window</span>
-          <span style="font-size:11pt;font-weight:700;color:#1D9E75;white-space:nowrap">$1,181.25</span>
+          <span style="font-size:11pt;font-weight:700;color:#6b7280;white-space:nowrap">$573.75</span>
           <span class="chev" style="font-size:11px;color:#bbb;margin-left:6px;transition:transform 0.2s">&#9654;</span>
         </div>
         
@@ -102,32 +102,6 @@
         <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">$573.75</div>
       </div>
     </div></div>
-    </div><div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
-      <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
-      <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Printed Name <span style="color:#c0392b">*</span></label>
-          <input id="sig_name" type="text" value="Greg Parker & Janet Snedecor" placeholder="Full name required" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
-        </div>
-        <div><label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Date</label>
-          <input id="sig_date" type="text" value="April 10, 2026" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
-        </div>
-      </div>
-      <div style="margin-bottom:14px">
-        <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:3px">Email Address <span style="color:#c0392b">*</span></label>
-        <input id="sig_email" type="email" placeholder="your@email.com" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:11pt;font-family:Arial,sans-serif">
-        <div style="font-size:8pt;color:#888;margin-top:3px">A confirmation will be sent to this address.</div>
-      </div>
-      <label style="font-size:8pt;color:#888;text-transform:uppercase;display:block;margin-bottom:4px">Signature <span style="color:#c0392b">*</span></label>
-      <div class="sig-wrap"><canvas id="sigCanvas"></canvas></div>
-      <div style="display:flex;gap:8px;margin-top:6px">
-        <button onclick="clearSig()" style="font-size:11px;padding:5px 12px;border:1px solid #ddd;border-radius:6px;cursor:pointer;background:#fff;font-family:Arial,sans-serif">Clear Signature</button>
-        <span id="sigStatus" style="font-size:11px;color:#c0392b;align-self:center"></span>
-      </div>
-      <button class="submit-btn" onclick="submitAuth()">Submit Authorization</button>
-      <div id="submitMsg" style="display:none;margin-top:12px;padding:12px;background:#f0faf6;border-radius:6px;font-size:9pt;color:#155a3e;text-align:center;font-weight:700">
-        ✓ Authorization submitted. Turn Point Marine has been notified. A confirmation has been sent to your email.
-      </div>
     </div><div style="margin-top:28px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
     <div style="background:#f5f5f3;border-bottom:2px solid #e5e5e0;padding:12px 18px;font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#555">Estimate Summary &mdash; Work in Progress &amp; Complete</div>
     <table style="width:100%;border-collapse:collapse">

@@ -2,18 +2,18 @@
   "_meta": {
     "vessel": "Whistler",
     "client": "Greg Parker & Janet Snedecor",
-    "exportedAt": "2026-04-10T21:33:17.282Z",
+    "exportedAt": "2026-04-10T21:56:06.096Z",
     "engineVersion": 3
   },
   "projects": [
     {
       "id": 1,
       "name": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 100,

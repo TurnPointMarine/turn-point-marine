@@ -384,6 +384,7 @@ function projEstLabor(p){return projScopeLabor(p)+projActualLabor(p);}
 function projEstMat(p){return projScopeMat(p)+projActualMat(p);}
 function projEstSub(p){return projScopeSub(p);}
 function projEstTotal(p){return projEstLabor(p)+projEstMat(p)+projEstSub(p);}
+function projDisplayTotal(p){return p.isTM?projActualTotal(p):projScopeTotal(p);}// T&M shows actual, scope shows estimate
 function projEstHrs(p){
   const sh=(p.scopeTasks||[]).reduce((a,t)=>a+(t.hrs||0),0);
   const ah=projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S'&&te.cat!=='P').reduce((a,te)=>a+(te.hrs||0),0);
@@ -470,9 +471,9 @@ function renderSummary(){
   const gt=document.getElementById('grandTotal');
   if(gt){
     const actP=inc.filter(p=>p.status!=='billed'&&p.status!=='holding');
-    const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
-    const gMat=actP.reduce((a,p)=>a+projEstMat(p),0);
-    const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+    const gL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
+    const gMat=actP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)),0);
+    const gSub=actP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
     const gSubtotal=gL+gMat+gSub;
     const gShop=gSubtotal*0.03;
     const gTax=settings.taxExempt?0:(gSubtotal+gShop)*0.091;
@@ -524,7 +525,7 @@ function renderEstimate(){
     secProjs.forEach(proj=>{
       const pi=projects.indexOf(proj);
       const isProjOpen=openProjs.has(proj.id);
-      const pTotal=projEstTotal(proj);
+      const pTotal=proj.isTM?projActualTotal(proj):projScopeTotal(proj);
       const pw=document.createElement('div');pw.className='project'+(proj.include===false?' excluded':'');
       pw.style.cssText='border:1px solid '+(isProjOpen?'#b0bec5':'#e5e5e0')+';border-radius:8px;margin:6px 0;overflow:hidden;transition:border-color 0.15s';
       const ph=document.createElement('div');ph.className='proj-hdr';
@@ -1013,8 +1014,8 @@ function exportClientDoc(){
   const compP=projects.filter(p=>p.include!==false&&p.status==='complete');
   const billP=projects.filter(p=>p.include!==false&&p.status==='billed');
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
-  const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
-  const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
+  const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
+  const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
   const allMat=actP.reduce((a,p)=>a+projEstMat(p),0);
   const allSub=actP.reduce((a,p)=>a+projEstSub(p),0);
@@ -1084,7 +1085,7 @@ function exportClientDoc(){
   let uid=0;
   function projBlock(proj,accentColor,showCheck,showCOs){
     const pid='proj'+(uid++);
-    const total=projEstTotal(proj);
+    const total=projDisplayTotal(proj);
     const cos=(proj.cos||[]);
     let inner='';
 
@@ -1169,7 +1170,7 @@ function exportClientDoc(){
   // ── HOLDING PATTERN (selected projects) ─────────────────────────────────
   const futureP=projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true);
   if(futureP.length>0){
-    const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
+    const futureTotal=futureP.reduce((a,p)=>a+projDisplayTotal(p),0);
     html+=sectionHdr('#7c6f9f','PROJECTS IN HOLDING PATTERN',futureP.length,fd(futureTotal),'Upcoming projects — not yet authorized');
     html+=`<div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
     futureP.forEach(proj=>{html+=projBlock(proj,'#7c6f9f',false,false);});
@@ -1178,7 +1179,7 @@ function exportClientDoc(){
   // ── NEEDS AUTH ─────────────────────────────────────────────────────────
   if(authP.length>0||coProjs.length>0){
     const coTotal=coProjs.reduce((a,p)=>(p.scopeTasks||[]).filter(t=>t.co).reduce((b,t)=>b+taskTotal(t),0)+a,0);
-    const authTotal=authP.reduce((a,p)=>a+projEstTotal(p),0)+coTotal;
+    const authTotal=authP.reduce((a,p)=>a+projDisplayTotal(p),0)+coTotal;
     html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed');
     html+=`<div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">${s.authText}</div>`;
     authP.forEach(proj=>{html+=projBlock(proj,'#1D9E75',true,false);});
@@ -1234,14 +1235,14 @@ function exportClientDoc(){
 
   // ── IN PROGRESS ─────────────────────────────────────────────────────────
   if(inPP.length>0){
-    const pt=inPP.reduce((a,p)=>a+projEstTotal(p),0);
+    const pt=inPP.reduce((a,p)=>a+projDisplayTotal(p),0);
     html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway');
     inPP.forEach(proj=>{html+=projBlock(proj,'#6b7280',false,true);});
   }
 
   // ── COMPLETE ────────────────────────────────────────────────────────────
   if(compP.length>0){
-    const ct=compP.reduce((a,p)=>a+projEstTotal(p),0);
+    const ct=compP.reduce((a,p)=>a+projDisplayTotal(p),0);
     html+=sectionHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(ct),'Work complete, invoice pending');
     compP.forEach(proj=>{html+=projBlock(proj,'#4a5e5a',false,false);});
   }
@@ -1269,7 +1270,7 @@ function exportClientDoc(){
 
   // ── BILLED ──────────────────────────────────────────────────────────────
   if(billP.length>0){
-    const bt=billP.reduce((a,p)=>a+projEstTotal(p),0);
+    const bt=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
     let billRows='';
     billP.forEach((proj,bi)=>{
       const inv=proj.invoiceNum?` &mdash; Inv #${proj.invoiceNum}`:'';
@@ -1278,7 +1279,7 @@ function exportClientDoc(){
         <div onclick="var d=document.getElementById('${bid}');var c=document.getElementById('${bid}_chev');d.style.display=d.style.display==='none'?'block':'none';c.style.transform=d.style.display==='none'?'':'rotate(90deg)'" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;color:#888">
           <span id="${bid}_chev" style="font-size:9px;color:#ccc;display:inline-block;transition:transform 0.15s">&#9654;</span>
           <span style="flex:1;font-size:9.5pt;color:#999">${proj.name}<span style="color:#bbb;font-weight:400;font-size:8.5pt">${inv}</span></span>
-          <span style="font-size:9.5pt;color:#bbb">${fd(projEstTotal(proj))}</span>
+          <span style="font-size:9.5pt;color:#bbb">${fd(projDisplayTotal(proj))}</span>
         </div>
         <div id="${bid}" style="display:none;padding:0 14px 10px 32px;background:#fafafa">
           ${ttMerged(proj)}
@@ -1406,8 +1407,8 @@ function exportClientPDF(){
   const compP=projects.filter(p=>p.include!==false&&p.status==='complete');
   const billP=projects.filter(p=>p.include!==false&&p.status==='billed');
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
-  const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
-  const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
+  const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
+  const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const allL=actP.reduce((a,p)=>a+projEstLabor(p),0);
   const allM=actP.reduce((a,p)=>a+projEstMat(p)+projEstSub(p),0);
 
@@ -1471,7 +1472,7 @@ function exportClientPDF(){
             <span id="chev${pi}" style="font-size:18px;color:#5dba99;padding:4px 8px;flex-shrink:0">&#9654;</span>
           </div>
           ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
-          ${projEstTotal(proj)>0?`<div style="font-size:11pt;font-weight:700;color:#1D9E75;margin-top:4px">${fd(projEstTotal(proj))}</div>`:''}
+          ${projDisplayTotal(proj)>0?`<div style="font-size:11pt;font-weight:700;color:#1D9E75;margin-top:4px">${fd(projDisplayTotal(proj))}</div>`:''}
         </div>
       </div>
       <div id="detail${pi}" style="background:#fafffe;border-top:1px solid #e0f0ea;padding:8px 14px"><div class="task-wrap">${ttMerged(proj)}</div></div>
@@ -1499,7 +1500,7 @@ function exportClientPDF(){
           <span id="compchev${pi}" style="font-size:11px;color:#4a5e5a;display:inline-block;transition:transform 0.2s">&#9654;</span>
           <span style="font-size:11pt;font-weight:700">${String(authP.length+inPP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
         </div>
-        <div style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap;padding-left:12px">${fd(projEstTotal(proj))}</div>
+        <div style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap;padding-left:12px">${fd(projDisplayTotal(proj))}</div>
       </div>
       <div id="compdetail${pi}" style="display:none;background:#eef3f2;border-top:1px solid #c5d4d1;padding:8px 14px"><div class="task-wrap">${ttMerged(proj)}</div></div>
     </div>`;
@@ -1512,7 +1513,7 @@ function exportClientPDF(){
     billRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
         <div style="font-size:11pt;font-weight:700;color:#555">${String(authP.length+inPP.length+compP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
-        <div style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap;padding-left:12px">${fd(projEstTotal(proj))}</div>
+        <div style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap;padding-left:12px">${fd(projDisplayTotal(proj))}</div>
       </div>
     </div>`;
   });
@@ -1576,7 +1577,7 @@ input[type=text]:focus{border-color:#1D9E75;box-shadow:0 0 0 2px rgba(29,158,117
 </div>
 
 ${authP.length>0?`
-${secHdr('#5dba99','AUTHORIZATION NEEDED BEFORE PROCEEDING',authP.length,fd(authP.reduce((a,p)=>a+projEstTotal(p),0)),'#f0faf6','#155a3e','Check the box next to each project you authorize, then type your name and click Send Authorization.')}
+${secHdr('#5dba99','AUTHORIZATION NEEDED BEFORE PROCEEDING',authP.length,fd(authP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#f0faf6','#155a3e','Check the box next to each project you authorize, then type your name and click Send Authorization.')}
 ${authRows}
 <div style="border:2px solid #5dba99;padding:20px 24px;background:#f0faf6;margin-top:12px">
   <div style="font-size:10pt;font-weight:700;color:#155a3e;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Authorization</div>
@@ -1603,18 +1604,18 @@ ${authRows}
 `:''}
 
 ${inPP.length>0?`
-${secHdr('#6b7280','IN PROGRESS',inPP.length,fd(inPP.reduce((a,p)=>a+projEstTotal(p),0)),'#f9fafb','#374151','Authorized work currently underway.')}
+${secHdr('#6b7280','IN PROGRESS',inPP.length,fd(inPP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#f9fafb','#374151','Authorized work currently underway.')}
 ${inProgRows}
 `:''}
 
 ${compP.length>0?`
-${secHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(compP.reduce((a,p)=>a+projEstTotal(p),0)),'#eef3f2','#2d4a46','Work completed and ready to invoice.')}
+${secHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(compP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#eef3f2','#2d4a46','Work completed and ready to invoice.')}
 ${compRows}
 `:''}
 
 ${billP.length>0?`
 <div style="page-break-before:always"></div>
-${secHdr('#374151','BILLED',billP.length,fd(billP.reduce((a,p)=>a+projEstTotal(p),0)),'#fafafa','#555','Invoiced \u2014 shown for your records.')}
+${secHdr('#374151','BILLED',billP.length,fd(billP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#fafafa','#555','Invoiced \u2014 shown for your records.')}
 ${billRows}
 `:''}
 
@@ -1991,7 +1992,7 @@ function renderProgress(){
   projects.forEach(proj=>{
     const eH=projEstHrs(proj);const aH=projActHrs(proj);const pct=eH>0?Math.min(aH/eH,1):0;const over=aH>eH;
     const sec=document.createElement('div');sec.style.cssText='background:#fff;border:1px solid #e5e5e0;border-radius:12px;margin-bottom:10px;overflow:hidden';
-    sec.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafaf8;border-bottom:1px solid #e5e5e0"><span style="font-size:11px;font-weight:700;color:#fff;background:'+(over?'#c0392b':'#1a1a1a')+';border-radius:5px;padding:2px 7px">'+String(projects.indexOf(proj)+1).padStart(2,'0')+'</span><span style="flex:1;font-weight:600">'+proj.name+'</span><div style="width:180px;margin-right:16px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:3px"><span>'+aH.toFixed(1)+'h actual</span><span>'+eH.toFixed(1)+'h est</span></div><div style="background:#f0f0ed;border-radius:4px;height:6px;overflow:hidden"><div style="height:6px;border-radius:4px;background:'+(over?'#c0392b':'#1D9E75')+';width:'+(pct*100).toFixed(1)+'%"></div></div></div><span style="font-size:12px;font-weight:700;color:'+(over?'#c0392b':'#1D9E75')+'">'+fmt(aH*(RATES['T']||135))+' / '+fmt(projEstTotal(proj))+'</span></div>';
+    sec.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafaf8;border-bottom:1px solid #e5e5e0"><span style="font-size:11px;font-weight:700;color:#fff;background:'+(over?'#c0392b':'#1a1a1a')+';border-radius:5px;padding:2px 7px">'+String(projects.indexOf(proj)+1).padStart(2,'0')+'</span><span style="flex:1;font-weight:600">'+proj.name+'</span><div style="width:180px;margin-right:16px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:3px"><span>'+aH.toFixed(1)+'h actual</span><span>'+eH.toFixed(1)+'h est</span></div><div style="background:#f0f0ed;border-radius:4px;height:6px;overflow:hidden"><div style="height:6px;border-radius:4px;background:'+(over?'#c0392b':'#1D9E75')+';width:'+(pct*100).toFixed(1)+'%"></div></div></div><span style="font-size:12px;font-weight:700;color:'+(over?'#c0392b':'#1D9E75')+'">'+fmt(aH*(RATES['T']||135))+' / '+fmt(projDisplayTotal(proj))+'</span></div>';
     list.appendChild(sec);
   });
 }
