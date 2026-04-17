@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-17T12:29:50.669Z",
+    "exportedAt": "2026-04-17T12:55:07.420Z",
     "engineVersion": 3
   },
   "projects": [
@@ -1194,6 +1194,27 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 50,
+      "name": "Main Engines Drive Puck Replacement",
+      "status": "holding",
+      "include": true,
+      "notes": "$11-12,000ish\nPulling Aquadrive forward shafts. Lifting both engines with bell housing mounts. Decoupling both transmissions. Replacing the drive interface. Reassemble.",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 186,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
     }
   ],
   "timeEntries": [
@@ -1288,8 +1309,8 @@
       "posted": false
     }
   ],
-  "nextProjId": 50,
-  "nextTaskId": 186,
+  "nextProjId": 51,
+  "nextTaskId": 187,
   "nextCOId": 101,
   "nextTEId": 1010,
   "settings": {
