@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-17T12:55:07.420Z",
+    "exportedAt": "2026-04-17T13:05:28.568Z",
     "engineVersion": 3
   },
   "projects": [
@@ -342,7 +342,8 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "showInDoc": true
     },
     {
       "id": 24,
@@ -385,7 +386,7 @@
     {
       "id": 31,
       "name": "Buff/Wax During Haul Out",
-      "status": "needs_auth",
+      "status": "in_progress",
       "notes": "Buff/wax \n1. Below the lower rub rail. \n2. Forward of the lower rub rail I suggest buffing waxing from the waterline up to the halfway mark between the waterline and the cap rail.  This will leave the rest of the bow and topsides accessible when she is back in the water. ",
       "include": true,
       "isTM": false,
@@ -669,7 +670,7 @@
     {
       "id": 35,
       "name": "Oil Pressure Gauges Alarming",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Functional to AK and back through the Fall. \nNew sending units will be tested on her trip to Anacortes for haul out. My sense is that the present location of these exposes them to too much heat. If the new sending units resolve the issue as expected we can relocate the sending units where they will not be exposed to the heat exposure right there next to the engine block.\n\n**Will follow up with Change of Scope when we are clear that the new sending units work. ",
       "estimateTotal": null,
@@ -690,7 +691,7 @@
           "hrs": 1,
           "mat": 0,
           "sub": 0,
-          "co": true
+          "co": false
         }
       ],
       "tasks": [],
@@ -821,7 +822,7 @@
           "hrs": 0,
           "mat": 160.69,
           "sub": 0,
-          "co": true
+          "co": false
         },
         {
           "id": 181,
