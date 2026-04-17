@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-15T22:37:39.498Z",
+    "exportedAt": "2026-04-17T12:29:50.669Z",
     "engineVersion": 3
   },
   "projects": [
@@ -326,8 +326,8 @@
     {
       "id": 19,
       "name": "Wax",
-      "status": "in_progress",
-      "notes": "",
+      "status": "holding",
+      "notes": "If you would like to pursue wax above the buffing/waxing done on the hull an estimate will be provided. ",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -338,14 +338,6 @@
           "desc": "Wax",
           "hrs": 30,
           "mat": 100,
-          "sub": 0
-        },
-        {
-          "id": 130,
-          "cat": "V",
-          "desc": "Anacortes travel for 4 days of buff/wax ",
-          "hrs": 4,
-          "mat": 0,
           "sub": 0
         }
       ],
