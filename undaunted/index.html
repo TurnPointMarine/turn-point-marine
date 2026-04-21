@@ -103,6 +103,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .del-btn:hover{color:#c0392b}
 .sub-row td{background:#f8f8f6;border-top:1px solid #e5e5e0;padding:8px;font-size:12px;font-weight:700}
 .proj-footer{display:flex;gap:8px;padding:10px 16px;border-top:1px solid #f0f0ed;flex-wrap:wrap}
+.billing-row{display:flex;align-items:center;gap:8px;padding:7px 16px;background:#f0faf6;border-top:1px solid #a7d8c5;font-size:12px}
+.billing-inp{font-size:12px;padding:3px 7px;border:1px solid #a7d8c5;border-radius:6px;background:#fff;font-family:inherit}
+.billing-total{font-size:12px;font-weight:700;color:#155a3e;margin-left:auto;white-space:nowrap}
 .drag-handle{cursor:grab;color:#bbb;font-size:16px;padding:0 6px;user-select:none;line-height:1}
 .drag-handle:active{cursor:grabbing}
 .project.drag-over{outline:2px dashed #5dba99;outline-offset:-2px}
@@ -322,7 +325,7 @@ let settings={company:'Turn Point Marine',manager:'Abram Anderson',email:'abram@
 let unlocked=false;
 let secOpenState={holding:true,needs_auth:true,in_progress:true,complete:false,billed:false};
 let openProjs=new Set();
-let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000;
+let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000,nextBillingId=500;
 let projects=[];
 let timeEntries=[];
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -375,6 +378,8 @@ function reconcileTimeEntries(){
 function projActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projActualMat(p){return projPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
+function projBilledTotal(p){return(p.billingEvents||[]).reduce((a,b)=>a+(b.amount||0),0);}
+function projDisplayTotal(p){return p.isTM?projActualTotal(p):projScopeTotal(p);}
 
 // Combined total (scope + actual posted TEs) — used everywhere
 function projEstLabor(p){return projScopeLabor(p)+projActualLabor(p);}
@@ -474,6 +479,14 @@ function renderSummary(){
     const gShop=gSubtotal*0.03;
     const gTax=settings.taxExempt?0:(gSubtotal+gShop)*0.091;
     const gTotal=gSubtotal+gShop+gTax;
+    // Deposits paid (Mat - Deposit Paid entries)
+    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
+    const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+(t.mat||0),0),0);
+    const totalDeposits=gDepositsTEs+gDepositsScope;
+    // Billing events across all active projects
+    const totalBilled=actP.reduce((a,p)=>a+projBilledTotal(p),0);
+    const totalDeductions=totalDeposits+totalBilled;
+    const gOutstanding=gTotal-totalDeductions;
     const row=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:12px;color:'+(bold?'#1a1a1a':'#888')+'">'+label+'</span><span style="font-size:12px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
     gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
       +row('Labor',gL,false)
@@ -482,7 +495,12 @@ function renderSummary(){
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
       +row('Shop Fee (3%)',gShop,false)
       +(settings.taxExempt?'':row('Tax (9.1%)',gTax,false))
-      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px -16px;background:#1D9E75;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>';
+      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px 0;background:#1D9E75"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>'
+      +(totalDeductions>0
+        ?(totalDeposits>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 14px;margin:0 -20px;background:#e8f5ee;border-top:1px solid #c3e0cf"><span style="font-size:12px;color:#155a3e">Deposits Paid</span><span style="font-size:12px;font-weight:600;color:#155a3e">−'+fmt(totalDeposits)+'</span></div>':'')
+        +(totalBilled>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 14px;margin:0 -20px;background:#e8f5ee;border-top:1px solid #c3e0cf"><span style="font-size:12px;color:#155a3e">Billed to Date</span><span style="font-size:12px;font-weight:600;color:#155a3e">−'+fmt(totalBilled)+'</span></div>':'')
+        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:0 -20px -16px;background:#155a3e;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Estimated Outstanding</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gOutstanding)+'</span></div>'
+        :'<div style="border-radius:0 0 12px 12px;overflow:hidden;margin:0 -20px -16px;height:0"></div>');
   }
   saveData();
 }
@@ -832,7 +850,30 @@ function renderEstimate(){
       }
       pb.appendChild(sumBar);
 
-      // Change of Scope sub-sections
+      // Billing Events
+      const billingEvents=proj.billingEvents||[];
+      if(billingEvents.length>0){
+        const billedHdr=document.createElement('div');
+        billedHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#e8f5ee;border-top:2px solid #1D9E75;font-size:10px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em';
+        const billedAmt=projBilledTotal(proj);
+        billedHdr.innerHTML='<span>Billed to Date</span><span>'+fmt(billedAmt)+'</span>';
+        pb.appendChild(billedHdr);
+        billingEvents.forEach((be,bi)=>{
+          const brow=document.createElement('div');brow.className='billing-row';
+          const dateInp=document.createElement('input');dateInp.className='billing-inp';dateInp.type='date';dateInp.value=be.date||'';dateInp.style.width='120px';
+          dateInp.onchange=()=>{be.date=dateInp.value;saveData();renderSummary();};
+          const invInp=document.createElement('input');invInp.className='billing-inp';invInp.placeholder='Inv #';invInp.value=be.invoiceNum||'';invInp.style.width='80px';
+          invInp.onchange=()=>{be.invoiceNum=invInp.value;saveData();};
+          const descInp=document.createElement('input');descInp.className='billing-inp';descInp.placeholder='Description (optional)';descInp.value=be.desc||'';descInp.style.flex='1';
+          descInp.onchange=()=>{be.desc=descInp.value;saveData();};
+          const amtInp=document.createElement('input');amtInp.className='billing-inp';amtInp.type='number';amtInp.min=0;amtInp.step=0.01;amtInp.placeholder='$0.00';amtInp.value=be.amount||'';amtInp.style.width='90px';amtInp.style.textAlign='right';
+          amtInp.onchange=()=>{be.amount=parseFloat(amtInp.value)||0;saveData();renderEstimate();};
+          const delBtn=document.createElement('button');delBtn.className='del-btn';delBtn.textContent='×';delBtn.style.color='#c0392b';
+          delBtn.onclick=()=>{proj.billingEvents.splice(bi,1);saveData();renderEstimate();};
+          brow.appendChild(dateInp);brow.appendChild(invInp);brow.appendChild(descInp);brow.appendChild(amtInp);brow.appendChild(delBtn);
+          pb.appendChild(brow);
+        });
+      }
       const projCos=proj.cos||[];
       if(projCos.length>0){
         projCos.forEach((co,ci)=>{
@@ -861,6 +902,15 @@ function renderEstimate(){
       mdn.onclick=(e)=>{e.stopPropagation();const idx=projects.indexOf(proj);if(idx<projects.length-1){projects.splice(idx,1);projects.splice(idx+1,0,proj);saveData();renderEstimate();}};
       const dpr=document.createElement('button');dpr.className='btn-sm danger';dpr.textContent='Delete project';dpr.onclick=()=>{if(confirm('Delete "'+proj.name+'"?')){projects.splice(pi,1);renderEstimate();}};
       foot.appendChild(ata);
+      // Add Billing button
+      const abill=document.createElement('button');abill.className='btn-sm';abill.style.cssText='color:#155a3e;border-color:#a7d8c5;background:#f0faf6';abill.textContent='+ Add billing';
+      abill.onclick=()=>{
+        if(!proj.billingEvents)proj.billingEvents=[];
+        const today=new Date().toISOString().split('T')[0];
+        proj.billingEvents.push({id:nextBillingId++,date:today,invoiceNum:'',desc:'',amount:0});
+        openProjs.add(proj.id);saveData();renderEstimate();
+      };
+      foot.appendChild(abill);
       // Add Time Entry button
       if(proj.status!=='billed'){
         const ate=document.createElement('button');ate.className='btn-sm blue';ate.textContent='+ Add time entry';
@@ -1052,6 +1102,10 @@ function exportClientDoc(){
         <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
         <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">${fd(actT)}</div>
       </div>
+      ${projBilledTotal(proj)>0?`<div style="flex:1;padding:8px 12px;background:#e8f5ee;border-radius:4px">
+        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Billed to Date</div>
+        <div style="font-size:11pt;font-weight:700;color:#155a3e;font-family:Arial,sans-serif">−${fd(projBilledTotal(proj))}</div>
+      </div>`:''}
     </div>`;
     return h;
   }
@@ -1738,7 +1792,7 @@ function exportData(){
       exportedAt:new Date().toISOString(),
       engineVersion:ENGINE_VERSION
     },
-    projects,timeEntries,nextProjId,nextTaskId,nextCOId,nextTEId,settings
+    projects,timeEntries,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings
   };
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');
@@ -1761,7 +1815,8 @@ function migrateData(d){
       status:statusMap[p.status]||p.status,
       include:p.include!==undefined?p.include:true,
       showInDoc:p.showInDoc||false,
-      cos:p.cos||[]
+      cos:p.cos||[],
+      billingEvents:p.billingEvents||[]
     }));
   }
 
@@ -1975,7 +2030,7 @@ function addProject(){
   const name=document.getElementById('newProjName').value.trim()||'New Project';
   const status=document.getElementById('newProjStatus').value;
   const id=nextProjId++;
-  projects.push({id,name,status,include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[{id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0}],tasks:[],cos:[]});
+  projects.push({id,name,status,include:true,notes:'',estimateTotal:null,isTM:false,scopeTasks:[{id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0}],tasks:[],cos:[],billingEvents:[]});
   openProjs.add(id);document.getElementById('newProjName').value='';
   renderEstimate();populateTEDropdowns();saveData();
 }
@@ -2017,7 +2072,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
-  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,nextProjId,nextTaskId,nextCOId,nextTEId,settings,vessel:v?v.value:'Hannah Mae',client:c?c.value:''}));}catch(e){}
+  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,vessel:v?v.value:'Hannah Mae',client:c?c.value:''}));}catch(e){}
 }
 function loadData(){
   try{
