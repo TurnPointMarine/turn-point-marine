@@ -1102,10 +1102,10 @@ function exportClientDoc(){
         <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
         <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">${fd(actT)}</div>
       </div>
-      ${projBilledTotal(proj)>0?`<div style="flex:1;padding:8px 12px;background:#e8f5ee;border-radius:4px">
-        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Billed to Date</div>
-        <div style="font-size:11pt;font-weight:700;color:#155a3e;font-family:Arial,sans-serif">−${fd(projBilledTotal(proj))}</div>
-      </div>`:''}
+      ${projBilledTotal(proj)>0?'<div style="flex:1;padding:8px 12px;background:#e8f5ee;border-radius:4px">'
+        +'<div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Billed to Date</div>'
+        +'<div style="font-size:11pt;font-weight:700;color:#155a3e;font-family:Arial,sans-serif">−'+fd(projBilledTotal(proj))+'</div>'
+        +'</div>':''}
     </div>`;
     return h;
   }

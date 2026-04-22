@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-17T13:05:28.568Z",
+    "exportedAt": "2026-04-22T14:55:05.900Z",
     "engineVersion": 3
   },
   "projects": [
@@ -1216,6 +1216,28 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 51,
+      "name": "Raw Water Pump SME",
+      "status": "holding",
+      "include": true,
+      "notes": "shaft seal on raw water side is leaking raw water. Replace Pump pump cost is around $1,200",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 187,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
     }
   ],
   "timeEntries": [
@@ -1310,10 +1332,11 @@
       "posted": false
     }
   ],
-  "nextProjId": 51,
-  "nextTaskId": 187,
+  "nextProjId": 52,
+  "nextTaskId": 188,
   "nextCOId": 101,
   "nextTEId": 1010,
+  "nextBillingId": 500,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",

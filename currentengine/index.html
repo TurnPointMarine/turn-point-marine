@@ -310,9 +310,10 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 <script>
 const ENGINE_VERSION=3;
 const PIN='1248';
-const RATES={T:135,B:105,D:95,V:95,M:0,S:0};
-const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT'};
-const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS'};
+const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0};
+const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid'};
+const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP'};
+const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v3';
 const SECTIONS=[
   {key:'holding',label:'Holding Pattern',color:'#7c6f9f',textColor:'#fff',bg:'#f3f0fa',border:'#c9bfea',defaultOpen:true},
@@ -1054,7 +1055,6 @@ function exportClientDoc(){
   const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
-  const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
   function taskTable(tasks){
     if(!tasks||tasks.length===0)return'';
     let rows='';
@@ -1102,10 +1102,10 @@ function exportClientDoc(){
         <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Actual to Date</div>
         <div style="font-size:11pt;font-weight:700;color:#1D9E75;font-family:Arial,sans-serif">${fd(actT)}</div>
       </div>
-      ${projBilledTotal(proj)>0?`<div style="flex:1;padding:8px 12px;background:#e8f5ee;border-radius:4px">
-        <div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Billed to Date</div>
-        <div style="font-size:11pt;font-weight:700;color:#155a3e;font-family:Arial,sans-serif">−${fd(projBilledTotal(proj))}</div>
-      </div>`:''}
+      ${projBilledTotal(proj)>0?'<div style="flex:1;padding:8px 12px;background:#e8f5ee;border-radius:4px">'
+        +'<div style="font-size:7pt;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Billed to Date</div>'
+        +'<div style="font-size:11pt;font-weight:700;color:#155a3e;font-family:Arial,sans-serif">−'+fd(projBilledTotal(proj))+'</div>'
+        +'</div>':''}
     </div>`;
     return h;
   }
