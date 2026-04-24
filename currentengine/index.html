@@ -1201,7 +1201,24 @@ function exportClientDoc(){
     const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
     html+=sectionHdr('#7c6f9f','PROJECTS IN HOLDING PATTERN',futureP.length,fd(futureTotal),'Upcoming projects — not yet authorized');
     html+=`<div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
-    futureP.forEach(proj=>{html+=projBlock(proj,'#7c6f9f',false,false);});
+    futureP.forEach((proj,fi)=>{
+      const fid='future'+fi;
+      const fTotal=projEstTotal(proj);
+      html+=`<div style="border:1px solid #c9bfea;border-radius:8px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
+        <div onclick="var d=document.getElementById('${fid}');var a=document.getElementById('${fid}arr');if(d.style.display==='none'){d.style.display='block';a.textContent='▼';}else{d.style.display='none';a.textContent='▶';}"
+          style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f3f0fa;cursor:pointer;user-select:none">
+          <span style="font-size:10pt;font-weight:700;color:#4a3f6b">${proj.name}</span>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:10pt;font-weight:700;color:#7c6f9f">${fd(fTotal)}</span>
+            <span id="${fid}arr" style="font-size:10px;color:#7c6f9f">▶</span>
+          </div>
+        </div>
+        <div id="${fid}" style="display:none;padding:10px 14px;border-top:1px solid #c9bfea;background:#faf8ff">
+          ${proj.notes?`<div style="font-size:8.5pt;color:#888;font-style:italic;margin-bottom:8px;line-height:1.5">${nl2br(proj.notes)}</div>`:''}
+          ${mergedTable(proj)}
+        </div>
+      </div>`;
+    });
   }
 
   // ── NEEDS AUTH ─────────────────────────────────────────────────────────

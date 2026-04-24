@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-04-22T14:55:05.900Z",
+    "exportedAt": "2026-04-24T13:14:28.035Z",
     "engineVersion": 3
   },
   "projects": [
@@ -692,6 +692,15 @@
           "mat": 0,
           "sub": 0,
           "co": false
+        },
+        {
+          "id": 188,
+          "cat": "T",
+          "desc": "Remove brass plumbing from the engine block that supplies pressure to the oil pressure sending unit and flow to the Gulf Coast bypass oil filter. Install 3' braided oil line with crimped reverse flare fittings. Route sending unit wiring aft to reach the sending units new location. ",
+          "hrs": 1.5,
+          "mat": 100,
+          "sub": 0,
+          "co": true
         }
       ],
       "tasks": [],
@@ -1330,12 +1339,21 @@
       "hrs": 0,
       "desc": "",
       "posted": false
+    },
+    {
+      "id": 1010,
+      "date": "2026-04-24",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "",
+      "posted": false
     }
   ],
   "nextProjId": 52,
-  "nextTaskId": 188,
+  "nextTaskId": 189,
   "nextCOId": 101,
-  "nextTEId": 1010,
+  "nextTEId": 1011,
   "nextBillingId": 500,
   "settings": {
     "company": "Turn Point Marine",
