@@ -1,8 +1,8 @@
 {
   "_meta": {
     "vessel": "Whistler",
-    "client": "Greg Parker & Janet Snedecor",
-    "exportedAt": "2026-04-10T22:01:14.913Z",
+    "client": "Janet Snedecor & Greg Parker ",
+    "exportedAt": "2026-05-04T16:55:56.574Z",
     "engineVersion": 3
   },
   "projects": [
@@ -106,12 +106,58 @@
       "hrs": 1,
       "desc": "Found no new moisture in the salon wall paneling. Ran water at a higher flow rate into the L bench. Circled back in a few hours and found water ingress in the salon above the window the leak has been showing up just aft of. Also found water has been exiting the midship drain of the flybridge wraparound cowling. The aft corner drain where moisture was found on 4/7 looked like it was showing signs of draining water yet it is tough to say as the main water channel passes here. \n\nI am pretty sure I have located the location of the water ingress to under the bench seat (not the L bench). When in the boathouse I will be able to zero in on exactly where the water is getting in by introducing water in an isolated corner under the bench seat. ",
       "posted": true
+    },
+    {
+      "id": 1008,
+      "date": "2026-04-13",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "Taped off flybridge starboard forward bench to leak check the teak trim and interior drainage of the bench. Found normal levels of water exposure presenting out from under the teak trim on the inside of the flybridge cowling, out both drain holes in the exterior of the flybridge cowling and then inside over the salon windows. ",
+      "posted": true
+    },
+    {
+      "id": 1006,
+      "date": "2026-04-14",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 6,
+      "desc": "Cleaned the compartment beneath the forward starboard flybridge settee bench with a vacuum, soapy water and then acetone. Removed all flaking paint and marine growth from the fiberglass and gelcoat seams where water drains through the settee compartment using a scraper. \nCleaned once more and then masked off the starboard edge and corners of the compartment where water could escape. Applied 3M-5200 sealant and documented with photos.\n\nThoroughly cleaned and removed the stubborn marine growth from the starboard flybridge deck trim. Propped up the starboard flybridge handrail canvas to gain better access to the trim and scraped out the dirt from the edges of the trim. Vacuumed the area and allowed the trim to dry prior to sealant installation. ",
+      "posted": true
+    },
+    {
+      "id": 1007,
+      "date": "2026-04-16",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 5,
+      "desc": "Masked off the top and bottom edge of the starboard flybridge teak deck trim as well as the PVC cable port under the forward starboard flybridge settee, then installed 3M-5200 sealant along the trim and built up the barrier around the PVC to prevent water intrusion. Removed all tape, reassembled the starboard flybridge handrail canvas, and cleaned the workspace. ",
+      "posted": true
+    },
+    {
+      "id": 1009,
+      "date": "2026-04-24",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "T",
+      "hrs": 1.75,
+      "desc": "Installed sealant in the gelcoat fracture inboard of the BBQ on the aft deck.\n\nReassembled the grates and locker contexts for the settee compartments on the flybridge that were used to access to troubleshooting salon leak.\n \nCollected the heater and dehumidifier used to dry out the salon.",
+      "posted": true
+    },
+    {
+      "id": 1010,
+      "date": "2026-04-14",
+      "proj": "Repair Water Leak Showing Up in Salon Starboard Aft of Window",
+      "cat": "M",
+      "hrs": 118.63,
+      "desc": "3M 5200 FAST CURE 10OZ CARTRIDGE WHT (x1)\nACETONE GL (x1)\n2090 BLUE MASKING TAPE 1\" (W) (x1)\nT SHIRT WHT RAG BAG 10 LB (x1)\n3M 5200 BLACK 10OZ CARTRIDGE (x1)\n",
+      "posted": true
     }
   ],
   "nextProjId": 2,
   "nextTaskId": 104,
   "nextCOId": 100,
-  "nextTEId": 1006,
+  "nextTEId": 1011,
+  "nextBillingId": 500,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
