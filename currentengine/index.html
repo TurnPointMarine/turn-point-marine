@@ -1226,7 +1226,8 @@ function exportClientDoc(){
 
   // Letterhead
   html+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:20px;border-bottom:2px solid #1a1a1a">
-    <div style="padding-top:4px">
+    ${s.logoB64?`<img src="data:${s.logoMime||'image/jpeg'};base64,${s.logoB64}" style="height:80px;object-fit:contain;display:block;border-radius:4px" alt="Turn Point Marine">`:'<div style="font-size:16pt;font-weight:700;color:#1a1a1a;font-family:Arial,sans-serif">'+s.company+'</div>'}
+    <div style="padding-top:4px;text-align:right">
       <div style="font-size:11pt;font-weight:700;font-family:Arial,sans-serif;color:#1a1a1a">${s.company}</div>
       <div style="font-size:9pt;color:#555;margin-top:6px;line-height:1.7;font-family:Arial,sans-serif">
         ${s.manager}<br>
@@ -1234,7 +1235,6 @@ function exportClientDoc(){
         ${s.phone?'<br>'+s.phone:''}
       </div>
     </div>
-    ${s.logoB64?`<img src="data:${s.logoMime||'image/jpeg'};base64,${s.logoB64}" style="height:80px;object-fit:contain;display:block" alt="Turn Point Marine">`:'<div style="font-size:16pt;font-weight:700;color:#1a1a1a;font-family:Arial,sans-serif">'+s.company+'</div>'}
   </div>
   <div style="margin-bottom:20px">
     <div style="font-size:7.5pt;color:#999;text-transform:uppercase;letter-spacing:0.08em;font-family:Arial,sans-serif;margin-bottom:3px">Client</div>
