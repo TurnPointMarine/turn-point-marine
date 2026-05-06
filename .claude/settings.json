@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(/Users/abramanderson/Library/CloudStorage/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/**)",
+      "Read(/Users/abramanderson/Documents/**)",
+      "Edit(/Users/abramanderson/Documents/**)",
+      "Write(/Users/abramanderson/Documents/**)"
+    ],
+    "defaultMode": "default"
+  }
+}
