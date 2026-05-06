@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-05T20:35:09.305Z",
+    "exportedAt": "2026-05-05T21:35:35.718Z",
     "engineVersion": 3
   },
   "projects": [
@@ -997,24 +997,6 @@
       "isTM": false,
       "scopeTasks": [
         {
-          "id": 160,
-          "cat": "M",
-          "desc": "Febr",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0,
-          "co": false
-        },
-        {
-          "id": 161,
-          "cat": "M",
-          "desc": "March",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0,
-          "co": false
-        },
-        {
           "id": 162,
           "cat": "M",
           "desc": "April",
@@ -1316,6 +1298,50 @@
       "tasks": [],
       "cos": [],
       "billingEvents": []
+    },
+    {
+      "id": 54,
+      "name": "Dry Storage Febr",
+      "status": "billed",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 191,
+          "cat": "M",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 250
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 55,
+      "name": "Dry Storage March",
+      "status": "billed",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 192,
+          "cat": "M",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 250
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
     }
   ],
   "timeEntries": [
@@ -1329,42 +1355,6 @@
       "posted": false
     },
     {
-      "id": 1001,
-      "date": "2026-04-03",
-      "proj": "Dry Storage",
-      "cat": "M",
-      "hrs": 0,
-      "desc": "",
-      "posted": false
-    },
-    {
-      "id": 1002,
-      "date": "2026-04-06",
-      "proj": "Generators Start Batteries Upgrade to Victron Charger",
-      "cat": "M",
-      "hrs": 0,
-      "desc": "",
-      "posted": false
-    },
-    {
-      "id": 1003,
-      "date": "2026-04-09",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "M",
-      "hrs": 0,
-      "desc": "",
-      "posted": false
-    },
-    {
-      "id": 1004,
-      "date": "2026-04-10",
-      "proj": "Forward Scan Transducer Replace",
-      "cat": "P",
-      "hrs": 0,
-      "desc": "Garmin PANOPTIX PS51-TH TRANSDUCER 1.0\nREPLACEMENT \n*including special order shipping costs.",
-      "posted": false
-    },
-    {
       "id": 1005,
       "date": "2026-04-10",
       "proj": "Forward Scan Transducer Replace",
@@ -1372,15 +1362,6 @@
       "hrs": 1397.28,
       "desc": "PANOPTIX PS51-TH TRANSDUCER 1.0\nREPLACEMENT\n*including special order shipping costs.",
       "posted": true
-    },
-    {
-      "id": 1006,
-      "date": "2026-04-10",
-      "proj": "Winter Wash February",
-      "cat": "P",
-      "hrs": 0,
-      "desc": "Winter Wash",
-      "posted": false
     },
     {
       "id": 1007,
@@ -1398,34 +1379,7 @@
       "cat": "D",
       "hrs": 0,
       "desc": "Winter Wash Febr",
-      "posted": false
-    },
-    {
-      "id": 1009,
-      "date": "2026-04-10",
-      "proj": "Winter Wash February",
-      "cat": "T",
-      "hrs": 0,
-      "desc": "",
-      "posted": false
-    },
-    {
-      "id": 1010,
-      "date": "2026-04-24",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "M",
-      "hrs": 0,
-      "desc": "",
-      "posted": false
-    },
-    {
-      "id": 2001,
-      "date": "2026-03-16",
-      "proj": "Winter Wash March",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Picked up cleaning supplies at LFS.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2004,
@@ -1433,62 +1387,8 @@
       "proj": "Winter Wash March",
       "cat": "T",
       "hrs": 3.5,
-      "desc": "Winter wash.",
-      "posted": false
-    },
-    {
-      "id": 2005,
-      "date": "2026-03-16",
-      "proj": "Winter Wash March",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Sprayed teak decks with vinegar solution to remove marine growth.",
-      "posted": false
-    },
-    {
-      "id": 2007,
-      "date": "2026-03-16",
-      "proj": "Winter Wash March",
-      "cat": "T",
-      "hrs": 0.53,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
-      "id": 2008,
-      "date": "2026-03-16",
-      "proj": "Alternators Upgrade",
-      "cat": "T",
-      "hrs": 0.33,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
-      "id": 2009,
-      "date": "2026-03-16",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.07,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
-      "id": 2010,
-      "date": "2026-03-16",
-      "proj": "24V Nav/Comm Battery Bank Upgrade To Victron Lithium Ng Batteries",
-      "cat": "T",
-      "hrs": 0.07,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
-      "id": 2011,
-      "date": "2026-03-23",
-      "proj": "Dry Storage",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Loaded old NavComm battery boxes, engine zincs, and underwater zincs into storage container.",
-      "posted": false
+      "desc": "Winter wash March",
+      "posted": true
     },
     {
       "id": 2013,
@@ -1509,15 +1409,6 @@
       "posted": true
     },
     {
-      "id": 2015,
-      "date": "2026-03-26",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "T",
-      "hrs": 1,
-      "desc": "Conducted a buff and wax estimate. Required referencing what had been buffed previously as it was hard to get eyes on the hull.",
-      "posted": false
-    },
-    {
       "id": 2016,
       "date": "2026-03-26",
       "proj": "Fuel Inlet Panels",
@@ -1536,15 +1427,6 @@
       "posted": true
     },
     {
-      "id": 2018,
-      "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.57,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
       "id": 2019,
       "date": "2026-03-26",
       "proj": "PreSeason Commissioning",
@@ -1552,15 +1434,6 @@
       "hrs": 0.29,
       "desc": "Travel time (proportional share, total 1.0h).",
       "posted": true
-    },
-    {
-      "id": 2020,
-      "date": "2026-03-26",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "T",
-      "hrs": 0.14,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
     },
     {
       "id": 2021,
@@ -1578,7 +1451,7 @@
       "cat": "T",
       "hrs": 1.5,
       "desc": "Carefully sanded epoxy barrier coat on fasteners of both fuel inlet panels to achieve flush surface for final coat of paint.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2023,
@@ -1605,34 +1478,7 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
-      "id": 2026,
-      "date": "2026-03-27",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
-    },
-    {
-      "id": 2027,
-      "date": "2026-04-01",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Picked up new nameplates for fuel inlet fittings at Bay Engraving.",
-      "posted": false
-    },
-    {
-      "id": 2028,
-      "date": "2026-04-03",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "T",
-      "hrs": 0.5,
-      "desc": "Discussed fittings for testing new oil pressure sending units with Abe.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2029,
@@ -1641,7 +1487,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Picked up fittings to test new oil pressure sending units at LFS warehouse.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2030,
@@ -1650,7 +1496,7 @@
       "cat": "T",
       "hrs": 1.75,
       "desc": "Removed starboard main engine oil pressure sending unit and installed new unit. Tested resistance between engine and sending unit wiring to verify proper function. Began installing oil pressure gauge on oil line, but incorrect fittings had been ordered. Reinstalled original sending unit and returned new units to shop.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2031,
@@ -1668,7 +1514,7 @@
       "cat": "T",
       "hrs": 0.65,
       "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2033,
@@ -1677,7 +1523,7 @@
       "cat": "T",
       "hrs": 0.35,
       "desc": "Travel time (proportional share, total 1.0h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2034,
@@ -1686,7 +1532,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Removed Portuguese bridge contents, foredeck locker contents, and summer tie down lines from storage.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2035,
@@ -1695,7 +1541,7 @@
       "cat": "T",
       "hrs": 6,
       "desc": "Picked up fuel for pressure washer and used it to remove marine growth from non-skid decks, mast components, canvas, swim step, all vessel hardware, and hard-to-reach crevices.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2036,
@@ -1704,7 +1550,7 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Installed summer tie down lines and delivered winter lines to storage.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2037,
@@ -1712,8 +1558,8 @@
       "proj": "Haul/Wash/Block",
       "cat": "T",
       "hrs": 4.25,
-      "desc": "Assisted in launching vessel in Anacortes and inspected hull. Yard pressure washed the vessel.",
-      "posted": false
+      "desc": "Assisted in hauling vessel in Anacortes and inspected hull. Yard pressure washed the vessel.",
+      "posted": true
     },
     {
       "id": 2038,
@@ -1722,7 +1568,7 @@
       "cat": "T",
       "hrs": 5.5,
       "desc": "Setup scaffold and buffed bottom half of white gelcoat on port hull from forward end of vessel to master head porthole window. Three passes with coarse compound.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2039,
@@ -1731,7 +1577,7 @@
       "cat": "T",
       "hrs": 0.99,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2040,
@@ -1740,7 +1586,7 @@
       "cat": "T",
       "hrs": 0.76,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2041,
@@ -1749,7 +1595,7 @@
       "cat": "T",
       "hrs": 5.5,
       "desc": "Buffed bottom half of white gelcoat on starboard hull from forward end of lower rub rail to forward end of vessel, plus port hull from master head porthole window to forward end of lower rub rail. Three passes with coarse compound.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2042,
@@ -1758,7 +1604,7 @@
       "cat": "T",
       "hrs": 2,
       "desc": "Applied a coat of wax to bottom half of white gelcoat on port hull from forward end of vessel to forward end of lower rub rail, plus blue stripe along bottom of hull within same parameters.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2043,
@@ -1767,7 +1613,7 @@
       "cat": "T",
       "hrs": 1.75,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2044,
@@ -1776,7 +1622,7 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Removed and set out fire extinguishers for Pacific Rim Fire to service.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2045,
@@ -1785,16 +1631,7 @@
       "cat": "T",
       "hrs": 1.75,
       "desc": "Laid blankets and tarps on foredeck and loaded anchor chain onto deck while lining up all painted chain markings. Cleaned filter for dehumidifier in anchor chain locker.",
-      "posted": false
-    },
-    {
-      "id": 2046,
-      "date": "2026-04-21",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 2.75,
-      "desc": "Masked off starboard side of house with plastic sheeting to prevent yard dust on fuel inlet panels while painting. Cleaned panels, masked gelcoat around panels, applied a coat of Omni paint to front faces to create smooth finish and cover epoxy barrier coat around fasteners.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2047,
@@ -1803,16 +1640,7 @@
       "cat": "T",
       "hrs": 2.25,
       "desc": "Applied a coat of wax to bottom half of white gelcoat on starboard hull from forward end of vessel to forward end of lower rub rail, plus blue stripe along bottom of hull within same parameters.",
-      "posted": false
-    },
-    {
-      "id": 2048,
-      "date": "2026-04-21",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.59,
-      "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2049,
@@ -1821,7 +1649,7 @@
       "cat": "T",
       "hrs": 0.48,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2050,
@@ -1830,7 +1658,7 @@
       "cat": "T",
       "hrs": 0.38,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2051,
@@ -1839,16 +1667,7 @@
       "cat": "T",
       "hrs": 0.05,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
-    },
-    {
-      "id": 2052,
-      "date": "2026-04-22",
-      "proj": "Exterior Deep Clean After Haul Out",
-      "cat": "T",
-      "hrs": 0.75,
-      "desc": "Installed 3M-5200 sealant into a few cracks on two of the starboard scupper doors. Installed structural epoxy into one of the hinge fasteners that was starting to crack open.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2053,
@@ -1857,16 +1676,7 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Picked up new Garmin transducer at Anacortes Fisheries locker, measured cable length, and compared to old transducer to inspect for proper fitment.",
-      "posted": false
-    },
-    {
-      "id": 2054,
-      "date": "2026-04-23",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 1.75,
-      "desc": "Removed masking tape and plastic sheeting used to paint fuel panels. Drilled out fastener holes and installed plastic drains and fuel fill labels. Wiped down panels and documented with photos.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2055,
@@ -1875,7 +1685,7 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Sorted and stowed all fire extinguishers on vessel after they had been serviced.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2056,
@@ -1884,7 +1694,7 @@
       "cat": "T",
       "hrs": 3.25,
       "desc": "Buffed and waxed gelcoat around swim step corners, then waxed gelcoat beneath both lower rub rails and starboard half of transom. Two passes with fine compound and one coat of marine wax.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2057,
@@ -1893,16 +1703,7 @@
       "cat": "T",
       "hrs": 0.81,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
-    },
-    {
-      "id": 2058,
-      "date": "2026-04-23",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.44,
-      "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2059,
@@ -1911,7 +1712,7 @@
       "cat": "T",
       "hrs": 0.19,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2060,
@@ -1920,25 +1721,7 @@
       "cat": "T",
       "hrs": 0.06,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
-    },
-    {
-      "id": 2061,
-      "date": "2026-04-24",
-      "proj": "Haul/Wash/Block",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Acquired new ladder for vessel after the ladder supplied by yard was taken. Tied off ladder to prevent injury.",
-      "posted": false
-    },
-    {
-      "id": 2062,
-      "date": "2026-04-24",
-      "proj": "Exterior Deep Clean After Haul Out",
-      "cat": "T",
-      "hrs": 1.5,
-      "desc": "Installed two scupper doors on starboard hull using 3M-5200 sealant.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2063,
@@ -1947,7 +1730,7 @@
       "cat": "T",
       "hrs": 3,
       "desc": "Mixed batch of InterProtect epoxy barrier coat and applied to three anchor chain markings where exposed metal was significant. Once cured, applied two coats of Omni paint to eight chain markings showing paint loss.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2064,
@@ -1956,7 +1739,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Applied one coat of marine wax to port half of transom.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2065,
@@ -1965,7 +1748,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Opened up and prepared all external water lines for the season and tested for leaks.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2066,
@@ -1974,7 +1757,7 @@
       "cat": "T",
       "hrs": 0.78,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2067,
@@ -1983,7 +1766,7 @@
       "cat": "T",
       "hrs": 0.39,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2068,
@@ -1992,7 +1775,7 @@
       "cat": "T",
       "hrs": 0.13,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2069,
@@ -2001,7 +1784,7 @@
       "cat": "T",
       "hrs": 0.13,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2070,
@@ -2010,7 +1793,7 @@
       "cat": "T",
       "hrs": 0.07,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2071,
@@ -2019,7 +1802,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Removed cockpit and flybridge furniture from storage along with Portuguese bright locker contents, then loaded winter tie down lines into storage.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2072,
@@ -2028,7 +1811,7 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Touched up a few areas on anchor chain markings with Omni paint.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2073,
@@ -2037,7 +1820,7 @@
       "cat": "T",
       "hrs": 1.75,
       "desc": "Removed flybridge cover, unboxed new flybridge chair, and assembled components using Loctite thread locker. Cleaned seat base contact points that allow 360-degree rotation using acetone, applied SuperLube to base, installed seat, tested for proper function.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2074,
@@ -2046,7 +1829,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Delivered tools and supplies to vessel in order to service davit, oil pressure sending units, and Garmin transducer.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2075,
@@ -2055,7 +1838,7 @@
       "cat": "T",
       "hrs": 3.25,
       "desc": "Raised davit arm, drained old hydraulic oil back to hydraulic pump, evacuated old hydraulic oil using vacuum pump, then removed and drained main hydraulic return line near pump. Removed oil reservoir for hydraulic flow control valves, installed new flow control valves using Loctite thread locker, cleaned workspace.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2076,
@@ -2064,7 +1847,7 @@
       "cat": "T",
       "hrs": 0.83,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2077,
@@ -2073,7 +1856,7 @@
       "cat": "T",
       "hrs": 0.39,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2078,
@@ -2082,7 +1865,7 @@
       "cat": "T",
       "hrs": 0.17,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2079,
@@ -2091,7 +1874,7 @@
       "cat": "T",
       "hrs": 0.11,
       "desc": "Travel time (proportional share, total 1.5h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2080,
@@ -2100,7 +1883,7 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Opened winterization valve for windshield wipers, connected freshwater lines, and tested windshield wipers.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2081,
@@ -2109,7 +1892,7 @@
       "cat": "T",
       "hrs": 1.75,
       "desc": "Removed broken transducer, inspected power supply, and determined safer to draw power from bilge pumps rather than bus bar due to cable ampacity. Wired new transducer from bilge pump power supply, installed new ATC fuse, secured wiring with zip ties.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2082,
@@ -2118,7 +1901,7 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Delivered and loaded Portuguese bridge, foredeck, and flybridge locker contents onto vessel.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2083,
@@ -2127,7 +1910,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Loaded anchor chain back into anchor chain locker.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2084,
@@ -2136,7 +1919,7 @@
       "cat": "T",
       "hrs": 2.75,
       "desc": "Topped off hydraulic oil in davit pump with 5L. Set main return line into bucket and cycled davit many times to remove old oil while topping off to prevent air locks. Once oil was clear, installed cap in return line and sanded ceiling above davit pump to install new filter housing for hydraulic return line.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2085,
@@ -2145,7 +1928,7 @@
       "cat": "T",
       "hrs": 0.8,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2086,
@@ -2154,7 +1937,7 @@
       "cat": "T",
       "hrs": 0.51,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2087,
@@ -2163,7 +1946,7 @@
       "cat": "T",
       "hrs": 0.29,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2088,
@@ -2172,7 +1955,7 @@
       "cat": "T",
       "hrs": 0.15,
       "desc": "Travel time (proportional share, total 1.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2089,
@@ -2181,16 +1964,7 @@
       "cat": "T",
       "hrs": 1.25,
       "desc": "Installed flybridge BBQ and polished stainless steel with Never-Dull polish.",
-      "posted": false
-    },
-    {
-      "id": 2090,
-      "date": "2026-04-29",
-      "proj": "PreSeason Commissioning",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Reinstalled starboard cockpit door handle as a replacement could not be delivered prior to shakedown cruises.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2091,
@@ -2199,7 +1973,7 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Consolidated all tarps and blankets used to paint chain, then organized Portuguese bridge and foredeck locker contents.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2092,
@@ -2208,7 +1982,7 @@
       "cat": "T",
       "hrs": 1,
       "desc": "Removed all cap rail and hatch canvas, then installed Bimini for the season.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2093,
@@ -2217,7 +1991,7 @@
       "cat": "T",
       "hrs": 1.5,
       "desc": "Installed new watermaker filters, ordered new charcoal filters, cleaned workspace, and evacuated water out of forward machinery space sump.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2094,
@@ -2226,16 +2000,16 @@
       "cat": "T",
       "hrs": 1.5,
       "desc": "Stored loose tools and supplies and assisted in launching vessel back into the water.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2095,
       "date": "2026-04-29",
       "proj": "Deliver Undaunted from Haul Out to Bellingham",
       "cat": "T",
-      "hrs": 4.5,
-      "desc": "Delivered shuttle car to Bellingham, delivered vessel to Bellingham from Anacortes. Cleaned spilled oil on starboard main engine after oil hose for oil pressure sending units broke off during transit. Assisted in calibrating autopilot.",
-      "posted": false
+      "hrs": 3.5,
+      "desc": "Delivered shuttle car to gate 3 in Bellingham, delivered vessel to Bellingham from Anacortes. Cleaned spilled oil on starboard main engine after oil hose for oil pressure sending units broke off during transit. ",
+      "posted": true
     },
     {
       "id": 2096,
@@ -2244,7 +2018,7 @@
       "cat": "T",
       "hrs": 0.32,
       "desc": "Travel time (proportional share, total 0.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2097,
@@ -2253,7 +2027,7 @@
       "cat": "T",
       "hrs": 0.14,
       "desc": "Travel time (proportional share, total 0.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2098,
@@ -2262,7 +2036,7 @@
       "cat": "T",
       "hrs": 0.11,
       "desc": "Travel time (proportional share, total 0.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2099,
@@ -2271,7 +2045,7 @@
       "cat": "T",
       "hrs": 0.11,
       "desc": "Travel time (proportional share, total 0.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2100,
@@ -2280,7 +2054,7 @@
       "cat": "T",
       "hrs": 0.07,
       "desc": "Travel time (proportional share, total 0.75h).",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2101,
@@ -2289,7 +2063,7 @@
       "cat": "T",
       "hrs": 4.5,
       "desc": "Washed vessel and wiped out all exterior lockers, doors, and drains.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2102,
@@ -2298,7 +2072,7 @@
       "cat": "T",
       "hrs": 1,
       "desc": "Installed all interior carpets.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2103,
@@ -2307,7 +2081,7 @@
       "cat": "T",
       "hrs": 1,
       "desc": "Organized lazarette and loaded cockpit furniture and flybridge chairs onto vessel. Unloaded tools and supplies from vessel used for recent projects.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2104,
@@ -2315,8 +2089,8 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Installed two inflatable fenders and removed sausage fenders. Installed life sling on flybridge.",
-      "posted": false
+      "desc": "Inflated a pair of cylinder fenders, removed foam fenders from vessel. Installed inflated cylinder fenders. Installed life sling on flybridge.",
+      "posted": true
     },
     {
       "id": 2105,
@@ -2325,20 +2099,20 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Checked tender fuel level, removed tender charger, and looked over vessel prior to shakedown cruise.",
-      "posted": false
+      "posted": true
     },
     {
       "id": 2106,
       "date": "2026-05-01",
-      "proj": "Dry Storage",
+      "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
       "desc": "Consolidated plastic sheeting used to protect carpets over winter. Loaded hydraulic oil, old NavComm battery boxes, sausage fenders, and pilothouse counter protective cardboard cutouts into storage.",
-      "posted": false
+      "posted": true
     }
   ],
-  "nextProjId": 54,
-  "nextTaskId": 191,
+  "nextProjId": 56,
+  "nextTaskId": 193,
   "nextCOId": 101,
   "nextTEId": 1011,
   "nextBillingId": 500,

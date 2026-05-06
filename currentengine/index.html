@@ -183,7 +183,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   </div>
 </div>
 <div class="tab-bar">
-  <div class="tab active" id="tab-estimate" onclick="switchTab('estimate')">Estimate <span id="lock-icon" style="font-size:10px;color:#bbb">&#128274;</span></div>
+  <div class="tab active" id="tab-estimate" onclick="switchTab('estimate')">Estimate Engine <span id="lock-icon" style="font-size:10px;color:#bbb">&#128274;</span></div>
   <div class="tab" id="tab-timeentry" onclick="switchTab('timeentry')">Time Entry</div>
   <div class="tab" id="tab-progress" onclick="switchTab('progress')">Progress</div>
   <div class="tab" id="tab-settings" onclick="switchTab('settings')">&#9881; Settings</div>
@@ -318,14 +318,14 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   <div onclick="exportClientPDF();hideExportMenu()" style="padding:10px 16px;cursor:pointer;font-size:13px;font-family:inherit" onmouseover="this.style.background='#f5f5f3'" onmouseout="this.style.background=''">&#128196; Export Client Doc (HTML)</div>
 </div>
 <script>
-const ENGINE_VERSION=3;
+const ENGINE_VERSION=4;
 const PIN='1248';
 const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0};
 const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid'};
 function isMatCat(c){return c==='M'||c==='S'||c==='P';}
 const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP'};
 const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
-const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v3';
+const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v4';
 const SECTIONS=[
   {key:'holding',label:'Holding Pattern',color:'#7c6f9f',textColor:'#fff',bg:'#f3f0fa',border:'#c9bfea',defaultOpen:true},
   {key:'needs_auth',label:'Authorization Needed',color:'#5dba99',textColor:'#fff',bg:'#f0faf6',border:'#a7d8c5',defaultOpen:true},
@@ -340,6 +340,7 @@ let openProjs=new Set();
 let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000,nextBillingId=500;
 let projects=[];
 let timeEntries=[];
+let billingEvents=[];
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function taskLabor(t){return(RATES[t.cat]||0)*(t.hrs||0);}
 function taskTotal(t){return taskLabor(t)+(t.mat||0)+(t.sub||0);}
@@ -390,7 +391,15 @@ function reconcileTimeEntries(){
 function projActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
-function projBilledTotal(p){return(p.billingEvents||[]).reduce((a,b)=>a+(b.amount||0),0);}
+function projBilledTotal(p){
+  // Ship 1: billed total = sum of posted time entries in locked flocks tagged with this project
+  return timeEntries
+    .filter(te=>te.proj===p.name&&te.posted&&isEntryBilled(te))
+    .reduce((a,te)=>{
+      const rate=RATES[te.cat]||0;
+      return a+(isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate);
+    },0);
+}
 function projDisplayTotal(p){return p.isTM?projActualTotal(p):projScopeTotal(p);}
 
 // Combined total (scope + actual posted TEs) — used everywhere
@@ -413,16 +422,78 @@ function checkScopeBump(p){
   // Scope bump noted but status not auto-changed — user adds CO manually
 }
 
+// ===== FLOCK HELPERS (Ship 1 — vessel-level billing events) =====
+function ensureCurrentFlock(){
+  let cur=billingEvents.find(b=>b.isCurrent&&!b.locked);
+  if(!cur){
+    cur={id:nextBillingId++,name:'Next Invoice',isCurrent:true,locked:false,createdAt:new Date().toISOString()};
+    billingEvents.push(cur);
+  }
+  return cur;
+}
+function isEntryBilled(te){
+  if(!te.billingEventId)return false;
+  const be=billingEvents.find(b=>b.id===te.billingEventId);
+  return !!(be&&be.locked);
+}
+function entryFlock(te){
+  if(!te.billingEventId)return null;
+  return billingEvents.find(b=>b.id===te.billingEventId)||null;
+}
+function flockTotal(be){
+  if(!be)return 0;
+  const tes=timeEntries.filter(te=>te.billingEventId===be.id&&te.posted);
+  return tes.reduce((a,te)=>{
+    const rate=RATES[te.cat]||0;
+    return a+(isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate);
+  },0);
+}
+function flockEntryCount(be){
+  if(!be)return 0;
+  return timeEntries.filter(te=>te.billingEventId===be.id&&te.posted).length;
+}
+function lockFlock(beId,invoiceNum,invoiceDate){
+  const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  be.locked=true;
+  be.isCurrent=false;
+  be.invoiceNum=invoiceNum||'';
+  be.invoiceDate=invoiceDate||new Date().toISOString().split('T')[0];
+  ensureCurrentFlock(); // spawn new "Next Invoice"
+  saveData();renderTimeEntry();
+}
+function unlockFlock(beId){
+  const be=billingEvents.find(b=>b.id===beId);if(!be||!be.locked)return;
+  be.locked=false;
+  saveData();renderTimeEntry();
+}
+function renameFlock(beId,newName){
+  const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  be.name=newName;
+  saveData();renderTimeEntry();
+}
+
 // Post/unpost time entry
 function postTimeEntry(teId){
   const te=timeEntries.find(t=>t.id===teId);if(!te)return;
   te.posted=true;
+  // Ship 1: auto-assign to current flock if not already assigned
+  if(!te.billingEventId){
+    const cur=ensureCurrentFlock();
+    te.billingEventId=cur.id;
+  }
   const proj=projects.find(p=>p.name===te.proj);if(proj)checkScopeBump(proj);
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 function unpostTimeEntry(teId){
   const te=timeEntries.find(t=>t.id===teId);if(!te)return;
   te.posted=false;
+  // Ship 1: when unposted, detach from flock (re-attaches on next post)
+  te.billingEventId=null;
+  saveData();renderTimeEntry();if(unlocked)renderEstimate();
+}
+function assignEntryToFlock(teId,beId){
+  const te=timeEntries.find(t=>t.id===teId);if(!te)return;
+  te.billingEventId=beId?parseInt(beId):null;
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 
@@ -839,9 +910,9 @@ function renderEstimate(){
           dateInp.onchange=()=>{te.date=dateInp.value;saveData();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
           // Hrs or Amount — hide hrs for M/S, show dollar input instead
-          const isMatCat=isMatCat(te.cat);
+          const isMatCatLocal=isMatCat(te.cat);
           const hrsTd=document.createElement('td');hrsTd.style.cssText='padding:0;text-align:right';
-          if(isMatCat){
+          if(isMatCatLocal){
             hrsTd.setAttribute('colspan','2');
             const amtInp=document.createElement('input');amtInp.type='number';amtInp.min=0;amtInp.step=0.01;amtInp.value=te.hrs||'';amtInp.placeholder='$0.00';amtInp.className='tinp r';amtInp.style.cssText='font-size:12px;width:90px;text-align:right';
             amtInp.onchange=()=>{te.hrs=parseFloat(amtInp.value)||0;amtTd.textContent=fmt(te.hrs);saveData();renderSummary();};
@@ -894,27 +965,31 @@ function renderEstimate(){
       }
       pb.appendChild(sumBar);
 
-      // Billing Events
-      const billingEvents=proj.billingEvents||[];
-      if(billingEvents.length>0){
+      // Billed History (Ship 1: derived from locked flocks containing this project's entries)
+      const billedAmt=projBilledTotal(proj);
+      if(billedAmt>0){
+        // Find which locked flocks have entries from this project
+        const flocksTouched={};
+        timeEntries.filter(te=>te.proj===proj.name&&te.posted&&isEntryBilled(te)).forEach(te=>{
+          const f=entryFlock(te);
+          if(f){
+            if(!flocksTouched[f.id]){flocksTouched[f.id]={flock:f,total:0,count:0};}
+            const rate=RATES[te.cat]||0;
+            const amt=isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate;
+            flocksTouched[f.id].total+=amt;
+            flocksTouched[f.id].count++;
+          }
+        });
         const billedHdr=document.createElement('div');
         billedHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:6px 16px;background:#e8f5ee;border-top:2px solid #1D9E75;font-size:10px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em';
-        const billedAmt=projBilledTotal(proj);
         billedHdr.innerHTML='<span>Billed to Date</span><span>'+fmt(billedAmt)+'</span>';
         pb.appendChild(billedHdr);
-        billingEvents.forEach((be,bi)=>{
-          const brow=document.createElement('div');brow.className='billing-row';
-          const dateInp=document.createElement('input');dateInp.className='billing-inp';dateInp.type='date';dateInp.value=be.date||'';dateInp.style.width='120px';
-          dateInp.onchange=()=>{be.date=dateInp.value;saveData();renderSummary();};
-          const invInp=document.createElement('input');invInp.className='billing-inp';invInp.placeholder='Inv #';invInp.value=be.invoiceNum||'';invInp.style.width='80px';
-          invInp.onchange=()=>{be.invoiceNum=invInp.value;saveData();};
-          const descInp=document.createElement('input');descInp.className='billing-inp';descInp.placeholder='Description (optional)';descInp.value=be.desc||'';descInp.style.flex='1';
-          descInp.onchange=()=>{be.desc=descInp.value;saveData();};
-          const amtInp=document.createElement('input');amtInp.className='billing-inp';amtInp.type='number';amtInp.min=0;amtInp.step=0.01;amtInp.placeholder='$0.00';amtInp.value=be.amount||'';amtInp.style.width='90px';amtInp.style.textAlign='right';
-          amtInp.onchange=()=>{be.amount=parseFloat(amtInp.value)||0;saveData();renderEstimate();};
-          const delBtn=document.createElement('button');delBtn.className='del-btn';delBtn.textContent='×';delBtn.style.color='#c0392b';
-          delBtn.onclick=()=>{proj.billingEvents.splice(bi,1);saveData();renderEstimate();};
-          brow.appendChild(dateInp);brow.appendChild(invInp);brow.appendChild(descInp);brow.appendChild(amtInp);brow.appendChild(delBtn);
+        Object.values(flocksTouched).forEach(({flock,total,count})=>{
+          const brow=document.createElement('div');
+          brow.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:5px 16px 5px 24px;background:#f6fbf8;font-size:11px;color:#475569;border-bottom:1px solid #e5e7eb';
+          const left=flock.invoiceNum?'🔒 Invoice '+flock.invoiceNum:'🔒 '+flock.name;
+          const dateStr=flock.invoiceDate?' · '+flock.invoiceDate:'';
+          brow.innerHTML='<span>'+left+dateStr+' <span style="color:#94a3b8">('+count+' entr'+(count!==1?'ies':'y')+')</span></span><span style="font-weight:600">'+fmt(total)+'</span>';
           pb.appendChild(brow);
         });
       }
@@ -946,15 +1021,6 @@ function renderEstimate(){
       mdn.onclick=(e)=>{e.stopPropagation();const idx=projects.indexOf(proj);if(idx<projects.length-1){projects.splice(idx,1);projects.splice(idx+1,0,proj);saveData();renderEstimate();}};
       const dpr=document.createElement('button');dpr.className='btn-sm danger';dpr.textContent='Delete project';dpr.onclick=()=>{if(confirm('Delete "'+proj.name+'"?')){projects.splice(pi,1);renderEstimate();}};
       foot.appendChild(ata);
-      // Add Billing button
-      const abill=document.createElement('button');abill.className='btn-sm';abill.style.cssText='color:#155a3e;border-color:#a7d8c5;background:#f0faf6';abill.textContent='+ Add billing';
-      abill.onclick=()=>{
-        if(!proj.billingEvents)proj.billingEvents=[];
-        const today=new Date().toISOString().split('T')[0];
-        proj.billingEvents.push({id:nextBillingId++,date:today,invoiceNum:'',desc:'',amount:0});
-        openProjs.add(proj.id);saveData();renderEstimate();
-      };
-      foot.appendChild(abill);
       // Add Time Entry button
       if(proj.status!=='billed'){
         const ate=document.createElement('button');ate.className='btn-sm blue';ate.textContent='+ Add time entry';
@@ -1873,7 +1939,7 @@ function exportData(){
       exportedAt:new Date().toISOString(),
       engineVersion:ENGINE_VERSION
     },
-    projects,timeEntries,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings
+    projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings
   };
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');
@@ -1914,8 +1980,25 @@ function migrateData(d){
     d.timeEntries=(d.timeEntries||[]).map(te=>({...te,posted:te.posted||false}));
   }
 
+  // v3 → v4: vessel-level billing events (flocks) replace per-project billingEvents
+  if(fromVersion<4){
+    // Initialize vessel-level billingEvents array
+    d.billingEvents=d.billingEvents||[];
+    // Strip per-project billingEvents (now vessel-level)
+    d.projects=d.projects.map(p=>{
+      const{billingEvents,...rest}=p;
+      return rest;
+    });
+    // Existing posted time entries get billingEventId=null
+    // ensureCurrentFlock() on load will assign them to the new "Next Invoice"
+    d.timeEntries=(d.timeEntries||[]).map(te=>({
+      ...te,
+      billingEventId:te.billingEventId||null
+    }));
+  }
+
   // Future migrations go here:
-  // if(fromVersion<4){ ... }
+  // if(fromVersion<5){ ... }
 
   d._meta.engineVersion=ENGINE_VERSION;
   return d;
@@ -1943,13 +2026,20 @@ function importData(event){
 
       projects=d.projects;
       timeEntries=d.timeEntries||[];
+      billingEvents=d.billingEvents||[];
       if(d.nextProjId)nextProjId=d.nextProjId;
       if(d.nextTaskId)nextTaskId=d.nextTaskId;
       if(d.nextCOId)nextCOId=d.nextCOId;
       if(d.nextTEId)nextTEId=d.nextTEId;
+      if(d.nextBillingId)nextBillingId=d.nextBillingId;
       if(d.settings){const prevLogo=settings.logoB64;const prevMime=settings.logoMime;Object.assign(settings,d.settings);if(!settings.logoB64){settings.logoB64=prevLogo;settings.logoMime=prevMime;}if(settings.email==='abram@turnpointmarine.com')settings.email='Abram@turnpointmarine.com';}
       // Migrate change_of_scope status to in_progress
       projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
+      // Ship 1: ensure current flock and auto-attach orphan posted entries
+      const cur=ensureCurrentFlock();
+      timeEntries.forEach(te=>{
+        if(te.posted&&!te.billingEventId){te.billingEventId=cur.id;}
+      });
       if(d._meta){
         const vv=document.getElementById('vfVessel');
         const vc=document.getElementById('vfClient');
@@ -2024,38 +2114,80 @@ function renderTimeEntry(){
   const wrap=document.getElementById('teTableWrap');
   wrap.innerHTML='';
 
+  // Ensure we always have a current flock so display logic is stable
+  ensureCurrentFlock();
+
   const allFiltered=timeEntries.filter(te=>(!fp||te.proj===fp)&&(!fc||te.cat===fc));
   const unposted=allFiltered.filter(te=>!te.posted);
   const posted=allFiltered.filter(te=>te.posted);
 
-  function buildTETable(entries,isPosted){
+  function flockOptionsHTML(te){
+    // Build <option> list for billing event dropdown (excludes locked flocks unless te is in one)
+    let opts='';
+    billingEvents.forEach(be=>{
+      const isInLocked=be.locked&&te.billingEventId===be.id;
+      // Show: all unlocked flocks, plus the locked flock this entry belongs to (so it's visible)
+      if(!be.locked||isInLocked){
+        const sel=te.billingEventId===be.id?' selected':'';
+        let label=be.name||'(unnamed)';
+        if(be.locked&&be.invoiceNum)label=be.invoiceNum+' (locked)';
+        else if(be.locked)label=label+' (locked)';
+        else if(be.isCurrent)label='→ '+label;
+        opts+='<option value="'+be.id+'"'+sel+'>'+label.replace(/</g,'&lt;')+'</option>';
+      }
+    });
+    return opts;
+  }
+
+  function buildTETable(entries,isPosted,flockCtx){
     const tbl=document.createElement('table');tbl.className='te-table';
-    tbl.style.cssText='border-radius:0 0 8px 8px;border:1px solid '+(isPosted?'#a7d8c5':'#fcd34d')+';border-top:none';
-    tbl.innerHTML='<thead><tr><th style="width:100px">Date</th><th style="width:160px">Project</th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:70px">Hrs</th><th class="r" style="width:80px">Amount</th><th style="width:110px"></th></tr></thead>';
+    const borderColor=flockCtx&&flockCtx.locked?'#cbd5e1':(isPosted?'#a7d8c5':'#fcd34d');
+    tbl.style.cssText='border-radius:0 0 8px 8px;border:1px solid '+borderColor+';border-top:none';
+    tbl.innerHTML='<thead><tr><th style="width:90px">Date</th><th style="width:140px">Project</th><th style="width:95px">Cat</th><th>Description</th><th class="r" style="width:55px">Hrs</th><th class="r" style="width:70px">Amount</th><th style="width:130px">Invoice</th><th style="width:90px"></th></tr></thead>';
     const tbody=document.createElement('tbody');
     entries.forEach(te=>{
       const ri=timeEntries.indexOf(te);
       const rate=RATES[te.cat]||0;
       const amt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*rate;
+      const isLocked=isEntryBilled(te);
+      const flock=entryFlock(te);
+      const isCurrent=flock&&flock.isCurrent&&!flock.locked;
+
       const tr=document.createElement('tr');
-      if(!isPosted)tr.style.background='#fffdf5';
-      tr.innerHTML='<td><input class="te-inp" value="'+(te.date||'')+'" onchange="timeEntries['+ri+'].date=this.value;saveData()"></td>'
-        +'<td><select class="te-sel" onchange="timeEntries['+ri+'].proj=this.value;saveData()">'+projects.map(p=>'<option'+(p.name===te.proj?' selected':'')+'>'+p.name+'</option>').join('')+'</select></td>'
-        +'<td><select class="te-sel" onchange="timeEntries['+ri+'].cat=this.value;renderTimeEntry()">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
-        +'<td class="desc-cell" data-desc-cell="1"></td>'
-        +'<td style="text-align:right;padding:0;vertical-align:top"><input class="te-inp r" type="number" min="0" step="0.25" value="'+(te.hrs||'')+'" onchange="timeEntries['+ri+'].hrs=parseFloat(this.value)||0;renderTimeEntry()" style="width:70px"></td>'
-        +'<td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;vertical-align:top">'+fmt(amt)+'</td>'
+      if(!isPosted){
+        tr.style.background='#fffdf5';
+      }else if(isLocked){
+        tr.style.background='#fafafa';
+        tr.style.color='#94a3b8';
+      }else if(isCurrent){
+        tr.style.background='#f0fdf4'; // light green tint
+        tr.style.fontWeight='500';
+      }
+
+      const lockedTextStyle=isLocked?'text-decoration:line-through;color:#94a3b8;':'';
+      const flockSelectDisabled=isLocked?'disabled':'';
+      const flockCellContent=isLocked
+        ?'🔒 <span style="font-size:10px;color:#64748b">'+(flock&&flock.invoiceNum?flock.invoiceNum:(flock?flock.name:''))+'</span>'
+        :'<select class="te-sel" '+flockSelectDisabled+' onchange="assignEntryToFlock('+te.id+',this.value)" style="font-size:10px;width:100%">'+flockOptionsHTML(te)+'</select>';
+
+      tr.innerHTML='<td style="'+lockedTextStyle+'"><input class="te-inp" value="'+(te.date||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].date=this.value;saveData()"></td>'
+        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].proj=this.value;saveData()">'+projects.map(p=>'<option'+(p.name===te.proj?' selected':'')+'>'+p.name.replace(/</g,'&lt;')+'</option>').join('')+'</select></td>'
+        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].cat=this.value;renderTimeEntry()">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
+        +'<td class="desc-cell" data-desc-cell="1" style="'+lockedTextStyle+'"></td>'
+        +'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="0.25" value="'+(te.hrs||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].hrs=parseFloat(this.value)||0;renderTimeEntry()" style="width:55px"></td>'
+        +'<td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;vertical-align:top;'+lockedTextStyle+'">'+fmt(amt)+'</td>'
+        +'<td style="padding:4px 6px;vertical-align:middle">'+flockCellContent+'</td>'
         +'<td style="padding:2px 6px;white-space:nowrap;text-align:right;vertical-align:top">'
-        +(isPosted
-          ?'<button class="btn-sm danger" style="font-size:10px" onclick="unpostTimeEntry('+te.id+')">Unpost</button>'
-          :'<button class="btn-sm blue" style="font-size:10px;font-weight:700" onclick="postTimeEntry('+te.id+')">Post →</button>')
-        +' <button class="btn-sm" title="Move up" style="padding:2px 5px;font-size:10px" onclick="var t=timeEntries.splice('+ri+',1)[0];if('+ri+'>0)timeEntries.splice('+ri+'-1,0,t);else timeEntries.unshift(t);saveData();renderTimeEntry()">&#9650;</button>'
-        +' <button class="btn-sm" title="Move down" style="padding:2px 5px;font-size:10px" onclick="var t=timeEntries.splice('+ri+',1)[0];timeEntries.splice(Math.min('+ri+',timeEntries.length),0,t);saveData();renderTimeEntry()">&#9660;</button>'
-        +' <button class="del-btn" onclick="timeEntries.splice('+ri+',1);renderTimeEntry();renderProgress()">&#215;</button>'
+        +(isLocked
+          ?'<span style="font-size:10px;color:#94a3b8">billed</span>'
+          :(isPosted
+            ?'<button class="btn-sm danger" style="font-size:10px" onclick="unpostTimeEntry('+te.id+')">Unpost</button>'
+            :'<button class="btn-sm blue" style="font-size:10px;font-weight:700" onclick="postTimeEntry('+te.id+')">Post →</button>'))
+        +(isLocked?'':' <button class="del-btn" onclick="if(confirm(\'Delete this entry?\')){timeEntries.splice('+ri+',1);saveData();renderTimeEntry();renderProgress();}">&#215;</button>')
         +'</td>';
-      // Inject auto-grow textarea into the description cell (createElement keeps text safe from < & quotes)
       const descCell=tr.querySelector('td[data-desc-cell]');
       const descTa=document.createElement('textarea');descTa.className='te-desc';descTa.rows=1;descTa.value=te.desc||'';
+      if(isLocked){descTa.readOnly=true;descTa.style.background='transparent';}
       descTa.oninput=()=>{timeEntries[ri].desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
       descTa.onchange=()=>{saveData();};
       descCell.appendChild(descTa);
@@ -2070,28 +2202,119 @@ function renderTimeEntry(){
     return;
   }
 
-  // Unposted section
+  // Unposted section (unchanged behavior)
   if(unposted.length>0){
     const sec=document.createElement('div');sec.style.marginBottom='16px';
     const sh=document.createElement('div');
     sh.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;background:#fff8ee;color:#b45309;border:1px solid #fcd34d;border-bottom:none';
     sh.innerHTML='<span>⚠ Unposted — Not on Estimate</span><span style="font-weight:400;font-size:10px">'+unposted.length+' entr'+(unposted.length!==1?'ies':'y')+'</span>';
-    sec.appendChild(sh);sec.appendChild(buildTETable(unposted,false));
+    sec.appendChild(sh);sec.appendChild(buildTETable(unposted,false,null));
     wrap.appendChild(sec);
   }
 
-  // Posted section
+  // Posted section — grouped by flock
   if(posted.length>0){
-    const sec=document.createElement('div');sec.style.marginBottom='16px';
-    const sh=document.createElement('div');
-    sh.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;background:#f0faf6;color:#155a3e;border:1px solid #a7d8c5;border-bottom:none';
-    sh.innerHTML='<span>✓ Posted to Estimate</span><span style="font-weight:400;font-size:10px">'+posted.length+' entr'+(posted.length!==1?'ies':'y')+'</span>';
-    sec.appendChild(sh);sec.appendChild(buildTETable(posted,true));
-    wrap.appendChild(sec);
+    // Build display order: current flock first, then other unlocked, then locked (chronological by invoiceDate desc)
+    const sortedFlocks=[...billingEvents].sort((a,b)=>{
+      if(a.isCurrent&&!a.locked)return -1;
+      if(b.isCurrent&&!b.locked)return 1;
+      if(a.locked&&!b.locked)return 1;
+      if(!a.locked&&b.locked)return -1;
+      if(a.locked&&b.locked){
+        return (b.invoiceDate||'').localeCompare(a.invoiceDate||'');
+      }
+      return (a.createdAt||'').localeCompare(b.createdAt||'');
+    });
+
+    sortedFlocks.forEach(be=>{
+      const flockEntries=posted.filter(te=>te.billingEventId===be.id);
+      if(flockEntries.length===0&&!be.isCurrent)return; // skip empty non-current flocks
+
+      const sec=document.createElement('div');sec.style.marginBottom='16px';
+      const sh=document.createElement('div');
+
+      // Header style varies by flock state
+      let bg,fg,border;
+      if(be.locked){
+        bg='#f8fafc';fg='#475569';border='#cbd5e1';
+      }else if(be.isCurrent){
+        bg='#f0fdf4';fg='#166534';border='#86efac';
+      }else{
+        bg='#f0faf6';fg='#155a3e';border='#a7d8c5';
+      }
+      sh.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;background:'+bg+';color:'+fg+';border:1px solid '+border+';border-bottom:none';
+
+      const total=flockTotal(be);
+      const cnt=flockEntries.length;
+
+      // Left side: name, pill, lock indicator
+      let leftHTML='';
+      if(be.locked){
+        leftHTML='🔒 <span>'+(be.invoiceNum?'Invoice '+be.invoiceNum:be.name)+'</span>';
+        if(be.invoiceDate)leftHTML+=' <span style="font-weight:400;font-size:10px;text-transform:none">'+be.invoiceDate+'</span>';
+      }else if(be.isCurrent){
+        leftHTML='✓ '+be.name+' <span style="background:#16a34a;color:#fff;font-size:9px;padding:2px 6px;border-radius:8px;margin-left:6px;text-transform:uppercase;letter-spacing:0.05em">Next Invoice</span>';
+      }else{
+        leftHTML='✓ '+be.name;
+      }
+
+      // Right side: count, total, action button
+      let rightHTML='<span style="font-weight:400;font-size:10px;text-transform:none">'+cnt+' entr'+(cnt!==1?'ies':'y')+' · <strong>'+fmt(total)+'</strong></span>';
+      if(!be.locked&&cnt>0){
+        rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:8px;background:#0f766e;color:#fff;border:none;padding:3px 10px;border-radius:6px;cursor:pointer" onclick="promptLockFlock('+be.id+')">Lock 🔒</button>';
+      }else if(be.locked){
+        rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:8px" onclick="promptUnlockFlock('+be.id+')">Unlock</button>';
+      }
+      // Rename button (not for locked flocks)
+      if(!be.locked){
+        rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:4px" onclick="promptRenameFlock('+be.id+')" title="Rename">✎</button>';
+      }
+
+      sh.innerHTML='<span>'+leftHTML+'</span><span>'+rightHTML+'</span>';
+      sec.appendChild(sh);
+
+      if(flockEntries.length>0){
+        sec.appendChild(buildTETable(flockEntries,true,be));
+      }else{
+        // Empty current flock — show a hint
+        const empty=document.createElement('div');
+        empty.style.cssText='background:#fff;border:1px solid '+border+';border-top:none;border-radius:0 0 8px 8px;padding:14px;text-align:center;color:#9ca3af;font-size:11px';
+        empty.textContent='No entries yet — newly posted entries will land here.';
+        sec.appendChild(empty);
+      }
+      wrap.appendChild(sec);
+    });
   }
 
-  // Size every description textarea to fit its content (must run after rows are in the DOM)
+  // Size every description textarea to fit its content
   wrap.querySelectorAll('.te-desc').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});
+}
+
+// ===== FLOCK PROMPT UI =====
+function promptLockFlock(beId){
+  const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  if(!unlocked){alert('Enter PIN on the Estimate Engine tab to lock invoices.');return;}
+  const cnt=flockEntryCount(be);
+  const tot=flockTotal(be);
+  const invNum=prompt('Lock "'+be.name+'" as billed?\n\n'+cnt+' entries totaling '+fmt(tot)+'\n\nEnter Invoice # (e.g. 23514):');
+  if(invNum===null)return;
+  const today=new Date().toISOString().split('T')[0];
+  const invDate=prompt('Invoice date (YYYY-MM-DD):',today);
+  if(invDate===null)return;
+  if(!confirm('Lock as Invoice #'+invNum+' dated '+invDate+'?\n\nThis cannot be undone without unlocking. A new "Next Invoice" flock will be created.'))return;
+  lockFlock(beId,invNum.trim(),invDate.trim());
+}
+function promptUnlockFlock(beId){
+  const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  if(!unlocked){alert('Enter PIN on the Estimate Engine tab to unlock invoices.');return;}
+  if(!confirm('Unlock "'+(be.invoiceNum?'Invoice '+be.invoiceNum:be.name)+'"?\n\nEntries will become editable again.'))return;
+  unlockFlock(beId);
+}
+function promptRenameFlock(beId){
+  const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  const newName=prompt('Rename flock:',be.name);
+  if(newName===null||newName.trim()===''||newName.trim()===be.name)return;
+  renameFlock(beId,newName.trim());
 }
 function addTimeEntry(){
   const p=document.getElementById('teProj').value;const h=parseFloat(document.getElementById('teHrs').value)||0;
@@ -2162,20 +2385,27 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
-  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,vessel:v?v.value:'Hannah Mae',client:c?c.value:''}));}catch(e){}
+  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,vessel:v?v.value:'Hannah Mae',client:c?c.value:''}));}catch(e){}
 }
 function loadData(){
   try{
     const raw=localStorage.getItem(STORAGE_KEY);if(!raw)return false;
     const d=JSON.parse(raw);
     if(d.projects)projects=d.projects;if(d.timeEntries)timeEntries=d.timeEntries;
+    if(d.billingEvents)billingEvents=d.billingEvents;
     if(d.nextProjId)nextProjId=d.nextProjId;if(d.nextTaskId)nextTaskId=d.nextTaskId;
     if(d.nextCOId)nextCOId=d.nextCOId;if(d.nextTEId)nextTEId=d.nextTEId;
+    if(d.nextBillingId)nextBillingId=d.nextBillingId;
     if(d.settings){const prevLogo=settings.logoB64;const prevMime=settings.logoMime;Object.assign(settings,d.settings);if(!settings.logoB64){settings.logoB64=prevLogo;settings.logoMime=prevMime;}if(settings.email==='abram@turnpointmarine.com')settings.email='Abram@turnpointmarine.com';}
     if(d.vessel){const v=document.getElementById('vfVessel');const n=document.getElementById('navVessel');if(v)v.value=d.vessel;if(n)n.textContent=d.vessel;}
     if(d.client){const c=document.getElementById('vfClient');if(c)c.value=d.client;}
     // Migrate any change_of_scope status projects to in_progress
     projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
+    // Ship 1: ensure a current "Next Invoice" flock exists, then auto-attach orphan posted entries
+    const cur=ensureCurrentFlock();
+    timeEntries.forEach(te=>{
+      if(te.posted&&!te.billingEventId){te.billingEventId=cur.id;}
+    });
     return true;
   }catch(e){return false;}
 }
