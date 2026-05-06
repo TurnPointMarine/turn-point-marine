@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-06T19:18:59.253Z",
+    "exportedAt": "2026-05-06T17:49:31.414Z",
     "engineVersion": 4
   },
   "projects": [
@@ -143,15 +143,6 @@
           "hrs": 1,
           "mat": 0,
           "sub": 0
-        },
-        {
-          "id": 193,
-          "cat": "M",
-          "desc": "New hose clamps, replacement labels for fuel fill ports, new fasteners, acetone, tape and sealant. ",
-          "hrs": 0,
-          "mat": 200,
-          "sub": 0,
-          "co": true
         }
       ],
       "tasks": [],
@@ -395,7 +386,7 @@
     {
       "id": 31,
       "name": "Buff/Wax During Haul Out",
-      "status": "complete",
+      "status": "in_progress",
       "notes": "Buff/wax \n1. Below the lower rub rail. \n2. Forward of the lower rub rail I suggest buffing waxing from the waterline up to the halfway mark between the waterline and the cap rail.  This will leave the rest of the bow and topsides accessible when she is back in the water. ",
       "include": true,
       "isTM": false,
@@ -1350,242 +1341,12 @@
   ],
   "timeEntries": [
     {
-      "id": 2004,
-      "date": "2026-03-16",
-      "proj": "Winter Wash March",
-      "cat": "T",
-      "hrs": 3.5,
-      "desc": "Winter wash March",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 1000,
       "date": "2026-03-26",
       "proj": "Davit",
       "cat": "T",
       "hrs": 2,
       "desc": "asfdasef",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2013,
-      "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 8,
-      "desc": "Disconnected hoses and remove panels. Once coated rebed with 3M4200 and re-install fuel hoses.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2014,
-      "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.25,
-      "desc": "Recorded photos of davit pump specifications and ordered new paint from Wesco for the fuel panels.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2016,
-      "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 0.5,
-      "desc": "Searched for missing fuel fitting label. Delivered old labels to Bay Engraving to fabricate new labels as one was misplaced.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2017,
-      "date": "2026-03-26",
-      "proj": "Pilothouse Lewmar Hatch Install",
-      "cat": "T",
-      "hrs": 2,
-      "desc": "Removed old pilothouse hatch lids, cleaned set pin bushings with drill bit, installed new hatch lids using SuperLube on set pins and rubber seals.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2019,
-      "date": "2026-03-26",
-      "proj": "PreSeason Commissioning",
-      "cat": "V",
-      "hrs": 0.29,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2021,
-      "date": "2026-03-27",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "T",
-      "hrs": 1.5,
-      "desc": "Revised buff/wax estimate to include gelcoat condition. Searched spare oil pressure sending units and recorded specs to pigtail units away from heat. Recorded photos of newly installed flybridge hatch lids. Recorded estimates: strip varnish from port teak handrail outboard of salon, clean teak decks, route duplex cable from sending units to midship machinery space.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2025,
-      "date": "2026-03-27",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "V",
-      "hrs": 0.25,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2022,
-      "date": "2026-03-27",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
-      "hrs": 1.5,
-      "desc": "Carefully sanded epoxy barrier coat on fasteners of both fuel inlet panels to achieve flush surface for final coat of paint.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2023,
-      "date": "2026-03-27",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "T",
-      "hrs": 3,
-      "desc": "Applied a coat of marine wax to transom, stanchions, and all gelcoat in the cockpit.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2024,
-      "date": "2026-03-27",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
-      "hrs": 0.5,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2029,
-      "date": "2026-04-03",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "T",
-      "hrs": 0.5,
-      "desc": "Picked up fittings to test new oil pressure sending units at LFS warehouse.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2030,
-      "date": "2026-04-03",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "T",
-      "hrs": 1.75,
-      "desc": "Removed starboard main engine oil pressure sending unit and installed new unit. Tested resistance between engine and sending unit wiring to verify proper function. Began installing oil pressure gauge on oil line, but incorrect fittings had been ordered. Reinstalled original sending unit and returned new units to shop.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2032,
-      "date": "2026-04-03",
-      "proj": "Oil Pressure Gauges Alarming",
-      "cat": "V",
-      "hrs": 0.65,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2031,
-      "date": "2026-04-03",
-      "proj": "Port Rail Varnish Strip & Install Cover",
-      "cat": "T",
-      "hrs": 1.5,
-      "desc": "Started removing flaking varnish on port lower deck handrail using scraper, heat gun, and dip net to scoop varnish flakes.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2033,
-      "date": "2026-04-03",
-      "proj": "Port Rail Varnish Strip & Install Cover",
-      "cat": "V",
-      "hrs": 0.35,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2034,
-      "date": "2026-04-07",
-      "proj": "PreSeason Commissioning",
-      "cat": "T",
-      "hrs": 0.5,
-      "desc": "Removed Portuguese bridge contents, foredeck locker contents, and summer tie down lines from storage.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2036,
-      "date": "2026-04-07",
-      "proj": "PreSeason Commissioning",
-      "cat": "T",
-      "hrs": 0.75,
-      "desc": "Installed summer tie down lines and delivered winter lines to storage.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2035,
-      "date": "2026-04-07",
-      "proj": "Exterior Deep Clean After Haul Out",
-      "cat": "T",
-      "hrs": 6,
-      "desc": "Picked up fuel for pressure washer and used it to remove marine growth from non-skid decks, mast components, canvas, swim step, all vessel hardware, and hard-to-reach crevices.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2037,
-      "date": "2026-04-09",
-      "proj": "Haul/Wash/Block",
-      "cat": "T",
-      "hrs": 4.25,
-      "desc": "Assisted in hauling vessel in Anacortes and inspected hull. Yard pressure washed the vessel.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2040,
-      "date": "2026-04-09",
-      "proj": "Haul/Wash/Block",
-      "cat": "V",
-      "hrs": 0.65,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2038,
-      "date": "2026-04-09",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "T",
-      "hrs": 5.5,
-      "desc": "Setup scaffold and buffed bottom half of white gelcoat on port hull from forward end of vessel to master head porthole window. Three passes with coarse compound.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2039,
-      "date": "2026-04-09",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
-      "hrs": 0.85,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": false,
       "billingEventId": null
     },
@@ -1620,14 +1381,244 @@
       "billingEventId": 500
     },
     {
+      "id": 2004,
+      "date": "2026-03-16",
+      "proj": "Winter Wash March",
+      "cat": "T",
+      "hrs": 3.5,
+      "desc": "Winter wash March",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2013,
+      "date": "2026-03-26",
+      "proj": "Fuel Inlet Panels",
+      "cat": "T",
+      "hrs": 3,
+      "desc": "Carefully sanded chipped paint around all fasteners on fuel inlet panels with 400 grit, removed sealant on fasteners, cleaned with acetone, applied a coat of InterProtect 2000E epoxy barrier coat to all fasteners.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2014,
+      "date": "2026-03-26",
+      "proj": "Fuel Inlet Panels",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Recorded photos of davit pump specifications and ordered new paint from Wesco for the fuel panels.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2016,
+      "date": "2026-03-26",
+      "proj": "Fuel Inlet Panels",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Searched for missing fuel fitting label. Delivered old labels to Bay Engraving to fabricate new labels as one was misplaced.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2017,
+      "date": "2026-03-26",
+      "proj": "Pilothouse Lewmar Hatch Install",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "Removed old pilothouse hatch lids, cleaned set pin bushings with drill bit, installed new hatch lids using SuperLube on set pins and rubber seals.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2019,
+      "date": "2026-03-26",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.29,
+      "desc": "Travel time (proportional share, total 1.0h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2021,
+      "date": "2026-03-27",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Revised buff/wax estimate to include gelcoat condition. Searched spare oil pressure sending units and recorded specs to pigtail units away from heat. Recorded photos of newly installed flybridge hatch lids. Recorded estimates: strip varnish from port teak handrail outboard of salon, clean teak decks, route duplex cable from sending units to midship machinery space.",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 2022,
+      "date": "2026-03-27",
+      "proj": "Fuel Inlet Panels",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Carefully sanded epoxy barrier coat on fasteners of both fuel inlet panels to achieve flush surface for final coat of paint.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2023,
+      "date": "2026-03-27",
+      "proj": "Buff/Wax During Haul Out",
+      "cat": "T",
+      "hrs": 3,
+      "desc": "Applied a coat of marine wax to transom, stanchions, and all gelcoat in the cockpit.",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 2024,
+      "date": "2026-03-27",
+      "proj": "Buff/Wax During Haul Out",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Travel time (proportional share, total 1.0h).",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 2025,
+      "date": "2026-03-27",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Travel time (proportional share, total 1.0h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2029,
+      "date": "2026-04-03",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Picked up fittings to test new oil pressure sending units at LFS warehouse.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2030,
+      "date": "2026-04-03",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "T",
+      "hrs": 1.75,
+      "desc": "Removed starboard main engine oil pressure sending unit and installed new unit. Tested resistance between engine and sending unit wiring to verify proper function. Began installing oil pressure gauge on oil line, but incorrect fittings had been ordered. Reinstalled original sending unit and returned new units to shop.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2031,
+      "date": "2026-04-03",
+      "proj": "Port Rail Varnish Strip & Install Cover",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Started removing flaking varnish on port lower deck handrail using scraper, heat gun, and dip net to scoop varnish flakes.",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 2032,
+      "date": "2026-04-03",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "T",
+      "hrs": 0.65,
+      "desc": "Travel time (proportional share, total 1.0h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2033,
+      "date": "2026-04-03",
+      "proj": "Port Rail Varnish Strip & Install Cover",
+      "cat": "T",
+      "hrs": 0.35,
+      "desc": "Travel time (proportional share, total 1.0h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2034,
+      "date": "2026-04-07",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Removed Portuguese bridge contents, foredeck locker contents, and summer tie down lines from storage.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2035,
+      "date": "2026-04-07",
+      "proj": "Exterior Deep Clean After Haul Out",
+      "cat": "T",
+      "hrs": 6,
+      "desc": "Picked up fuel for pressure washer and used it to remove marine growth from non-skid decks, mast components, canvas, swim step, all vessel hardware, and hard-to-reach crevices.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2036,
+      "date": "2026-04-07",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Installed summer tie down lines and delivered winter lines to storage.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2037,
+      "date": "2026-04-09",
+      "proj": "Haul/Wash/Block",
+      "cat": "T",
+      "hrs": 4.25,
+      "desc": "Assisted in hauling vessel in Anacortes and inspected hull. Yard pressure washed the vessel.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2038,
+      "date": "2026-04-09",
+      "proj": "Buff/Wax During Haul Out",
+      "cat": "T",
+      "hrs": 5.5,
+      "desc": "Setup scaffold and buffed bottom half of white gelcoat on port hull from forward end of vessel to master head porthole window. Three passes with coarse compound.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2039,
+      "date": "2026-04-09",
+      "proj": "Buff/Wax During Haul Out",
+      "cat": "T",
+      "hrs": 0.99,
+      "desc": "Travel time (proportional share, total 1.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2040,
+      "date": "2026-04-09",
+      "proj": "Haul/Wash/Block",
+      "cat": "T",
+      "hrs": 0.76,
+      "desc": "Travel time (proportional share, total 1.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
       "id": 2041,
       "date": "2026-04-10",
       "proj": "Buff/Wax During Haul Out",
       "cat": "T",
       "hrs": 5.5,
       "desc": "Buffed bottom half of white gelcoat on starboard hull from forward end of lower rub rail to forward end of vessel, plus port hull from master head porthole window to forward end of lower rub rail. Three passes with coarse compound.",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2042,
@@ -1636,18 +1627,18 @@
       "cat": "T",
       "hrs": 2,
       "desc": "Applied a coat of wax to bottom half of white gelcoat on port hull from forward end of vessel to forward end of lower rub rail, plus blue stripe along bottom of hull within same parameters.",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2043,
       "date": "2026-04-10",
       "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
-      "hrs": 1.5,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": false,
-      "billingEventId": null
+      "cat": "T",
+      "hrs": 1.75,
+      "desc": "Travel time (proportional share, total 1.75h).",
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2044,
@@ -1656,16 +1647,6 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Removed and set out fire extinguishers for Pacific Rim Fire to service.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2051,
-      "date": "2026-04-21",
-      "proj": "Fire Suppression System Certifications",
-      "cat": "V",
-      "hrs": 0.05,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -1680,34 +1661,44 @@
       "billingEventId": 500
     },
     {
-      "id": 2050,
-      "date": "2026-04-21",
-      "proj": "Paint Anchor Chain Markings",
-      "cat": "V",
-      "hrs": 0.38,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2047,
       "date": "2026-04-21",
       "proj": "Buff/Wax During Haul Out",
       "cat": "T",
       "hrs": 2.25,
       "desc": "Applied a coat of wax to bottom half of white gelcoat on starboard hull from forward end of vessel to forward end of lower rub rail, plus blue stripe along bottom of hull within same parameters.",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2049,
       "date": "2026-04-21",
       "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
+      "cat": "T",
       "hrs": 0.48,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": false,
-      "billingEventId": null
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2050,
+      "date": "2026-04-21",
+      "proj": "Paint Anchor Chain Markings",
+      "cat": "T",
+      "hrs": 0.38,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2051,
+      "date": "2026-04-21",
+      "proj": "Fire Suppression System Certifications",
+      "cat": "T",
+      "hrs": 0.05,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2053,
@@ -1716,16 +1707,6 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Picked up new Garmin transducer at Anacortes Fisheries locker, measured cable length, and compared to old transducer to inspect for proper fitment.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2059,
-      "date": "2026-04-23",
-      "proj": "Forward Scan Transducer Replace",
-      "cat": "V",
-      "hrs": 0.19,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -1740,34 +1721,44 @@
       "billingEventId": 500
     },
     {
-      "id": 2060,
-      "date": "2026-04-23",
-      "proj": "Fire Suppression System Certifications",
-      "cat": "V",
-      "hrs": 0.06,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2056,
       "date": "2026-04-23",
       "proj": "Buff/Wax During Haul Out",
       "cat": "T",
       "hrs": 3.25,
       "desc": "Buffed and waxed gelcoat around swim step corners, then waxed gelcoat beneath both lower rub rails and starboard half of transom. Two passes with fine compound and one coat of marine wax.",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2057,
       "date": "2026-04-23",
       "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
+      "cat": "T",
       "hrs": 0.81,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": false,
-      "billingEventId": null
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2059,
+      "date": "2026-04-23",
+      "proj": "Forward Scan Transducer Replace",
+      "cat": "T",
+      "hrs": 0.19,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2060,
+      "date": "2026-04-23",
+      "proj": "Fire Suppression System Certifications",
+      "cat": "T",
+      "hrs": 0.06,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2063,
@@ -1780,34 +1771,14 @@
       "billingEventId": 500
     },
     {
-      "id": 2066,
-      "date": "2026-04-24",
-      "proj": "Paint Anchor Chain Markings",
-      "cat": "V",
-      "hrs": 0.78,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2064,
       "date": "2026-04-24",
       "proj": "Buff/Wax During Haul Out",
       "cat": "T",
       "hrs": 0.5,
       "desc": "Applied one coat of marine wax to port half of transom.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
-      "id": 2068,
-      "date": "2026-04-24",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
-      "hrs": 0.13,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2065,
@@ -1820,12 +1791,12 @@
       "billingEventId": 500
     },
     {
-      "id": 2069,
+      "id": 2066,
       "date": "2026-04-24",
-      "proj": "PreSeason Commissioning",
-      "cat": "V",
-      "hrs": 0.13,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
+      "proj": "Paint Anchor Chain Markings",
+      "cat": "T",
+      "hrs": 0.78,
+      "desc": "Travel time (proportional share, total 1.5h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -1833,21 +1804,41 @@
       "id": 2067,
       "date": "2026-04-24",
       "proj": "Exterior Deep Clean After Haul Out",
-      "cat": "V",
+      "cat": "T",
       "hrs": 0.39,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": false,
-      "billingEventId": null
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2068,
+      "date": "2026-04-24",
+      "proj": "Buff/Wax During Haul Out",
+      "cat": "T",
+      "hrs": 0.13,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2069,
+      "date": "2026-04-24",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.13,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2070,
       "date": "2026-04-24",
       "proj": "Haul/Wash/Block",
-      "cat": "V",
+      "cat": "T",
       "hrs": 0.07,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": false,
-      "billingEventId": null
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2071,
@@ -1856,16 +1847,6 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Removed cockpit and flybridge furniture from storage along with Portuguese bright locker contents, then loaded winter tie down lines into storage.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2079,
-      "date": "2026-04-27",
-      "proj": "PreSeason Commissioning",
-      "cat": "V",
-      "hrs": 0.11,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -1880,16 +1861,6 @@
       "billingEventId": 500
     },
     {
-      "id": 2078,
-      "date": "2026-04-27",
-      "proj": "Paint Anchor Chain Markings",
-      "cat": "V",
-      "hrs": 0.17,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2073,
       "date": "2026-04-27",
       "proj": "Flybridge Captains Chairs Replace",
@@ -1900,31 +1871,21 @@
       "billingEventId": 500
     },
     {
-      "id": 2077,
-      "date": "2026-04-27",
-      "proj": "Flybridge Captains Chairs Replace",
-      "cat": "V",
-      "hrs": 0.39,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2074,
       "date": "2026-04-27",
       "proj": "Davit",
       "cat": "T",
       "hrs": 0.5,
       "desc": "Delivered tools and supplies to vessel in order to service davit, oil pressure sending units, and Garmin transducer.",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2075,
       "date": "2026-04-27",
       "proj": "Davit",
       "cat": "T",
-      "hrs": 3.75,
+      "hrs": 3.25,
       "desc": "Raised davit arm, drained old hydraulic oil back to hydraulic pump, evacuated old hydraulic oil using vacuum pump, then removed and drained main hydraulic return line near pump. Removed oil reservoir for hydraulic flow control valves, installed new flow control valves using Loctite thread locker, cleaned workspace.",
       "posted": true,
       "billingEventId": 500
@@ -1933,9 +1894,39 @@
       "id": 2076,
       "date": "2026-04-27",
       "proj": "Davit",
-      "cat": "V",
+      "cat": "T",
       "hrs": 0.83,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2077,
+      "date": "2026-04-27",
+      "proj": "Flybridge Captains Chairs Replace",
+      "cat": "T",
+      "hrs": 0.39,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2078,
+      "date": "2026-04-27",
+      "proj": "Paint Anchor Chain Markings",
+      "cat": "T",
+      "hrs": 0.17,
+      "desc": "Travel time (proportional share, total 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2079,
+      "date": "2026-04-27",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.11,
+      "desc": "Travel time (proportional share, total 1.5h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -1950,26 +1941,6 @@
       "billingEventId": 500
     },
     {
-      "id": 2082,
-      "date": "2026-04-28",
-      "proj": "PreSeason Commissioning",
-      "cat": "T",
-      "hrs": 0.75,
-      "desc": "Delivered and loaded Portuguese bridge, foredeck, and flybridge locker contents onto vessel.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2087,
-      "date": "2026-04-28",
-      "proj": "PreSeason Commissioning",
-      "cat": "V",
-      "hrs": 0.25,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2081,
       "date": "2026-04-28",
       "proj": "Forward Scan Transducer Replace",
@@ -1980,12 +1951,12 @@
       "billingEventId": 500
     },
     {
-      "id": 2086,
+      "id": 2082,
       "date": "2026-04-28",
-      "proj": "Forward Scan Transducer Replace",
-      "cat": "V",
-      "hrs": 0.44,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Delivered and loaded Portuguese bridge, foredeck, and flybridge locker contents onto vessel.",
       "posted": true,
       "billingEventId": 500
     },
@@ -1996,16 +1967,6 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Loaded anchor chain back into anchor chain locker.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2088,
-      "date": "2026-04-28",
-      "proj": "Paint Anchor Chain Markings",
-      "cat": "V",
-      "hrs": 0.13,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -2023,9 +1984,39 @@
       "id": 2085,
       "date": "2026-04-28",
       "proj": "Davit",
-      "cat": "V",
-      "hrs": 0.68,
-      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
+      "cat": "T",
+      "hrs": 0.8,
+      "desc": "Travel time (proportional share, total 1.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2086,
+      "date": "2026-04-28",
+      "proj": "Forward Scan Transducer Replace",
+      "cat": "T",
+      "hrs": 0.51,
+      "desc": "Travel time (proportional share, total 1.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2087,
+      "date": "2026-04-28",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.29,
+      "desc": "Travel time (proportional share, total 1.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2088,
+      "date": "2026-04-28",
+      "proj": "Paint Anchor Chain Markings",
+      "cat": "T",
+      "hrs": 0.15,
+      "desc": "Travel time (proportional share, total 1.75h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -2050,32 +2041,12 @@
       "billingEventId": 500
     },
     {
-      "id": 2097,
-      "date": "2026-04-29",
-      "proj": "PreSeason Commissioning",
-      "cat": "V",
-      "hrs": 0.14,
-      "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2092,
       "date": "2026-04-29",
       "proj": "Preseason Commissioning Canvas",
       "cat": "T",
       "hrs": 1,
       "desc": "Removed all cap rail and hatch canvas, then installed Bimini for the season.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2100,
-      "date": "2026-04-29",
-      "proj": "Preseason Commissioning Canvas",
-      "cat": "V",
-      "hrs": 0.07,
-      "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -2090,32 +2061,12 @@
       "billingEventId": 500
     },
     {
-      "id": 2098,
-      "date": "2026-04-29",
-      "proj": "B-Watermaker",
-      "cat": "V",
-      "hrs": 0.11,
-      "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
       "id": 2094,
       "date": "2026-04-29",
       "proj": "Haul/Wash/Block",
       "cat": "T",
       "hrs": 1.5,
-      "desc": "Installed fenders and lines as we needed to drop the mechanic off at the dock when work inspection in the water was complete on the way out of the slings. Stored loose tools and supplies and assisted in launching vessel back into the water.",
-      "posted": true,
-      "billingEventId": 500
-    },
-    {
-      "id": 2099,
-      "date": "2026-04-29",
-      "proj": "Haul/Wash/Block",
-      "cat": "V",
-      "hrs": 0.11,
-      "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
+      "desc": "Stored loose tools and supplies and assisted in launching vessel back into the water.",
       "posted": true,
       "billingEventId": 500
     },
@@ -2133,9 +2084,49 @@
       "id": 2096,
       "date": "2026-04-29",
       "proj": "Deliver Undaunted from Haul Out to Bellingham",
-      "cat": "V",
+      "cat": "T",
       "hrs": 0.32,
-      "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
+      "desc": "Travel time (proportional share, total 0.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2097,
+      "date": "2026-04-29",
+      "proj": "PreSeason Commissioning",
+      "cat": "T",
+      "hrs": 0.14,
+      "desc": "Travel time (proportional share, total 0.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2098,
+      "date": "2026-04-29",
+      "proj": "B-Watermaker",
+      "cat": "T",
+      "hrs": 0.11,
+      "desc": "Travel time (proportional share, total 0.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2099,
+      "date": "2026-04-29",
+      "proj": "Haul/Wash/Block",
+      "cat": "T",
+      "hrs": 0.11,
+      "desc": "Travel time (proportional share, total 0.75h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 2100,
+      "date": "2026-04-29",
+      "proj": "Preseason Commissioning Canvas",
+      "cat": "T",
+      "hrs": 0.07,
+      "desc": "Travel time (proportional share, total 0.75h).",
       "posted": true,
       "billingEventId": 500
     },
@@ -2198,42 +2189,6 @@
       "desc": "Consolidated plastic sheeting used to protect carpets over winter. Loaded hydraulic oil, old NavComm battery boxes, sausage fenders, and pilothouse counter protective cardboard cutouts into storage.",
       "posted": true,
       "billingEventId": 500
-    },
-    {
-      "id": 1011,
-      "date": "2026-05-06",
-      "proj": "Fuel Inlet Panels",
-      "cat": "V",
-      "hrs": 1,
-      "desc": "Job site transit (project labor's proportional share of the day's 1h).",
-      "posted": true
-    },
-    {
-      "id": 1012,
-      "date": "2026-05-06",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "B",
-      "hrs": 33,
-      "desc": "1. Buff and wax below lower rub rail. \n2. Buff and wax forward of the lower rub rail I buffing & waxing from the waterline up to the halfway mark between the waterline and the teak cap rail.  ",
-      "posted": true
-    },
-    {
-      "id": 1013,
-      "date": "2026-05-06",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "V",
-      "hrs": 6,
-      "desc": "Job site transit (project labor's proportional share of the 1.5h transit for 4 days).",
-      "posted": true
-    },
-    {
-      "id": 1014,
-      "date": "2026-05-06",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "M",
-      "hrs": 160,
-      "desc": "Coarse Compound, 52.50\nFine Compound, 52.50\nWax, 30.00\nWool pads, 30.00",
-      "posted": true
     }
   ],
   "billingEvents": [
@@ -2246,9 +2201,9 @@
     }
   ],
   "nextProjId": 56,
-  "nextTaskId": 194,
+  "nextTaskId": 193,
   "nextCOId": 101,
-  "nextTEId": 1015,
+  "nextTEId": 1011,
   "nextBillingId": 501,
   "settings": {
     "company": "Turn Point Marine",
