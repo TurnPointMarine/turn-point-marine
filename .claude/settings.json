@@ -1,9 +1,24 @@
 {
   "permissions": {
     "deny": [
-      "Read(/Users/abramanderson/Library/CloudStorage/**)",
-      "Edit(/Users/abramanderson/Library/CloudStorage/**)",
-      "Write(/Users/abramanderson/Library/CloudStorage/**)",
+      "Read(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Tax Licensure Docs/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Tax Licensure Docs/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Tax Licensure Docs/**)",
+      "Read(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Financial/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Financial/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Financial/**)",
+      "Read(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Legal/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Legal/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Legal/**)",
+      "Read(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Insurance/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Insurance/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Insurance/**)",
+      "Read(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Vendor Accounts/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Vendor Accounts/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Vendor Accounts/**)",
+      "Read(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Employee Materials/**)",
+      "Edit(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Employee Materials/**)",
+      "Write(/Users/abramanderson/Library/CloudStorage/OneDrive-TurnPointMarine/Docs TPM/Employee Materials/**)",
       "Read(/Users/abramanderson/Documents/**)",
       "Edit(/Users/abramanderson/Documents/**)",
       "Write(/Users/abramanderson/Documents/**)"
