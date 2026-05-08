@@ -2,10 +2,8 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-08T20:04:41.008Z",
-    "engineVersion": 4,
-    "migratedPtoM": "2026-05-08T20:50:29.770092",
-    "migrationNote": "P\u2192M: 4 TEs, 4 scope tasks. Inv#23514 backfilled to 2 Winter Wash projects."
+    "exportedAt": "2026-05-08T21:00:42.334Z",
+    "engineVersion": 4
   },
   "projects": [
     {
@@ -123,7 +121,7 @@
     },
     {
       "id": 6,
-      "name": "Fuel Inlet Panels",
+      "name": "Fuel Inlet Panels Technician",
       "status": "complete",
       "notes": "Disconnect hoses and remove panels. Once coated rebed with 3M4200",
       "include": true,
@@ -1219,7 +1217,7 @@
       "status": "billed",
       "isTM": false,
       "estimateTotal": null,
-      "notes": "Victron Cerbo MK2 replacement \u2014 billed on invoice 23514.",
+      "notes": "Victron Cerbo MK2 replacement — billed on invoice 23514.",
       "scopeTasks": [],
       "cos": [],
       "invoiceNum": "23514",
@@ -2275,7 +2273,7 @@
       "proj": "Winter Wash March",
       "cat": "M",
       "hrs": 287.5,
-      "desc": "Winter Wash February \u2014 additional charges",
+      "desc": "Winter Wash February — additional charges",
       "posted": true,
       "billingEventId": 501
     },
@@ -2322,7 +2320,7 @@
     {
       "id": 1024,
       "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Technician",
       "cat": "T",
       "hrs": 8,
       "desc": "Disconnected hoses and remove panels. Once coated rebeded with 3M4200,  re-installed fuel hoses.",
@@ -2332,7 +2330,7 @@
     {
       "id": 1025,
       "date": "2026-05-08",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Technician",
       "cat": "V",
       "hrs": 1,
       "desc": "Blaine Travel",
@@ -2342,7 +2340,7 @@
     {
       "id": 1026,
       "date": "2026-05-08",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Technician",
       "cat": "M",
       "hrs": 200,
       "desc": "New hose clamps, replacement labels for fuel fill ports, new fasteners, acetone, tape and sealant. ",
@@ -2519,7 +2517,7 @@
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
     "email": "Abram@turnpointmarine.com",
-    "clientEmail": "",
+    "clientEmail": "Abram@turnpointmarine.com",
     "clientEmail2": "",
     "phone": "",
     "footer": "Estimate Only - Subject to Change. Work does not proceed without signed authorization.",
