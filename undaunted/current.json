@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-08T13:09:29.380Z",
+    "exportedAt": "2026-05-08T19:20:50.911Z",
     "engineVersion": 4
   },
   "projects": [
@@ -51,7 +51,7 @@
     {
       "id": 3,
       "name": "Davit",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "Davit: replace rotational control valves & worn hydraulic lines, hydraulic fluid flush, add filter to hydraulic plumbing.",
       "include": true,
       "isTM": false,
@@ -122,7 +122,7 @@
     {
       "id": 6,
       "name": "Fuel Inlet Panels",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "Disconnect hoses and remove panels. Once coated rebed with 3M4200",
       "include": true,
       "isTM": false,
@@ -143,15 +143,6 @@
           "hrs": 1,
           "mat": 0,
           "sub": 0
-        },
-        {
-          "id": 193,
-          "cat": "M",
-          "desc": "New hose clamps, replacement labels for fuel fill ports, new fasteners, acetone, tape and sealant. ",
-          "hrs": 0,
-          "mat": 200,
-          "sub": 0,
-          "co": true
         }
       ],
       "tasks": [],
@@ -257,7 +248,7 @@
       "id": 27,
       "name": "Haul/Wash/Block",
       "status": "in_progress",
-      "notes": "",
+      "notes": "*Waiting on the 2 week billing cycle that Pacific Marine Center goes through. ",
       "include": true,
       "isTM": false,
       "estimateTotal": null,
@@ -275,28 +266,36 @@
       "cos": []
     },
     {
-      "id": 28,
-      "name": "Pull Starboard Propeller & Shaft",
-      "status": "in_progress",
-      "notes": "I have put this forward to Todd at Pacific Marine Center as a working outline of expenses for the worst case scenario. Hopefully we can pull the propeller and shaft, repair the shaft and re-install. \nI am waiting for a response from him. Sounds like he went in for knee surgery this week. \n\nWORST CASE SCENARIO\n4-6 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n3-5 thousand for a shaft if needed. \n6-8 hours for replacing a cutlass bearing. \n4-6 hours for installing new shaft and propeller. \n\n    24hrs labor @ $145/hr = $4,000 with tax, \n   $6,000 materials with tax.\nEstimate of safe worst case scenario ~$10,000: \n\nGUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$900 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $900\n$3,200 with tax\n",
+      "id": 39,
+      "name": "Deliver Undaunted from Cap Sante to Haul Out",
+      "status": "complete",
       "include": true,
-      "isTM": false,
+      "notes": "-Deliver Undaunted from Cap Sante to Haul Out\n-When on her stands hook up shore power and ensure everything is charging. \n-Stow all lines and fenders for duration of haul to prevent them from collecting yard dirt.",
       "estimateTotal": null,
+      "isTM": true,
       "scopeTasks": [
         {
-          "id": 121,
-          "cat": "T",
-          "desc": "Managing Project",
-          "hrs": 3,
+          "id": 139,
+          "cat": "D",
+          "desc": "",
+          "hrs": 0,
           "mat": 0,
           "sub": 0
         },
         {
-          "id": 128,
+          "id": 147,
           "cat": "T",
-          "desc": "GUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$1,000 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $1,000\n$3,200 with tax",
-          "hrs": 14,
-          "mat": 1000,
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 148,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
           "sub": 0
         }
       ],
@@ -306,7 +305,7 @@
     {
       "id": 29,
       "name": "Forward Scan Transducer Replace",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "Garmin Panoptix PS-51TH",
       "include": true,
       "isTM": false,
@@ -356,8 +355,8 @@
     },
     {
       "id": 24,
-      "name": "Fuel Inlet Panels",
-      "status": "in_progress",
+      "name": "Fuel Inlet Panels Detail",
+      "status": "complete",
       "notes": "Clean corrosion epoxy barrier coat then paint\n*CHANGE OF SCOPE REQUEST IS THE SUBCONTRACTOR COST NOT QUOTED IN THE INITIAL ESTIMATE \n  $950\n*Stripping the fuel inlet panels required an acid dip for each panel, scraping and then vapor honing. The estimate did not include any subcontractor cost as at the time it was submitted. It was thought that the normal vapor honing once would get the panels stripped of coatings. ",
       "include": true,
       "isTM": false,
@@ -377,7 +376,7 @@
           "desc": "Vapor Hone\nAcid dip and scrape.\nVapor Hone second time",
           "hrs": 0,
           "mat": 0,
-          "sub": 975,
+          "sub": 950,
           "co": false
         },
         {
@@ -473,44 +472,6 @@
       "showInDoc": true
     },
     {
-      "id": 16,
-      "name": "Generators Start Batteries Upgrade to Victron Charger",
-      "status": "in_progress",
-      "notes": "Remove old Charge system Install new 120v Victron charger and integrate with Victron ecosystem.\n\n*CHANGE OF SCOPE needed for install of new cables. The old chargers cables won't integrate with the Victron chargers,\n2 hours and $50 of cables should get us there. ",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 112,
-          "cat": "T",
-          "desc": "Victron Generator Start Battery Charger",
-          "hrs": 5,
-          "mat": 500,
-          "sub": 0
-        },
-        {
-          "id": 131,
-          "cat": "T",
-          "desc": "Need to run new cables with the charger install",
-          "hrs": 2,
-          "mat": 50,
-          "sub": 0,
-          "co": false
-        },
-        {
-          "id": 155,
-          "cat": "V",
-          "desc": "Travel",
-          "hrs": 1,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
       "id": 17,
       "name": "Victron Electronic Engine Controls Battery Charger",
       "status": "billed",
@@ -534,7 +495,7 @@
     {
       "id": 20,
       "name": "Paint Anchor Chain Markings",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "",
       "include": true,
       "isTM": false,
@@ -584,7 +545,7 @@
     {
       "id": 32,
       "name": "Stainless Polish",
-      "status": "needs_auth",
+      "status": "holding",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -617,7 +578,7 @@
       "include": true,
       "notes": "",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 133,
@@ -642,7 +603,7 @@
     {
       "id": 34,
       "name": "Exterior Varnish Repairs & Refinish",
-      "status": "needs_auth",
+      "status": "holding",
       "include": true,
       "notes": "This had been discussed yet it hadn't appeared on any Worklists yet. ",
       "estimateTotal": null,
@@ -679,7 +640,7 @@
     {
       "id": 35,
       "name": "Oil Pressure Gauges Alarming",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "Functional to AK and back through the Fall. \nNew sending units will be tested on her trip to Anacortes for haul out. My sense is that the present location of these exposes them to too much heat. If the new sending units resolve the issue as expected we can relocate the sending units where they will not be exposed to the heat exposure right there next to the engine block.\n\n**Will follow up with Change of Scope when we are clear that the new sending units work. ",
       "estimateTotal": null,
@@ -740,7 +701,7 @@
     {
       "id": 36,
       "name": "Exterior Deep Clean After Haul Out",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -769,7 +730,7 @@
     {
       "id": 37,
       "name": "Preseason Commissioning Canvas",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "-Flybrige and Cap Rail Canvas, remove, dry & stow in dry storage\n-Put up Bimini rails and install bimini canvas",
       "estimateTotal": null,
@@ -798,7 +759,7 @@
     {
       "id": 38,
       "name": "PreSeason Commissioning",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "-Unwinterize aft and forward freshwater lines as well as the raw water washdown pump that was flushed of salt water for the off season.\n-Load Portuguese bridge lockers and foredeck lockers with their gear.\n-Deliver cockpit chairs/tables from dry storage. \n-Deliver bbq from dry storage and install. \n-Replace the winter dock lines with summer dock down lines.\n-Install interior carpets. ",
       "estimateTotal": null,
@@ -827,7 +788,7 @@
     {
       "id": 12,
       "name": "Flybridge Captains Chairs Replace",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "Springfield\n  1040002: $431.83\n",
       "include": true,
       "isTM": false,
@@ -855,43 +816,6 @@
           "cat": "T",
           "desc": "Labor",
           "hrs": 2,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 39,
-      "name": "Deliver Undaunted from Cap Sante to Haul Out",
-      "status": "in_progress",
-      "include": true,
-      "notes": "-Deliver Undaunted from Cap Sante to Haul Out\n-When on her stands hook up shore power and ensure everything is charging. \n-Stow all lines and fenders for duration of haul to prevent them from collecting yard dirt.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [
-        {
-          "id": 139,
-          "cat": "D",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 147,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 148,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
           "mat": 0,
           "sub": 0
         }
@@ -978,9 +902,9 @@
       "name": "Securing Anchors with the Windlass Capstan",
       "status": "in_progress",
       "include": true,
-      "notes": "Need to install fender lines on carabiners install on anchors and send Wes photos",
+      "notes": "Waiting on response in WhatsApp. Sent photos and explanation. ",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 159,
@@ -997,48 +921,9 @@
       "showInDoc": true
     },
     {
-      "id": 43,
-      "name": "Dry Storage",
-      "status": "in_progress",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 162,
-          "cat": "M",
-          "desc": "April",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0,
-          "co": false
-        },
-        {
-          "id": 163,
-          "cat": "M",
-          "desc": "May",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0,
-          "co": false
-        },
-        {
-          "id": 180,
-          "cat": "M",
-          "desc": "June",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
       "id": 44,
       "name": "Fire Suppression System Certifications",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "Service and certify handheld fire extinguishers.\nTest Fireboy shut down and bypass functionality & Fireboy certification.",
       "estimateTotal": null,
@@ -1061,6 +946,73 @@
           "mat": 0,
           "sub": 0,
           "co": false
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 16,
+      "name": "Generators Start Batteries Upgrade to Victron Charger",
+      "status": "in_progress",
+      "notes": "Remove old Charge system Install new 120v Victron charger, program and test proper functionality.",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 112,
+          "cat": "T",
+          "desc": "Victron Generator Start Battery Charger",
+          "hrs": 5,
+          "mat": 500,
+          "sub": 0
+        },
+        {
+          "id": 131,
+          "cat": "T",
+          "desc": "Need to run new cables with the charger install",
+          "hrs": 2,
+          "mat": 50,
+          "sub": 0,
+          "co": false
+        },
+        {
+          "id": 155,
+          "cat": "V",
+          "desc": "Travel",
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": []
+    },
+    {
+      "id": 28,
+      "name": "Pull Starboard Propeller & Shaft",
+      "status": "in_progress",
+      "notes": "*Waiting on the 2 week billing cycle that Pacific Marine Center goes through. \n\nI have put this forward to Todd at Pacific Marine Center as a working outline of expenses for the worst case scenario. Hopefully we can pull the propeller and shaft, repair the shaft and re-install. \nI am waiting for a response from him. Sounds like he went in for knee surgery this week. \n\nWORST CASE SCENARIO\n4-6 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n3-5 thousand for a shaft if needed. \n6-8 hours for replacing a cutlass bearing. \n4-6 hours for installing new shaft and propeller. \n\n    24hrs labor @ $145/hr = $4,000 with tax, \n   $6,000 materials with tax.\nEstimate of safe worst case scenario ~$10,000: \n\nGUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$900 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $900\n$3,200 with tax\n",
+      "include": true,
+      "isTM": false,
+      "estimateTotal": null,
+      "scopeTasks": [
+        {
+          "id": 121,
+          "cat": "T",
+          "desc": "Managing Project",
+          "hrs": 3,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 128,
+          "cat": "T",
+          "desc": "GUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$1,000 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $1,000\n$3,200 with tax",
+          "hrs": 14,
+          "mat": 1000,
+          "sub": 0
         }
       ],
       "tasks": [],
@@ -1139,35 +1091,6 @@
           "cat": "V",
           "desc": "Travel",
           "hrs": 0.5,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 48,
-      "name": "House Battery Bank Cerbo Troubleshoot/Replace",
-      "status": "billed",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 172,
-          "cat": "M",
-          "desc": "",
-          "hrs": 0,
-          "mat": 273,
-          "sub": 0
-        },
-        {
-          "id": 173,
-          "cat": "T",
-          "desc": "Two hours to troubleshoot, replace and program/network new unit",
-          "hrs": 2,
           "mat": 0,
           "sub": 0
         }
@@ -1265,33 +1188,12 @@
     },
     {
       "id": 53,
-      "name": "Deliver Undaunted from Haul Out to Bellingham",
-      "status": "needs_auth",
-      "notes": "Return trip post-haul-out: deliver vessel from Anacortes back to Bellingham home port. Includes shuttle car drop, transit, on-arrival cleanup, and autopilot calibration.",
-      "include": true,
-      "isTM": false,
-      "estimateTotal": null,
-      "scopeTasks": [
-        {
-          "id": 200,
-          "cat": "T",
-          "desc": "Deliver Undaunted from Haul Out to Bellingham",
-          "hrs": 5,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 53,
       "name": "Pilothouse Lewmar Hatch Install",
       "status": "needs_auth",
       "include": true,
-      "notes": "",
+      "notes": "The pilothouse overhead hatches were purchased two years ago. We had several back and forth shipments from Lewmar (due to incompetent customer service at Lewmar). Received these hatches in the Fall of 2025, checked fitment at that point and waited to install so they would have one less winter of exposure. .  . ",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 190,
@@ -1300,48 +1202,6 @@
           "hrs": 0,
           "mat": 0,
           "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 54,
-      "name": "Dry Storage Febr",
-      "status": "billed",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 191,
-          "cat": "M",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 250
-        }
-      ],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 55,
-      "name": "Dry Storage March",
-      "status": "billed",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 192,
-          "cat": "M",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 250
         }
       ],
       "tasks": [],
@@ -1357,7 +1217,119 @@
       "scopeTasks": [],
       "cos": [],
       "invoiceNum": "23514",
-      "include": false
+      "include": true
+    },
+    {
+      "id": 57,
+      "name": "Launch Vessel & Deliver Undaunted from Anacortes to Bellingham",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "This task was asked of me without clarification in this format. I would like to run it through the proper channels of this format. ",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 194,
+          "cat": "T",
+          "desc": "Installed fenders and lines as we needed to drop the mechanic off at the dock when work inspection in the water was complete on the way out of the slings. Stored loose tools and supplies and assisted in launching vessel back into the water.",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 58,
+      "name": "New Project",
+      "status": "holding",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 195,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 59,
+      "name": "New Project",
+      "status": "holding",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 196,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 60,
+      "name": "Dry Storage",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 199,
+          "cat": "P",
+          "desc": "February",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0
+        },
+        {
+          "id": 200,
+          "cat": "P",
+          "desc": "March",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0
+        },
+        {
+          "id": 201,
+          "cat": "P",
+          "desc": "April",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0
+        },
+        {
+          "id": 202,
+          "cat": "P",
+          "desc": "May",
+          "hrs": 0,
+          "mat": 250,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
     }
   ],
   "timeEntries": [
@@ -1384,17 +1356,17 @@
     {
       "id": 2013,
       "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
-      "cat": "T",
+      "proj": "Fuel Inlet Panels Detail",
+      "cat": "D",
       "hrs": 8,
-      "desc": "Disconnected hoses and remove panels. Once coated rebed with 3M4200 and re-install fuel hoses.",
+      "desc": "Clean corrosion.  Epoxy barrier coat then paint with color matched enamel.",
       "posted": true,
       "billingEventId": 500
     },
     {
       "id": 2014,
       "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Detail",
       "cat": "T",
       "hrs": 0.25,
       "desc": "Recorded photos of davit pump specifications and ordered new paint from Wesco for the fuel panels.",
@@ -1404,7 +1376,7 @@
     {
       "id": 2016,
       "date": "2026-03-26",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Detail",
       "cat": "T",
       "hrs": 0.5,
       "desc": "Searched for missing fuel fitting label. Delivered old labels to Bay Engraving to fabricate new labels as one was misplaced.",
@@ -1416,8 +1388,8 @@
       "date": "2026-03-26",
       "proj": "Pilothouse Lewmar Hatch Install",
       "cat": "T",
-      "hrs": 2,
-      "desc": "Removed old pilothouse hatch lids, cleaned set pin bushings with drill bit, installed new hatch lids using SuperLube on set pins and rubber seals.",
+      "hrs": 1.5,
+      "desc": "Removed old pilothouse hatch lids. Cleaned set pin bushings with drill bit. Greased new set pins. Installed new set of hatch lids.",
       "posted": true,
       "billingEventId": 500
     },
@@ -1454,7 +1426,7 @@
     {
       "id": 2022,
       "date": "2026-03-27",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Detail",
       "cat": "T",
       "hrs": 1.5,
       "desc": "Carefully sanded epoxy barrier coat on fasteners of both fuel inlet panels to achieve flush surface for final coat of paint.",
@@ -1488,25 +1460,35 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Picked up fittings to test new oil pressure sending units at LFS warehouse.",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2030,
       "date": "2026-04-03",
       "proj": "Oil Pressure Gauges Alarming",
       "cat": "T",
-      "hrs": 1.75,
-      "desc": "Removed starboard main engine oil pressure sending unit and installed new unit. Tested resistance between engine and sending unit wiring to verify proper function. Began installing oil pressure gauge on oil line, but incorrect fittings had been ordered. Reinstalled original sending unit and returned new units to shop.",
+      "hrs": 3.75,
+      "desc": "Remove brass plumbing from the engine block that supplies pressure to the oil pressure sending unit and flow to the Gulf Coast bypass oil filter. Install 3' braided oil line with crimped reverse flare fittings. Route sending unit wiring aft to reach the sending units new location. \n\nWhen the starboard main engine is heat soaked and at low idle we are getting 13psi of oil pressure with the mechanical gauge I installed Monday. At the same time the VDO gauge shows well under 10psi and the alarm is sounding.\n\nConsulting with Tri County for information and propose next steps.",
       "posted": true,
       "billingEventId": 500
+    },
+    {
+      "id": 1041,
+      "date": "2026-05-08",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "T",
+      "hrs": 0,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2032,
       "date": "2026-04-03",
       "proj": "Oil Pressure Gauges Alarming",
       "cat": "V",
-      "hrs": 0.65,
+      "hrs": 0.48,
       "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
       "posted": true,
       "billingEventId": 500
@@ -1516,10 +1498,10 @@
       "date": "2026-04-03",
       "proj": "Port Rail Varnish Strip & Install Cover",
       "cat": "T",
-      "hrs": 1.5,
-      "desc": "Started removing flaking varnish on port lower deck handrail using scraper, heat gun, and dip net to scoop varnish flakes.",
-      "posted": false,
-      "billingEventId": null
+      "hrs": 2,
+      "desc": "Removed delaminated varnish on port lower deck handrail with scraper and heat gun. Got the worst exposed to the air and sunshine. \nNot complete. ",
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2033,
@@ -1528,16 +1510,16 @@
       "cat": "V",
       "hrs": 0.35,
       "desc": "Job site transit (project labor's proportional share of the day's 1.0h).",
-      "posted": false,
-      "billingEventId": null
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 2034,
-      "date": "2026-04-07",
+      "date": "2026-04-30",
       "proj": "PreSeason Commissioning",
-      "cat": "T",
-      "hrs": 0.5,
-      "desc": "Removed Portuguese bridge contents, foredeck locker contents, and summer tie down lines from storage.",
+      "cat": "D",
+      "hrs": 8,
+      "desc": "Removed Portuguese bridge contents, foredeck locker contents, and summer tie down lines from storage.\n\nRemoved cockpit and flybridge furniture from dry storage along with Portuguese bright locker contents, then loaded winter tie down lines into storage.\n\nDelivered and loaded Portuguese bridge, foredeck, and flybridge locker contents onto vessel.\n\nInstalled flybridge BBQ.\n\nOrganized lazarette. Loaded cockpit furniture and flybridge chairs onto vessel. \n\nInflated and hung a pair of cylinder fenders. Returned the pair of cylindrical foam fenders to \ndry storage. Installed life sling on flybridge.\n\nChecked tender fuel level, removed tender charger, and looked over vessel prior to shakedown cruise.\n\nOpened up and prepared all external water lines for the season and tested for leaks. \nOpened winterization valve for windshield wipers, connected freshwater lines, and tested windshield wipers.\n\nInstalled all interior carpets.\n\nConsolidated plastic sheeting used to protect carpets over winter. Loaded hydraulic oil, sausage fenders, and pilothouse counter protective cardboard cutouts into storage.",
       "posted": true,
       "billingEventId": 500
     },
@@ -1545,19 +1527,19 @@
       "id": 2036,
       "date": "2026-04-07",
       "proj": "PreSeason Commissioning",
-      "cat": "T",
+      "cat": "D",
       "hrs": 0.75,
-      "desc": "Installed summer tie down lines and delivered winter lines to storage.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2035,
       "date": "2026-04-07",
       "proj": "Exterior Deep Clean After Haul Out",
-      "cat": "T",
+      "cat": "D",
       "hrs": 6,
-      "desc": "Picked up fuel for pressure washer and used it to remove marine growth from non-skid decks, mast components, canvas, swim step, all vessel hardware, and hard-to-reach crevices.",
+      "desc": "Pressure washed marine growth from non-skid decks, mast components, canvas, swim step, all vessel hardware, and hard-to-reach crevices.",
       "posted": true,
       "billingEventId": 500
     },
@@ -1567,9 +1549,9 @@
       "proj": "Haul/Wash/Block",
       "cat": "T",
       "hrs": 4.25,
-      "desc": "Assisted in hauling vessel in Anacortes and inspected hull. Yard pressure washed the vessel.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2040,
@@ -1578,8 +1560,8 @@
       "cat": "V",
       "hrs": 0.65,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2038,
@@ -1617,7 +1599,7 @@
       "proj": "Dry Storage",
       "cat": "P",
       "hrs": 500,
-      "desc": "February and March",
+      "desc": "\nFebruary \nMarch",
       "posted": true,
       "billingEventId": 501
     },
@@ -1666,8 +1648,8 @@
       "date": "2026-04-21",
       "proj": "Fire Suppression System Certifications",
       "cat": "T",
-      "hrs": 0.25,
-      "desc": "Removed and set out fire extinguishers for Pacific Rim Fire to service.",
+      "hrs": 1.5,
+      "desc": "Removed all fire extinguishers from delivered to Pacific Rim Fire for service. Confirmed Fireboy shutdown functionality. Sorted and stowed all fire extinguishers on vessel after they had been serviced.",
       "posted": true,
       "billingEventId": 500
     },
@@ -1678,16 +1660,16 @@
       "cat": "V",
       "hrs": 0.05,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2045,
       "date": "2026-04-21",
       "proj": "Paint Anchor Chain Markings",
-      "cat": "T",
-      "hrs": 1.75,
-      "desc": "Laid blankets and tarps on foredeck and loaded anchor chain onto deck while lining up all painted chain markings. Cleaned filter for dehumidifier in anchor chain locker.",
+      "cat": "D",
+      "hrs": 6.5,
+      "desc": "Laid blankets and tarps on foredeck. Loaded anchor chain onto deck while lining up all painted chain markings. Cleaned filter for dehumidifier in anchor chain locker. \nPainted sections of chain that hadn't had epoxy primer before with Epoxy Barrier Coat.\npainted the Red and Yellow over the primer. \nLoaded chain back into locker.  \n",
       "posted": true,
       "billingEventId": 500
     },
@@ -1696,7 +1678,7 @@
       "date": "2026-04-21",
       "proj": "Paint Anchor Chain Markings",
       "cat": "V",
-      "hrs": 0.38,
+      "hrs": 0.75,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": true,
       "billingEventId": 500
@@ -1728,8 +1710,8 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Picked up new Garmin transducer at Anacortes Fisheries locker, measured cable length, and compared to old transducer to inspect for proper fitment.",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2059,
@@ -1738,18 +1720,18 @@
       "cat": "V",
       "hrs": 0.19,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2055,
       "date": "2026-04-23",
       "proj": "Fire Suppression System Certifications",
       "cat": "T",
-      "hrs": 0.25,
-      "desc": "Sorted and stowed all fire extinguishers on vessel after they had been serviced.",
-      "posted": true,
-      "billingEventId": 500
+      "hrs": 0.75,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2060,
@@ -1758,8 +1740,8 @@
       "cat": "V",
       "hrs": 0.06,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2056,
@@ -1788,8 +1770,8 @@
       "cat": "T",
       "hrs": 3,
       "desc": "Mixed batch of InterProtect epoxy barrier coat and applied to three anchor chain markings where exposed metal was significant. Once cured, applied two coats of Omni paint to eight chain markings showing paint loss.",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2066,
@@ -1798,8 +1780,8 @@
       "cat": "V",
       "hrs": 0.78,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2064,
@@ -1825,11 +1807,11 @@
       "id": 2065,
       "date": "2026-04-24",
       "proj": "PreSeason Commissioning",
-      "cat": "T",
-      "hrs": 0.5,
-      "desc": "Opened up and prepared all external water lines for the season and tested for leaks.",
-      "posted": true,
-      "billingEventId": 500
+      "cat": "D",
+      "hrs": 0.75,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2069,
@@ -1838,8 +1820,8 @@
       "cat": "V",
       "hrs": 0.13,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2067,
@@ -1867,9 +1849,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Removed cockpit and flybridge furniture from storage along with Portuguese bright locker contents, then loaded winter tie down lines into storage.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2079,
@@ -1878,8 +1860,8 @@
       "cat": "V",
       "hrs": 0.11,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2072,
@@ -1888,8 +1870,8 @@
       "cat": "T",
       "hrs": 0.75,
       "desc": "Touched up a few areas on anchor chain markings with Omni paint.",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2078,
@@ -1898,16 +1880,16 @@
       "cat": "V",
       "hrs": 0.17,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2073,
       "date": "2026-04-27",
       "proj": "Flybridge Captains Chairs Replace",
       "cat": "T",
-      "hrs": 1.75,
-      "desc": "Removed flybridge cover, unboxed new flybridge chair, and assembled components using Loctite thread locker. Cleaned seat base contact points that allow 360-degree rotation using acetone, applied SuperLube to base, installed seat, tested for proper function.",
+      "hrs": 2,
+      "desc": "Removed flybridge cover, unboxed new flybridge chair, and assembled components using Loctite thread locker. Cleaned seat base contact points that allow 360-degree rotation using acetone, applied SuperLube to base, installed seat, exercised to confirm proper function.",
       "posted": true,
       "billingEventId": 500
     },
@@ -1918,8 +1900,8 @@
       "cat": "V",
       "hrs": 0.39,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2074,
@@ -1936,8 +1918,8 @@
       "date": "2026-04-27",
       "proj": "Davit",
       "cat": "T",
-      "hrs": 8,
-      "desc": "Replaced hydraulic flow control valves for rotational control (installed cranked fully open). \nEvacuated of old hydraulic oil with vacuum pump.\nFlushed hydraulic system and fill with fresh AW68.\nAdjusted flow control valves down from fully open to about 2.3 it seems like it is the right speed for rotational control. Easily adjustable. \n*Rotational control is now smooth and consistent, the hit and miss function of rotational control movement is no longer an issue. ",
+      "hrs": 10,
+      "desc": "Replaced hydraulic flow control valves for rotational control (installed cranked fully open). \nEvacuated of old hydraulic oil with vacuum pump.\nFlushed hydraulic system and fill with fresh AW68.\nAdjusted flow control valves down from fully open to about 2.3 it seems like it is the right speed for rotational control. Easily adjustable. \n*Rotational control is now smooth and consistent, the hit and miss function of rotational control movement is no longer an issue. \nInstalled hydraulic filter housing on ceiling of lazarette directly above the davit motor/pump. Plumbed filter housing in with new hydraulic hose, moved davit return hydraulic return line to input of filter housing. ",
       "posted": true,
       "billingEventId": 500
     },
@@ -1957,9 +1939,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.25,
-      "desc": "Opened winterization valve for windshield wipers, connected freshwater lines, and tested windshield wipers.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2082,
@@ -1967,9 +1949,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.75,
-      "desc": "Delivered and loaded Portuguese bridge, foredeck, and flybridge locker contents onto vessel.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2087,
@@ -1978,15 +1960,15 @@
       "cat": "V",
       "hrs": 0.25,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2081,
       "date": "2026-04-28",
       "proj": "Forward Scan Transducer Replace",
       "cat": "T",
-      "hrs": 1.75,
+      "hrs": 6,
       "desc": "Removed broken transducer, inspected power supply, and determined safer to draw power from bilge pumps rather than bus bar due to cable ampacity. Wired new transducer from bilge pump power supply, installed new ATC fuse, secured wiring with zip ties.",
       "posted": true,
       "billingEventId": 500
@@ -1998,8 +1980,8 @@
       "cat": "V",
       "hrs": 0.44,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2083,
@@ -2008,8 +1990,8 @@
       "cat": "T",
       "hrs": 0.5,
       "desc": "Loaded anchor chain back into anchor chain locker.",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2088,
@@ -2018,8 +2000,8 @@
       "cat": "V",
       "hrs": 0.13,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2084,
@@ -2047,9 +2029,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 1.25,
-      "desc": "Installed flybridge BBQ and polished stainless steel with Never-Dull polish.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "Installed flybridge BBQ and ",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2091,
@@ -2057,9 +2039,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Consolidated all tarps and blankets used to paint chain, then organized Portuguese bridge and foredeck locker contents.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "Consolidated all tarps and blankets used to paint chain, \nthen organized Portuguese bridge and foredeck locker contents.",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2097,
@@ -2068,16 +2050,16 @@
       "cat": "V",
       "hrs": 0.14,
       "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2092,
       "date": "2026-04-29",
       "proj": "Preseason Commissioning Canvas",
-      "cat": "T",
-      "hrs": 1,
-      "desc": "Removed all cap rail and hatch canvas, then installed Bimini for the season.",
+      "cat": "D",
+      "hrs": 3,
+      "desc": "Removed all cap rail and hatch canvas. Installed Bimini for the season. Dried rail canvas and stowed in dry storage.\n\nInstalled summer tie down lines and delivered winter lines to storage.",
       "posted": true,
       "billingEventId": 500
     },
@@ -2088,8 +2070,8 @@
       "cat": "V",
       "hrs": 0.07,
       "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2093,
@@ -2117,9 +2099,9 @@
       "proj": "Haul/Wash/Block",
       "cat": "T",
       "hrs": 1.5,
-      "desc": "Installed fenders and lines as we needed to drop the mechanic off at the dock when work inspection in the water was complete on the way out of the slings. Stored loose tools and supplies and assisted in launching vessel back into the water.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "\n",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2099,
@@ -2128,18 +2110,18 @@
       "cat": "V",
       "hrs": 0.11,
       "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2095,
       "date": "2026-04-29",
       "proj": "Deliver Undaunted from Haul Out to Bellingham",
-      "cat": "T",
+      "cat": "V",
       "hrs": 3.5,
-      "desc": "Delivered shuttle car to gate 3 in Bellingham, delivered vessel to Bellingham from Anacortes. Cleaned spilled oil on starboard main engine after oil hose for oil pressure sending units broke off during transit. ",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "Delivered shuttle car to gate 3 in Bellingham, delivered Undaunted to Bellingham from Anacortes. Cleaned spilled oil on starboard main engine after oil hose for oil pressure sending units broke off during transit. ",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2096,
@@ -2148,15 +2130,15 @@
       "cat": "V",
       "hrs": 0.32,
       "desc": "Job site transit (project labor's proportional share of the day's 0.75h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2101,
       "date": "2026-04-30",
       "proj": "Exterior Deep Clean After Haul Out",
-      "cat": "T",
-      "hrs": 4.5,
+      "cat": "D",
+      "hrs": 3,
       "desc": "Washed vessel and wiped out all exterior lockers, doors, and drains.",
       "posted": true,
       "billingEventId": 500
@@ -2167,9 +2149,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 1,
-      "desc": "Installed all interior carpets.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2103,
@@ -2177,9 +2159,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 1,
-      "desc": "Organized lazarette and loaded cockpit furniture and flybridge chairs onto vessel. Unloaded tools and supplies from vessel used for recent projects.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2104,
@@ -2187,9 +2169,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Inflated a pair of cylinder fenders, removed foam fenders from vessel. Installed inflated cylinder fenders. Installed life sling on flybridge.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2105,
@@ -2197,9 +2179,9 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Checked tender fuel level, removed tender charger, and looked over vessel prior to shakedown cruise.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2106,
@@ -2207,17 +2189,27 @@
       "proj": "PreSeason Commissioning",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Consolidated plastic sheeting used to protect carpets over winter. Loaded hydraulic oil, old NavComm battery boxes, sausage fenders, and pilothouse counter protective cardboard cutouts into storage.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 1011,
       "date": "2026-05-06",
-      "proj": "Fuel Inlet Panels",
+      "proj": "Fuel Inlet Panels Detail",
       "cat": "V",
       "hrs": 1,
       "desc": "Job site transit (project labor's proportional share of the day's 1h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1023,
+      "date": "2025-12-10",
+      "proj": "Fuel Inlet Panels Detail",
+      "cat": "S",
+      "hrs": 950,
+      "desc": "Vapor Hone\nAcid dip and scrape.\nVapor Hone second time",
       "posted": true,
       "billingEventId": 500
     },
@@ -2226,7 +2218,7 @@
       "date": "2026-05-06",
       "proj": "Buff/Wax During Haul Out",
       "cat": "B",
-      "hrs": 33,
+      "hrs": 35,
       "desc": "1. Buff and wax below lower rub rail. \n2. Buff and wax forward of the lower rub rail I buffing & waxing from the waterline up to the halfway mark between the waterline and the teak cap rail.  ",
       "posted": true,
       "billingEventId": 500
@@ -2300,6 +2292,198 @@
       "desc": "NHF PREM AW 68 HYD FL 5G ",
       "posted": false,
       "billingEventId": null
+    },
+    {
+      "id": 1020,
+      "date": "2026-04-29",
+      "proj": "Launch Vessel & Deliver Undaunted from Anacortes to Bellingham",
+      "cat": "V",
+      "hrs": 7.5,
+      "desc": "AM transit for Nik and Abram, Bellingham to Anacortes.\n\nPulled shore power chords back aboard, stowed the 120v chord in its bag starboard side of the lazarette. Installed fenders and lines as we needed to drop the mechanic off at the dock when work inspection in the water was complete on the way out of the slings. Stored loose tools and supplies and assisted in launching vessel back into the water. \nStood by while rolling Undaunted over and half way into the water. Boarded checked work done on underwater gear while still in the slings. Cleared full launch. Fired up all systems backed out of the slings, dropped the yard tech off at the dock. Transited to Bellingham. \nTied up in Bellingham at Gate 3 portside against the dock, hooked up power and locked up.\n\n\n*oil clean up and replumbing of the oil pressure sending unit into the side of the block is not billed time. ",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1021,
+      "date": "2026-04-30",
+      "proj": "Launch Vessel & Deliver Undaunted from Anacortes to Bellingham",
+      "cat": "V",
+      "hrs": 2,
+      "desc": "Retreived vehicle left behind in Anacortes when vessel launched.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1024,
+      "date": "2026-03-26",
+      "proj": "Fuel Inlet Panels",
+      "cat": "T",
+      "hrs": 8,
+      "desc": "Disconnected hoses and remove panels. Once coated rebeded with 3M4200,  re-installed fuel hoses.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1025,
+      "date": "2026-05-08",
+      "proj": "Fuel Inlet Panels",
+      "cat": "V",
+      "hrs": 1,
+      "desc": "Blaine Travel",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1026,
+      "date": "2026-05-08",
+      "proj": "Fuel Inlet Panels",
+      "cat": "M",
+      "hrs": 200,
+      "desc": "New hose clamps, replacement labels for fuel fill ports, new fasteners, acetone, tape and sealant. ",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 1027,
+      "date": "2026-05-08",
+      "proj": "Fuel Inlet Panels Detail",
+      "cat": "M",
+      "hrs": 200,
+      "desc": "New hose clamps, replacement labels for fuel fill ports, new fasteners, acetone, tape and sealant. ",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1028,
+      "date": "2026-05-08",
+      "proj": "Fuel Inlet Panels Detail",
+      "cat": "T",
+      "hrs": 0,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 1029,
+      "date": "2026-05-08",
+      "proj": "Davit",
+      "cat": "M",
+      "hrs": 169.59,
+      "desc": "NHF PREM AW 68 HYD FL 5G (x1)\n3/8\" HYDR HOSE JIC F\n3/4\"NPT TO JIC 3/8\" REDUCERS\nHYDRAULIC FILTER HOUSING\nHYDRAULIC FILTER X2\n",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1030,
+      "date": "2026-05-08",
+      "proj": "Forward Scan Transducer Replace",
+      "cat": "V",
+      "hrs": 1,
+      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1031,
+      "date": "2026-05-08",
+      "proj": "Paint Anchor Chain Markings",
+      "cat": "M",
+      "hrs": 100,
+      "desc": "EPOXY BARRIER COAT\nOMNI COLOR MATCHED ENAMEL YELLOW\nOMNI COLOR MATCHED ENAMEL RED\nACETONE ",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1032,
+      "date": "2026-04-17",
+      "proj": "Flybridge Captains Chairs Replace",
+      "cat": "M",
+      "hrs": 401.53,
+      "desc": "Deluxe Captain's Seat - White (x1) ",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1033,
+      "date": "2026-04-17",
+      "proj": "Flybridge Captains Chairs Replace",
+      "cat": "M",
+      "hrs": 190.54,
+      "desc": "2 7/8\" Locking Trac Lock III Slide and\nSwivel",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1034,
+      "date": "2026-05-08",
+      "proj": "Exterior Deep Clean After Haul Out",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
+    },
+    {
+      "id": 1035,
+      "date": "2026-05-08",
+      "proj": "Dry Storage",
+      "cat": "P",
+      "hrs": 250,
+      "desc": "April\n",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1036,
+      "date": "2026-05-08",
+      "proj": "Dry Storage",
+      "cat": "P",
+      "hrs": 250,
+      "desc": "May",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1037,
+      "date": "2026-04-21",
+      "proj": "Fire Suppression System Certifications",
+      "cat": "S",
+      "hrs": 380,
+      "desc": "Basic testing and certifications for Undaunted's fire suppression systems.",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1038,
+      "date": "2026-05-08",
+      "proj": "Deliver Undaunted from Cap Sante to Haul Out",
+      "cat": "D",
+      "hrs": 4.25,
+      "desc": "Moved boat from dock at Pacific Marine Center into slings. \nInspected hull and running gear closely before they had a chance to pressure wash it. Took photos and shared relevant findings. \n\nStowed foam tube fenders, buoy fenders and dock lines so they didn't get covered in yard dust. \nSet up power through 120v converter and dialed back input current limit in the Cerbo for the House Battery Bank. ",
+      "posted": true,
+      "billingEventId": 500,
+      "co": false
+    },
+    {
+      "id": 1039,
+      "date": "2026-05-08",
+      "proj": "Deliver Undaunted from Cap Sante to Haul Out",
+      "cat": "V",
+      "hrs": 0.65,
+      "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
+      "posted": true,
+      "billingEventId": 500,
+      "co": false
+    },
+    {
+      "id": 1040,
+      "date": "2026-05-08",
+      "proj": "Oil Pressure Gauges Alarming",
+      "cat": "M",
+      "hrs": 150,
+      "desc": "Oil Pressure sending units",
+      "posted": true,
+      "billingEventId": 500
     }
   ],
   "billingEvents": [
@@ -2314,16 +2498,16 @@
       "id": 501,
       "name": "Invoice 23514",
       "invoiceNum": "23514",
-      "invoiceDate": "2026-04-10",
+      "invoiceDate": "2026-04-08",
       "locked": true,
       "isCurrent": false,
       "createdAt": "2026-04-10T00:00:00.000Z"
     }
   ],
-  "nextProjId": 57,
-  "nextTaskId": 194,
+  "nextProjId": 61,
+  "nextTaskId": 204,
   "nextCOId": 101,
-  "nextTEId": 1020,
+  "nextTEId": 1042,
   "nextBillingId": 502,
   "settings": {
     "company": "Turn Point Marine",
