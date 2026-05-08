@@ -149,6 +149,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <div class="nav-sep"></div>
     <button class="nav-btn blue" onclick="openMaterialsImport()">&#11014; Materials</button>
     <button class="nav-btn amber" onclick="reconcileTimeEntries()">&#9881; Reconcile</button>
+    <button class="nav-btn green" onclick="openLockBillingModal()" style="border-color:#1D9E75;color:#1D9E75;background:transparent;font-weight:600">&#128274; Lock Billing</button>
     <div class="nav-sep"></div>
     <div class="nav-drop" id="dropData">
       <button class="nav-btn amber" onclick="toggleDrop('dropData')">Data &#9660;</button>
@@ -179,6 +180,35 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <div class="clear-modal-btns">
       <button class="btn" onclick="closeClearModalDirect()">Cancel</button>
       <button class="btn" style="background:#c0392b;color:#fff;border-color:#c0392b" onclick="confirmClear()">Clear All Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lock Billing modal -->
+<div class="clear-modal-overlay" id="lockBillingOverlay" onclick="closeLockBillingModal(event)" style="display:none">
+  <div class="clear-modal" style="width:600px;max-width:95vw;max-height:90vh;overflow-y:auto">
+    <h3 style="color:#1D9E75">&#128274; Lock Billing Event</h3>
+    <p style="margin-bottom:12px">Build the next billing event from your <strong>Completed</strong> projects. All entries on selected projects will be locked into this billing event and the projects will bump to <strong>Billed</strong> status.</p>
+    <div style="margin-bottom:14px">
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px">Billing Event Name</label>
+      <input type="text" id="lockBillingName" placeholder="Invoice 2026-05-08" style="width:100%;font-size:14px;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-family:inherit">
+    </div>
+    <div style="margin-bottom:6px;display:flex;justify-content:space-between;align-items:center">
+      <label style="font-size:11px;font-weight:600;color:#666;text-transform:uppercase;letter-spacing:0.04em">Projects to Include</label>
+      <div>
+        <button class="btn-sm" onclick="lockBillingSelectAll(true)" style="font-size:10px">All</button>
+        <button class="btn-sm" onclick="lockBillingSelectAll(false)" style="font-size:10px">None</button>
+      </div>
+    </div>
+    <div id="lockBillingProjList" style="max-height:340px;overflow-y:auto;border:1px solid #e5e5e0;border-radius:7px;background:#fafaf8"></div>
+    <div style="margin-top:14px;padding:12px 14px;background:#f0faf6;border-radius:7px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:12px;color:#155a3e;font-weight:600">Selected Total</span>
+      <span id="lockBillingTotal" style="font-size:18px;font-weight:700;color:#1D9E75">$0.00</span>
+    </div>
+    <div class="clear-modal-err" id="lockBillingErr"></div>
+    <div class="clear-modal-btns">
+      <button class="btn" onclick="closeLockBillingModalDirect()">Cancel</button>
+      <button class="btn" style="background:#1D9E75;color:#fff;border-color:#1D9E75" onclick="confirmLockBilling()">&#128274; Lock &amp; Bump to Billed</button>
     </div>
   </div>
 </div>
@@ -410,10 +440,10 @@ function projBilledTotal(p){
 }
 function projDisplayTotal(p){return p.isTM?projAllActualTotal(p):projScopeTotal(p);}
 
-// Combined total (scope + actual posted TEs) — used everywhere
-function projEstLabor(p){return projScopeLabor(p)+projActualLabor(p);}
-function projEstMat(p){return projScopeMat(p)+projActualMat(p);}
-function projEstSub(p){return projScopeSub(p);}
+// Combined total (scope + actual posted TEs) — used everywhere. T&M projects have no estimate, so scope contribution is zero.
+function projEstLabor(p){return(p.isTM?0:projScopeLabor(p))+projActualLabor(p);}
+function projEstMat(p){return(p.isTM?0:projScopeMat(p))+projActualMat(p);}
+function projEstSub(p){return p.isTM?0:projScopeSub(p);}
 function projEstTotal(p){return projEstLabor(p)+projEstMat(p)+projEstSub(p);}
 function projEstHrs(p){
   const sh=(p.scopeTasks||[]).reduce((a,t)=>a+(t.hrs||0),0);
@@ -645,19 +675,78 @@ function renderEstimate(){
   SECTIONS.forEach(sec=>{
     const target=sec.key==='billed'?billedList:list;
     const secProjs=projects.filter(p=>p.status===sec.key);
-    const secEstTotal=secProjs.filter(p=>p.include!==false).reduce((a,p)=>a+projScopeTotal(p),0);
+    const secEstTotal=secProjs.filter(p=>p.include!==false&&!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0);
+    const secTMTotal=secProjs.filter(p=>p.include!==false&&p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0);
     const secActTotal=sec.key==='billed'
       ? projects.filter(p=>p.include!==false).reduce((a,p)=>a+projBilledTotal(p),0)
-      : secProjs.filter(p=>p.include!==false).reduce((a,p)=>a+projAllActualTotal(p),0);
+      : secProjs.filter(p=>p.include!==false&&!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0);
     const isOpen=secOpenState[sec.key]!==undefined?secOpenState[sec.key]:sec.defaultOpen;
     const wrap=document.createElement('div');wrap.className='sec-wrap';wrap.style.border='1px solid '+sec.border;wrap.dataset.sec=sec.key;
     const hdr=document.createElement('div');hdr.className='sec-hdr';hdr.style.cssText='background:'+sec.color+';color:'+sec.textColor;
-    hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+secProjs.length+' project'+(secProjs.length!==1?'s':'')+'</span></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(secEstTotal>0?fmt(secEstTotal):'—')+' est</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+' actual</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
+    hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+secProjs.length+' project'+(secProjs.length!==1?'s':'')+'</span></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(secEstTotal>0?fmt(secEstTotal):'—')+' est</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secTMTotal>0?fmt(secTMTotal):'—')+' T&M</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+' actual</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
     hdr.onclick=()=>{secOpenState[sec.key]=!secOpenState[sec.key];renderEstimate();};
     wrap.appendChild(hdr);
     const body=document.createElement('div');body.className='sec-body'+(isOpen?' open':'');
     if(secProjs.length===0){const em=document.createElement('div');em.className='sec-empty';em.textContent='No projects in this section.';body.appendChild(em);}
-    secProjs.forEach(proj=>{
+    // Billed section: group projects by their billing event for audit trail visibility
+    let projsToRender=secProjs;
+    let projGroupHeaders={}; // projId -> billingEvent (rendered above this project)
+    if(sec.key==='billed'){
+      // Determine each project's primary billing event = the event most of its billed entries belong to
+      const projBE={}; // projId -> beId
+      secProjs.forEach(p=>{
+        const billedTEs=timeEntries.filter(te=>te.proj===p.name&&te.posted&&isEntryBilled(te));
+        if(billedTEs.length===0){projBE[p.id]=null;return;}
+        const counts={};
+        billedTEs.forEach(te=>{counts[te.billingEventId]=(counts[te.billingEventId]||0)+1;});
+        let topId=null,topCount=0;
+        Object.entries(counts).forEach(([k,v])=>{if(v>topCount){topId=parseInt(k);topCount=v;}});
+        projBE[p.id]=topId;
+      });
+      // Sort projects: by billing event date descending (newest first), then by project order
+      projsToRender=secProjs.slice().sort((a,b)=>{
+        const beA=billingEvents.find(e=>e.id===projBE[a.id]);
+        const beB=billingEvents.find(e=>e.id===projBE[b.id]);
+        const dA=beA?(beA.invoiceDate||beA.createdAt||''):'';
+        const dB=beB?(beB.invoiceDate||beB.createdAt||''):'';
+        if(dA!==dB)return dB.localeCompare(dA); // newest first
+        return projects.indexOf(a)-projects.indexOf(b);
+      });
+      // For each project, mark whether it's the FIRST in its group (so we render a header above it)
+      let lastBEId='__none__';
+      projsToRender.forEach(p=>{
+        const beId=projBE[p.id];
+        const beKey=beId===null?'__unassigned__':beId;
+        if(beKey!==lastBEId){
+          projGroupHeaders[p.id]=billingEvents.find(e=>e.id===beId)||null;
+          lastBEId=beKey;
+        }
+      });
+    }
+    projsToRender.forEach(proj=>{
+      // Inject billing event group header if this project starts a new group
+      if(sec.key==='billed'&&projGroupHeaders.hasOwnProperty(proj.id)){
+        const be=projGroupHeaders[proj.id];
+        const beHdr=document.createElement('div');
+        beHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:#e8f5ee;border:1px solid #a7d8c5;border-radius:6px;margin:10px 0 6px;font-size:11px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.04em';
+        if(be){
+          // Sum projects under this billing event
+          const groupProjs=projsToRender.filter(pr=>{
+            const bt=timeEntries.filter(te=>te.proj===pr.name&&te.posted&&isEntryBilled(te)&&te.billingEventId===be.id);
+            return bt.length>0;
+          });
+          const groupTotal=groupProjs.reduce((a,pr)=>{
+            return a+timeEntries.filter(te=>te.proj===pr.name&&te.posted&&te.billingEventId===be.id).reduce((b,te)=>b+teAmount(te),0);
+          },0);
+          const dateStr=be.invoiceDate||(be.createdAt?be.createdAt.split('T')[0]:'');
+          const lockIcon=be.locked?'🔒':'🔓';
+          const invStr=be.invoiceNum?' · Inv #'+be.invoiceNum:'';
+          beHdr.innerHTML='<span>'+lockIcon+' '+be.name+invStr+(dateStr?' · '+dateStr:'')+' <span style="color:#94a3b8;font-weight:400;text-transform:none">('+groupProjs.length+' project'+(groupProjs.length!==1?'s':'')+')</span></span><span>'+fmt(groupTotal)+'</span>';
+        } else {
+          beHdr.innerHTML='<span>Billed (no event link)</span><span></span>';
+        }
+        body.appendChild(beHdr);
+      }
       const pi=projects.indexOf(proj);
       const isProjOpen=openProjs.has(proj.id);
       const pTotal=projDisplayTotal(proj);
@@ -1225,15 +1314,15 @@ function exportClientDoc(){
   const compP=projects.filter(p=>p.include!==false&&p.status==='complete');
   const billP=projects.filter(p=>p.include!==false&&p.status==='billed');
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
-  const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
-  const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
+  const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
+  const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
   const allMat=actP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)),0);
   const allSub=actP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
   const allM=allMat+allSub;
 
   // Bake project data into the doc for submit
-  const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projEstTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
+  const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projDisplayTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
   function taskTable(tasks){
@@ -1296,6 +1385,21 @@ function exportClientDoc(){
     const pid='proj'+(uid++);
     const total=projDisplayTotal(proj);
     const cos=(proj.cos||[]);
+    // Build est / actual breakdown for the row
+    const scopeT=projScopeTotal(proj);
+    const actT=projAllActualTotal(proj);
+    let totalsHtml='';
+    if(proj.isTM){
+      // T&M: just show actual labeled as T&M
+      totalsHtml='<span style="font-size:9pt;font-weight:600;color:'+accentColor+';white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
+    } else if(scopeT>0&&actT>0){
+      // Both est and actual to show
+      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
+        +'<span style="font-size:11pt;font-weight:700;color:'+accentColor+';white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">actual</span></span>';
+    } else {
+      // Only one — fall back to single number
+      totalsHtml='<span style="font-size:11pt;font-weight:700;color:'+accentColor+';white-space:nowrap">'+fd(total)+'</span>';
+    }
     let inner='';
 
     // Scope detail
@@ -1324,10 +1428,10 @@ function exportClientDoc(){
 
     return `<div style="border:1px solid #e5e5e0;border-left:5px solid ${accentColor};border-radius:8px;margin:8px 0;overflow:hidden;font-family:Arial,sans-serif;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:12px 14px;background:#fff;cursor:pointer" onclick="var d=document.getElementById('${pid}_detail');d.style.display=d.style.display==='none'?'block':'none';this.querySelector('.chev').style.transform=d.style.display==='none'?'':'rotate(90deg)'">
-        <div style="display:flex;align-items:center;gap:10px">
+        <div style="display:flex;align-items:center;gap:14px">
           ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
           <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
-          <span style="font-size:11pt;font-weight:700;color:${accentColor};white-space:nowrap">${fd(total)}</span>
+          ${totalsHtml}
           <span class="chev" style="font-size:11px;color:#bbb;margin-left:6px;transition:transform 0.2s">&#9654;</span>
         </div>
         ${proj.notes?`<div style="font-size:8.5pt;color:#888;font-style:italic;margin-top:5px;padding-left:${showCheck?'28px':'0'};white-space:pre-wrap;line-height:1.5">${nl2br(proj.notes)}</div>`:''}
@@ -1336,13 +1440,24 @@ function exportClientDoc(){
     </div>`;
   }
 
-  function sectionHdr(color,label,count,total,note){
+  function sectionHdr(color,label,count,total,note,breakdown){
+    let totalHtml;
+    if(breakdown){
+      // breakdown = {est, tm, actual} — mirrors engine section header
+      const parts=[];
+      if(breakdown.est>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.est)+' est</span>');
+      if(breakdown.tm>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.tm)+' T&amp;M</span>');
+      if(breakdown.actual>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.actual)+' actual</span>');
+      totalHtml='<div style="display:flex;align-items:center;gap:10px;font-family:Arial,sans-serif">'+parts.join('<span style="opacity:0.5">|</span>')+'</div>';
+    } else {
+      totalHtml='<div style="font-size:13pt;font-weight:700">'+total+'</div>';
+    }
     return `<div style="background:${color};color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
       <div>
         <div style="font-size:12pt;font-weight:700">${label}</div>
         <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">${count} project${count!==1?'s':''} &mdash; ${note}</div>
       </div>
-      <div style="font-size:13pt;font-weight:700">${total}</div>
+      ${totalHtml}
     </div>`;
   }
 
@@ -1383,7 +1498,7 @@ function exportClientDoc(){
   // ── HOLDING PATTERN (selected projects) ─────────────────────────────────
   const futureP=projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true);
   if(futureP.length>0){
-    const futureTotal=futureP.reduce((a,p)=>a+projEstTotal(p),0);
+    const futureTotal=futureP.reduce((a,p)=>a+projDisplayTotal(p),0);
     html+=`<div style="background:#7c6f9f;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;cursor:pointer;user-select:none"
       onclick="var l=document.getElementById('futureList');var a=document.getElementById('futureArr');if(l.style.display==='none'){l.style.display='block';a.textContent='▲';}else{l.style.display='none';a.textContent='▼';}">
       <div>
@@ -1425,7 +1540,7 @@ function exportClientDoc(){
       const teT=projCoTEs(p).reduce((b,te)=>b+teAmount(te),0);
       return a+taskT+teT;
     },0);
-    const authTotal=authP.reduce((a,p)=>a+projEstTotal(p),0)+coTotal;
+    const authTotal=authP.reduce((a,p)=>a+projDisplayTotal(p),0)+coTotal;
     html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed');
     html+=`<div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">${s.authText}</div>`;
     authP.forEach(proj=>{html+=projBlock(proj,'#1D9E75',true,false);});
@@ -1484,15 +1599,25 @@ function exportClientDoc(){
 
   // ── IN PROGRESS ─────────────────────────────────────────────────────────
   if(inPP.length>0){
-    const pt=inPP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway');
+    const pt=inPP.reduce((a,p)=>a+projDisplayTotal(p),0);
+    const inPP_brk={
+      est:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
+      tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
+      actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+    };
+    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk);
     inPP.forEach(proj=>{html+=projBlock(proj,'#6b7280',false,true);});
   }
 
   // ── COMPLETE ────────────────────────────────────────────────────────────
   if(compP.length>0){
-    const ct=compP.reduce((a,p)=>a+projEstTotal(p),0);
-    html+=sectionHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(ct),'Work complete, invoice pending');
+    const ct=compP.reduce((a,p)=>a+projDisplayTotal(p),0);
+    const compP_brk={
+      est:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
+      tm:compP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
+      actual:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+    };
+    html+=sectionHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(ct),'Work complete, invoice pending',compP_brk);
     compP.forEach(proj=>{html+=projBlock(proj,'#4a5e5a',false,false);});
   }
 
@@ -1519,16 +1644,18 @@ function exportClientDoc(){
 
   // ── BILLED ──────────────────────────────────────────────────────────────
   if(billP.length>0){
-    const bt=billP.reduce((a,p)=>a+projEstTotal(p),0);
+    // For billed projects, the meaningful total is what was actually billed (lifetime actuals), not the scope estimate
+    const bt=billP.reduce((a,p)=>a+(p.isTM?projAllActualTotal(p):(projAllActualTotal(p)||projScopeTotal(p))),0);
     let billRows='';
     billP.forEach((proj,bi)=>{
       const inv=proj.invoiceNum?` &mdash; Inv #${proj.invoiceNum}`:'';
       const bid='billed_'+bi;
+      const billedAmt=proj.isTM?projAllActualTotal(proj):(projAllActualTotal(proj)||projScopeTotal(proj));
       billRows+=`<div style="border-bottom:1px solid #f0f0ed;font-family:Arial,sans-serif">
         <div onclick="var d=document.getElementById('${bid}');var c=document.getElementById('${bid}_chev');d.style.display=d.style.display==='none'?'block':'none';c.style.transform=d.style.display==='none'?'':'rotate(90deg)'" style="display:flex;align-items:center;gap:8px;padding:9px 14px;cursor:pointer;color:#888">
           <span id="${bid}_chev" style="font-size:9px;color:#ccc;display:inline-block;transition:transform 0.15s">&#9654;</span>
           <span style="flex:1;font-size:9.5pt;color:#999">${proj.name}<span style="color:#bbb;font-weight:400;font-size:8.5pt">${inv}</span></span>
-          <span style="font-size:9.5pt;color:#bbb">${fd(projDisplayTotal(proj))}</span>
+          <span style="font-size:9.5pt;color:#bbb">${fd(billedAmt)}</span>
         </div>
         <div id="${bid}" style="display:none;padding:0 14px 10px 32px;background:#fafafa">
           ${ttMerged(proj)}
@@ -1657,8 +1784,8 @@ function exportClientPDF(){
   const compP=projects.filter(p=>p.include!==false&&p.status==='complete');
   const billP=projects.filter(p=>p.include!==false&&p.status==='billed');
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
-  const actTotal=actP.reduce((a,p)=>a+projEstTotal(p),0);
-  const billTotal=billP.reduce((a,p)=>a+projEstTotal(p),0);
+  const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
+  const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
   const allM=actP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)+projScopeSub(p)),0);
 
@@ -1702,11 +1829,21 @@ function exportClientPDF(){
       </tbody></table>`;
   }
 
-  function secHdr(bg,title,count,total,noteBg,noteColor,noteText){
-    return `<div style="background:${bg};color:#fff;padding:14px 20px;margin-top:24px;display:flex;justify-content:space-between;align-items:center">
+  function secHdr(bg,title,count,total,noteBg,noteColor,noteText,breakdown){
+    let totalHtml;
+    if(breakdown){
+      const parts=[];
+      if(breakdown.est>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.est)+' est</span>');
+      if(breakdown.tm>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.tm)+' T&amp;M</span>');
+      if(breakdown.actual>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.actual)+' actual</span>');
+      totalHtml='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">'+parts.join('<span style="opacity:0.5">|</span>')+'</div>';
+    } else {
+      totalHtml='<div style="font-size:13pt;font-weight:700">'+total+'</div>';
+    }
+    return `<div style="background:${bg};color:#fff;padding:14px 20px;margin-top:24px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
       <div><div style="font-size:14pt;font-weight:700">${title}</div>
       <div style="font-size:9pt;opacity:0.85;margin-top:3px">${count} project${count!==1?'s':''} pending</div></div>
-      <div style="font-size:13pt;font-weight:700">${total}</div></div>
+      ${totalHtml}</div>
       <div style="background:${noteBg};border-left:4px solid ${bg};padding:5px 16px;font-size:9pt;color:${noteColor};font-style:italic">${noteText}</div>`;
   }
 
@@ -1732,10 +1869,24 @@ function exportClientPDF(){
   // Build in-progress rows
   let inProgRows='';
   inPP.forEach((proj,pi)=>{
+    const scopeT=projScopeTotal(proj);
+    const actT=projAllActualTotal(proj);
+    let totalsHtml='';
+    if(proj.isTM){
+      totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#6b7280;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
+    } else if(scopeT>0&&actT>0){
+      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
+        +'<span style="font-size:10.5pt;font-weight:700;color:#6b7280;white-space:nowrap;padding-left:10px">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">actual</span></span>';
+    } else if(scopeT>0||actT>0){
+      totalsHtml='<span style="font-size:10.5pt;font-weight:700;color:#6b7280;white-space:nowrap">'+fd(scopeT||actT)+'</span>';
+    }
     inProgRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
-      <div style="padding:10px 14px">
-        <span style="font-size:11pt;font-weight:700">${String(authP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
-        ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
+      <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="flex:1;min-width:200px">
+          <span style="font-size:11pt;font-weight:700">${String(authP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
+          ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
+        </div>
+        ${totalsHtml}
       </div>
       <div style="background:#fafafa;border-top:1px solid #e5e7eb;padding:8px 14px">${ttMerged(proj)}</div>
     </div>`;
@@ -1744,13 +1895,24 @@ function exportClientPDF(){
   // Build complete rows
   let compRows='';
   compP.forEach((proj,pi)=>{
+    const scopeT=projScopeTotal(proj);
+    const actT=projAllActualTotal(proj);
+    let totalsHtml='';
+    if(proj.isTM){
+      totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#4a5e5a;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
+    } else if(scopeT>0&&actT>0){
+      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
+        +'<span style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap;padding-left:10px">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">actual</span></span>';
+    } else {
+      totalsHtml='<span style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap">'+fd(scopeT||actT)+'</span>';
+    }
     compRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #4a5e5a;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
-      <div class="proj-toggle comp-toggle" data-pi="comp${pi}" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
-        <div style="display:flex;align-items:center;gap:8px;flex:1">
+      <div class="proj-toggle comp-toggle" data-pi="comp${pi}" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:10px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px">
           <span id="compchev${pi}" style="font-size:11px;color:#4a5e5a;display:inline-block;transition:transform 0.2s">&#9654;</span>
           <span style="font-size:11pt;font-weight:700">${String(authP.length+inPP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
         </div>
-        <div style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap;padding-left:12px">${fd(projDisplayTotal(proj))}</div>
+        <div style="display:flex;align-items:center;gap:0;white-space:nowrap;padding-left:12px">${totalsHtml}</div>
       </div>
       <div id="compdetail${pi}" style="display:none;background:#eef3f2;border-top:1px solid #c5d4d1;padding:8px 14px"><div class="task-wrap">${ttMerged(proj)}</div></div>
     </div>`;
@@ -1760,13 +1922,41 @@ function exportClientPDF(){
   let billRows='';
   billP.forEach((proj,pi)=>{
     const inv=proj.invoiceNum||proj.invoiceDate?' <span style="font-size:9pt;color:#888;font-weight:400">'+(proj.invoiceNum?'Inv #'+proj.invoiceNum:'')+(proj.invoiceDate?' \u2014 '+new Date(proj.invoiceDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'')+'</span>':'';
+    const scopeT=projScopeTotal(proj);
+    const actT=projAllActualTotal(proj);
+    let totalsHtml='';
+    if(proj.isTM){
+      totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#9ca3af;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
+    } else if(scopeT>0&&actT>0&&Math.abs(scopeT-actT)>0.01){
+      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
+        +'<span style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap;padding-left:10px">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">billed</span></span>';
+    } else {
+      totalsHtml='<span style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap">'+fd(actT||scopeT)+'</span>';
+    }
     billRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
-      <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
-        <div style="font-size:11pt;font-weight:700;color:#555">${String(authP.length+inPP.length+compP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
-        <div style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap;padding-left:12px">${fd(projDisplayTotal(proj))}</div>
+      <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="font-size:11pt;font-weight:700;color:#555;flex:1;min-width:200px">${String(authP.length+inPP.length+compP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
+        <div style="display:flex;align-items:center;white-space:nowrap;padding-left:12px">${totalsHtml}</div>
       </div>
     </div>`;
   });
+
+  // Section-level est/T&M/actual breakdowns
+  const inPP_brk={
+    est:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
+    tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
+    actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+  };
+  const compP_brk={
+    est:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
+    tm:compP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
+    actual:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+  };
+  const billP_brk={
+    est:billP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
+    tm:billP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
+    actual:billP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+  };
 
   const html=`<!DOCTYPE html>
 <html><head><meta charset="UTF-8"><title>${vessel} \u2014 Client Authorization</title>
@@ -1827,7 +2017,7 @@ input[type=text]:focus{border-color:#1D9E75;box-shadow:0 0 0 2px rgba(29,158,117
 </div>
 
 ${authP.length>0?`
-${secHdr('#5dba99','AUTHORIZATION NEEDED BEFORE PROCEEDING',authP.length,fd(authP.reduce((a,p)=>a+projEstTotal(p),0)),'#f0faf6','#155a3e','Check the box next to each project you authorize, then type your name and click Send Authorization.')}
+${secHdr('#5dba99','AUTHORIZATION NEEDED BEFORE PROCEEDING',authP.length,fd(authP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#f0faf6','#155a3e','Check the box next to each project you authorize, then type your name and click Send Authorization.')}
 ${authRows}
 <div style="border:2px solid #5dba99;padding:20px 24px;background:#f0faf6;margin-top:12px">
   <div style="font-size:10pt;font-weight:700;color:#155a3e;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em">Authorization</div>
@@ -1854,18 +2044,18 @@ ${authRows}
 `:''}
 
 ${inPP.length>0?`
-${secHdr('#6b7280','IN PROGRESS',inPP.length,fd(inPP.reduce((a,p)=>a+projEstTotal(p),0)),'#f9fafb','#374151','Authorized work currently underway.')}
+${secHdr('#6b7280','IN PROGRESS',inPP.length,fd(inPP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#f9fafb','#374151','Authorized work currently underway.',inPP_brk)}
 ${inProgRows}
 `:''}
 
 ${compP.length>0?`
-${secHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(compP.reduce((a,p)=>a+projEstTotal(p),0)),'#eef3f2','#2d4a46','Work completed and ready to invoice.')}
+${secHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(compP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#eef3f2','#2d4a46','Work completed and ready to invoice.',compP_brk)}
 ${compRows}
 `:''}
 
 ${billP.length>0?`
 <div style="page-break-before:always"></div>
-${secHdr('#374151','BILLED',billP.length,fd(billP.reduce((a,p)=>a+projEstTotal(p),0)),'#fafafa','#555','Invoiced \u2014 shown for your records.')}
+${secHdr('#374151','BILLED',billP.length,fd(billP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#fafafa','#555','Invoiced \u2014 shown for your records.',billP_brk)}
 ${billRows}
 `:''}
 
@@ -2435,6 +2625,90 @@ function openClearModal(){
   document.getElementById('clearModalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('clearConfirmInput').focus(),50);
 }
+
+// ─── LOCK BILLING EVENT MODAL ──────────────────────────────────────
+let lockBillingSelected={}; // { projId: true/false }
+function openLockBillingModal(){
+  // Eligible: status='complete', has at least one unbilled posted entry
+  const eligible=projects.filter(p=>{
+    if(p.status!=='complete')return false;
+    if(p.include===false)return false;
+    return projUnbilledPostedTEs(p).length>0;
+  });
+  if(eligible.length===0){
+    alert('No completed projects with unbilled posted entries.\n\nBump completed projects to "Complete — Ready for Billing" status and post their time entries first.');
+    return;
+  }
+  // Default name: "Invoice YYYY-MM-DD"
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('lockBillingName').value='Invoice '+today;
+  document.getElementById('lockBillingErr').textContent='';
+  // Default all selected
+  lockBillingSelected={};
+  eligible.forEach(p=>{lockBillingSelected[p.id]=true;});
+  renderLockBillingList(eligible);
+  document.getElementById('lockBillingOverlay').style.display='flex';
+}
+function closeLockBillingModal(e){if(e.target===document.getElementById('lockBillingOverlay'))closeLockBillingModalDirect();}
+function closeLockBillingModalDirect(){document.getElementById('lockBillingOverlay').style.display='none';}
+function renderLockBillingList(eligible){
+  const list=document.getElementById('lockBillingProjList');
+  list.innerHTML='';
+  eligible.forEach(p=>{
+    const unbilled=projUnbilledPostedTEs(p);
+    const tot=unbilled.reduce((a,te)=>a+teAmount(te),0);
+    const projNum=String(projects.indexOf(p)+1).padStart(2,'0');
+    const row=document.createElement('label');
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid #e5e5e0;cursor:pointer;background:#fff';
+    row.onmouseover=()=>row.style.background='#f5f5f3';
+    row.onmouseout=()=>row.style.background='#fff';
+    const cb=document.createElement('input');cb.type='checkbox';cb.checked=lockBillingSelected[p.id]!==false;
+    cb.style.cssText='width:16px;height:16px;cursor:pointer;accent-color:#1D9E75';
+    cb.onchange=()=>{lockBillingSelected[p.id]=cb.checked;updateLockBillingTotal();};
+    const numSpan=document.createElement('span');numSpan.style.cssText='font-size:10px;font-weight:700;background:#1a1a1a;color:#fff;border-radius:4px;padding:2px 6px;flex-shrink:0';numSpan.textContent=projNum;
+    const nameSpan=document.createElement('span');nameSpan.style.cssText='flex:1;font-size:13px;color:#1a1a1a;font-weight:500';nameSpan.textContent=p.name;
+    const countSpan=document.createElement('span');countSpan.style.cssText='font-size:10px;color:#888';countSpan.textContent=unbilled.length+' entr'+(unbilled.length!==1?'ies':'y');
+    const totSpan=document.createElement('span');totSpan.style.cssText='font-size:13px;font-weight:600;color:#1D9E75;min-width:80px;text-align:right';totSpan.textContent=fmt(tot);
+    row.appendChild(cb);row.appendChild(numSpan);row.appendChild(nameSpan);row.appendChild(countSpan);row.appendChild(totSpan);
+    list.appendChild(row);
+  });
+  updateLockBillingTotal();
+}
+function updateLockBillingTotal(){
+  const eligible=projects.filter(p=>p.status==='complete'&&p.include!==false&&projUnbilledPostedTEs(p).length>0);
+  const tot=eligible.filter(p=>lockBillingSelected[p.id]!==false).reduce((a,p)=>a+projUnbilledPostedTEs(p).reduce((b,te)=>b+teAmount(te),0),0);
+  document.getElementById('lockBillingTotal').textContent=fmt(tot);
+}
+function lockBillingSelectAll(val){
+  const eligible=projects.filter(p=>p.status==='complete'&&p.include!==false&&projUnbilledPostedTEs(p).length>0);
+  eligible.forEach(p=>{lockBillingSelected[p.id]=val;});
+  renderLockBillingList(eligible);
+}
+function confirmLockBilling(){
+  const name=(document.getElementById('lockBillingName').value||'').trim();
+  if(!name){document.getElementById('lockBillingErr').textContent='Billing event name is required.';return;}
+  const eligible=projects.filter(p=>p.status==='complete'&&p.include!==false&&projUnbilledPostedTEs(p).length>0);
+  const selected=eligible.filter(p=>lockBillingSelected[p.id]!==false);
+  if(selected.length===0){document.getElementById('lockBillingErr').textContent='Select at least one project.';return;}
+  // Create new locked billing event
+  const newBE={id:nextBillingId++,name:name,locked:true,isCurrent:false,createdAt:new Date().toISOString(),invoiceDate:new Date().toISOString().split('T')[0],invoiceNum:''};
+  billingEvents.push(newBE);
+  // Assign all unbilled posted entries on selected projects to this event
+  let entryCount=0;
+  selected.forEach(p=>{
+    projUnbilledPostedTEs(p).forEach(te=>{te.billingEventId=newBE.id;entryCount++;});
+    // Bump project to billed
+    p.status='billed';
+  });
+  // Spawn a new "Next Invoice" so subsequent posts have a home
+  ensureCurrentFlock();
+  saveData();
+  closeLockBillingModalDirect();
+  renderEstimate();renderTimeEntry();renderProgress();
+  alert('✓ Locked '+entryCount+' entr'+(entryCount!==1?'ies':'y')+' across '+selected.length+' project'+(selected.length!==1?'s':'')+' into "'+name+'".\n\nProjects bumped to Billed status.');
+}
+// ────────────────────────────────────────────────────────────────────
+
 function closeClearModal(e){if(e.target===document.getElementById('clearModalOverlay'))closeClearModalDirect();}
 function closeClearModalDirect(){document.getElementById('clearModalOverlay').classList.remove('open');}
 function clearModalErr(msg){document.getElementById('clearModalErr').textContent=msg;}

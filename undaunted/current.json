@@ -2,8 +2,10 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-08T19:20:50.911Z",
-    "engineVersion": 4
+    "exportedAt": "2026-05-08T20:04:41.008Z",
+    "engineVersion": 4,
+    "migratedPtoM": "2026-05-08T20:50:29.770092",
+    "migrationNote": "P\u2192M: 4 TEs, 4 scope tasks. Inv#23514 backfilled to 2 Winter Wash projects."
   },
   "projects": [
     {
@@ -1067,7 +1069,9 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "invoiceNum": "23514",
+      "invoiceDate": "2026-05-08"
     },
     {
       "id": 47,
@@ -1096,7 +1100,9 @@
         }
       ],
       "tasks": [],
-      "cos": []
+      "cos": [],
+      "invoiceNum": "23514",
+      "invoiceDate": "2026-05-08"
     },
     {
       "id": 49,
@@ -1213,7 +1219,7 @@
       "status": "billed",
       "isTM": false,
       "estimateTotal": null,
-      "notes": "Victron Cerbo MK2 replacement — billed on invoice 23514.",
+      "notes": "Victron Cerbo MK2 replacement \u2014 billed on invoice 23514.",
       "scopeTasks": [],
       "cos": [],
       "invoiceNum": "23514",
@@ -1296,7 +1302,7 @@
       "scopeTasks": [
         {
           "id": 199,
-          "cat": "P",
+          "cat": "M",
           "desc": "February",
           "hrs": 0,
           "mat": 250,
@@ -1304,7 +1310,7 @@
         },
         {
           "id": 200,
-          "cat": "P",
+          "cat": "M",
           "desc": "March",
           "hrs": 0,
           "mat": 250,
@@ -1312,7 +1318,7 @@
         },
         {
           "id": 201,
-          "cat": "P",
+          "cat": "M",
           "desc": "April",
           "hrs": 0,
           "mat": 250,
@@ -1320,7 +1326,7 @@
         },
         {
           "id": 202,
-          "cat": "P",
+          "cat": "M",
           "desc": "May",
           "hrs": 0,
           "mat": 250,
@@ -1587,7 +1593,7 @@
       "id": 1005,
       "date": "2026-04-10",
       "proj": "Forward Scan Transducer Replace",
-      "cat": "P",
+      "cat": "M",
       "hrs": 1397.28,
       "desc": "PANOPTIX PS51-TH TRANSDUCER 1.0\nREPLACEMENT\n*including special order shipping costs.",
       "posted": true,
@@ -1597,7 +1603,7 @@
       "id": 1007,
       "date": "2026-04-10",
       "proj": "Dry Storage",
-      "cat": "P",
+      "cat": "M",
       "hrs": 500,
       "desc": "\nFebruary \nMarch",
       "posted": true,
@@ -2269,7 +2275,7 @@
       "proj": "Winter Wash March",
       "cat": "M",
       "hrs": 287.5,
-      "desc": "Winter Wash February — additional charges",
+      "desc": "Winter Wash February \u2014 additional charges",
       "posted": true,
       "billingEventId": 501
     },
@@ -2427,7 +2433,7 @@
       "id": 1035,
       "date": "2026-05-08",
       "proj": "Dry Storage",
-      "cat": "P",
+      "cat": "M",
       "hrs": 250,
       "desc": "April\n",
       "posted": true,
@@ -2437,7 +2443,7 @@
       "id": 1036,
       "date": "2026-05-08",
       "proj": "Dry Storage",
-      "cat": "P",
+      "cat": "M",
       "hrs": 250,
       "desc": "May",
       "posted": true,
