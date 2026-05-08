@@ -125,7 +125,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 .te-table tr:last-child td{border-bottom:none}
 .te-inp{width:100%;border:none;background:transparent;font-size:12px;color:#1a1a1a;font-family:inherit;padding:8px 10px}
 .te-inp:focus{outline:none;background:#fffbe6}
-.te-desc{width:100%;border:none;background:transparent;font-size:12px;color:#1a1a1a;font-family:inherit;padding:8px 10px;resize:none;overflow:hidden;line-height:1.4;display:block;min-height:32px}
+.te-desc{width:100%;border:none;background:transparent;font-size:12px;color:#1a1a1a;font-family:inherit;padding:8px 10px;resize:none;overflow:hidden;line-height:1.4;display:block}
 .te-desc:focus{outline:none;background:#fffbe6}
 .te-table td.desc-cell{vertical-align:top}
 .te-sel{font-size:12px;padding:6px 8px;border:none;background:transparent;font-family:inherit;width:100%;color:#1a1a1a}
@@ -351,10 +351,8 @@ function projScopeMat(p){return(p.scopeTasks||[]).reduce((a,t)=>a+(t.mat||0),0);
 function projScopeSub(p){return(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0);}
 function projScopeTotal(p){return projScopeLabor(p)+projScopeMat(p)+projScopeSub(p);}
 
-// Posted time entries (actual work) — includes billed entries
+// Posted time entries (actual work)
 function projPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted);}
-// Posted, unbilled time entries — used for "outstanding to bill" math
-function projUnbilledPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted&&!isEntryBilled(te));}
 
 function reconcileTimeEntries(){
   const projectNames=projects.map(p=>p.name);
@@ -390,13 +388,9 @@ function reconcileTimeEntries(){
   saveData();renderEstimate();renderTimeEntry();
   alert('✅ Fixed '+fixed+' of '+orphaned.length+' entries.'+(fixed<orphaned.length?'\n⚠ '+(orphaned.length-fixed)+' could not be matched — check manually.':''));
 }
-function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
-function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
+function projActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
+function projActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
-// "All actual" — includes billed entries. Used for T&M projDisplayTotal (life-to-date) and Progress hours.
-function projAllActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
-function projAllActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
-function projAllActualTotal(p){return projAllActualLabor(p)+projAllActualMat(p);}
 function projBilledTotal(p){
   // Ship 1: billed total = sum of posted time entries in locked flocks tagged with this project
   return timeEntries
@@ -406,7 +400,7 @@ function projBilledTotal(p){
       return a+(isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate);
     },0);
 }
-function projDisplayTotal(p){return p.isTM?projAllActualTotal(p):projScopeTotal(p);}
+function projDisplayTotal(p){return p.isTM?projActualTotal(p):projScopeTotal(p);}
 
 // Combined total (scope + actual posted TEs) — used everywhere
 function projEstLabor(p){return projScopeLabor(p)+projActualLabor(p);}
@@ -438,11 +432,6 @@ function ensureCurrentFlock(){
   return cur;
 }
 function isEntryBilled(te){
-  // Project-level billed status takes precedence — if a project is marked
-  // Billed, all its posted entries are treated as billed regardless of flock state
-  const proj=projects.find(p=>p.name===te.proj);
-  if(proj&&proj.status==='billed')return true;
-  // Otherwise check flock lock state
   if(!te.billingEventId)return false;
   const be=billingEvents.find(b=>b.id===te.billingEventId);
   return !!(be&&be.locked);
@@ -605,13 +594,13 @@ function renderSummary(){
     const gShop=gSubtotal*0.03;
     const gTax=settings.taxExempt?0:(gSubtotal+gShop)*0.091;
     const gTotal=gSubtotal+gShop+gTax;
-    // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
-    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
+    // Deposits paid (Mat - Deposit Paid entries)
+    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
     const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+(t.mat||0),0),0);
     const totalDeposits=gDepositsTEs+gDepositsScope;
-    // Billed entries on active projects — already excluded from gSubtotal via projEstLabor/Mat now, so this is just for display
+    // Billing events across all active projects
     const totalBilled=actP.reduce((a,p)=>a+projBilledTotal(p),0);
-    const totalDeductions=totalDeposits;
+    const totalDeductions=totalDeposits+totalBilled;
     const gOutstanding=gTotal-totalDeductions;
     const row=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:12px;color:'+(bold?'#1a1a1a':'#888')+'">'+label+'</span><span style="font-size:12px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
     gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
@@ -762,7 +751,7 @@ function renderEstimate(){
       pb.appendChild(estHdr);
 
       // Notes row
-      const nr=document.createElement('div');nr.className='notes-row';const nl=document.createElement('label');nl.textContent='Notes:';const ni=document.createElement('textarea');ni.className='notes-inp';ni.rows=1;ni.value=proj.notes||'';ni.placeholder='Scope narrative, estimated hours, internal notes...';ni.oninput=()=>{proj.notes=ni.value;ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';saveData();};if(proj.notes)requestAnimationFrame(()=>{ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';});nr.appendChild(nl);nr.appendChild(ni);pb.appendChild(nr);
+      const nr=document.createElement('div');nr.className='notes-row';const nl=document.createElement('label');nl.textContent='Notes:';const ni=document.createElement('textarea');ni.className='notes-inp';ni.rows=1;ni.value=proj.notes||'';ni.placeholder='Scope narrative, estimated hours, internal notes...';ni.oninput=()=>{proj.notes=ni.value;ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';saveData();};if(proj.notes)setTimeout(()=>{ni.style.height=ni.scrollHeight+'px';},0);nr.appendChild(nl);nr.appendChild(ni);pb.appendChild(nr);
 
       // Helper to build a task table
       function buildTaskTable(tasks,editable){
@@ -800,9 +789,9 @@ function renderEstimate(){
             ctd.style.cssText='padding:4px 8px;font-size:11px;color:#155a3e';ctd.textContent=CAT_LABELS[task.cat]||task.cat;
           }
           tr.appendChild(ctd);
-          const dta=document.createElement('textarea');dta.className='tinp';dta.value=task.desc||'';dta.placeholder='Task description...';dta.rows=1;dta.readOnly=!editable;dta.style.cssText='resize:none;overflow:hidden;line-height:1.4;min-height:24px;'+(editable?'':'background:#fafffe;color:#444;');
+          const dta=document.createElement('textarea');dta.className='tinp';dta.value=task.desc||'';dta.placeholder='Task description...';dta.rows=1;dta.readOnly=!editable;dta.style.cssText='resize:none;overflow:hidden;line-height:1.4;'+(editable?'':'background:#fafffe;color:#444;');
           if(editable){dta.oninput=()=>{task.desc=dta.value;dta.style.height='auto';dta.style.height=dta.scrollHeight+'px';};dta.onchange=()=>{task.desc=dta.value;saveData();};}
-          if(task.desc)requestAnimationFrame(()=>{dta.style.height='auto';dta.style.height=dta.scrollHeight+'px';});
+          if(task.desc)setTimeout(()=>{dta.style.height='auto';dta.style.height=dta.scrollHeight+'px';},0);
           const dtd=document.createElement('td');dtd.style.verticalAlign='top';dtd.appendChild(dta);tr.appendChild(dtd);
           const mkn=(val,cls,type,step,cb,ro)=>{const td=document.createElement('td');const inp=document.createElement('input');inp.className='tinp'+(cls?' '+cls:'');inp.value=val||'';if(type)inp.type=type;if(step)inp.step=step;if(type==='number')inp.min=0;inp.readOnly=ro||false;if(ro)inp.style.cssText='background:#fafffe;color:#444;';if(cb)inp.onchange=cb;td.appendChild(inp);return td;};
           const htd=mkn(task.hrs,'r','number',0.25,editable?e=>{task.hrs=parseFloat(e.target.value)||0;ltd.textContent=task.cat==='M'||task.cat==='S'?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(htd);
@@ -872,28 +861,14 @@ function renderEstimate(){
         postedTEs.forEach(te=>{
           const rate=RATES[te.cat]||0;
           const amt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*rate;
-          const isBilled=isEntryBilled(te);
-          const tr=document.createElement('tr');
-          // Billed entries: green tint + strikethrough, locked from editing
-          if(isBilled){
-            tr.style.background='#e8f5ee';
-            tr.style.color='#94a3b8';
-            tr.style.textDecoration='line-through';
-          }else{
-            tr.style.background='#fafffe';
-          }
+          const tr=document.createElement('tr');tr.style.background='#fafffe';
           // Drag handle cell — supports both reorder (within project) and reassign (to other project)
           const dhTd=document.createElement('td');dhTd.style.cssText='width:20px;padding:0 4px;color:#ccc;text-align:center;font-size:14px;cursor:grab';dhTd.textContent='⠿';
           dhTd.title='Drag to reorder or drop on another project header to reassign';
-          if(!isBilled){
-            dhTd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};
-            dhTd.onmouseup=()=>{tr.draggable=false;};
-          }else{
-            dhTd.style.cursor='not-allowed';
-            dhTd.style.opacity='0.4';
-          }
+          dhTd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};
+          dhTd.onmouseup=()=>{tr.draggable=false;};
           tr.draggable=false;
-          tr.ondragstart=e=>{if(!tr.draggable||isBilled)return;teDragSrcId=te.id;e.dataTransfer.setData('teId',String(te.id));e.dataTransfer.setData('fromProjName',proj.name);e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
+          tr.ondragstart=e=>{if(!tr.draggable)return;teDragSrcId=te.id;e.dataTransfer.setData('teId',String(te.id));e.dataTransfer.setData('fromProjName',proj.name);e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
           tr.ondragend=e=>{tr.draggable=false;tr.style.opacity='1';teDragSrcId=null;document.querySelectorAll('tr.te-proj-drag-over').forEach(el=>el.classList.remove('te-proj-drag-over'));};
           tr.ondragover=e=>{e.preventDefault();e.stopPropagation();if(teDragSrcId===null||teDragSrcId===te.id)return;document.querySelectorAll('tr.te-proj-drag-over').forEach(el=>el.classList.remove('te-proj-drag-over'));tr.classList.add('te-proj-drag-over');};
           tr.ondragleave=()=>tr.classList.remove('te-proj-drag-over');
@@ -914,28 +889,25 @@ function renderEstimate(){
           // Category — editable select
           const catTd=document.createElement('td');catTd.className=CAT_CLS[te.cat]||'';catTd.style.cssText='padding:4px 8px;font-size:11px;';
           const catSel=document.createElement('select');catSel.className='cat-sel';catSel.style.cssText='font-size:11px;color:#155a3e;font-weight:600;';
-          if(isBilled)catSel.disabled=true;
           Object.entries(CAT_LABELS).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===te.cat)o.selected=true;catSel.appendChild(o);});
           catSel.onchange=()=>{
             te.cat=catSel.value;
             catTd.className=CAT_CLS[te.cat]||'';
             const newAmt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);
             amtTd.textContent=fmt(newAmt);
-            saveData();renderSummary();renderEstimate();renderTimeEntry();
+            saveData();renderSummary();renderEstimate();
           };
           catTd.appendChild(catSel);tr.appendChild(catTd);
           // Description — editable textarea
-          const descTa=document.createElement('textarea');descTa.className='tinp';descTa.value=te.desc||'';descTa.rows=1;descTa.style.cssText='resize:none;overflow:hidden;line-height:1.4;min-height:24px;background:'+(isBilled?'transparent':'#fafffe')+';font-size:12px;';
-          if(isBilled)descTa.readOnly=true;
+          const descTa=document.createElement('textarea');descTa.className='tinp';descTa.value=te.desc||'';descTa.rows=1;descTa.style.cssText='resize:none;overflow:hidden;line-height:1.4;background:#fafffe;font-size:12px;';
           descTa.oninput=()=>{te.desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
-          descTa.onchange=()=>{te.desc=descTa.value;saveData();renderTimeEntry();};
-          if(te.desc)requestAnimationFrame(()=>{descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';});
+          descTa.onchange=()=>{te.desc=descTa.value;saveData();};
+          if(te.desc)setTimeout(()=>{descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';},0);
           const descTd=document.createElement('td');descTd.style.verticalAlign='top';descTd.appendChild(descTa);tr.appendChild(descTd);
           // Date — editable input
           const dateTd=document.createElement('td');dateTd.style.cssText='padding:0;text-align:right';
           const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:120px;text-align:right';
-          if(isBilled)dateInp.readOnly=true;
-          dateInp.onchange=()=>{te.date=dateInp.value;saveData();renderTimeEntry();};
+          dateInp.onchange=()=>{te.date=dateInp.value;saveData();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
           // Hrs or Amount — hide hrs for M/S, show dollar input instead
           const isMatCatLocal=isMatCat(te.cat);
@@ -943,30 +915,22 @@ function renderEstimate(){
           if(isMatCatLocal){
             hrsTd.setAttribute('colspan','2');
             const amtInp=document.createElement('input');amtInp.type='number';amtInp.min=0;amtInp.step=0.01;amtInp.value=te.hrs||'';amtInp.placeholder='$0.00';amtInp.className='tinp r';amtInp.style.cssText='font-size:12px;width:90px;text-align:right';
-            if(isBilled)amtInp.readOnly=true;
-            amtInp.onchange=()=>{te.hrs=parseFloat(amtInp.value)||0;amtTd.textContent=fmt(te.hrs);saveData();renderSummary();renderTimeEntry();};
+            amtInp.onchange=()=>{te.hrs=parseFloat(amtInp.value)||0;amtTd.textContent=fmt(te.hrs);saveData();renderSummary();};
             hrsTd.appendChild(amtInp);tr.appendChild(hrsTd);
           } else {
             const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
-            if(isBilled)hrsInp.readOnly=true;
-            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(isMatCat(te.cat)?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();renderTimeEntry();};
+            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(isMatCat(te.cat)?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();};
             hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
             // Rate
             const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent='$'+rate;tr.appendChild(rateTd);
           }
           // Amount
           const amtTd=document.createElement('td');amtTd.className='cell-bold';amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);tr.appendChild(amtTd);
-          // Unpost button (or billed indicator)
+          // Unpost button
           const actTd=document.createElement('td');actTd.style.cssText='padding:4px 8px;text-align:right';
-          if(isBilled){
-            const billedLbl=document.createElement('span');billedLbl.style.cssText='font-size:10px;color:#155a3e;font-weight:600';billedLbl.textContent='🔒 billed';
-            actTd.appendChild(billedLbl);
-          }else{
-            const unpostBtn=document.createElement('button');unpostBtn.className='btn-sm danger';unpostBtn.style.fontSize='10px';unpostBtn.textContent='Unpost';
-            unpostBtn.onclick=()=>unpostTimeEntry(te.id);
-            actTd.appendChild(unpostBtn);
-          }
-          tr.appendChild(actTd);
+          const unpostBtn=document.createElement('button');unpostBtn.className='btn-sm danger';unpostBtn.style.fontSize='10px';unpostBtn.textContent='Unpost';
+          unpostBtn.onclick=()=>unpostTimeEntry(te.id);
+          actTd.appendChild(unpostBtn);tr.appendChild(actTd);
           actBody.appendChild(tr);
         });
         // Actual subtotal — split labor / materials
@@ -1062,17 +1026,15 @@ function renderEstimate(){
         const ate=document.createElement('button');ate.className='btn-sm blue';ate.textContent='+ Add time entry';
         ate.onclick=()=>{
           const today=new Date().toISOString().split('T')[0];
-          const cur=ensureCurrentFlock();
-          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'T',hrs:0,desc:'',posted:true,billingEventId:cur.id});
-          openProjs.add(proj.id);saveData();renderEstimate();renderTimeEntry();
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'T',hrs:0,desc:'',posted:true});
+          openProjs.add(proj.id);saveData();renderEstimate();
         };
         foot.appendChild(ate);
         const atm=document.createElement('button');atm.className='btn-sm';atm.style.cssText='color:#059669;border-color:#6ee7b7';atm.textContent='+ Add materials';
         atm.onclick=()=>{
           const today=new Date().toISOString().split('T')[0];
-          const cur=ensureCurrentFlock();
-          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:0,desc:'',posted:true,billingEventId:cur.id});
-          openProjs.add(proj.id);saveData();renderEstimate();renderTimeEntry();
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:0,desc:'',posted:true});
+          openProjs.add(proj.id);saveData();renderEstimate();
         };
         foot.appendChild(atm);
       }
@@ -2208,11 +2170,11 @@ function renderTimeEntry(){
         ?'🔒 <span style="font-size:10px;color:#64748b">'+(flock&&flock.invoiceNum?flock.invoiceNum:(flock?flock.name:''))+'</span>'
         :'<select class="te-sel" '+flockSelectDisabled+' onchange="assignEntryToFlock('+te.id+',this.value)" style="font-size:10px;width:100%">'+flockOptionsHTML(te)+'</select>';
 
-      tr.innerHTML='<td style="'+lockedTextStyle+'"><input class="te-inp" value="'+(te.date||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].date=this.value;saveData();if(unlocked)renderEstimate();"></td>'
-        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].proj=this.value;saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+projects.map(p=>'<option'+(p.name===te.proj?' selected':'')+'>'+p.name.replace(/</g,'&lt;')+'</option>').join('')+'</select></td>'
-        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].cat=this.value;saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
+      tr.innerHTML='<td style="'+lockedTextStyle+'"><input class="te-inp" value="'+(te.date||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].date=this.value;saveData()"></td>'
+        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].proj=this.value;saveData()">'+projects.map(p=>'<option'+(p.name===te.proj?' selected':'')+'>'+p.name.replace(/</g,'&lt;')+'</option>').join('')+'</select></td>'
+        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].cat=this.value;renderTimeEntry()">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
         +'<td class="desc-cell" data-desc-cell="1" style="'+lockedTextStyle+'"></td>'
-        +'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="0.25" value="'+(te.hrs||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].hrs=parseFloat(this.value)||0;saveData();renderTimeEntry();if(unlocked)renderEstimate();" style="width:55px"></td>'
+        +'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="0.25" value="'+(te.hrs||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].hrs=parseFloat(this.value)||0;renderTimeEntry()" style="width:55px"></td>'
         +'<td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;vertical-align:top;'+lockedTextStyle+'">'+fmt(amt)+'</td>'
         +'<td style="padding:4px 6px;vertical-align:middle">'+flockCellContent+'</td>'
         +'<td style="padding:2px 6px;white-space:nowrap;text-align:right;vertical-align:top">'
@@ -2227,7 +2189,7 @@ function renderTimeEntry(){
       const descTa=document.createElement('textarea');descTa.className='te-desc';descTa.rows=1;descTa.value=te.desc||'';
       if(isLocked){descTa.readOnly=true;descTa.style.background='transparent';}
       descTa.oninput=()=>{timeEntries[ri].desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
-      descTa.onchange=()=>{saveData();if(unlocked)renderEstimate();};
+      descTa.onchange=()=>{saveData();};
       descCell.appendChild(descTa);
       tbody.appendChild(tr);
     });
@@ -2325,9 +2287,7 @@ function renderTimeEntry(){
   }
 
   // Size every description textarea to fit its content
-  requestAnimationFrame(()=>{
-    wrap.querySelectorAll('.te-desc').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});
-  });
+  wrap.querySelectorAll('.te-desc').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});
 }
 
 // ===== FLOCK PROMPT UI =====
@@ -2520,16 +2480,14 @@ function renderMatLineItems(items){
 function confirmMaterialsImport(){
   let added=0,skipped=0;
   const today=new Date().toISOString().split('T')[0];
-  const cur=ensureCurrentFlock();
   _matParsed.forEach((item,i)=>{
     const sel=document.getElementById('matProj_'+i);
     if(!sel||sel.value==='__skip__'){skipped++;return;}
-    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:item.amount,desc:item.desc,posted:true,billingEventId:cur.id});
+    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:item.amount,desc:item.desc,posted:true});
     added++;
   });
   saveData();
-  renderTimeEntry();
-  if(unlocked){renderEstimate();}
+  if(unlocked){renderEstimate();renderTimeEntry();}
   closeMaterialsImport();
   alert('✅ Added '+added+' material entr'+(added!==1?'ies':'y')+(skipped?' ('+skipped+' skipped)':'')+'.');
 }

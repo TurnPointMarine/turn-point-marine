@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-06T19:18:59.253Z",
+    "exportedAt": "2026-05-08T13:09:29.380Z",
     "engineVersion": 4
   },
   "projects": [
@@ -1346,6 +1346,18 @@
       ],
       "tasks": [],
       "cos": []
+    },
+    {
+      "id": 56,
+      "name": "Cerbo Replacement",
+      "status": "billed",
+      "isTM": false,
+      "estimateTotal": null,
+      "notes": "Victron Cerbo MK2 replacement — billed on invoice 23514.",
+      "scopeTasks": [],
+      "cos": [],
+      "invoiceNum": "23514",
+      "include": false
     }
   ],
   "timeEntries": [
@@ -1357,7 +1369,7 @@
       "hrs": 3.5,
       "desc": "Winter wash March",
       "posted": true,
-      "billingEventId": 500
+      "billingEventId": 501
     },
     {
       "id": 1000,
@@ -1597,7 +1609,7 @@
       "hrs": 1397.28,
       "desc": "PANOPTIX PS51-TH TRANSDUCER 1.0\nREPLACEMENT\n*including special order shipping costs.",
       "posted": true,
-      "billingEventId": 500
+      "billingEventId": 501
     },
     {
       "id": 1007,
@@ -1607,7 +1619,7 @@
       "hrs": 500,
       "desc": "February and March",
       "posted": true,
-      "billingEventId": 500
+      "billingEventId": 501
     },
     {
       "id": 1008,
@@ -1617,7 +1629,7 @@
       "hrs": 0,
       "desc": "Winter Wash Febr",
       "posted": true,
-      "billingEventId": 500
+      "billingEventId": 501
     },
     {
       "id": 2041,
@@ -1924,8 +1936,8 @@
       "date": "2026-04-27",
       "proj": "Davit",
       "cat": "T",
-      "hrs": 3.75,
-      "desc": "Raised davit arm, drained old hydraulic oil back to hydraulic pump, evacuated old hydraulic oil using vacuum pump, then removed and drained main hydraulic return line near pump. Removed oil reservoir for hydraulic flow control valves, installed new flow control valves using Loctite thread locker, cleaned workspace.",
+      "hrs": 8,
+      "desc": "Replaced hydraulic flow control valves for rotational control (installed cranked fully open). \nEvacuated of old hydraulic oil with vacuum pump.\nFlushed hydraulic system and fill with fresh AW68.\nAdjusted flow control valves down from fully open to about 2.3 it seems like it is the right speed for rotational control. Easily adjustable. \n*Rotational control is now smooth and consistent, the hit and miss function of rotational control movement is no longer an issue. ",
       "posted": true,
       "billingEventId": 500
     },
@@ -1934,7 +1946,7 @@
       "date": "2026-04-27",
       "proj": "Davit",
       "cat": "V",
-      "hrs": 0.83,
+      "hrs": 1.5,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
       "posted": true,
       "billingEventId": 500
@@ -2015,9 +2027,9 @@
       "proj": "Davit",
       "cat": "T",
       "hrs": 2.75,
-      "desc": "Topped off hydraulic oil in davit pump with 5L. Set main return line into bucket and cycled davit many times to remove old oil while topping off to prevent air locks. Once oil was clear, installed cap in return line and sanded ceiling above davit pump to install new filter housing for hydraulic return line.",
-      "posted": true,
-      "billingEventId": 500
+      "desc": "",
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2085,
@@ -2026,8 +2038,8 @@
       "cat": "V",
       "hrs": 0.68,
       "desc": "Job site transit (project labor's proportional share of the day's 1.5h).",
-      "posted": true,
-      "billingEventId": 500
+      "posted": false,
+      "billingEventId": null
     },
     {
       "id": 2089,
@@ -2206,7 +2218,8 @@
       "cat": "V",
       "hrs": 1,
       "desc": "Job site transit (project labor's proportional share of the day's 1h).",
-      "posted": true
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 1012,
@@ -2215,7 +2228,8 @@
       "cat": "B",
       "hrs": 33,
       "desc": "1. Buff and wax below lower rub rail. \n2. Buff and wax forward of the lower rub rail I buffing & waxing from the waterline up to the halfway mark between the waterline and the teak cap rail.  ",
-      "posted": true
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 1013,
@@ -2224,7 +2238,8 @@
       "cat": "V",
       "hrs": 6,
       "desc": "Job site transit (project labor's proportional share of the 1.5h transit for 4 days).",
-      "posted": true
+      "posted": true,
+      "billingEventId": 500
     },
     {
       "id": 1014,
@@ -2233,7 +2248,58 @@
       "cat": "M",
       "hrs": 160,
       "desc": "Coarse Compound, 52.50\nFine Compound, 52.50\nWax, 30.00\nWool pads, 30.00",
-      "posted": true
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1015,
+      "date": "2026-04-10",
+      "proj": "Cerbo Replacement",
+      "cat": "M",
+      "hrs": 273,
+      "desc": "Victron Cerbo MK2",
+      "posted": true,
+      "billingEventId": 501
+    },
+    {
+      "id": 1016,
+      "date": "2026-04-10",
+      "proj": "Cerbo Replacement",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "Two hours to troubleshoot, replace and program/network new House Bank Cerbo",
+      "posted": true,
+      "billingEventId": 501
+    },
+    {
+      "id": 1017,
+      "date": "2026-04-10",
+      "proj": "Winter Wash March",
+      "cat": "M",
+      "hrs": 287.5,
+      "desc": "Winter Wash February — additional charges",
+      "posted": true,
+      "billingEventId": 501
+    },
+    {
+      "id": 1018,
+      "date": "2026-05-08",
+      "proj": "Davit",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "Flow Control valves, 1/4\", x2\nNautical Structures, N2BV0037\nInvoice #23489 ",
+      "posted": true,
+      "billingEventId": 500
+    },
+    {
+      "id": 1019,
+      "date": "2026-05-08",
+      "proj": "Davit",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "NHF PREM AW 68 HYD FL 5G ",
+      "posted": false,
+      "billingEventId": null
     }
   ],
   "billingEvents": [
@@ -2243,13 +2309,22 @@
       "isCurrent": true,
       "locked": false,
       "createdAt": "2026-05-06T17:15:57.847Z"
+    },
+    {
+      "id": 501,
+      "name": "Invoice 23514",
+      "invoiceNum": "23514",
+      "invoiceDate": "2026-04-10",
+      "locked": true,
+      "isCurrent": false,
+      "createdAt": "2026-04-10T00:00:00.000Z"
     }
   ],
-  "nextProjId": 56,
+  "nextProjId": 57,
   "nextTaskId": 194,
   "nextCOId": 101,
-  "nextTEId": 1015,
-  "nextBillingId": 501,
+  "nextTEId": 1020,
+  "nextBillingId": 502,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
