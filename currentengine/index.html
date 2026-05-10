@@ -422,8 +422,10 @@ function reconcileTimeEntries(){
   saveData();renderEstimate();renderTimeEntry();
   alert('✅ Fixed '+fixed+' of '+orphaned.length+' entries.'+(fixed<orphaned.length?'\n⚠ '+(orphaned.length-fixed)+' could not be matched — check manually.':''));
 }
-function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
+function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
+function projActualMatOnly(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);}
+function projActualSub(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
 // "All actual" — includes billed entries. Used for T&M projDisplayTotal (life-to-date) and Progress hours.
 function projAllActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
@@ -1619,14 +1621,35 @@ function exportClientDoc(){
     };
     html+=sectionHdr('#4a5e5a','COMPLETED \u2014 READY FOR BILLING',compP.length,fd(ct),'Work complete, invoice pending',compP_brk);
     compP.forEach(proj=>{html+=projBlock(proj,'#4a5e5a',false,false);});
+
+    // ── COMPLETED-ONLY SUMMARY ────────────────────────────────────────────
+    // Tells client: "If you sent an invoice for Completed work right now, here's the math."
+    // Sourced from ACTUAL unbilled posted entries (not scope), since that's what's actually going on the next invoice.
+    const compL=compP.reduce((a,p)=>a+projActualLabor(p),0);
+    const compMat=compP.reduce((a,p)=>a+projActualMatOnly(p),0);
+    const compSub=compP.reduce((a,p)=>a+projActualSub(p),0);
+    const compSubtotal=compL+compMat+compSub;
+    const compShop=(compL+compMat)*0.03;
+    const compTax=settings.taxExempt?0:(compSubtotal+compShop)*0.091;
+    const compTotal=compSubtotal+compShop+compTax;
+    html+=`<div style="margin-top:20px;border:2px solid #4a5e5a;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="background:#4a5e5a;color:#fff;padding:12px 18px;font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Completed &mdash; Ready for Billing Summary</div>
+      <table style="width:100%;border-collapse:collapse">
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compL)}</td></tr>
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compMat)}</td></tr>
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compSub)}</td></tr>
+        <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(compSubtotal)}</td></tr>
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compShop)}</td></tr>
+        ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTax)}</td></tr>`}
+      </table>
+      <div style="background:#4a5e5a;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11pt;font-weight:700">Ready to Invoice</span>
+        <span style="font-size:13pt;font-weight:700">${fd(compTotal)}</span>
+      </div>
+    </div>`;
   }
 
   // ── ESTIMATE SUMMARY ────────────────────────────────────────────────────
-  // Completed-only breakdown (subset of allL/allMat/allSub)
-  const compL=compP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
-  const compMat=compP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)),0);
-  const compSub=compP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
-  const compSubtotal=compL+compMat+compSub;
   const _sub=allL+allM;
   const _shop=_sub*0.03;
   const _tax=settings.taxExempt?0:(_sub+_shop)*0.091;
@@ -1637,7 +1660,6 @@ function exportClientDoc(){
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allL)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allMat)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
-      ${compP.length>0?`<tr style="border-bottom:1px solid #e5e5e0;background:#eef3f2"><td style="padding:8px 18px;font-size:9.5pt;color:#2d4a46;font-weight:600;font-style:italic">Completed &mdash; Ready for Billing (${compP.length} project${compP.length!==1?'s':''})</td><td style="padding:8px 18px;text-align:right;font-size:9.5pt;color:#2d4a46;font-weight:700">${fd(compSubtotal)}</td></tr>`:''}
       <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
       ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>`}
