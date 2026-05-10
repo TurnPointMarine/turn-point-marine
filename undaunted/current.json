@@ -3,7 +3,14 @@
     "vessel": "Undaunted",
     "client": "Wes Garner",
     "exportedAt": "2026-05-08T21:00:42.334Z",
-    "engineVersion": 4
+    "engineVersion": 4,
+    "migrations": {
+      "P_to_M": "0 time entries, 0 scope tasks",
+      "invoiceNum_backfill": "2 Winter Wash projects \u2192 Inv 23514",
+      "forwardScan_dedup": "Zeroed mat:1397.28 on Forward Scan scope task",
+      "dryStorage_dedup": "Removed Feb + March scope tasks (4\u21922)",
+      "timestamp": "2026-05-10T17:30:10.328508"
+    }
   },
   "projects": [
     {
@@ -316,7 +323,7 @@
           "cat": "T",
           "desc": "Forward Scan Transducer Replace",
           "hrs": 6,
-          "mat": 1397.28,
+          "mat": 0,
           "sub": 0
         },
         {
@@ -1217,7 +1224,7 @@
       "status": "billed",
       "isTM": false,
       "estimateTotal": null,
-      "notes": "Victron Cerbo MK2 replacement — billed on invoice 23514.",
+      "notes": "Victron Cerbo MK2 replacement \u2014 billed on invoice 23514.",
       "scopeTasks": [],
       "cos": [],
       "invoiceNum": "23514",
@@ -1298,22 +1305,6 @@
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
-        {
-          "id": 199,
-          "cat": "M",
-          "desc": "February",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0
-        },
-        {
-          "id": 200,
-          "cat": "M",
-          "desc": "March",
-          "hrs": 0,
-          "mat": 250,
-          "sub": 0
-        },
         {
           "id": 201,
           "cat": "M",
@@ -2273,7 +2264,7 @@
       "proj": "Winter Wash March",
       "cat": "M",
       "hrs": 287.5,
-      "desc": "Winter Wash February — additional charges",
+      "desc": "Winter Wash February \u2014 additional charges",
       "posted": true,
       "billingEventId": 501
     },

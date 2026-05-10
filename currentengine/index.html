@@ -1622,6 +1622,11 @@ function exportClientDoc(){
   }
 
   // ── ESTIMATE SUMMARY ────────────────────────────────────────────────────
+  // Completed-only breakdown (subset of allL/allMat/allSub)
+  const compL=compP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
+  const compMat=compP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)),0);
+  const compSub=compP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
+  const compSubtotal=compL+compMat+compSub;
   const _sub=allL+allM;
   const _shop=_sub*0.03;
   const _tax=settings.taxExempt?0:(_sub+_shop)*0.091;
@@ -1632,6 +1637,7 @@ function exportClientDoc(){
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allL)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allMat)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
+      ${compP.length>0?`<tr style="border-bottom:1px solid #e5e5e0;background:#eef3f2"><td style="padding:8px 18px;font-size:9.5pt;color:#2d4a46;font-weight:600;font-style:italic">Completed &mdash; Ready for Billing (${compP.length} project${compP.length!==1?'s':''})</td><td style="padding:8px 18px;text-align:right;font-size:9.5pt;color:#2d4a46;font-weight:700">${fd(compSubtotal)}</td></tr>`:''}
       <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
       <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
       ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>`}
