@@ -2,15 +2,8 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-08T21:00:42.334Z",
-    "engineVersion": 4,
-    "migrations": {
-      "P_to_M": "0 time entries, 0 scope tasks",
-      "invoiceNum_backfill": "2 Winter Wash projects \u2192 Inv 23514",
-      "forwardScan_dedup": "Zeroed mat:1397.28 on Forward Scan scope task",
-      "dryStorage_dedup": "Removed Feb + March scope tasks (4\u21922)",
-      "timestamp": "2026-05-10T17:30:10.328508"
-    }
+    "exportedAt": "2026-05-10T18:03:44.810Z",
+    "engineVersion": 4
   },
   "projects": [
     {
@@ -1200,7 +1193,7 @@
     {
       "id": 53,
       "name": "Pilothouse Lewmar Hatch Install",
-      "status": "needs_auth",
+      "status": "complete",
       "include": true,
       "notes": "The pilothouse overhead hatches were purchased two years ago. We had several back and forth shipments from Lewmar (due to incompetent customer service at Lewmar). Received these hatches in the Fall of 2025, checked fitment at that point and waited to install so they would have one less winter of exposure. .  . ",
       "estimateTotal": null,
@@ -1224,7 +1217,7 @@
       "status": "billed",
       "isTM": false,
       "estimateTotal": null,
-      "notes": "Victron Cerbo MK2 replacement \u2014 billed on invoice 23514.",
+      "notes": "Victron Cerbo MK2 replacement — billed on invoice 23514.",
       "scopeTasks": [],
       "cos": [],
       "invoiceNum": "23514",
@@ -1233,7 +1226,7 @@
     {
       "id": 57,
       "name": "Launch Vessel & Deliver Undaunted from Anacortes to Bellingham",
-      "status": "needs_auth",
+      "status": "complete",
       "include": true,
       "notes": "This task was asked of me without clarification in this format. I would like to run it through the proper channels of this format. ",
       "estimateTotal": null,
@@ -2264,7 +2257,7 @@
       "proj": "Winter Wash March",
       "cat": "M",
       "hrs": 287.5,
-      "desc": "Winter Wash February \u2014 additional charges",
+      "desc": "Winter Wash February — additional charges",
       "posted": true,
       "billingEventId": 501
     },
