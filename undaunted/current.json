@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-05-10T18:11:57.341Z",
+    "exportedAt": "2026-05-13T15:53:01.674Z",
     "engineVersion": 4
   },
   "projects": [
@@ -1612,16 +1612,6 @@
       "billingEventId": null
     },
     {
-      "id": 2042,
-      "date": "2026-04-10",
-      "proj": "Buff/Wax During Haul Out",
-      "cat": "T",
-      "hrs": 2,
-      "desc": "Applied a coat of wax to bottom half of white gelcoat on port hull from forward end of vessel to forward end of lower rub rail, plus blue stripe along bottom of hull within same parameters.",
-      "posted": false,
-      "billingEventId": null
-    },
-    {
       "id": 2043,
       "date": "2026-04-10",
       "proj": "Buff/Wax During Haul Out",
@@ -2477,10 +2467,12 @@
   "billingEvents": [
     {
       "id": 500,
-      "name": "Next Invoice",
-      "isCurrent": true,
-      "locked": false,
-      "createdAt": "2026-05-06T17:15:57.847Z"
+      "name": "23516",
+      "isCurrent": false,
+      "locked": true,
+      "createdAt": "2026-05-06T17:15:57.847Z",
+      "invoiceNum": "23516",
+      "invoiceDate": "2026-05-08"
     },
     {
       "id": 501,
@@ -2490,13 +2482,20 @@
       "locked": true,
       "isCurrent": false,
       "createdAt": "2026-04-10T00:00:00.000Z"
+    },
+    {
+      "id": 502,
+      "name": "Next Invoice",
+      "isCurrent": true,
+      "locked": false,
+      "createdAt": "2026-05-13T15:52:48.793Z"
     }
   ],
   "nextProjId": 61,
   "nextTaskId": 204,
   "nextCOId": 101,
   "nextTEId": 1042,
-  "nextBillingId": 502,
+  "nextBillingId": 503,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",

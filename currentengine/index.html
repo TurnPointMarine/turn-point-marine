@@ -371,6 +371,24 @@ let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000,nextBillingId=500;
 let projects=[];
 let timeEntries=[];
 let billingEvents=[];
+// ─── UI STATE PERSISTENCE ───────────────────────────────────────────────
+// secOpenState and openProjs control which sections/projects are expanded.
+// Serialize them on save, restore on load, so layout state persists across reloads and JSON exports.
+function serializeUiState(){
+  return {
+    secOpenState:{...secOpenState},
+    openProjs:Array.from(openProjs)
+  };
+}
+function restoreUiState(ui){
+  if(!ui)return;
+  if(ui.secOpenState&&typeof ui.secOpenState==='object'){
+    secOpenState={...secOpenState,...ui.secOpenState};
+  }
+  if(Array.isArray(ui.openProjs)){
+    openProjs=new Set(ui.openProjs);
+  }
+}
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function taskLabor(t){return(RATES[t.cat]||0)*(t.hrs||0);}
 function taskTotal(t){return taskLabor(t)+(t.mat||0)+(t.sub||0);}
@@ -525,6 +543,12 @@ function postTimeEntry(teId){
   if(!te.billingEventId){
     const cur=ensureCurrentFlock();
     te.billingEventId=cur.id;
+  }
+  // Materials get a sortOrder placing them at the bottom of the project's material list
+  if(isMatCat(te.cat)&&(te.sortOrder===undefined||te.sortOrder===null)){
+    const projMats=timeEntries.filter(t=>t.proj===te.proj&&t.posted&&isMatCat(t.cat)&&t.id!==te.id);
+    const maxOrd=projMats.reduce((m,t)=>Math.max(m,t.sortOrder||0),0);
+    te.sortOrder=maxOrd+1;
   }
   const proj=projects.find(p=>p.name===te.proj);if(proj)checkScopeBump(proj);
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
@@ -686,7 +710,7 @@ function renderEstimate(){
     const wrap=document.createElement('div');wrap.className='sec-wrap';wrap.style.border='1px solid '+sec.border;wrap.dataset.sec=sec.key;
     const hdr=document.createElement('div');hdr.className='sec-hdr';hdr.style.cssText='background:'+sec.color+';color:'+sec.textColor;
     hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+secProjs.length+' project'+(secProjs.length!==1?'s':'')+'</span></div><div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(secEstTotal>0?fmt(secEstTotal):'—')+' est</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secTMTotal>0?fmt(secTMTotal):'—')+' T&M</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+' actual</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
-    hdr.onclick=()=>{secOpenState[sec.key]=!secOpenState[sec.key];renderEstimate();};
+    hdr.onclick=()=>{secOpenState[sec.key]=!secOpenState[sec.key];saveData();renderEstimate();};
     wrap.appendChild(hdr);
     const body=document.createElement('div');body.className='sec-body'+(isOpen?' open':'');
     if(secProjs.length===0){const em=document.createElement('div');em.className='sec-empty';em.textContent='No projects in this section.';body.appendChild(em);}
@@ -821,7 +845,7 @@ function renderEstimate(){
         ph.appendChild(showDocChk);ph.appendChild(showDocLbl2);
       }
       ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);ph.appendChild(badge);ph.appendChild(chev);
-      ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);renderEstimate();});
+      ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);saveData();renderEstimate();});
       // Drop target for TE drag-reassign
       ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
       ph.addEventListener('dragleave',()=>{ph.style.background='';});
@@ -932,7 +956,7 @@ function renderEstimate(){
         scopeHdr.style.cssText='padding:5px 16px;background:#f0f4ff;border-bottom:1px solid #dbe4ff;font-size:10px;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
         const scopeTotal=projScopeTotal(proj);
         scopeHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px">'+(estIsOpen?'▼':'▶')+'</span>Estimated</span><span style="font-weight:700;color:#3b4a6b">'+fmt(scopeTotal)+'</span>';
-        scopeHdr.onclick=()=>{secOpenState[estKey]=!estIsOpen;renderEstimate();};
+        scopeHdr.onclick=()=>{secOpenState[estKey]=!estIsOpen;saveData();renderEstimate();};
         pb.appendChild(scopeHdr);
         const estWrap=document.createElement('div');estWrap.style.display=estIsOpen?'block':'none';
         estWrap.appendChild(buildTaskTable(proj.scopeTasks||[],true));
@@ -952,19 +976,26 @@ function renderEstimate(){
         pb.appendChild(estWrap);
       }
 
-      // ACTUAL SECTION — posted time entries: labor first by date, then materials by date
+      // ACTUAL SECTION — labor sorted by date asc; materials by manual sortOrder (free placement)
       const postedTEs=projPostedTEs(proj).slice().sort((a,b)=>{
-        const aIsM=a.cat==='M'||a.cat==='S';const bIsM=b.cat==='M'||b.cat==='S';
+        const aIsM=isMatCat(a.cat);const bIsM=isMatCat(b.cat);
         if(aIsM!==bIsM)return aIsM?1:-1;
+        if(aIsM){
+          // Both materials: sort by sortOrder ascending; missing sortOrder sinks to bottom
+          const aOrd=(a.sortOrder===undefined||a.sortOrder===null)?Number.MAX_SAFE_INTEGER:a.sortOrder;
+          const bOrd=(b.sortOrder===undefined||b.sortOrder===null)?Number.MAX_SAFE_INTEGER:b.sortOrder;
+          if(aOrd!==bOrd)return aOrd-bOrd;
+          return (a.id||0)-(b.id||0);
+        }
         return (a.date||'').localeCompare(b.date||'');
       });
       const actKey='act_'+proj.id;
-      const actIsOpen=secOpenState[actKey]!==false; // default true (expanded)
+      const actIsOpen=secOpenState[actKey]!==false; // default true (expanded — show entries when project is opened)
       const actualHdr=document.createElement('div');
       actualHdr.style.cssText='padding:5px 16px;background:#f0faf6;border-bottom:1px solid #a7d8c5;border-top:1px solid #a7d8c5;font-size:10px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
       const actualTotal=projAllActualTotal(proj);
       actualHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px">'+(actIsOpen?'▼':'▶')+'</span>Actual — Posted Time Entries</span><span style="font-weight:700;color:#1D9E75">'+fmt(actualTotal)+'</span>';
-      actualHdr.onclick=()=>{secOpenState[actKey]=!actIsOpen;renderEstimate();};
+      actualHdr.onclick=()=>{secOpenState[actKey]=!actIsOpen;saveData();renderEstimate();};
       pb.appendChild(actualHdr);
       const actWrap=document.createElement('div');actWrap.style.display=actIsOpen?'block':'none';
 
@@ -1009,13 +1040,31 @@ function renderEstimate(){
             const srcId=parseInt(e.dataTransfer.getData('teId'));
             const fromProj=e.dataTransfer.getData('fromProjName');
             if(!srcId||fromProj!==proj.name||srcId===te.id)return;
-            // Reorder within timeEntries array
-            const srcIdx=timeEntries.findIndex(t=>t.id===srcId);
-            const tgtIdx=timeEntries.findIndex(t=>t.id===te.id);
-            if(srcIdx<0||tgtIdx<0)return;
-            const moved=timeEntries.splice(srcIdx,1)[0];
-            timeEntries.splice(tgtIdx,0,moved);
-            saveData();renderEstimate();
+            const srcTE=timeEntries.find(t=>t.id===srcId);
+            const tgtTE=te;
+            if(!srcTE)return;
+            // Materials use sortOrder for free placement; labor doesn't reorder this way (sorts by date)
+            if(isMatCat(srcTE.cat)&&isMatCat(tgtTE.cat)){
+              // Build the current visual material order from postedTEs (already sorted)
+              const matList=postedTEs.filter(t=>isMatCat(t.cat));
+              const srcIdx=matList.findIndex(t=>t.id===srcId);
+              const tgtIdx=matList.findIndex(t=>t.id===te.id);
+              if(srcIdx<0||tgtIdx<0)return;
+              const moved=matList.splice(srcIdx,1)[0];
+              matList.splice(tgtIdx,0,moved);
+              // Reassign sortOrder sequentially starting from 1
+              matList.forEach((t,i)=>{t.sortOrder=i+1;});
+              saveData();renderEstimate();
+            } else if(!isMatCat(srcTE.cat)&&!isMatCat(tgtTE.cat)){
+              // Both labor — reorder in array (mostly for visual but date-sort still wins on re-render)
+              const srcIdx=timeEntries.findIndex(t=>t.id===srcId);
+              const tgtIdx=timeEntries.findIndex(t=>t.id===te.id);
+              if(srcIdx<0||tgtIdx<0)return;
+              const moved=timeEntries.splice(srcIdx,1)[0];
+              timeEntries.splice(tgtIdx,0,moved);
+              saveData();renderEstimate();
+            }
+            // Mixed drops (labor onto material, material onto labor) are ignored — materials always sort below labor
           };
           tr.appendChild(dhTd);
           // Category — editable select
@@ -1233,7 +1282,7 @@ function renderEstimate(){
     const coHdr=document.createElement('div');coHdr.className='sec-hdr';coHdr.style.cssText='background:#d97706;color:#fff';
     coHdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">CHANGE OF SCOPE — NEEDS AUTHORIZATION</span></div>'
       +'<div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(coTotal>0?fmt(coTotal):'—')+'</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
-    coHdr.onclick=()=>{secOpenState['_cos']=!isOpen;renderEstimate();};
+    coHdr.onclick=()=>{secOpenState['_cos']=!isOpen;saveData();renderEstimate();};
     coWrap.appendChild(coHdr);
     const coBody=document.createElement('div');coBody.className='sec-body'+(isOpen?' open':'');
     coProjs.forEach(p=>{
@@ -2232,7 +2281,8 @@ function exportData(){
       exportedAt:new Date().toISOString(),
       engineVersion:ENGINE_VERSION
     },
-    projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings
+    projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,
+    uiState:serializeUiState()
   };
   const blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});
   const a=document.createElement('a');
@@ -2326,6 +2376,7 @@ function importData(event){
       if(d.nextTEId)nextTEId=d.nextTEId;
       if(d.nextBillingId)nextBillingId=d.nextBillingId;
       if(d.settings){const prevLogo=settings.logoB64;const prevMime=settings.logoMime;Object.assign(settings,d.settings);if(!settings.logoB64){settings.logoB64=prevLogo;settings.logoMime=prevMime;}if(settings.email==='abram@turnpointmarine.com')settings.email='Abram@turnpointmarine.com';}
+      if(d.uiState)restoreUiState(d.uiState);
       // Migrate change_of_scope status to in_progress
       projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
       // Ship 1: ensure current flock and auto-attach orphan posted entries
@@ -2481,6 +2532,9 @@ function renderTimeEntry(){
       const descCell=tr.querySelector('td[data-desc-cell]');
       const descTa=document.createElement('textarea');descTa.className='te-desc';descTa.rows=1;descTa.value=te.desc||'';
       if(isLocked){descTa.readOnly=true;descTa.style.background='transparent';descTa.style.textDecoration='line-through';descTa.style.color='#94a3b8';}
+      // Auto-grow only when focused; collapsed (1 row) otherwise so the TE tab stays scannable
+      descTa.onfocus=()=>{descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
+      descTa.onblur=()=>{descTa.style.height='';descTa.rows=1;};
       descTa.oninput=()=>{timeEntries[ri].desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
       descTa.onchange=()=>{saveData();if(unlocked)renderEstimate();};
       descCell.appendChild(descTa);
@@ -2579,10 +2633,8 @@ function renderTimeEntry(){
     });
   }
 
-  // Size every description textarea to fit its content
-  requestAnimationFrame(()=>{
-    wrap.querySelectorAll('.te-desc').forEach(t=>{t.style.height='auto';t.style.height=t.scrollHeight+'px';});
-  });
+  // Description textareas stay at 1-row height (collapsed) until focused, so the table is scannable
+  // — they expand on focus to show full content for editing
 }
 
 // ===== FLOCK PROMPT UI =====
@@ -2764,7 +2816,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
-  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,vessel:v?v.value:'Hannah Mae',client:c?c.value:''}));}catch(e){}
+  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,vessel:v?v.value:'Hannah Mae',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
 }
 function loadData(){
   try{
@@ -2778,6 +2830,7 @@ function loadData(){
     if(d.settings){const prevLogo=settings.logoB64;const prevMime=settings.logoMime;Object.assign(settings,d.settings);if(!settings.logoB64){settings.logoB64=prevLogo;settings.logoMime=prevMime;}if(settings.email==='abram@turnpointmarine.com')settings.email='Abram@turnpointmarine.com';}
     if(d.vessel){const v=document.getElementById('vfVessel');const n=document.getElementById('navVessel');if(v)v.value=d.vessel;if(n)n.textContent=d.vessel;}
     if(d.client){const c=document.getElementById('vfClient');if(c)c.value=d.client;}
+    if(d.uiState)restoreUiState(d.uiState);
     // Migrate any change_of_scope status projects to in_progress
     projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
     // Ship 1: ensure a current "Next Invoice" flock exists, then auto-attach orphan posted entries
