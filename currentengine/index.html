@@ -348,7 +348,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   <div onclick="exportClientPDF();hideExportMenu()" style="padding:10px 16px;cursor:pointer;font-size:13px;font-family:inherit" onmouseover="this.style.background='#f5f5f3'" onmouseout="this.style.background=''">&#128196; Export Client Doc (HTML)</div>
 </div>
 <script>
-const ENGINE_VERSION=4;
+const ENGINE_VERSION=5;
 const PIN='1248';
 const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0};
 const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid'};
@@ -484,7 +484,8 @@ function checkScopeBump(p){
 function ensureCurrentFlock(){
   let cur=billingEvents.find(b=>b.isCurrent&&!b.locked);
   if(!cur){
-    cur={id:nextBillingId++,name:'Next Invoice',isCurrent:true,locked:false,createdAt:new Date().toISOString()};
+    const today=new Date().toISOString().split('T')[0];
+    cur={id:nextBillingId++,name:'Billing Event '+today,isCurrent:true,locked:false,createdAt:new Date().toISOString(),history:[]};
     billingEvents.push(cur);
   }
   return cur;
@@ -515,13 +516,23 @@ function flockEntryCount(be){
   if(!be)return 0;
   return timeEntries.filter(te=>te.billingEventId===be.id&&te.posted).length;
 }
+function logFlockChange(be,field,from,to){
+  // Append a change record to the billing event's history array.
+  // Skips no-op changes (from === to) so we don't pollute history with re-confirmations.
+  if(from===to)return;
+  if(!be.history)be.history=[];
+  be.history.push({field,from:from||'',to:to||'',at:new Date().toISOString()});
+}
 function lockFlock(beId,invoiceNum,invoiceDate){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  // Log invoice number change if it's different from what's stored (covers re-lock with different number)
+  logFlockChange(be,'invoiceNum',be.invoiceNum,invoiceNum||'');
   be.locked=true;
   be.isCurrent=false;
   be.invoiceNum=invoiceNum||'';
   be.invoiceDate=invoiceDate||new Date().toISOString().split('T')[0];
-  ensureCurrentFlock(); // spawn new "Next Invoice"
+  be.lockedAt=new Date().toISOString();
+  ensureCurrentFlock(); // spawn new replacement flock
   saveData();renderTimeEntry();
 }
 function unlockFlock(beId){
@@ -531,8 +542,17 @@ function unlockFlock(beId){
 }
 function renameFlock(beId,newName){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  logFlockChange(be,'name',be.name,newName);
   be.name=newName;
   saveData();renderTimeEntry();
+}
+function setFlockInvoiceNum(beId,newNum){
+  // Soft-lock edit path for changing invoice number on a locked billing event.
+  // The confirmation modal that gates this lives in the UI layer (Step 2+).
+  const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  logFlockChange(be,'invoiceNum',be.invoiceNum,newNum);
+  be.invoiceNum=newNum||'';
+  saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 
 // Post/unpost time entry
@@ -1226,7 +1246,7 @@ function renderEstimate(){
         ate.onclick=()=>{
           const today=new Date().toISOString().split('T')[0];
           const cur=ensureCurrentFlock();
-          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'T',hrs:0,desc:'',posted:true,billingEventId:cur.id});
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'T',hrs:0,desc:'',posted:true,billingEventId:cur.id,includeInClientDoc:true});
           openProjs.add(proj.id);saveData();renderEstimate();renderTimeEntry();
         };
         foot.appendChild(ate);
@@ -1234,7 +1254,7 @@ function renderEstimate(){
         atm.onclick=()=>{
           const today=new Date().toISOString().split('T')[0];
           const cur=ensureCurrentFlock();
-          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:0,desc:'',posted:true,billingEventId:cur.id});
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:0,desc:'',posted:true,billingEventId:cur.id,includeInClientDoc:true});
           openProjs.add(proj.id);saveData();renderEstimate();renderTimeEntry();
         };
         foot.appendChild(atm);
@@ -2340,8 +2360,22 @@ function migrateData(d){
     }));
   }
 
+  // v4 → v5: Phase II foundation — flock history audit trail + per-entry client doc inclusion
+  if(fromVersion<5){
+    // Initialize history[] on every existing billing event
+    d.billingEvents=(d.billingEvents||[]).map(be=>({
+      ...be,
+      history:be.history||[]
+    }));
+    // Initialize includeInClientDoc on every existing time entry (default true preserves current behavior)
+    d.timeEntries=(d.timeEntries||[]).map(te=>({
+      ...te,
+      includeInClientDoc:te.includeInClientDoc!==undefined?te.includeInClientDoc:true
+    }));
+  }
+
   // Future migrations go here:
-  // if(fromVersion<5){ ... }
+  // if(fromVersion<6){ ... }
 
   d._meta.engineVersion=ENGINE_VERSION;
   return d;
@@ -2666,7 +2700,7 @@ function promptRenameFlock(beId){
 function addTimeEntry(){
   const p=document.getElementById('teProj').value;const h=parseFloat(document.getElementById('teHrs').value)||0;
   if(!p||!h)return;
-  timeEntries.push({id:nextTEId++,date:document.getElementById('teDate').value,proj:p,cat:document.getElementById('teCat').value,hrs:h,desc:document.getElementById('teDesc').value.trim()});
+  timeEntries.push({id:nextTEId++,date:document.getElementById('teDate').value,proj:p,cat:document.getElementById('teCat').value,hrs:h,desc:document.getElementById('teDesc').value.trim(),includeInClientDoc:true});
   document.getElementById('teHrs').value='';document.getElementById('teDesc').value='';
   renderTimeEntry();renderProgress();saveData();
 }
@@ -2916,7 +2950,7 @@ function confirmMaterialsImport(){
   _matParsed.forEach((item,i)=>{
     const sel=document.getElementById('matProj_'+i);
     if(!sel||sel.value==='__skip__'){skipped++;return;}
-    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:item.amount,desc:item.desc,posted:true,billingEventId:cur.id});
+    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:item.amount,desc:item.desc,posted:true,billingEventId:cur.id,includeInClientDoc:true});
     added++;
   });
   saveData();
