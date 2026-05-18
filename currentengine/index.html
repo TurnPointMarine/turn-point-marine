@@ -96,7 +96,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .tinp.r{text-align:right}
 .cat-sel{font-size:11px;padding:4px 6px;border:none;border-right:1px solid #f0f0ed;background:transparent;color:#555;font-family:inherit;width:100%}
 .cat-sel:focus{outline:none}
-.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#f5f0ff}.cM{background:#f5f5f5}.cS{background:#fdf0ff}.cF{background:#fef3c7}
+.cT{background:#eef4ff}.cB{background:#fff8ee}.cD{background:#f0faf0}.cV{background:#f5f0ff}.cM{background:#f5f5f5}.cS{background:#fdf0ff}.cF{background:#fef3c7}.cL{background:#fde68a}.cP{background:#e0e7ff}
 .cell-r{padding:8px;text-align:right;font-size:12px;color:#444;white-space:nowrap}
 .cell-bold{padding:8px;text-align:right;font-size:12px;font-weight:700;white-space:nowrap}
 .del-btn{background:none;border:none;cursor:pointer;color:#ddd;font-size:16px;padding:6px 8px}
@@ -309,7 +309,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
       <select id="teFilterProj" onchange="renderTimeEntry()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit"><option value="">All projects</option></select>
       <select id="teFilterCat" onchange="renderTimeEntry()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:8px;background:#fff;font-family:inherit">
         <option value="">All categories</option><option value="T">Technician</option><option value="B">Buff &amp; Wax</option>
-        <option value="D">Detail</option><option value="V">Travel</option><option value="F">Flat Rate</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
+        <option value="D">Detail</option><option value="V">Travel</option><option value="F">Flat Rate</option><option value="L">Flat Rate - Daily</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
       </select>
     </div>
   </div>
@@ -320,7 +320,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <div class="vf-group"><div class="vf-label">Category</div>
       <select id="teCat" onchange="onTeCatChange()" style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;background:#fff;font-family:inherit">
         <option value="T">Technician</option><option value="B">Buff &amp; Wax</option><option value="D">Detail</option>
-        <option value="V">Travel</option><option value="F">Flat Rate</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
+        <option value="V">Travel</option><option value="F">Flat Rate</option><option value="L">Flat Rate - Daily</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
       </select>
     </div>
     <div class="vf-group"><div class="vf-label" id="teHrsLabel">Hours / Amount</div><input type="number" id="teHrs" min="0" step="0.25" placeholder="0.0" style="width:90px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
@@ -395,20 +395,24 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 <script>
 const ENGINE_VERSION=8;
 const PIN='1248';
-const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0,F:0};
-const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid',F:'Flat Rate'};
+const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0,F:0,L:0};
+const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid',F:'Flat Rate',L:'Flat Rate - Daily'};
 // Category buckets:
 //   Labor (T/B/D/V): hrs × RATES[cat] = amount; rate is fixed in the RATES table
-//   Flat  (F):       hrs (used as qty) × t.rate/te.rate = amount; rate is per-line editable
+//   Flat  (F/L):     hrs (used as qty or days) × t.rate/te.rate = amount; rate is per-line editable
+//                    F displays qty with '×' suffix; L displays as days ('d' suffix)
 //   Mat   (M/S/P):   amount lives directly in `mat` (tasks) or `hrs` (time entries)
 function isMatCat(c){return c==='M'||c==='S'||c==='P';}
-function isFlatCat(c){return c==='F';}
+function isFlatCat(c){return c==='F'||c==='L';}
+function isDailyCat(c){return c==='L';}
 function isLaborCat(c){return c==='T'||c==='B'||c==='D'||c==='V';}
-// Effective per-unit rate for a task or time entry. Flat Rate reads from its own `rate` field;
+// Effective per-unit rate for a task or time entry. Flat Rate variants read from their own `rate` field;
 // labor categories fall back to the global RATES table; mat-like categories have no rate.
-function taskRate(t){return t.cat==='F'?(t.rate||0):(RATES[t.cat]||0);}
-function teRate(te){return te.cat==='F'?(te.rate||0):(RATES[te.cat]||0);}
-const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP',F:'cF'};
+function taskRate(t){return isFlatCat(t.cat)?(t.rate||0):(RATES[t.cat]||0);}
+function teRate(te){return isFlatCat(te.cat)?(te.rate||0):(RATES[te.cat]||0);}
+// Display suffix on hrs/qty cell for a given category
+function unitSuffix(c){if(isMatCat(c))return'';if(isDailyCat(c))return'd';if(c==='F')return'×';return'h';}
+const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP',F:'cF',L:'cL'};
 const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v4';
 const SECTIONS=[
@@ -461,9 +465,17 @@ function restoreUiState(ui){
   }
 }
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-// Labor amount on a task. For F, hrs acts as qty and rate is per-line. For T/B/D/V, rate comes
+// Effective qty for a flat-rate line. Blank/zero qty defaults to 1 so a single flat fee
+// works by entering rate only (e.g. "$2,175 Prop Speed coating" with no qty needed).
+// Same convention applies to Flat Rate Daily — but if you want a half-day, enter 0.5 explicitly.
+function flatQty(t){return(t.hrs&&t.hrs>0)?t.hrs:1;}
+// Labor amount on a task. For F/L, qty defaults to 1 (see flatQty). For T/B/D/V, rate comes
 // from the RATES table. For M/S/P, returns 0 (the amount lives in the mat/sub columns).
-function taskLabor(t){return isMatCat(t.cat)?0:taskRate(t)*(t.hrs||0);}
+function taskLabor(t){
+  if(isMatCat(t.cat))return 0;
+  if(isFlatCat(t.cat))return taskRate(t)*flatQty(t);
+  return taskRate(t)*(t.hrs||0);
+}
 function taskTotal(t){return taskLabor(t)+(t.mat||0)+(t.sub||0);}
 
 // Scope tasks (manually entered estimate)
@@ -477,7 +489,7 @@ function projPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.pos
 function projCoTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted&&te.co);}
 function teAmount(te){
   if(isMatCat(te.cat))return(te.hrs||0);
-  if(isFlatCat(te.cat))return(te.hrs||0)*(te.rate||0);
+  if(isFlatCat(te.cat))return flatQty(te)*(te.rate||0);
   return(te.hrs||0)*(RATES[te.cat]||0);
 }
 // Posted, unbilled time entries — used for "outstanding to bill" math
@@ -521,12 +533,12 @@ function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>isLaborCa
 function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualMatOnly(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualSub(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
-function projActualFlat(p){return projUnbilledPostedTEs(p).filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(te.rate||0),0);}
+function projActualFlat(p){return projUnbilledPostedTEs(p).filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+flatQty(te)*(te.rate||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p)+projActualFlat(p);}
 // "All actual" — includes billed entries. Used for T&M projDisplayTotal (life-to-date) and Progress hours.
 function projAllActualLabor(p){return projPostedTEs(p).filter(te=>isLaborCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projAllActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
-function projAllActualFlat(p){return projPostedTEs(p).filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(te.rate||0),0);}
+function projAllActualFlat(p){return projPostedTEs(p).filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+flatQty(te)*(te.rate||0),0);}
 function projAllActualTotal(p){return projAllActualLabor(p)+projAllActualMat(p)+projAllActualFlat(p);}
 function projBilledTotal(p){
   // Ship 1: billed total = sum of posted time entries in locked flocks tagged with this project
@@ -1279,7 +1291,7 @@ function renderEstimate(){
       // Helper to build a task table
       function buildTaskTable(tasks,editable){
         const tbl=document.createElement('table');tbl.className='ttable';
-        tbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:50px">Hrs</th><th class="r" style="width:55px">Rate</th><th class="r" style="width:80px">Labor</th><th class="r" style="width:70px">Materials</th><th class="r" style="width:75px">SBCNTRCT</th><th class="r" style="width:80px">Total</th><th style="width:28px"></th></tr></thead>';
+        tbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:55px">Hrs</th><th class="r" style="width:90px">Rate</th><th class="r" style="width:85px">Labor</th><th class="r" style="width:75px">Materials</th><th class="r" style="width:80px">SBCNTRCT</th><th class="r" style="width:85px">Total</th><th style="width:28px"></th></tr></thead>';
         const tbody=document.createElement('tbody');
         tasks.forEach((task,ti)=>{
           const tr=document.createElement('tr');
@@ -1323,8 +1335,10 @@ function renderEstimate(){
           const mkn=(val,cls,type,step,cb,ro)=>{const td=document.createElement('td');const inp=document.createElement('input');inp.className='tinp'+(cls?' '+cls:'');inp.value=val||'';if(type)inp.type=type;if(step)inp.step=step;if(type==='number')inp.min=0;inp.readOnly=ro||false;if(ro)inp.style.cssText='background:#fafffe;color:#444;';if(cb)inp.onchange=cb;td.appendChild(inp);return td;};
           const isFlatTask=isFlatCat(task.cat);
           const isMatTask=isMatCat(task.cat);
-          const htd=mkn(task.hrs,'r','number',isFlatTask?1:0.25,editable?e=>{task.hrs=parseFloat(e.target.value)||0;ltd.textContent=isMatTask?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);
-          if(isFlatTask){htd.querySelector('input').title='Quantity (flat-rate)';}
+          const isDailyTask=isDailyCat(task.cat);
+          const hrsStep=isDailyTask?0.5:isFlatTask?1:0.25;
+          const htd=mkn(task.hrs,'r','number',hrsStep,editable?e=>{task.hrs=parseFloat(e.target.value)||0;ltd.textContent=isMatTask?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);
+          if(isFlatTask){htd.querySelector('input').title=isDailyTask?'Days (flat-rate daily) — defaults to 1 if blank':'Quantity (flat-rate) — defaults to 1 if blank';htd.querySelector('input').placeholder=isDailyTask?'1 day':'1';}
           tr.appendChild(htd);
           // RATE cell — fixed display for labor cats, editable input for Flat Rate, dashed for M/S/P
           const rtd=document.createElement('td');
@@ -1332,7 +1346,7 @@ function renderEstimate(){
             rtd.style.cssText='padding:0;text-align:right';
             const rInp=document.createElement('input');rInp.className='tinp r';rInp.type='number';rInp.min=0;rInp.step=0.01;rInp.value=task.rate||'';rInp.placeholder='$';rInp.readOnly=!editable;
             if(!editable)rInp.style.cssText='background:#fafffe;color:#444;';
-            rInp.title='Per-unit rate (flat)';
+            rInp.title=isDailyTask?'Daily rate ($/day)':'Per-unit rate (flat)';
             if(editable)rInp.onchange=e=>{task.rate=parseFloat(e.target.value)||0;ltd.textContent=fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();};
             rtd.appendChild(rInp);
           } else {
@@ -1418,7 +1432,7 @@ function renderEstimate(){
 
       if(postedTEs.length>0){
         const actTbl=document.createElement('table');actTbl.className='ttable';
-        actTbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:80px">Date</th><th class="r" style="width:50px">Hrs</th><th class="r" style="width:55px">Rate</th><th class="r" style="width:80px">Amount</th><th style="width:90px"></th></tr></thead>';
+        actTbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:80px">Date</th><th class="r" style="width:55px">Hrs</th><th class="r" style="width:90px">Rate</th><th class="r" style="width:85px">Amount</th><th style="width:90px"></th></tr></thead>';
         const actBody=document.createElement('tbody');
         let teDragSrcId=null;
         // Sub-row divider state: when we transition from non-graduated to graduated entries,
@@ -1539,6 +1553,7 @@ function renderEstimate(){
           // Hrs or Amount — hide hrs for M/S, show dollar input instead
           const isMatCatLocal=isMatCat(te.cat);
           const isFlatLocal=isFlatCat(te.cat);
+          const isDailyLocal=isDailyCat(te.cat);
           const hrsTd=document.createElement('td');hrsTd.style.cssText='padding:0;text-align:right';
           if(isMatCatLocal){
             hrsTd.setAttribute('colspan','2');
@@ -1547,17 +1562,18 @@ function renderEstimate(){
             amtInp.onchange=()=>{te.hrs=parseFloat(amtInp.value)||0;amtTd.textContent=fmt(te.hrs);saveData();renderSummary();renderEstimate();renderTimeEntry();};
             hrsTd.appendChild(amtInp);tr.appendChild(hrsTd);
           } else {
-            const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=isFlatLocal?1:0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
-            hrsInp.title=isFlatLocal?'Quantity (flat-rate)':'Hours';
+            const hrsStepTE=isDailyLocal?0.5:isFlatLocal?1:0.25;
+            const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=hrsStepTE;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
+            hrsInp.title=isDailyLocal?'Days (flat-rate daily) — defaults to 1 if blank':isFlatLocal?'Quantity (flat-rate) — defaults to 1 if blank':'Hours';
             if(isBilled)hrsInp.readOnly=true;
             hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(teAmount(te));saveData();renderSummary();renderEstimate();renderTimeEntry();};
             hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
-            // Rate cell — fixed display for labor cats, editable input for Flat Rate
+            // Rate cell — fixed display for labor cats, editable input for Flat Rate variants
             const rateTd=document.createElement('td');rateTd.style.cssText='padding:0;text-align:right';
             if(isFlatLocal){
-              const rateInp=document.createElement('input');rateInp.type='number';rateInp.min=0;rateInp.step=0.01;rateInp.value=te.rate||'';rateInp.placeholder='$';rateInp.className='tinp r';rateInp.style.cssText='font-size:12px;width:72px;text-align:right';
+              const rateInp=document.createElement('input');rateInp.type='number';rateInp.min=0;rateInp.step=0.01;rateInp.value=te.rate||'';rateInp.placeholder='$';rateInp.className='tinp r';rateInp.style.cssText='font-size:12px;width:84px;text-align:right';
               if(isBilled)rateInp.readOnly=true;
-              rateInp.title='Per-unit rate (flat)';
+              rateInp.title=isDailyLocal?'Daily rate ($/day)':'Per-unit rate (flat)';
               rateInp.onchange=()=>{te.rate=parseFloat(rateInp.value)||0;amtTd.textContent=fmt(teAmount(te));saveData();renderSummary();renderEstimate();renderTimeEntry();};
               rateTd.appendChild(rateInp);
             } else {
@@ -1802,11 +1818,10 @@ function ttMerged(proj){
       const labor=taskLabor(task);
       const ms=(task.mat||0)+(task.sub||0);
       const isMS=isMatCat(task.cat);
-      const isFlat=isFlatCat(task.cat);
       rows+=`<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:4px;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:9pt">
         <div style="white-space:pre-wrap">${nl2br(task.desc)||'—'}</div>
         <div style="color:#888;white-space:nowrap">${CAT_LABELS[task.cat]}</div>
-        <div style="color:#888;white-space:nowrap">${isMS?'—':(task.hrs||0)+(isFlat?'×':'h')}</div>
+        <div style="color:#888;white-space:nowrap">${isMS?'—':(task.hrs||0)+unitSuffix(task.cat)}</div>
         <div style="font-weight:600;white-space:nowrap">${fd(taskTotal(task))}</div>
       </div>`;
     });
@@ -1858,10 +1873,10 @@ function exportClientDoc(){
   // For TM projects, the same rules apply but to time entries (where qty lives in `hrs` and the per-unit rate in `rate`).
   const _scopeMat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat!=='S').reduce((a,t)=>a+(t.mat||0),0);
   const _scopeSub=(p)=>(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0)+(p.scopeTasks||[]).filter(t=>t.cat==='S').reduce((a,t)=>a+(t.mat||0),0);
-  const _scopeFlat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((a,t)=>a+(t.hrs||0)*(t.rate||0),0);
+  const _scopeFlat=(p)=>(p.scopeTasks||[]).filter(t=>isFlatCat(t.cat)).reduce((a,t)=>a+flatQty(t)*(t.rate||0),0);
   const _actualMat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
   const _actualSub=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
-  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0)*(te.rate||0),0);
+  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+flatQty(te)*(te.rate||0),0);
   const allMat=actP.reduce((a,p)=>a+(p.isTM?_actualMat(p):_scopeMat(p)),0);
   const allSub=actP.reduce((a,p)=>a+(p.isTM?_actualSub(p):_scopeSub(p)),0);
   const allFlat=actP.reduce((a,p)=>a+(p.isTM?_actualFlat(p):_scopeFlat(p)),0);
@@ -1878,10 +1893,9 @@ function exportClientDoc(){
       const labor=taskLabor(t);
       const ms=(t.mat||0)+(t.sub||0);
       const isMS=isMatCat(t.cat);
-      const isFlat=isFlatCat(t.cat);
       rows+=`<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${CAT_LABELS[t.cat]}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${isMS?'\u2014':(t.hrs||0)+(isFlat?'×':'h')}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${isMS?'\u2014':(t.hrs||0)+unitSuffix(t.cat)}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">${fd(taskTotal(t))}</td></tr>`;
     });
     const pTotal=tasks.reduce((a,t)=>a+taskTotal(t),0);
@@ -2200,7 +2214,7 @@ function exportClientDoc(){
     const compL=docReadyTEs.filter(te=>isLaborCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);
     const compMat=docReadyTEs.filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
     const compSub=docReadyTEs.filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
-    const compFlat=docReadyTEs.filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0)*(te.rate||0),0);
+    const compFlat=docReadyTEs.filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+flatQty(te)*(te.rate||0),0);
     const compSubtotal=compL+compMat+compSub+compFlat;
     // Shop fee base excludes Flat Rate (flat-rate services are all-inclusive)
     const compShop=(compL+compMat)*0.03;
@@ -3444,6 +3458,10 @@ function onTeCatChange(){
     rateWrap.style.display='';
     if(label)label.textContent='Qty';
     if(hrsInp)hrsInp.step='1';
+  } else if(cat==='L'){
+    rateWrap.style.display='';
+    if(label)label.textContent='Days';
+    if(hrsInp)hrsInp.step='0.5';
   } else if(cat==='M'||cat==='S'||cat==='P'){
     rateWrap.style.display='none';
     if(label)label.textContent='Amount';
@@ -3459,7 +3477,7 @@ function addTimeEntry(){
   if(!p||!h)return;
   const cat=document.getElementById('teCat').value;
   const entry={id:nextTEId++,date:document.getElementById('teDate').value,proj:p,cat,hrs:h,desc:document.getElementById('teDesc').value.trim(),includeInClientDoc:true,graduated:false};
-  if(cat==='F'){
+  if(cat==='F'||cat==='L'){
     const r=parseFloat(document.getElementById('teRate').value)||0;
     entry.rate=r;
   }

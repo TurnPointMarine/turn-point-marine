@@ -2,8 +2,8 @@
   "_meta": {
     "vessel": "Madeline",
     "client": "Dagmar Francis",
-    "exportedAt": "2026-05-18T15:53:54.813Z",
-    "engineVersion": 7
+    "exportedAt": "2026-05-18T18:00:07.017Z",
+    "engineVersion": 8
   },
   "projects": [
     {
@@ -11,15 +11,32 @@
       "name": "Haul/Launch & Hull Pressure Wash",
       "status": "needs_auth",
       "include": true,
-      "notes": "",
+      "notes": "Next available haul 6/23 @ 10:00\na suitable launch 7/9 @ 2:30",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
         {
           "id": 100,
-          "cat": "T",
-          "desc": "",
+          "cat": "F",
+          "desc": "Haul/Launch & Hull Pressure Wash",
           "hrs": 0,
+          "mat": 0,
+          "sub": 0,
+          "rate": 1092.53
+        },
+        {
+          "id": 108,
+          "cat": "T",
+          "desc": "-Remove Intellian dome at the dock.",
+          "hrs": 0.75,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 109,
+          "cat": "T",
+          "desc": "-Re-install after launch at the dock.",
+          "hrs": 0.75,
           "mat": 0,
           "sub": 0
         }
@@ -39,11 +56,12 @@
       "scopeTasks": [
         {
           "id": 101,
-          "cat": "T",
+          "cat": "F",
           "desc": "",
           "hrs": 0,
           "mat": 0,
-          "sub": 0
+          "sub": 0,
+          "rate": 112.58
         }
       ],
       "tasks": [],
@@ -61,10 +79,26 @@
       "scopeTasks": [
         {
           "id": 102,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
+          "cat": "B",
+          "desc": "Buffing:\nBlack gelcoat on the hull \n\t- 45hrs\nRed gelcoat on the hull \n\t-3hrs\nWhite gelcoat on the hull below the rub rail \n\t- 30hrs",
+          "hrs": 78,
           "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 110,
+          "cat": "B",
+          "desc": "Wax\nBlack gelcoat on the hull and transom \n\t- 7hrs\n\nWhite gelcoat on the hull below the rub rail \n\t- 4hrs\n\nWhite gelcoat on the transom \n- 1.5hrs",
+          "hrs": 12.5,
+          "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 111,
+          "cat": "M",
+          "desc": "Materials",
+          "hrs": 0,
+          "mat": 250,
           "sub": 0
         }
       ],
@@ -83,10 +117,34 @@
       "scopeTasks": [
         {
           "id": 103,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
+          "cat": "D",
+          "desc": "Prep hull, clean hull with acetone soaked rag. Apply bottom paint.",
+          "hrs": 11.25,
           "mat": 0,
+          "sub": 0
+        },
+        {
+          "id": 112,
+          "cat": "M",
+          "desc": "\t• Acetone, rags & tape \t",
+          "hrs": 0,
+          "mat": 42.49,
+          "sub": 0
+        },
+        {
+          "id": 113,
+          "cat": "M",
+          "desc": "\t• Rags, roller covers, chip brushes: ",
+          "hrs": 0,
+          "mat": 53.72,
+          "sub": 0
+        },
+        {
+          "id": 114,
+          "cat": "M",
+          "desc": "\t• Biocop TF Antifouling - Black (Gal)\n\n*Likely 2 gallons of paint needed.",
+          "hrs": 0,
+          "mat": 461.76,
           "sub": 0
         }
       ],
@@ -104,13 +162,13 @@
       "isTM": false,
       "scopeTasks": [
         {
-          "id": 104,
+          "id": 115,
           "cat": "F",
-          "desc": "Pull 4x T6 props (2x 16” 3blade & 2x 15” 4blade), sandblast, \napply Prop Speed & re-install ",
+          "desc": "Pull 4x T6 props \n  (2x 16” 3blade & 2x 15” 4blade), \nsandblast, \n\tapply Prop Speed & re-install \n",
           "hrs": 0,
           "mat": 0,
           "sub": 0,
-          "co": true
+          "rate": 2175
         }
       ],
       "tasks": [],
@@ -129,7 +187,7 @@
         {
           "id": 105,
           "cat": "S",
-          "desc": "Red Decal over red gel coat stripe on hull. ",
+          "desc": "Red Decal over red gel coat stripe on hull. \n\n      *Requires 50% deposit",
           "hrs": 0,
           "mat": 0,
           "sub": 957
@@ -188,7 +246,7 @@
     }
   ],
   "nextProjId": 7,
-  "nextTaskId": 108,
+  "nextTaskId": 116,
   "nextCOId": 100,
   "nextTEId": 1000,
   "nextBillingId": 506,
@@ -215,7 +273,7 @@
       "ready_for_billing": true,
       "billed": true,
       "act_14": true,
-      "est_1": false,
+      "est_1": true,
       "est_3": true,
       "est_18": true,
       "est_19": true,
@@ -226,14 +284,14 @@
       "act_15": false,
       "act_6": false,
       "est_6": true,
-      "est_5": true
+      "est_5": true,
+      "est_2": true,
+      "act_3": false,
+      "est_4": true,
+      "act_5": false
     },
     "openProjs": [
-      1,
-      2,
-      3,
-      4,
-      5
+      6
     ],
     "closedReadyProjs": [
       15,

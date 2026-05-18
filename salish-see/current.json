@@ -2,8 +2,8 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-05-18T15:29:07.600Z",
-    "engineVersion": 7
+    "exportedAt": "2026-05-18T17:16:32.665Z",
+    "engineVersion": 8
   },
   "projects": [
     {
@@ -160,7 +160,7 @@
     {
       "id": 8,
       "name": "Porthole Windows — Stainless Polish",
-      "status": "needs_auth",
+      "status": "holding",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -190,7 +190,7 @@
     {
       "id": 9,
       "name": "Key for Discharge Black Water Pump",
-      "status": "needs_auth",
+      "status": "holding",
       "include": true,
       "notes": "Discharge pump key doesn't work — investigate and repair/replace as needed.",
       "estimateTotal": null,
@@ -251,7 +251,7 @@
     {
       "id": 13,
       "name": "Windlass — Change Gear Oil",
-      "status": "holding",
+      "status": "needs_auth",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -307,17 +307,19 @@
           "id": 112,
           "cat": "F",
           "desc": "February 2026 Winter Watch (flat rate)",
-          "hrs": 0,
-          "mat": 325,
-          "sub": 0
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0,
+          "rate": 325
         },
         {
           "id": 113,
           "cat": "F",
           "desc": "March 2026 Winter Watch (flat rate)",
-          "hrs": 0,
-          "mat": 325,
-          "sub": 0
+          "hrs": 1,
+          "mat": 0,
+          "sub": 0,
+          "rate": 325
         }
       ],
       "tasks": [],
@@ -342,7 +344,7 @@
       "name": "Sand Teak Decks",
       "status": "holding",
       "include": true,
-      "notes": "Or Sanding the Swim Step Teak Deck ",
+      "notes": "Sand the Swim Step Teak Deck ",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
@@ -620,24 +622,26 @@
       "date": "2026-05-14",
       "proj": "Winter Watch — Feb + March 2026",
       "cat": "F",
-      "hrs": 325,
+      "hrs": 1,
       "desc": "February 2026 Winter Watch (flat rate)",
       "posted": true,
       "billingEventId": 504,
       "includeInClientDoc": true,
-      "graduated": true
+      "graduated": true,
+      "rate": 325
     },
     {
       "id": 1011,
       "date": "2026-05-14",
       "proj": "Winter Watch — Feb + March 2026",
       "cat": "F",
-      "hrs": 325,
+      "hrs": 1,
       "desc": "March 2026 Winter Watch (flat rate)",
       "posted": true,
       "billingEventId": 504,
       "includeInClientDoc": true,
-      "graduated": true
+      "graduated": true,
+      "rate": 325
     },
     {
       "id": 1012,
@@ -770,11 +774,15 @@
       "est_15": false,
       "est_22": true,
       "act_1": false,
-      "act_15": false
+      "act_15": false,
+      "act_6": false,
+      "est_6": true,
+      "est_5": true
     },
     "openProjs": [
       61,
-      1
+      1,
+      11
     ],
     "closedReadyProjs": [
       15,
