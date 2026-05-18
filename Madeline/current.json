@@ -1,26 +1,26 @@
 {
   "_meta": {
-    "vessel": "Salish See",
-    "client": "John Agnew",
-    "exportedAt": "2026-05-18T15:29:07.600Z",
+    "vessel": "Madeline",
+    "client": "Dagmar Francis",
+    "exportedAt": "2026-05-18T15:53:54.813Z",
     "engineVersion": 7
   },
   "projects": [
     {
       "id": 1,
-      "name": "Bimini Canvas Replacement",
-      "status": "complete",
+      "name": "Haul/Launch & Hull Pressure Wash",
+      "status": "needs_auth",
       "include": true,
-      "notes": "Bimini Canvas Replace\n(Authorization in text 11/18/2025)",
-      "estimateTotal": 5500,
+      "notes": "",
+      "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
         {
           "id": 100,
-          "cat": "S",
-          "desc": "Bimini Canvas Replace",
+          "cat": "T",
+          "desc": "",
           "hrs": 0,
-          "mat": 5500,
+          "mat": 0,
           "sub": 0
         }
       ],
@@ -30,18 +30,18 @@
     },
     {
       "id": 2,
-      "name": "Tender Transit to and From Shop for Services",
+      "name": "Lay Days in Shop",
       "status": "needs_auth",
       "include": true,
-      "notes": "Deliver tender to shop for services; deliver from shop to Salish See, secure to bunks, install canvas cover.",
+      "notes": "",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
         {
           "id": 101,
-          "cat": "D",
-          "desc": "Tender transit: deliver to shop and return; secure to bunks; install canvas cover",
-          "hrs": 4,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
           "mat": 0,
           "sub": 0
         }
@@ -52,7 +52,7 @@
     },
     {
       "id": 3,
-      "name": "Yamaha 25 Service",
+      "name": "Buff/Wax",
       "status": "needs_auth",
       "include": true,
       "notes": "",
@@ -62,25 +62,9 @@
         {
           "id": 102,
           "cat": "T",
-          "desc": "Change lower unit oil; replace spark plugs; change engine oil & filter; replace fuel filters; dispose of old fuel and replace with non-ethanol gasoline (Stabil-treated) to prevent carb gumming",
-          "hrs": 5,
+          "desc": "",
+          "hrs": 0,
           "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 103,
-          "cat": "M",
-          "desc": "Engine oil, oil filter, fuel filters, spark plugs",
-          "hrs": 0,
-          "mat": 85,
-          "sub": 0
-        },
-        {
-          "id": 104,
-          "cat": "M",
-          "desc": "Non-ethanol fuel & Stabil",
-          "hrs": 0,
-          "mat": 50,
           "sub": 0
         }
       ],
@@ -90,402 +74,65 @@
     },
     {
       "id": 4,
-      "name": "Throttle Sticky at Low RPM — Repair",
+      "name": "Antifouling Hull Paint",
       "status": "needs_auth",
       "include": true,
-      "notes": "My guess is shift and throttle cables need to be replaced. SeaStar TFXtreme cable ~$70.",
+      "notes": "",
       "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 103,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
       "tasks": [],
       "cos": [],
       "billingEvents": []
     },
     {
       "id": 5,
-      "name": "Fuel Filter Housing Replace",
+      "name": "Propeller Prop Speed Coating",
       "status": "needs_auth",
       "include": true,
-      "notes": "Fuel/Water Separator housing needs replacement. Recommending 120R-RAC Series w/Filter (~$142.50) — glass bowl to monitor for water, water drain valve helpful on this model. Racor R12 Filter Element spare (~$21).",
+      "notes": "",
       "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 104,
+          "cat": "F",
+          "desc": "Pull 4x T6 props (2x 16” 3blade & 2x 15” 4blade), sandblast, \napply Prop Speed & re-install ",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0,
+          "co": true
+        }
+      ],
       "tasks": [],
       "cos": [],
       "billingEvents": []
     },
     {
       "id": 6,
-      "name": "Kabola Service",
+      "name": "Red Gel Coat Vinyl Decal",
       "status": "needs_auth",
       "include": true,
-      "notes": "Pull burner head, clean out burn tube. Replace fuel nozzle. Replace fuel filter. ~3 hours likely if no hydronic pressure leaks. Last check, system was maintaining pressure fine. Materials ~$95.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 7,
-      "name": "Fire Suppression System Certifications",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "",
+      "notes": "*Requires a 50% Deposit in order to schedule",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
         {
           "id": 105,
-          "cat": "T",
-          "desc": "Pull extinguishers from vessel and deliver for certification",
-          "hrs": 1.5,
-          "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 106,
           "cat": "S",
-          "desc": "Fire suppression certification subcontractor",
-          "hrs": 0,
-          "mat": 325,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 8,
-      "name": "Porthole Windows — Stainless Polish",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 107,
-          "cat": "D",
-          "desc": "Polish stainless porthole windows",
-          "hrs": 6,
-          "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 108,
-          "cat": "M",
-          "desc": "Polish materials",
-          "hrs": 0,
-          "mat": 15,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 9,
-      "name": "Key for Discharge Black Water Pump",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "Discharge pump key doesn't work — investigate and repair/replace as needed.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 10,
-      "name": "Port Transmission Shift Cable - Replace",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "Replace cooked port main shift cable (melted housing jacket and conduit, above starboard exhaust elbow). Pull starboard main engine shift cable off transmission. Slide heat protective sleeve over both cables routed near exhaust elbow, secure to shift cable. Install both shift cables on respective engines. Use higher quality SeaStar shift cable CCX63323 (MORSE 301947-003 23FT 06092 S translates to this) ~$60.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 11,
-      "name": "Varnish — Repairs and 2 Maintenance Coats",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "Estimate $4,620 per 4/23 text. Subcontracted.",
-      "estimateTotal": 4620,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 109,
-          "cat": "S",
-          "desc": "Varnish — repairs and 2 maintenance coats",
-          "hrs": 0,
-          "mat": 4620,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 12,
-      "name": "Repair Blackwater Tank \"Empty\" Indicator Light",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "Need to pull up wiring diagram and see how this was cabled up for repair.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 13,
-      "name": "Windlass — Change Gear Oil",
-      "status": "holding",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 110,
-          "cat": "T",
-          "desc": "Change gear oil",
+          "desc": "Red Decal over red gel coat stripe on hull. ",
           "hrs": 0,
           "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": [],
-      "showInDoc": true
-    },
-    {
-      "id": 14,
-      "name": "Anchor Chain — Check and Paint",
-      "status": "holding",
-      "include": true,
-      "notes": "Confirm with client whether chain markings need repainting.",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 111,
-          "cat": "T",
-          "desc": "Check anchor chain; repaint markings if authorized",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": [],
-      "showInDoc": true
-    },
-    {
-      "id": 15,
-      "name": "Winter Watch — Feb + March 2026",
-      "status": "complete",
-      "include": true,
-      "notes": "Monthly winter watch service, flat rate per month.",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 112,
-          "cat": "F",
-          "desc": "February 2026 Winter Watch (flat rate)",
-          "hrs": 0,
-          "mat": 325,
-          "sub": 0
-        },
-        {
-          "id": 113,
-          "cat": "F",
-          "desc": "March 2026 Winter Watch (flat rate)",
-          "hrs": 0,
-          "mat": 325,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 16,
-      "name": "Winter Wash — Jan/Feb/Mar/Apr",
-      "status": "complete",
-      "include": true,
-      "notes": "Winter washes scheduled monthly (Jan, Feb, Mar, Apr). Previously flat rate per boat; now billed at actual time. Hours logged as time entries as work is performed.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 17,
-      "name": "Sand Teak Decks",
-      "status": "holding",
-      "include": true,
-      "notes": "Or Sanding the Swim Step Teak Deck ",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 114,
-          "cat": "D",
-          "desc": "Sand swim step",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": [],
-      "showInDoc": true
-    },
-    {
-      "id": 18,
-      "name": "Preseason Exterior Deep Clean",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "She is presently presentable and usably clean. A Preseason clean would do her well. ",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 115,
-          "cat": "D",
-          "desc": "Pressure wash green from vessel including instruments above the Bimini (underside of the radar included etc)",
-          "hrs": 8,
-          "mat": 20,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 19,
-      "name": "Engine Room Bilges Empty & Clean",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 116,
-          "cat": "D",
-          "desc": "See photos",
-          "hrs": 5.5,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 20,
-      "name": "Freshwater Tank Level Sending Units Fore and Aft - Repair Functionality",
-      "status": "complete",
-      "include": true,
-      "notes": "Need to import time entries here. ",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [
-        {
-          "id": 117,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 21,
-      "name": "Detail Porthole Stainless Frames & Windows",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "Clean, polish, remove watermarks from the stainless and glass, apply Aquapel, and apply SuperLube to the seals. \n6 windows\nHave photos in an email on 3/20 and can easily forward them to you...",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 118,
-          "cat": "D",
-          "desc": "Clean, polish, remove watermarks from the stainless and glass, apply Aquapel, and apply SuperLube to the seals. \n6 windows & frames",
-          "hrs": 5,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 22,
-      "name": "Wax",
-      "status": "needs_auth",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 119,
-          "cat": "B",
-          "desc": "Inboard sides of the flybridge\nSides of the house\nCockpit \nInside of the rails around the boat. ",
-          "hrs": 7,
-          "mat": 45,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 23,
-      "name": "Davit Rotational Control Gearbox",
-      "status": "in_progress",
-      "include": true,
-      "notes": "Progress made on dealing with the davit rotational control gearbox. \n",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [
-        {
-          "id": 120,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
+          "sub": 957
         }
       ],
       "tasks": [],
@@ -493,201 +140,7 @@
       "billingEvents": []
     }
   ],
-  "timeEntries": [
-    {
-      "id": 1000,
-      "date": "2026-01-12",
-      "proj": "Bimini Canvas Replacement",
-      "cat": "S",
-      "hrs": 1000,
-      "desc": "Deposit",
-      "posted": true,
-      "billingEventId": 503,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1001,
-      "date": "2026-04-23",
-      "proj": "Bimini Canvas Replacement",
-      "cat": "S",
-      "hrs": 4500,
-      "desc": "Bimini Canvas Replacement",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1002,
-      "date": "2026-02-04",
-      "proj": "Winter Wash — Jan/Feb/Mar/Apr",
-      "cat": "D",
-      "hrs": 2.5,
-      "desc": "Winter Wash",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true,
-      "co": false
-    },
-    {
-      "id": 1003,
-      "date": "2026-03-18",
-      "proj": "Winter Wash — Jan/Feb/Mar/Apr",
-      "cat": "D",
-      "hrs": 2.75,
-      "desc": "Winter Wash\nPumped the standing water from the engine room sump, wiped it dry, and disposed the bilge water.",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1004,
-      "date": "2026-03-18",
-      "proj": "Freshwater Tank Level Sending Units Fore and Aft - Repair Functionality",
-      "cat": "T",
-      "hrs": 5.5,
-      "desc": "Removed tank sending units ordered replacements. When the arrived, installed them and tested them for reading properly from empty to full. \n\nAcquired a PVC pipe and end cap, bonded the cap using PVC cement, and used the assembly to test the new freshwater sending units for the forward and aft tanks. Fabricated a 5 ft triplex cable and terminated it at a terminal strip, then used it to connect the new sending units through the existing wiring, providing sufficient length to submerge the units in the PVC tube for level testing. After confirming accurate readings, removed residual gasket material from the tanks and installed the new sending units. Topped off both freshwater tanks and performed a final test. ",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1005,
-      "date": "2026-03-04",
-      "proj": "Freshwater Tank Level Sending Units Fore and Aft - Repair Functionality",
-      "cat": "T",
-      "hrs": 0,
-      "desc": "",
-      "posted": false,
-      "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false
-    },
-    {
-      "id": 1006,
-      "date": "2026-01-02",
-      "proj": "Freshwater Tank Level Sending Units Fore and Aft - Repair Functionality",
-      "cat": "M",
-      "hrs": 375,
-      "desc": "Tank Level Sending units",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1007,
-      "date": "2026-05-01",
-      "proj": "Winter Wash — Jan/Feb/Mar/Apr",
-      "cat": "D",
-      "hrs": 2.75,
-      "desc": "Winter Wash",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1008,
-      "date": "2026-05-01",
-      "proj": "Wax",
-      "cat": "B",
-      "hrs": 4.25,
-      "desc": "High UV Exposure Areas\nWiped the condensation from the gelcoat and applied a coat of marine wax to the flybridge brow, port upper deck eyebrow, and the top and forward surfaces of the foredeck hood, focusing on high-UV areas. \n",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1009,
-      "date": "2026-04-22",
-      "proj": "Wax",
-      "cat": "B",
-      "hrs": 1.5,
-      "desc": "High UV Exposure Areas\nApplied a coat of marine wax to the stanchions and the port side of the foredeck hood. Washed dirt and salt off the flybridge brow and top of the hood to prepare for waxing.",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1010,
-      "date": "2026-05-14",
-      "proj": "Winter Watch — Feb + March 2026",
-      "cat": "F",
-      "hrs": 325,
-      "desc": "February 2026 Winter Watch (flat rate)",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1011,
-      "date": "2026-05-14",
-      "proj": "Winter Watch — Feb + March 2026",
-      "cat": "F",
-      "hrs": 325,
-      "desc": "March 2026 Winter Watch (flat rate)",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1012,
-      "date": "2026-04-06",
-      "proj": "Davit Rotational Control Gearbox",
-      "cat": "T",
-      "hrs": 2.25,
-      "desc": "Accessed Drain and emptied the oil and water from the gear box under the Davit while keeping track of the amount expelled. \nGently, exercised the davit to drain additional oil from the gearbox that was likely captured in the worm drive, removed a set pin to rotate the gearbox and obtain specifications, documented the gearbox and hydraulic motor orientation with photos for reference, then located and recorded gearbox specifications on the starboard face of the gearbox. Reinstalled the drained plug to prep for new oil. ",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1013,
-      "date": "2026-04-08",
-      "proj": "Davit Rotational Control Gearbox",
-      "cat": "T",
-      "hrs": 3.25,
-      "desc": "Topped off the davit gearbox with new oil, exercised the davit, drained the gearbox again to remove any internal corrosion while recording oil condition, refilled the gearbox, exercised the davit once more, and allowed it to sit overnight.  \nProperly disposed the old oil.  ",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1014,
-      "date": "2026-05-14",
-      "proj": "Davit Rotational Control Gearbox",
-      "cat": "M",
-      "hrs": 74,
-      "desc": "1 Gallon of manufacturer recommended gear oil for flushing the gear box. ",
-      "posted": true,
-      "billingEventId": 504,
-      "includeInClientDoc": true,
-      "graduated": true
-    },
-    {
-      "id": 1015,
-      "date": "2026-05-14",
-      "proj": "Davit Rotational Control Gearbox",
-      "cat": "M",
-      "hrs": 0,
-      "desc": "",
-      "posted": false,
-      "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false
-    }
-  ],
+  "timeEntries": [],
   "billingEvents": [
     {
       "id": 503,
@@ -734,10 +187,10 @@
       "history": []
     }
   ],
-  "nextProjId": 24,
-  "nextTaskId": 121,
+  "nextProjId": 7,
+  "nextTaskId": 108,
   "nextCOId": 100,
-  "nextTEId": 1016,
+  "nextTEId": 1000,
   "nextBillingId": 506,
   "settings": {
     "company": "Turn Point Marine",
@@ -770,11 +223,17 @@
       "est_15": false,
       "est_22": true,
       "act_1": false,
-      "act_15": false
+      "act_15": false,
+      "act_6": false,
+      "est_6": true,
+      "est_5": true
     },
     "openProjs": [
-      61,
-      1
+      1,
+      2,
+      3,
+      4,
+      5
     ],
     "closedReadyProjs": [
       15,

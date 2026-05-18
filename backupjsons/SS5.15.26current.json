@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-05-18T15:29:07.600Z",
+    "exportedAt": "2026-05-15T13:00:16.161Z",
     "engineVersion": 7
   },
   "projects": [
@@ -202,7 +202,7 @@
     },
     {
       "id": 10,
-      "name": "Port Transmission Shift Cable - Replace",
+      "name": "Replace Port Transmission Shift Cable",
       "status": "needs_auth",
       "include": true,
       "notes": "Replace cooked port main shift cable (melted housing jacket and conduit, above starboard exhaust elbow). Pull starboard main engine shift cable off transmission. Slide heat protective sleeve over both cables routed near exhaust elbow, secure to shift cable. Install both shift cables on respective engines. Use higher quality SeaStar shift cable CCX63323 (MORSE 301947-003 23FT 06092 S translates to this) ~$60.",
@@ -710,27 +710,9 @@
     {
       "id": 504,
       "name": "Billing Event 2026-05-14",
-      "isCurrent": false,
-      "locked": true,
-      "createdAt": "2026-05-14T18:52:59.127Z",
-      "history": [
-        {
-          "field": "invoiceNum",
-          "from": "",
-          "to": "Billing Event 2026-05-14",
-          "at": "2026-05-15T14:04:40.459Z"
-        }
-      ],
-      "invoiceNum": "Billing Event 2026-05-14",
-      "invoiceDate": "2026-05-15",
-      "lockedAt": "2026-05-15T14:04:40.459Z"
-    },
-    {
-      "id": 505,
-      "name": "Billing Event 2026-05-15",
       "isCurrent": true,
       "locked": false,
-      "createdAt": "2026-05-15T14:04:40.459Z",
+      "createdAt": "2026-05-14T18:52:59.127Z",
       "history": []
     }
   ],
@@ -738,7 +720,7 @@
   "nextTaskId": 121,
   "nextCOId": 100,
   "nextTEId": 1016,
-  "nextBillingId": 506,
+  "nextBillingId": 505,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
@@ -773,15 +755,15 @@
       "act_15": false
     },
     "openProjs": [
-      61,
-      1
+      61
     ],
     "closedReadyProjs": [
       15,
       16,
       20,
       22,
-      23
+      23,
+      1
     ],
     "closedBilledProjs": []
   }
