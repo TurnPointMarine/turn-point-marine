@@ -792,7 +792,7 @@ function renderSummary(){
     // Shop fee base excludes subcontractors — subs typically arrange their own overhead/markup,
     // so charging shop fee on top would be double-dipping.
     const gShop=(gL+gMat)*0.03;
-    const gTax=settings.taxExempt?0:(gSubtotal+gShop)*0.091;
+    const _gTaxBase=gSubtotal+gShop;const gTaxState=settings.taxExempt?0:_gTaxBase*0.065;const gTaxCity=settings.taxExempt?0:_gTaxBase*0.026;const gTax=gTaxState+gTaxCity;
     const gTotal=gSubtotal+gShop+gTax;
     // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
     const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
@@ -809,7 +809,7 @@ function renderSummary(){
       +row('Subcontractors',gSub,false)
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
       +row('Shop Fee (3%)',gShop,false)
-      +(settings.taxExempt?'':row('Tax (9.1%)',gTax,false))
+      +(settings.taxExempt?'':row('WA State Tax (6.5%)',gTaxState,false)+row('Bellingham City Tax (2.6%)',gTaxCity,false))
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px 0;background:#1D9E75"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>'
       +(totalDeductions>0
         ?(totalDeposits>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 14px;margin:0 -20px;background:#e8f5ee;border-top:1px solid #c3e0cf"><span style="font-size:12px;color:#155a3e">Deposits Paid</span><span style="font-size:12px;font-weight:600;color:#155a3e">−'+fmt(totalDeposits)+'</span></div>':'')
@@ -879,8 +879,7 @@ function renderReadyForBillingBody(body){
       +'<span style="font-size:10px;font-weight:500;color:#666;background:#fff;border:1px solid #d1d5db;border-radius:3px;padding:1px 5px;flex-shrink:0">'+statusLabel+'</span>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-      +'<span style="font-size:10px;color:#666">'+projTEs.length+' entr'+(projTEs.length!==1?'ies':'y')+'</span>'
-      +'<span style="font-size:13px;font-weight:700;color:'+hFg+'">'+fmt(projTotal)+'</span>'
+      +'<span style="font-size:10px;font-weight:700;color:#c026d3;background:#fdf4ff;border:1px solid #f0abfc;border-radius:4px;padding:2px 6px;white-space:nowrap">▼ '+projTEs.length+' · '+fmt(projTotal)+'</span>'
       +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
       +'</div>';
     phdr.onclick=()=>{
@@ -1975,10 +1974,10 @@ function exportClientDoc(){
     </div>`;
   }
 
-  function sectionHdr(color,label,count,total,note,breakdown){
+  function sectionHdr(color,label,count,total,note,breakdown,textColor,bodyId){
+    textColor=textColor||'#fff';
     let totalHtml;
     if(breakdown){
-      // breakdown = {est, tm, actual} — mirrors engine section header
       const parts=[];
       if(breakdown.est>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.est)+' est</span>');
       if(breakdown.tm>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.tm)+' T&amp;M</span>');
@@ -1987,13 +1986,13 @@ function exportClientDoc(){
     } else {
       totalHtml='<div style="font-size:13pt;font-weight:700">'+total+'</div>';
     }
-    return `<div style="background:${color};color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif">
-      <div>
-        <div style="font-size:12pt;font-weight:700">${label}</div>
-        <div style="font-size:8.5pt;opacity:0.8;margin-top:2px">${count} project${count!==1?'s':''} &mdash; ${note}</div>
-      </div>
-      ${totalHtml}
-    </div>`;
+    const chevHtml=bodyId?'<span class="sechev" style="font-size:12px;margin-left:4px;transition:transform 0.2s;transform:rotate(90deg);display:inline-block">&#9654;</span>':'';
+    const onclick=bodyId?' onclick="var d=document.getElementById(\''+bodyId+'\');var c=this.querySelector(\'.sechev\');var willOpen=d.style.display===\'none\';d.style.display=willOpen?\'block\':\'none\';c.style.transform=willOpen?\'rotate(90deg)\':\'rotate(0deg)\'"':'';
+    return '<div'+onclick+' style="background:'+color+';color:'+textColor+';padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;'+(bodyId?'cursor:pointer':'')+'">'
+      +'<div><div style="font-size:12pt;font-weight:700">'+label+'</div>'
+      +'<div style="font-size:8.5pt;opacity:0.8;margin-top:2px">'+count+' project'+(count!==1?'s':'')+' &mdash; '+note+'</div></div>'
+      +'<div style="display:flex;align-items:center;gap:12px">'+totalHtml+chevHtml+'</div>'
+      +'</div>';
   }
 
   // ── BUILD HTML ────────────────────────────────────────────────────────────
@@ -2078,7 +2077,8 @@ function exportClientDoc(){
       return a+taskT+teT;
     },0);
     const authTotal=authP.reduce((a,p)=>a+projDisplayTotal(p),0)+coTotal;
-    html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed');
+    html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed',null,null,'secbody_auth');
+    html+='<div id="secbody_auth">';
     html+=`<div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">${s.authText}</div>`;
     authP.forEach(proj=>{html+=projBlock(proj,'#1D9E75',true,false);});
     if(coProjs.length>0){
@@ -2105,6 +2105,7 @@ function exportClientDoc(){
     }
 
     // ── SIGNATURE & SUBMIT ──────────────────────────────────────────────────
+    html+='</div>';
     html+=`<div style="border:2px solid #1D9E75;border-radius:10px;padding:20px 24px;margin-top:16px;font-family:Arial,sans-serif">
       <div style="font-size:12pt;font-weight:700;color:#155a3e;margin-bottom:4px">Authorization &amp; Signature</div>
       <div style="font-size:9pt;color:#555;margin-bottom:14px;line-height:1.6">By signing below you authorize Turn Point Marine to proceed with all checked projects. Unchecked projects will not proceed. This constitutes an electronic signature under the E-SIGN Act.</div>
@@ -2142,8 +2143,10 @@ function exportClientDoc(){
       tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
       actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
-    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk);
+    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog');
+    html+='<div id="secbody_inprog">';
     inPP.forEach(proj=>{html+=projBlock(proj,'#6b7280',false,true);});
+    html+='</div>';
   }
 
   // ── COMPLETE ────────────────────────────────────────────────────────────
@@ -2158,8 +2161,10 @@ function exportClientDoc(){
       tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
       actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
-    html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk);
+    html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete');
+    html+='<div id="secbody_complete">';
     completeP.forEach(proj=>{html+=projBlock(proj,'#3d5a80',false,true);});
+    html+='</div>';
   }
 
   // ── BILLING EVENT ───────────────────────────────────────────────────────
@@ -2174,13 +2179,15 @@ function exportClientDoc(){
       tm:0,
       actual:ct
     };
-    html+=sectionHdr('#4a5e5a','BILLING EVENT',compP.length,fd(ct),'Work complete, invoice pending',compP_brk);
+    html+=sectionHdr('#e9cde9','BILLING EVENT',compP.length,fd(ct),'Work complete, invoice pending',compP_brk,'#7c3a72','secbody_billing');
     // Project block accent reflects each project's status color (per user instruction)
+    html+='<div id="secbody_billing">';
     compP.forEach(proj=>{
       const pSec=SECTIONS.find(s=>s.key===proj.status);
       const accent=pSec?pSec.color:'#4a5e5a';
       html+=projBlock(proj,accent,false,false);
     });
+    html+='</div>';
 
     // ── READY-FOR-BILLING SUMMARY ────────────────────────────────────────
     // Tells client: "If you sent an invoice for Ready work right now, here's the math."
@@ -2193,10 +2200,10 @@ function exportClientDoc(){
     const compSubtotal=compL+compMat+compSub+compFlat;
     // Shop fee base excludes Flat Rate (flat-rate services are all-inclusive)
     const compShop=(compL+compMat)*0.03;
-    const compTax=settings.taxExempt?0:(compSubtotal+compShop)*0.091;
+    const _compTaxBase=compSubtotal+compShop;const compTaxState=settings.taxExempt?0:_compTaxBase*0.065;const compTaxCity=settings.taxExempt?0:_compTaxBase*0.026;const compTax=compTaxState+compTaxCity;
     const compTotal=compSubtotal+compShop+compTax;
-    html+=`<div style="margin-top:20px;border:2px solid #4a5e5a;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
-      <div style="background:#4a5e5a;color:#fff;padding:12px 18px;font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Billing Event Summary</div>
+    html+=`<div style="margin-top:20px;border:2px solid #b792b2;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="background:#e9cde9;color:#7c3a72;padding:12px 18px;font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Billing Event Summary</div>
       <table style="width:100%;border-collapse:collapse">
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compL)}</td></tr>
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compMat)}</td></tr>
@@ -2204,9 +2211,9 @@ function exportClientDoc(){
         ${compFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compFlat)}</td></tr>`:''}
         <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(compSubtotal)}</td></tr>
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compShop)}</td></tr>
-        ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTax)}</td></tr>`}
+        ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">WA State Tax (6.5%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTaxState)}</td></tr><tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Bellingham City Tax (2.6%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTaxCity)}</td></tr>`}
       </table>
-      <div style="background:#4a5e5a;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
+      <div style="background:#7c3a72;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:11pt;font-weight:700">Ready to Invoice</span>
         <span style="font-size:13pt;font-weight:700">${fd(compTotal)}</span>
       </div>
@@ -2222,20 +2229,28 @@ function exportClientDoc(){
   const _shop=(allL+allMat)*0.03;
   const _tax=settings.taxExempt?0:(_sub+_shop)*0.091;
   const _total=_sub+_shop+_tax;
-  html+=`<div style="margin-top:28px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
-    <div style="background:#f5f5f3;border-bottom:2px solid #e5e5e0;padding:12px 18px;font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#555">Estimate Summary &mdash; Work in Progress &amp; Complete</div>
-    <table style="width:100%;border-collapse:collapse">
-      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allL)}</td></tr>
-      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allMat)}</td></tr>
-      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
-      ${allFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allFlat)}</td></tr>`:''}
-      <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
-      <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
-      ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>`}
-    </table>
-    <div style="background:#1D9E75;color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center">
-      <span style="font-size:12pt;font-weight:700">Total</span>
-      <span style="font-size:14pt;font-weight:700">${fd(_total)}</span>
+  const _estTaxBase=_sub+_shop;
+  const _taxState=settings.taxExempt?0:_estTaxBase*0.065;
+  const _taxCity=settings.taxExempt?0:_estTaxBase*0.026;
+  html+=`<div style="margin-top:28px;border:1px solid #ececec;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
+    <div onclick="var d=document.getElementById('estsum_detail');var c=this.querySelector('.sechev');var willOpen=d.style.display==='none';d.style.display=willOpen?'block':'none';c.style.transform=willOpen?'rotate(90deg)':'rotate(0deg)'" style="background:#faf9fb;padding:11px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
+      <span style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#999">Estimate Summary &mdash; Work in Progress &amp; Complete</span>
+      <span style="display:flex;align-items:center;gap:12px"><span style="font-size:11pt;font-weight:700;color:#888">${fd(_total)}</span><span class="sechev" style="font-size:11px;color:#bbb;transition:transform 0.2s;transform:rotate(0deg);display:inline-block">&#9654;</span></span>
+    </div>
+    <div id="estsum_detail" style="display:none">
+      <table style="width:100%;border-collapse:collapse;border-top:1px solid #eee">
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allL)}</td></tr>
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allMat)}</td></tr>
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
+        ${allFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allFlat)}</td></tr>`:''}
+        <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
+        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
+        ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">WA State Tax (6.5%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_taxState)}</td></tr><tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Bellingham City Tax (2.6%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_taxCity)}</td></tr>`}
+      </table>
+      <div style="background:#eef0ee;color:#555;padding:13px 18px;display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:11pt;font-weight:700">Total</span>
+        <span style="font-size:12pt;font-weight:700">${fd(_total)}</span>
+      </div>
     </div>
   </div>`;
 

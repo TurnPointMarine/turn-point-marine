@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-05-29T14:56:12.371Z",
+    "exportedAt": "2026-05-29T15:04:17.242Z",
     "engineVersion": 7
   },
   "projects": [
@@ -788,8 +788,7 @@
     },
     "openProjs": [
       61,
-      2,
-      24
+      2
     ],
     "closedReadyProjs": [
       15,
