@@ -1805,6 +1805,28 @@ function exportClientDoc(){
   const dateStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const s=settings;
   const fd=n=>n===0?'\u2014':'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  // Collapsible line-entry detail panel for a client-doc project card. Lists posted, unbilled entries
+  // (category, description, date, hrs, amount) — the same read-out the engine shows the operator.
+  function clientEntryPanel(proj,panelId,startOpen){
+    const tes=projUnbilledPostedTEs(proj).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+    if(tes.length===0)return {rows:'',has:false};
+    let rows='<div id="'+panelId+'" style="display:'+(startOpen?'block':'none')+';background:#fff;border-top:1px solid #e5e7eb">';
+    tes.forEach((te,ei)=>{
+      const catLbl=CAT_LABELS[te.cat]||te.cat;
+      const catCls=CAT_CLS[te.cat]||'';
+      const date=te.date||'\u2014';
+      const hrsLabel=isMatCat(te.cat)?'':(te.hrs?Number(te.hrs).toFixed(2)+'h':'');
+      rows+='<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 16px;'+(ei<tes.length-1?'border-bottom:1px solid #f0f0ed;':'')+'font-family:Arial,sans-serif">'
+        +'<span class="'+catCls+'" style="font-size:8.5pt;font-weight:600;padding:2px 7px;border-radius:3px;flex-shrink:0;white-space:nowrap">'+catLbl+'</span>'
+        +'<span style="font-size:9pt;color:#444;flex:1;min-width:0;line-height:1.45;white-space:pre-wrap">'+nl2br(te.desc||'')+'</span>'
+        +'<span style="font-size:8.5pt;color:#999;flex-shrink:0;white-space:nowrap;min-width:78px;text-align:right">'+date+'</span>'
+        +(hrsLabel?'<span style="font-size:8.5pt;color:#999;flex-shrink:0;min-width:42px;text-align:right">'+hrsLabel+'</span>':'<span style="min-width:42px"></span>')
+        +'<span style="font-size:9pt;font-weight:700;color:#1a3a5c;flex-shrink:0;min-width:78px;text-align:right">'+fd(teAmount(te))+'</span>'
+        +'</div>';
+    });
+    rows+='</div>';
+    return {rows:rows,has:true};
+  }
   const authP=projects.filter(p=>p.include!==false&&p.status==='needs_auth');
   const coProjs=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding'&&((p.scopeTasks||[]).some(t=>t.co)||projCoTEs(p).length>0));
   const inPP=projects.filter(p=>p.include!==false&&p.status==='in_progress');
@@ -2148,20 +2170,27 @@ function exportClientDoc(){
     inPP.forEach(proj=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
       const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
-      const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
-      const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
-      const noteHtml=proj.notes?'<div style="font-size:8.5pt;color:#888;font-style:italic;padding:0 16px 10px;background:#f9fafb;font-family:Arial,sans-serif">'+nl2br(proj.notes)+'</div>':'';
+      const noteHtml=proj.notes?'<div style="font-size:8.5pt;color:#888;font-style:italic;padding:8px 16px;background:#f9fafb;border-top:1px solid #e5e7eb;font-family:Arial,sans-serif">'+nl2br(proj.notes)+'</div>':'';
+      const panelId='ip'+(uid++);
+      const ep=clientEntryPanel(proj,panelId,false);
+      const clickable=ep.has?'cursor:pointer':'';
+      const onclick=ep.has?' onclick="var d=document.getElementById(\''+panelId+'\');var c=this.querySelector(\'.ecaret\');var o=d.style.display===\'none\';d.style.display=o?\'block\':\'none\';if(c)c.style.transform=o?\'rotate(90deg)\':\'rotate(0deg)\'"':'';
+      const caret=ep.has?'<span class="ecaret" style="font-size:11px;color:#6b7280;display:inline-block;transition:transform 0.2s">&#9654;</span>':'';
       // Each project = its own rounded bordered card (grey, all In Progress), with a gap.
       html+='<div style="border:1px solid #6b7280;border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#f9fafb">'
+        +'<div'+onclick+' style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#f9fafb;'+clickable+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
           +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
           +'<span style="font-size:10.5pt;font-weight:700;color:#374151;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">In Progress</span>'
         +'</div>'
-        +'<span style="font-size:10px;font-weight:700;color:#374151;background:#f3f4f6;border:1px solid #6b7280;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
+        +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +'<span style="font-size:10pt;font-weight:700;color:#374151;white-space:nowrap;font-family:Arial,sans-serif">'+fd(projTotal)+'</span>'
+          +caret
+        +'</div>'
         +'</div>'
         +noteHtml
+        +ep.rows
         +'</div>';
     });
     html+='</div>';
@@ -2185,18 +2214,25 @@ function exportClientDoc(){
     completeP.forEach((proj,bi)=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
       const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
-      const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
-      const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
+      const panelId='cp'+(uid++);
+      const ep=clientEntryPanel(proj,panelId,false);
+      const clickable=ep.has?'cursor:pointer':'';
+      const onclick=ep.has?' onclick="var d=document.getElementById(\''+panelId+'\');var c=this.querySelector(\'.ecaret\');var o=d.style.display===\'none\';d.style.display=o?\'block\':\'none\';if(c)c.style.transform=o?\'rotate(90deg)\':\'rotate(0deg)\'"':'';
+      const caret=ep.has?'<span class="ecaret" style="font-size:11px;color:#3d5a80;display:inline-block;transition:transform 0.2s">&#9654;</span>':'';
       // Each project = its own rounded bordered card (navy, all Complete), with a gap.
       html+='<div style="border:1px solid #3d5a80;border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe">'
+        +'<div'+onclick+' style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe;'+clickable+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
           +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
           +'<span style="font-size:10.5pt;font-weight:700;color:#1a3a5c;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
         +'</div>'
-        +'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
+        +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +'<span style="font-size:10pt;font-weight:700;color:#1a3a5c;white-space:nowrap;font-family:Arial,sans-serif">'+fd(projTotal)+'</span>'
+          +caret
         +'</div>'
+        +'</div>'
+        +ep.rows
         +'</div>';
     });
     html+='</div>';
@@ -2224,18 +2260,43 @@ function exportClientDoc(){
       const cardBorder=pSec?pSec.color:'#c354d6';
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
       const statusLabel=({needs_auth:'Authorization Needed',in_progress:'In Progress',complete:'Complete',holding:'Holding',billed:'Billed'})[proj.status]||proj.status;
-      const projTEs=docReadyTEs.filter(te=>te.proj===proj.name);
+      const projTEs=docReadyTEs.filter(te=>te.proj===proj.name).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
       const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
+      const panelId='bp'+(uid++);
+      const hasEntries=projTEs.length>0;
+      let panelRows='';
+      if(hasEntries){
+        panelRows='<div id="'+panelId+'" style="display:none;background:#fff;border-top:1px solid #e5e7eb">';
+        projTEs.forEach((te,ei)=>{
+          const catLbl=CAT_LABELS[te.cat]||te.cat;const catCls=CAT_CLS[te.cat]||'';
+          const date=te.date||'\u2014';const hrsLabel=isMatCat(te.cat)?'':(te.hrs?Number(te.hrs).toFixed(2)+'h':'');
+          panelRows+='<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 16px;'+(ei<projTEs.length-1?'border-bottom:1px solid #f0f0ed;':'')+'font-family:Arial,sans-serif">'
+            +'<span class="'+catCls+'" style="font-size:8.5pt;font-weight:600;padding:2px 7px;border-radius:3px;flex-shrink:0;white-space:nowrap">'+catLbl+'</span>'
+            +'<span style="font-size:9pt;color:#444;flex:1;min-width:0;line-height:1.45;white-space:pre-wrap">'+nl2br(te.desc||'')+'</span>'
+            +'<span style="font-size:8.5pt;color:#999;flex-shrink:0;white-space:nowrap;min-width:78px;text-align:right">'+date+'</span>'
+            +(hrsLabel?'<span style="font-size:8.5pt;color:#999;flex-shrink:0;min-width:42px;text-align:right">'+hrsLabel+'</span>':'<span style="min-width:42px"></span>')
+            +'<span style="font-size:9pt;font-weight:700;color:#b232c2;flex-shrink:0;min-width:78px;text-align:right">'+fd(teAmount(te))+'</span>'
+            +'</div>';
+        });
+        panelRows+='</div>';
+      }
+      const clickable=hasEntries?'cursor:pointer':'';
+      const onclick=hasEntries?' onclick="var d=document.getElementById(\''+panelId+'\');var c=this.querySelector(\'.ecaret\');var o=d.style.display===\'none\';d.style.display=o?\'block\':\'none\';if(c)c.style.transform=o?\'rotate(90deg)\':\'rotate(0deg)\'"':'';
+      const caret=hasEntries?'<span class="ecaret" style="font-size:11px;color:'+nameColor+';display:inline-block;transition:transform 0.2s">&#9654;</span>':'';
       // Each project = its own rounded bordered card, status-colored, with a gap.
       html+='<div style="border:1px solid '+cardBorder+';border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:'+rowBg+'">'
+        +'<div'+onclick+' style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:'+rowBg+';'+clickable+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
           +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
           +'<span style="font-size:10.5pt;font-weight:700;color:'+nameColor+';font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">'+statusLabel+'</span>'
         +'</div>'
-        +'<span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+projTEs.length+' &middot; '+fd(projTotal)+'</span>'
+        +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +'<span style="font-size:10pt;font-weight:700;color:#b232c2;white-space:nowrap;font-family:Arial,sans-serif">'+fd(projTotal)+'</span>'
+          +caret
         +'</div>'
+        +'</div>'
+        +panelRows
         +'</div>';
     });
     html+='</div>';
