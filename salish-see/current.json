@@ -2,8 +2,8 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-05-18T19:09:11.838Z",
-    "engineVersion": 8
+    "exportedAt": "2026-05-29T14:56:12.371Z",
+    "engineVersion": 7
   },
   "projects": [
     {
@@ -182,10 +182,10 @@
     },
     {
       "id": 10,
-      "name": "Port Transmission Shift Cable - Replace",
+      "name": "Transmission Shift Cables - Replace",
       "status": "needs_auth",
       "include": true,
-      "notes": "Replace cooked port main shift cable (melted housing jacket and conduit, above starboard exhaust elbow). Pull starboard main engine shift cable off transmission. Slide heat protective sleeve over both cables routed near exhaust elbow, secure to shift cable. Install both shift cables on respective engines. Use higher quality SeaStar shift cable CCX63323 (MORSE 301947-003 23FT 06092 S translates to this) ~$60.",
+      "notes": "Replace cooked shift cables (melted housing jacket and conduit, above starboard exhaust elbow). Pull starboard main engine shift cable off transmission. Slide heat protective sleeve over both cables routed near exhaust elbow, secure to shift cable. Install both shift cables on respective engines. Use higher quality SeaStar shift cable CCX63323 (MORSE 301947-003 23FT 06092 S translates to this) ~$120.",
       "estimateTotal": null,
       "isTM": true,
       "scopeTasks": [],
@@ -473,6 +473,28 @@
       "tasks": [],
       "cos": [],
       "billingEvents": []
+    },
+    {
+      "id": 24,
+      "name": "Cable Run Heat Exposure (just outboard of the SME exhaust elbow)",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Confirm the integrity of the duplex sheathing for heat damage.\n*There is a bundle of duplex near the spot of the starboard shift cable that is browned/blackened. Would you like us to pursue it? I suggest we trim zip ties of the cable run back (hang it down) so we can get access to this section of the bundle and confirm the integrity of the sheathing. Presently it is up outboard of the exhaust elbow and inaccessible to inspection. At a minimum we should make sure the sheathing of the individual duplex cables is not going to crumble to ash when the bundle is bent.\n \n\nChecking the cabling integrity is prudent with what we found.",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 121,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
     }
   ],
   "timeEntries": [
@@ -718,8 +740,8 @@
       "history": []
     }
   ],
-  "nextProjId": 24,
-  "nextTaskId": 121,
+  "nextProjId": 25,
+  "nextTaskId": 122,
   "nextCOId": 100,
   "nextTEId": 1016,
   "nextBillingId": 506,
@@ -739,12 +761,12 @@
   },
   "uiState": {
     "secOpenState": {
-      "holding": true,
+      "holding": false,
       "needs_auth": true,
       "in_progress": true,
       "complete": true,
       "ready_for_billing": true,
-      "billed": false,
+      "billed": true,
       "act_14": true,
       "est_1": false,
       "est_3": true,
@@ -753,7 +775,7 @@
       "est_21": true,
       "est_15": false,
       "est_22": true,
-      "act_1": true,
+      "act_1": false,
       "act_15": false,
       "act_6": false,
       "est_6": true,
@@ -761,14 +783,13 @@
       "est_2": true,
       "act_3": false,
       "est_4": true,
-      "act_5": false
+      "act_5": false,
+      "act_11": false
     },
     "openProjs": [
       61,
-      1,
-      11,
       2,
-      7
+      24
     ],
     "closedReadyProjs": [
       15,
