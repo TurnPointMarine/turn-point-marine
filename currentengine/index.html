@@ -502,6 +502,9 @@ function reconcileTimeEntries(){
 }
 function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
 function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
+// Outstanding actual = all UNBILLED posted entries (labor + materials + subcontractors).
+// Billed entries are excluded (they're represented by the pink "Billed" pill instead).
+function projUnbilledActualTotal(p){return projUnbilledPostedTEs(p).reduce((a,te)=>a+teAmount(te),0);}
 function projActualMatOnly(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualSub(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
@@ -866,7 +869,7 @@ function renderReadyForBillingBody(body){
       +'<span style="font-size:10px;font-weight:500;color:#666;background:#fff;border:1px solid #d1d5db;border-radius:3px;padding:1px 5px;flex-shrink:0">'+statusLabel+'</span>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-      +'<span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:2px 6px;white-space:nowrap">'+projTEs.length+' · '+fmt(projTotal)+'</span>'
+      +'<span style="font-size:10px;font-weight:700;color:'+hFg+';white-space:nowrap">'+fmt(projTotal)+'</span>'
       +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
       +'</div>';
     phdr.onclick=()=>{
@@ -1164,11 +1167,10 @@ function renderEstimate(){
       const invD=document.createElement('input');invD.type='date';invD.value=proj.invoiceDate||'';invD.style.cssText='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;width:120px;font-family:inherit';invD.onclick=e=>e.stopPropagation();invD.onmousedown=e=>e.stopPropagation();invD.onchange=()=>{proj.invoiceDate=invD.value;saveData();};
       invWrap.appendChild(invLbl);invWrap.appendChild(invN);invWrap.appendChild(invD);
       const badge=document.createElement('span');badge.className='proj-badge';badge.textContent=fmt(pTotal);
-      // Graduated indicator: small badge showing count + dollar total of graduated-and-not-locked entries.
-      // Only renders when there's at least one such entry on this project.
-      const gradEntries=timeEntries.filter(t=>t.proj===proj.name&&t.posted&&t.graduated===true&&!isEntryBilled(t));
+      // Graduated N·$ pill removed per request — the gray actual badge + pink Billed pill carry the info.
       let gradBadge=null;
-      if(gradEntries.length>0){
+      if(false){
+        const gradEntries=timeEntries.filter(t=>t.proj===proj.name&&t.posted&&t.graduated===true&&!isEntryBilled(t));
         const gradTotal=gradEntries.reduce((a,t)=>a+teAmount(t),0);
         gradBadge=document.createElement('span');
         gradBadge.style.cssText='font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:2px 6px;margin-right:6px;white-space:nowrap';
@@ -1176,6 +1178,16 @@ function renderEstimate(){
         gradBadge.title=gradEntries.length+' entr'+(gradEntries.length!==1?'ies':'y')+' graduated, ready for billing';
       }
       const chev=document.createElement('span');chev.className='chev'+(isProjOpen?' open':'');chev.innerHTML='&#9654;';
+      // Pink "billed" pill: shows payments already invoiced against this project (sub/deposit).
+      // These are excluded from the outstanding subtotal — this pill accounts for them.
+      const pillBilledAmt=projBilledTotal(proj);
+      let billedPill=null;
+      if(pillBilledAmt>0){
+        billedPill=document.createElement('span');
+        billedPill.style.cssText='font-size:10px;font-weight:700;color:#be185d;background:#fce7f3;border:1px solid #ec4899;border-radius:4px;padding:2px 6px;margin-right:6px;white-space:nowrap';
+        billedPill.textContent=fmt(pillBilledAmt)+' Billed';
+        billedPill.title='Already invoiced against this project';
+      }
       const dh=document.createElement('span');dh.className='drag-handle';dh.innerHTML='⠿';dh.title='Drag to reorder';
       dh.onmousedown=e=>{e.stopPropagation();pw.draggable=true;};
       dh.onmouseup=()=>{pw.draggable=false;};
@@ -1208,7 +1220,7 @@ function renderEstimate(){
         showDocLbl2.onclick=e=>{e.stopPropagation();showDocChk.click();};
         ph.appendChild(showDocChk);ph.appendChild(showDocLbl2);
       }
-      ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);if(gradBadge)ph.appendChild(gradBadge);ph.appendChild(badge);ph.appendChild(chev);
+      ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);if(gradBadge)ph.appendChild(gradBadge);if(billedPill)ph.appendChild(billedPill);ph.appendChild(badge);ph.appendChild(chev);
       ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);saveData();renderEstimate();});
       // Drop target for TE drag-reassign
       ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
@@ -2169,7 +2181,9 @@ function exportClientDoc(){
     html+='<div id="secbody_inprog" style="border:2px solid #6b7280;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     inPP.forEach(proj=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
+      const projTotal=projUnbilledActualTotal(proj);
+      const billedAmt=projBilledTotal(proj);
+      const billedPill=billedAmt>0?'<span style="font-size:9pt;font-weight:700;color:#be185d;background:#fce7f3;border:1px solid #ec4899;border-radius:4px;padding:2px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+fd(billedAmt)+' Billed</span>':'';
       const noteHtml=proj.notes?'<div style="font-size:8.5pt;color:#888;font-style:italic;padding:8px 16px;background:#f9fafb;border-top:1px solid #e5e7eb;font-family:Arial,sans-serif">'+nl2br(proj.notes)+'</div>':'';
       const panelId='ip'+(uid++);
       const ep=clientEntryPanel(proj,panelId,false);
@@ -2185,6 +2199,7 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">In Progress</span>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +billedPill
           +'<span style="font-size:10pt;font-weight:700;color:#374151;white-space:nowrap;font-family:Arial,sans-serif">'+fd(projTotal)+'</span>'
           +caret
         +'</div>'
@@ -2202,18 +2217,20 @@ function exportClientDoc(){
   // rollup/summary below — same model as the engine.
   const completeP=projects.filter(p=>p.include!==false&&p.status==='complete');
   if(completeP.length>0){
-    const cpt=completeP.reduce((a,p)=>a+projDisplayTotal(p),0);
+    const cpt=completeP.reduce((a,p)=>a+projUnbilledActualTotal(p),0);
     const completeP_brk={
       est:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
-      tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
-      actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+      tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projUnbilledActualTotal(p),0),
+      actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projUnbilledActualTotal(p),0)
     };
     html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80');
     // Section frame encompasses individual project cards with gaps (mirrors the engine Complete + Billing Event layout).
     html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     completeP.forEach((proj,bi)=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
+      const projTotal=projUnbilledActualTotal(proj);
+      const billedAmt=projBilledTotal(proj);
+      const billedPill=billedAmt>0?'<span style="font-size:9pt;font-weight:700;color:#be185d;background:#fce7f3;border:1px solid #ec4899;border-radius:4px;padding:2px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+fd(billedAmt)+' Billed</span>':'';
       const panelId='cp'+(uid++);
       const ep=clientEntryPanel(proj,panelId,false);
       const clickable=ep.has?'cursor:pointer':'';
@@ -2228,6 +2245,7 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+          +billedPill
           +'<span style="font-size:10pt;font-weight:700;color:#1a3a5c;white-space:nowrap;font-family:Arial,sans-serif">'+fd(projTotal)+'</span>'
           +caret
         +'</div>'
@@ -2314,8 +2332,8 @@ function exportClientDoc(){
     const compShop=(compL+compMat)*0.03;
     const _compTaxBase=compSubtotal+compShop;const compTaxState=settings.taxExempt?0:_compTaxBase*0.065;const compTaxCity=settings.taxExempt?0:_compTaxBase*0.026;const compTax=compTaxState+compTaxCity;
     const compTotal=compSubtotal+compShop+compTax;
-    html+=`<div style="margin-top:20px;border:2px solid #d946ef;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
-      <div style="background:#e9cde9;color:#7c3a72;padding:12px 18px;font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Billing Event Summary</div>
+    html+=`<div style="margin-top:20px;border:2px solid #c354d6;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
+      <div style="background:#fdf4ff;color:#b232c2;padding:12px 18px;font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em">Billing Event Summary</div>
       <table style="width:100%;border-collapse:collapse">
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compL)}</td></tr>
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compMat)}</td></tr>
@@ -2325,7 +2343,7 @@ function exportClientDoc(){
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compShop)}</td></tr>
         ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTax)}</td></tr>`}
       </table>
-      <div style="background:#fdf4ff;color:#c026d3;padding:14px 18px;border-top:2px solid #d946ef;display:flex;justify-content:space-between;align-items:center">
+      <div style="background:#fdf4ff;color:#b232c2;padding:14px 18px;border-top:2px solid #c354d6;display:flex;justify-content:space-between;align-items:center">
         <span style="font-size:11pt;font-weight:700">Ready to Invoice</span>
         <span style="font-size:13pt;font-weight:700">${fd(compTotal)}</span>
       </div>

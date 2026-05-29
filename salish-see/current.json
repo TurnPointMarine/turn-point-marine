@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-05-29T15:04:17.242Z",
+    "exportedAt": "2026-05-29T20:18:05.283Z",
     "engineVersion": 7
   },
   "projects": [
@@ -281,7 +281,7 @@
       "include": true,
       "notes": "Monthly winter watch service, flat rate per month.",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 112,
@@ -624,7 +624,7 @@
       "date": "2026-05-14",
       "proj": "Winter Watch — Feb + March 2026",
       "cat": "F",
-      "hrs": 1,
+      "hrs": 325,
       "desc": "February 2026 Winter Watch (flat rate)",
       "posted": true,
       "billingEventId": 504,
@@ -637,7 +637,7 @@
       "date": "2026-05-14",
       "proj": "Winter Watch — Feb + March 2026",
       "cat": "F",
-      "hrs": 1,
+      "hrs": 325,
       "desc": "March 2026 Winter Watch (flat rate)",
       "posted": true,
       "billingEventId": 504,
@@ -776,7 +776,7 @@
       "est_15": false,
       "est_22": true,
       "act_1": false,
-      "act_15": false,
+      "act_15": true,
       "act_6": false,
       "est_6": true,
       "est_5": true,
@@ -784,11 +784,14 @@
       "act_3": false,
       "est_4": true,
       "act_5": false,
-      "act_11": false
+      "act_11": false,
+      "act_23": false
     },
     "openProjs": [
       61,
-      2
+      2,
+      23,
+      15
     ],
     "closedReadyProjs": [
       15,
