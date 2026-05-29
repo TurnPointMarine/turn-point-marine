@@ -879,7 +879,7 @@ function renderReadyForBillingBody(body){
       +'<span style="font-size:10px;font-weight:500;color:#666;background:#fff;border:1px solid #d1d5db;border-radius:3px;padding:1px 5px;flex-shrink:0">'+statusLabel+'</span>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-      +'<span style="font-size:10px;font-weight:700;color:#c026d3;background:#fdf4ff;border:1px solid #f0abfc;border-radius:4px;padding:2px 6px;white-space:nowrap">▼ '+projTEs.length+' · '+fmt(projTotal)+'</span>'
+      +'<span style="font-size:10px;font-weight:700;color:#c026d3;background:#fdf4ff;border:1px solid #df8de9;border-radius:4px;padding:2px 6px;white-space:nowrap">'+projTEs.length+' · '+fmt(projTotal)+'</span>'
       +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
       +'</div>';
     phdr.onclick=()=>{
@@ -1183,8 +1183,8 @@ function renderEstimate(){
       if(gradEntries.length>0){
         const gradTotal=gradEntries.reduce((a,t)=>a+teAmount(t),0);
         gradBadge=document.createElement('span');
-        gradBadge.style.cssText='font-size:10px;font-weight:700;color:#c026d3;background:#fdf4ff;border:1px solid #f0abfc;border-radius:4px;padding:2px 6px;margin-right:6px;white-space:nowrap';
-        gradBadge.textContent='▼ '+gradEntries.length+' · '+fmt(gradTotal);
+        gradBadge.style.cssText='font-size:10px;font-weight:700;color:#c026d3;background:#fdf4ff;border:1px solid #df8de9;border-radius:4px;padding:2px 6px;margin-right:6px;white-space:nowrap';
+        gradBadge.textContent=gradEntries.length+' · '+fmt(gradTotal);
         gradBadge.title=gradEntries.length+' entr'+(gradEntries.length!==1?'ies':'y')+' graduated, ready for billing';
       }
       const chev=document.createElement('span');chev.className='chev'+(isProjOpen?' open':'');chev.innerHTML='&#9654;';
