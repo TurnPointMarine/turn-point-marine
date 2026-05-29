@@ -67,7 +67,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;user-select:none}
 .sec-hdr:hover{filter:brightness(0.96)}
 .sec-body{display:none;padding:0}
-.sec-wrap[data-sec="ready_for_billing"] .sec-body>*:last-child{border-bottom:none}
+.sec-wrap[data-sec="ready_for_billing"] .sec-body{padding-bottom:6px}
 .sec-body.open{display:block;padding:0}
 .sec-empty{padding:14px 18px;font-size:12px;color:#aaa;font-style:italic}
 .project{background:#fff;overflow:hidden}
@@ -871,12 +871,15 @@ function renderReadyForBillingBody(body){
     const hBg=pSec?pSec.bg:'#f0f7ff';
     const hFg=pSec?pSec.color:'#1e40af';
     const hBorder=pSec?pSec.color:'#bfdbfe';
+    // Each project is its OWN rounded bordered card (status color), with a gap — mirrors the Complete section.
+    const card=document.createElement('div');
+    card.style.cssText='border:1px solid '+hBorder+';border-radius:8px;margin:6px 12px;overflow:hidden';
     const phdr=document.createElement('div');
-    phdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:'+hBg+';border-bottom:1px solid '+hBorder+';font-size:12px;font-weight:600;color:'+hFg+';cursor:pointer;user-select:none';
+    phdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:'+hBg+';'+(isOpen?'border-bottom:1px solid '+hBorder+';':'')+'font-size:12px;font-weight:600;color:'+hFg+';cursor:pointer;user-select:none';
     phdr.title=isOpen?'Click to collapse entries':'Click to expand entries';
     phdr.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
       +'<span style="font-size:10px;font-weight:700;background:#1a1a1a;color:#fff;border-radius:4px;padding:2px 6px;flex-shrink:0">'+projNum+'</span>'
-      +'<span style="color:#b232c2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+name+'</span>'
+      +'<span style="color:'+hFg+';overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+name+'</span>'
       +'<span style="font-size:10px;font-weight:500;color:#666;background:#fff;border:1px solid #d1d5db;border-radius:3px;padding:1px 5px;flex-shrink:0">'+statusLabel+'</span>'
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
@@ -889,11 +892,12 @@ function renderReadyForBillingBody(body){
       else closedReadyProjs.add(proj.id);
       saveData();renderEstimate();
     };
-    body.appendChild(phdr);
+    card.appendChild(phdr);
+    body.appendChild(card);
     if(!isOpen)return;
-    projTEs.forEach(te=>{
+    projTEs.forEach((te,ei)=>{
       const row=document.createElement('div');
-      row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#fff;border-bottom:1px solid #e5e7eb;font-size:12px';
+      row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:8px 16px;background:#fff;'+(ei<projTEs.length-1?'border-bottom:1px solid #e5e7eb;':'')+'font-size:12px';
       const catLbl=CAT_LABELS[te.cat]||te.cat;
       const catCls=CAT_CLS[te.cat]||'';
       const date=te.date||'—';
@@ -911,7 +915,7 @@ function renderReadyForBillingBody(body){
         +'</div>';
       const btn=row.querySelector('button');
       btn.onclick=(e)=>{e.stopPropagation();ungraduateEntry(te.id);saveData();renderEstimate();};
-      body.appendChild(row);
+      card.appendChild(row);
     });
   });
 }
@@ -1058,7 +1062,7 @@ function renderEstimate(){
     }else{
       statsHtml='<span style="font-size:12px;opacity:0.9">'+(secEstTotal>0?fmt(secEstTotal):'—')+' est</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secTMTotal>0?fmt(secTMTotal):'—')+' T&M</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+' actual</span>';
     }
-    hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+countLabel+'</span></div><div style="display:flex;align-items:center;gap:10px">'+statsHtml+'<span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
+    hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+countLabel+'</span></div><div style="display:flex;align-items:center;gap:10px">'+statsHtml+'<span class="chev'+(isOpen?' open':'')+'" style="opacity:0.7;color:inherit">&#9654;</span></div>';
     hdr.onclick=()=>{secOpenState[sec.key]=!secOpenState[sec.key];saveData();renderEstimate();};
     wrap.appendChild(hdr);
     const body=document.createElement('div');body.className='sec-body'+(isOpen?' open':'');
@@ -1393,7 +1397,7 @@ function renderEstimate(){
       const actualHdr=document.createElement('div');
       actualHdr.style.cssText='padding:5px 16px;background:#f0faf6;border-bottom:1px solid #a7d8c5;border-top:1px solid #a7d8c5;font-size:10px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
       const actualTotal=projAllActualTotal(proj);
-      actualHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px">'+(actIsOpen?'▼':'▶')+'</span>Actual — Posted Time Entries</span><span style="font-weight:700;color:#1D9E75">'+fmt(actualTotal)+'</span>';
+      actualHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px;transform:rotate('+(actIsOpen?'90':'0')+'deg)">&#9654;</span>Actual — Posted Time Entries</span><span style="font-weight:700;color:#1D9E75">'+fmt(actualTotal)+'</span>';
       actualHdr.onclick=()=>{secOpenState[actKey]=!actIsOpen;saveData();renderEstimate();};
       pb.appendChild(actualHdr);
       const actWrap=document.createElement('div');actWrap.style.display=actIsOpen?'block':'none';
@@ -1725,7 +1729,7 @@ function renderEstimate(){
     const coWrap=document.createElement('div');coWrap.className='sec-wrap';coWrap.style.border='1px solid #fde68a';coWrap.dataset.sec='_cos';
     const coHdr=document.createElement('div');coHdr.className='sec-hdr';coHdr.style.cssText='background:#d97706;color:#fff';
     coHdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">CHANGE OF SCOPE — NEEDS AUTHORIZATION</span></div>'
-      +'<div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(coTotal>0?fmt(coTotal):'—')+'</span><span style="font-size:11px;opacity:0.7">'+(isOpen?'▼':'▶')+'</span></div>';
+      +'<div style="display:flex;align-items:center;gap:10px"><span style="font-size:12px;opacity:0.9">'+(coTotal>0?fmt(coTotal):'—')+'</span><span class="chev'+(isOpen?' open':'')+'" style="opacity:0.7;color:inherit">&#9654;</span></div>';
     coHdr.onclick=()=>{secOpenState['_cos']=!isOpen;saveData();renderEstimate();};
     coWrap.appendChild(coHdr);
     const coBody=document.createElement('div');coBody.className='sec-body'+(isOpen?' open':'');
@@ -1982,7 +1986,7 @@ function exportClientDoc(){
     </div>`;
   }
 
-  function sectionHdr(color,label,count,total,note,breakdown,textColor,bodyId){
+  function sectionHdr(color,label,count,total,note,breakdown,textColor,bodyId,connectColor){
     textColor=textColor||'#fff';
     let totalHtml;
     if(breakdown){
@@ -1997,9 +2001,9 @@ function exportClientDoc(){
     const chevHtml=bodyId?'<span class="sechev" style="font-size:12px;margin-left:4px;transition:transform 0.2s;transform:rotate(90deg);display:inline-block">&#9654;</span>':'';
     const onclick=bodyId?' onclick="var d=document.getElementById(\''+bodyId+'\');var c=this.querySelector(\'.sechev\');var willOpen=d.style.display===\'none\';d.style.display=willOpen?\'block\':\'none\';c.style.transform=willOpen?\'rotate(90deg)\':\'rotate(0deg)\'"':'';
     const hdrBorder=(textColor&&textColor!=='#fff')?textColor:darkenC(color);
-    const connectBody=(color==='#fdf4ff');
+    const connectBody=!!connectColor;
     const radius=connectBody?'8px 8px 0 0':'4px';
-    const hdrBdr=connectBody?'#c354d6':hdrBorder;
+    const hdrBdr=connectBody?connectColor:hdrBorder;
     return '<div'+onclick+' style="background:'+color+';color:'+textColor+';border:2px solid '+hdrBdr+';padding:12px 18px;border-radius:'+radius+';margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;'+(bodyId?'cursor:pointer':'')+'">'
       +'<div><div style="font-size:12pt;font-weight:700">'+label+'</div>'
       +'<div style="font-size:8.5pt;opacity:0.8;margin-top:2px">'+count+' project'+(count!==1?'s':'')+' &mdash; '+note+'</div></div>'
@@ -2048,14 +2052,14 @@ function exportClientDoc(){
   if(futureP.length>0){
     const futureTotal=futureP.reduce((a,p)=>a+projDisplayTotal(p),0);
     html+=`<div style="background:#7c6f9f;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;cursor:pointer;user-select:none"
-      onclick="var l=document.getElementById('futureList');var a=document.getElementById('futureArr');if(l.style.display==='none'){l.style.display='block';a.textContent='▲';}else{l.style.display='none';a.textContent='▼';}">
+      onclick="var l=document.getElementById('futureList');var a=document.getElementById('futureArr');if(l.style.display==='none'){l.style.display='block';a.style.transform='rotate(90deg)';}else{l.style.display='none';a.style.transform='rotate(0deg)';}">
       <div>
         <div style="font-weight:700;font-size:11pt;letter-spacing:0.03em">PROJECTS IN HOLDING PATTERN</div>
         <div style="font-size:8.5pt;opacity:0.85;margin-top:2px">${futureP.length} project${futureP.length!==1?'s':''} — Upcoming projects — not yet authorized</div>
       </div>
       <div style="display:flex;align-items:center;gap:14px">
         <span style="font-size:12pt;font-weight:700">${fd(futureTotal)}</span>
-        <span id="futureArr" style="font-size:11px;opacity:0.8">▼</span>
+        <span id="futureArr" style="font-size:11px;opacity:0.8;display:inline-block;transition:transform 0.2s">&#9654;</span>
       </div>
     </div>
     <div id="futureList" style="display:none">
@@ -2064,12 +2068,12 @@ function exportClientDoc(){
       const fid='future'+fi;
       const fTotal=projDisplayTotal(proj);
       html+=`<div style="border:1px solid #c9bfea;border-radius:8px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
-        <div onclick="var d=document.getElementById('${fid}');var a=document.getElementById('${fid}arr');if(d.style.display==='none'){d.style.display='block';a.textContent='▼';}else{d.style.display='none';a.textContent='▶';}"
+        <div onclick="var d=document.getElementById('${fid}');var a=document.getElementById('${fid}arr');if(d.style.display==='none'){d.style.display='block';a.style.transform='rotate(90deg)';}else{d.style.display='none';a.style.transform='rotate(0deg)';}"
           style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f3f0fa;cursor:pointer;user-select:none">
           <span style="font-size:10pt;font-weight:700;color:#4a3f6b">${proj.name}</span>
           <div style="display:flex;align-items:center;gap:12px">
             <span style="font-size:10pt;font-weight:700;color:#7c6f9f">${fd(fTotal)}</span>
-            <span id="${fid}arr" style="font-size:10px;color:#7c6f9f">▶</span>
+            <span id="${fid}arr" style="font-size:10px;color:#7c6f9f;display:inline-block;transition:transform 0.2s">&#9654;</span>
           </div>
         </div>
         <div id="${fid}" style="display:none;padding:10px 14px;border-top:1px solid #c9bfea;background:#faf8ff">
@@ -2173,9 +2177,24 @@ function exportClientDoc(){
       tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
       actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
-    html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete');
-    html+='<div id="secbody_complete">';
-    completeP.forEach(proj=>{html+=projBlock(proj,'#3d5a80',false,true);});
+    html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80');
+    // Pill rows inside ONE encompassing border (identical format to BILLING EVENT)
+    html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;margin-top:-2px">';
+    completeP.forEach((proj,bi)=>{
+      const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
+      const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
+      const isLast=bi===completeP.length-1;
+      const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
+      const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
+      html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe;'+(isLast?'':'border-bottom:1px solid #b9cdec')+'">'
+        +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
+          +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
+          +'<span style="font-size:10.5pt;font-weight:700;color:#1a3a5c;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
+          +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
+        +'</div>'
+        +'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
+        +'</div>';
+    });
     html+='</div>';
   }
 
@@ -2191,24 +2210,28 @@ function exportClientDoc(){
       tm:0,
       actual:ct
     };
-    html+=sectionHdr('#fdf4ff','BILLING EVENT',compP.length,fd(ct),'Work complete, invoice pending',compP_brk,'#b232c2','secbody_billing');
-    // Engine-style pill rows inside ONE encompassing magenta border (mirrors the engine Billing Event list).
-    html+='<div id="secbody_billing" style="border:2px solid #c354d6;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;margin-top:-2px">';
+    html+=sectionHdr('#fdf4ff','BILLING EVENT',compP.length,fd(ct),'Work complete, invoice pending',compP_brk,'#b232c2','secbody_billing','#c354d6');
+    // Section frame encompasses individual status-colored project cards (mirrors the engine Complete layout).
+    html+='<div id="secbody_billing" style="border:2px solid #c354d6;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     compP.forEach((proj,bi)=>{
       const pSec=SECTIONS.find(s=>s.key===proj.status);
       const rowBg=pSec?pSec.bg:'#fdf4ff';
+      const nameColor=pSec?pSec.color:'#b232c2';
+      const cardBorder=pSec?pSec.color:'#c354d6';
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
       const statusLabel=({needs_auth:'Authorization Needed',in_progress:'In Progress',complete:'Complete',holding:'Holding',billed:'Billed'})[proj.status]||proj.status;
       const projTEs=docReadyTEs.filter(te=>te.proj===proj.name);
       const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
-      const isLast=bi===compP.length-1;
-      html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:'+rowBg+';'+(isLast?'':'border-bottom:1px solid #c9b3c9')+'">'
+      // Each project = its own rounded bordered card, status-colored, with a gap.
+      html+='<div style="border:1px solid '+cardBorder+';border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:'+rowBg+'">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
           +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
-          +'<span style="font-size:10.5pt;font-weight:700;color:#b232c2;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
+          +'<span style="font-size:10.5pt;font-weight:700;color:'+nameColor+';font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">'+statusLabel+'</span>'
         +'</div>'
         +'<span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+projTEs.length+' &middot; '+fd(projTotal)+'</span>'
+        +'</div>'
         +'</div>';
     });
     html+='</div>';
