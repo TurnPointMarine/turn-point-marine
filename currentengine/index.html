@@ -66,9 +66,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .sec-wrap{margin-bottom:14px;border-radius:10px;overflow:hidden}
 .sec-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;cursor:pointer;user-select:none}
 .sec-hdr:hover{filter:brightness(0.96)}
-.sec-body{display:none;padding:0}
-.sec-wrap[data-sec="ready_for_billing"] .sec-body{padding-bottom:6px}
-.sec-body.open{display:block;padding:0}
+.sec-body{display:none;padding:0 0 6px}
+.sec-body.open{display:block;padding:0 0 6px}
 .sec-empty{padding:14px 18px;font-size:12px;color:#aaa;font-style:italic}
 .project{background:#fff;overflow:hidden}
 .proj-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fafaf8;border-bottom:1px solid #e5e5e0;cursor:pointer;user-select:none}
@@ -840,23 +839,7 @@ function renderReadyForBillingBody(body){
   });
   const projNames=Object.keys(byProj).sort((a,b)=>(projOrder[a]===undefined?9999:projOrder[a])-(projOrder[b]===undefined?9999:projOrder[b]));
 
-  // Section-level "Expand all / Collapse all" toggle bar — operates on the closed-deviation Set.
-  // Default behavior: all projects expanded. Collapse all → add every project ID. Expand all → clear the Set.
-  const projIds=projNames.map(n=>{const p=projects.find(pp=>pp.name===n);return p?p.id:null;}).filter(Boolean);
-  const allClosed=projIds.length>0&&projIds.every(id=>closedReadyProjs.has(id));
-  const bar=document.createElement('div');
-  bar.style.cssText='display:flex;justify-content:flex-end;padding:8px 16px;background:#fff;border-bottom:1px solid #e5e7eb';
-  const toggleAll=document.createElement('button');
-  toggleAll.style.cssText='background:none;border:1px solid #bfdbfe;color:#1e40af;cursor:pointer;font-size:11px;padding:3px 10px;border-radius:4px;font-family:inherit';
-  toggleAll.textContent=allClosed?'Expand all':'Collapse all';
-  toggleAll.onclick=(e)=>{
-    e.stopPropagation();
-    if(allClosed){closedReadyProjs.clear();}
-    else{projIds.forEach(id=>closedReadyProjs.add(id));}
-    saveData();renderEstimate();
-  };
-  bar.appendChild(toggleAll);
-  body.appendChild(bar);
+  // (Collapse all bar removed — each project card expands individually via its chevron.)
 
   projNames.forEach(name=>{
     const proj=projects.find(p=>p.name===name);
@@ -1146,7 +1129,7 @@ function renderEstimate(){
       // doesn't match any known section.
       const pSec=SECTIONS.find(s=>s.key===proj.status)||sec;
       const pw=document.createElement('div');pw.className='project'+(proj.include===false?' excluded':'');
-      pw.style.cssText='border:1px solid '+pSec.color+';border-radius:8px;margin:6px 0;overflow:hidden;transition:border-color 0.15s';
+      pw.style.cssText='border:1px solid '+pSec.color+';border-radius:8px;margin:6px 12px;overflow:hidden;transition:border-color 0.15s';
       const ph=document.createElement('div');ph.className='proj-hdr';
       ph.style.background=pSec.bg;
       const inclChk=document.createElement('input');inclChk.type='checkbox';inclChk.className='include-chk';inclChk.checked=proj.include!==false;inclChk.title='Include in export';inclChk.onclick=e=>e.stopPropagation();inclChk.onmousedown=e=>e.stopPropagation();inclChk.onchange=()=>{proj.include=inclChk.checked;pw.className='project'+(inclChk.checked?'':' excluded');renderSummary();};
@@ -2159,9 +2142,28 @@ function exportClientDoc(){
       tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
       actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
-    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog');
-    html+='<div id="secbody_inprog">';
-    inPP.forEach(proj=>{html+=projBlock(proj,'#6b7280',false,true);});
+    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog','#6b7280');
+    // Section frame encompasses individual project cards with gaps (mirrors Complete + Billing Event).
+    html+='<div id="secbody_inprog" style="border:2px solid #6b7280;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
+    inPP.forEach(proj=>{
+      const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
+      const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
+      const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
+      const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
+      const noteHtml=proj.notes?'<div style="font-size:8.5pt;color:#888;font-style:italic;padding:0 16px 10px;background:#f9fafb;font-family:Arial,sans-serif">'+nl2br(proj.notes)+'</div>':'';
+      // Each project = its own rounded bordered card (grey, all In Progress), with a gap.
+      html+='<div style="border:1px solid #6b7280;border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#f9fafb">'
+        +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
+          +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
+          +'<span style="font-size:10.5pt;font-weight:700;color:#374151;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
+          +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">In Progress</span>'
+        +'</div>'
+        +'<span style="font-size:10px;font-weight:700;color:#374151;background:#f3f4f6;border:1px solid #6b7280;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
+        +'</div>'
+        +noteHtml
+        +'</div>';
+    });
     html+='</div>';
   }
 
@@ -2178,21 +2180,23 @@ function exportClientDoc(){
       actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
     html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80');
-    // Pill rows inside ONE encompassing border (identical format to BILLING EVENT)
-    html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;overflow:hidden;margin-top:-2px">';
+    // Section frame encompasses individual project cards with gaps (mirrors the engine Complete + Billing Event layout).
+    html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     completeP.forEach((proj,bi)=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
       const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
-      const isLast=bi===completeP.length-1;
       const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
       const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
-      html+='<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe;'+(isLast?'':'border-bottom:1px solid #b9cdec')+'">'
+      // Each project = its own rounded bordered card (navy, all Complete), with a gap.
+      html+='<div style="border:1px solid #3d5a80;border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
+        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
           +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
           +'<span style="font-size:10.5pt;font-weight:700;color:#1a3a5c;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
         +'</div>'
         +'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
+        +'</div>'
         +'</div>';
     });
     html+='</div>';
