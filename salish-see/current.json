@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-05-29T20:18:05.283Z",
+    "exportedAt": "2026-06-01T16:32:25.735Z",
     "engineVersion": 7
   },
   "projects": [
@@ -69,7 +69,7 @@
     {
       "id": 4,
       "name": "Throttle Sticky at Low RPM — Repair",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "My guess is shift and throttle cables need to be replaced. SeaStar TFXtreme cable ~$70.",
       "estimateTotal": null,
@@ -82,7 +82,7 @@
     {
       "id": 5,
       "name": "Fuel Filter Housing Replace",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Fuel/Water Separator housing needs replacement. Recommending 120R-RAC Series w/Filter (~$142.50) — glass bowl to monitor for water, water drain valve helpful on this model. Racor R12 Filter Element spare (~$21).",
       "estimateTotal": null,
@@ -95,7 +95,7 @@
     {
       "id": 6,
       "name": "Kabola Service",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Pull burner head, clean out burn tube. Replace fuel nozzle. Replace fuel filter. ~3 hours likely if no hydronic pressure leaks. Last check, system was maintaining pressure fine. Materials ~$95.",
       "estimateTotal": null,
@@ -108,7 +108,7 @@
     {
       "id": 7,
       "name": "Fire Suppression System Certifications",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -183,7 +183,7 @@
     {
       "id": 10,
       "name": "Transmission Shift Cables - Replace",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Replace cooked shift cables (melted housing jacket and conduit, above starboard exhaust elbow). Pull starboard main engine shift cable off transmission. Slide heat protective sleeve over both cables routed near exhaust elbow, secure to shift cable. Install both shift cables on respective engines. Use higher quality SeaStar shift cable CCX63323 (MORSE 301947-003 23FT 06092 S translates to this) ~$120.",
       "estimateTotal": null,
@@ -433,7 +433,7 @@
     {
       "id": 22,
       "name": "Wax",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -789,9 +789,7 @@
     },
     "openProjs": [
       61,
-      2,
-      23,
-      15
+      2
     ],
     "closedReadyProjs": [
       15,

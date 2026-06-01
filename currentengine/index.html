@@ -1125,7 +1125,7 @@ function renderEstimate(){
       }
       const pi=projects.indexOf(proj);
       const isProjOpen=openProjs.has(proj.id);
-      const pTotal=projDisplayTotal(proj);
+      const pTotal=projDisplayTotal(proj)-projBilledTotal(proj);
       // Project status drives card chrome: wrapper border = section color, header bg = section bg tint.
       // Uses proj.status (not the section being rendered) so the colors travel with the project when
       // it appears in other sections via spanning (Step 3). Falls back to the rendering section if status
@@ -2181,7 +2181,7 @@ function exportClientDoc(){
     html+='<div id="secbody_inprog" style="border:2px solid #6b7280;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     inPP.forEach(proj=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projUnbilledActualTotal(proj);
+      const projTotal=projDisplayTotal(proj)-projBilledTotal(proj);
       const billedAmt=projBilledTotal(proj);
       const billedPill=billedAmt>0?'<span style="font-size:9pt;font-weight:700;color:#be185d;background:#fce7f3;border:1px solid #ec4899;border-radius:4px;padding:2px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+fd(billedAmt)+' Billed</span>':'';
       const noteHtml=proj.notes?'<div style="font-size:8.5pt;color:#888;font-style:italic;padding:8px 16px;background:#f9fafb;border-top:1px solid #e5e7eb;font-family:Arial,sans-serif">'+nl2br(proj.notes)+'</div>':'';
@@ -2217,18 +2217,18 @@ function exportClientDoc(){
   // rollup/summary below — same model as the engine.
   const completeP=projects.filter(p=>p.include!==false&&p.status==='complete');
   if(completeP.length>0){
-    const cpt=completeP.reduce((a,p)=>a+projUnbilledActualTotal(p),0);
+    const cpt=completeP.reduce((a,p)=>a+(projDisplayTotal(p)-projBilledTotal(p)),0);
     const completeP_brk={
       est:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
-      tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projUnbilledActualTotal(p),0),
-      actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projUnbilledActualTotal(p),0)
+      tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+(projDisplayTotal(p)-projBilledTotal(p)),0),
+      actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+(projDisplayTotal(p)-projBilledTotal(p)),0)
     };
     html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80');
     // Section frame encompasses individual project cards with gaps (mirrors the engine Complete + Billing Event layout).
     html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     completeP.forEach((proj,bi)=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projUnbilledActualTotal(proj);
+      const projTotal=projDisplayTotal(proj)-projBilledTotal(proj);
       const billedAmt=projBilledTotal(proj);
       const billedPill=billedAmt>0?'<span style="font-size:9pt;font-weight:700;color:#be185d;background:#fce7f3;border:1px solid #ec4899;border-radius:4px;padding:2px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+fd(billedAmt)+' Billed</span>':'';
       const panelId='cp'+(uid++);
