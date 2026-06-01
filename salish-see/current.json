@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-06-01T16:39:20.914Z",
+    "exportedAt": "2026-06-01T18:10:38.182Z",
     "engineVersion": 7
   },
   "projects": [
@@ -347,7 +347,7 @@
       "name": "Preseason Exterior Deep Clean",
       "status": "needs_auth",
       "include": true,
-      "notes": "She is presently presentable and usably clean. A Preseason clean would do her well. ",
+      "notes": "",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
@@ -835,14 +835,16 @@
       61,
       2,
       25,
-      26
+      26,
+      18
     ],
     "closedReadyProjs": [
       15,
       16,
       20,
       22,
-      23
+      23,
+      1
     ],
     "closedBilledProjs": [
       "504:15"
