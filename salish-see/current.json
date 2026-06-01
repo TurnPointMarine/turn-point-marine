@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-06-01T16:32:25.735Z",
+    "exportedAt": "2026-06-01T16:39:20.914Z",
     "engineVersion": 7
   },
   "projects": [
@@ -72,19 +72,6 @@
       "status": "in_progress",
       "include": true,
       "notes": "My guess is shift and throttle cables need to be replaced. SeaStar TFXtreme cable ~$70.",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 5,
-      "name": "Fuel Filter Housing Replace",
-      "status": "in_progress",
-      "include": true,
-      "notes": "Fuel/Water Separator housing needs replacement. Recommending 120R-RAC Series w/Filter (~$142.50) — glass bowl to monitor for water, water drain valve helpful on this model. Racor R12 Filter Element spare (~$21).",
       "estimateTotal": null,
       "isTM": true,
       "scopeTasks": [],
@@ -275,6 +262,19 @@
       "showInDoc": true
     },
     {
+      "id": 5,
+      "name": "Fuel Filter Housing Replace",
+      "status": "complete",
+      "include": true,
+      "notes": "Fuel/Water Separator housing needs replacement. Recommending 120R-RAC Series w/Filter (~$142.50) — glass bowl to monitor for water, water drain valve helpful on this model. Racor R12 Filter Element spare (~$21).",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
       "id": 15,
       "name": "Winter Watch — Feb + March 2026",
       "status": "complete",
@@ -433,7 +433,7 @@
     {
       "id": 22,
       "name": "Wax",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -485,6 +485,50 @@
       "scopeTasks": [
         {
           "id": 121,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 25,
+      "name": "New Project",
+      "status": "holding",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 122,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 26,
+      "name": "New Project",
+      "status": "holding",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 123,
           "cat": "T",
           "desc": "",
           "hrs": 0,
@@ -740,8 +784,8 @@
       "history": []
     }
   ],
-  "nextProjId": 25,
-  "nextTaskId": 122,
+  "nextProjId": 27,
+  "nextTaskId": 124,
   "nextCOId": 100,
   "nextTEId": 1016,
   "nextBillingId": 506,
@@ -789,7 +833,9 @@
     },
     "openProjs": [
       61,
-      2
+      2,
+      25,
+      26
     ],
     "closedReadyProjs": [
       15,
