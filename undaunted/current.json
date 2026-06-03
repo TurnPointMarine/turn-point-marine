@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Undaunted",
     "client": "Wes Garner",
-    "exportedAt": "2026-06-01T21:35:18.501Z",
+    "exportedAt": "2026-06-02T21:32:18.216Z",
     "engineVersion": 7
   },
   "projects": [
@@ -247,7 +247,7 @@
     {
       "id": 27,
       "name": "Haul/Wash/Block",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "*Waiting on the 2 week billing cycle that Pacific Marine Center goes through. ",
       "include": true,
       "isTM": false,
@@ -954,7 +954,7 @@
     {
       "id": 16,
       "name": "Generators Start Batteries Upgrade to Victron Charger",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "Remove old Charge system Install new 120v Victron charger, program and test proper functionality.",
       "include": true,
       "isTM": false,
@@ -992,7 +992,7 @@
     {
       "id": 28,
       "name": "Pull Starboard Propeller & Shaft",
-      "status": "in_progress",
+      "status": "complete",
       "notes": "*Waiting on the 2 week billing cycle that Pacific Marine Center goes through. \n\nI have put this forward to Todd at Pacific Marine Center as a working outline of expenses for the worst case scenario. Hopefully we can pull the propeller and shaft, repair the shaft and re-install. \nI am waiting for a response from him. Sounds like he went in for knee surgery this week. \n\nWORST CASE SCENARIO\n4-6 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n3-5 thousand for a shaft if needed. \n6-8 hours for replacing a cutlass bearing. \n4-6 hours for installing new shaft and propeller. \n\n    24hrs labor @ $145/hr = $4,000 with tax, \n   $6,000 materials with tax.\nEstimate of safe worst case scenario ~$10,000: \n\nGUNING FOR \n4-8 hours to pull the propeller and the shaft, the rudders don't interfere with the shaft removal. \n$900 for shaft repair. \n4-6 hours for installing new shaft and propeller. \n\n  14 hours labor @ 145/hr = $2,000\n  Shaft repair $900\n$3,200 with tax\n",
       "include": true,
       "isTM": false,
@@ -1352,6 +1352,28 @@
       "scopeTasks": [
         {
           "id": 207,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 63,
+      "name": "Dry Storage June",
+      "status": "complete",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 209,
           "cat": "T",
           "desc": "",
           "hrs": 0,
@@ -2631,7 +2653,7 @@
       "posted": true,
       "billingEventId": 502,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1043,
@@ -2679,7 +2701,43 @@
       "posted": true,
       "billingEventId": 502,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
+    },
+    {
+      "id": 1047,
+      "date": "2026-06-01",
+      "proj": "Haul/Wash/Block",
+      "cat": "S",
+      "hrs": 3035.6,
+      "desc": "Haul, Pressure Wash, Move & Block.\n\nMove & Launch",
+      "posted": true,
+      "billingEventId": 502,
+      "includeInClientDoc": true,
+      "graduated": true
+    },
+    {
+      "id": 1048,
+      "date": "2026-06-02",
+      "proj": "Pull Starboard Propeller & Shaft",
+      "cat": "S",
+      "hrs": 4723.87,
+      "desc": "Props and Starboard Shaft Repairs\nPull Props Scan, True & Re-Install\nPull Shaft True & Re-Install\n*starboard shaft was brought to within .001\" of true. ",
+      "posted": true,
+      "billingEventId": 502,
+      "includeInClientDoc": true,
+      "graduated": true
+    },
+    {
+      "id": 1049,
+      "date": "2026-06-02",
+      "proj": "Dry Storage June",
+      "cat": "F",
+      "hrs": 250,
+      "desc": "",
+      "posted": true,
+      "billingEventId": 502,
+      "includeInClientDoc": true,
+      "graduated": true
     }
   ],
   "billingEvents": [
@@ -2712,10 +2770,10 @@
       "history": []
     }
   ],
-  "nextProjId": 63,
-  "nextTaskId": 209,
+  "nextProjId": 64,
+  "nextTaskId": 210,
   "nextCOId": 101,
-  "nextTEId": 1047,
+  "nextTEId": 1050,
   "nextBillingId": 503,
   "settings": {
     "company": "Turn Point Marine",
@@ -2764,13 +2822,13 @@
       "est_14": true,
       "est_33": true,
       "act_16": true,
-      "est_16": true
+      "est_16": true,
+      "act_27": false
     },
     "openProjs": [
       60,
       37,
-      14,
-      16
+      14
     ],
     "closedReadyProjs": [
       15,
@@ -2778,7 +2836,9 @@
       20,
       22,
       23,
-      1
+      1,
+      61,
+      28
     ],
     "closedBilledProjs": [
       "504:15",

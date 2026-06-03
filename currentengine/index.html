@@ -396,7 +396,14 @@ const ENGINE_VERSION=7;
 const PIN='1248';
 const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0,F:0};
 const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'Subcontractor',P:'Mat - Deposit Paid',F:'Flat Rate'};
+// isMatCat = "value is a flat dollar amount stored in hrs" (not hrs×rate). Covers M/S/P/F.
+// This drives amount math, sorting, and display — do NOT narrow it without breaking those.
 function isMatCat(c){return c==='M'||c==='S'||c==='P'||c==='F';}
+// Narrower buckets for the Estimate Summary breakdown lines. Flat Rate and Subcontractor
+// are NOT materials and get their own lines; only true Materials (M) and deposits (P) count here.
+function isSummaryMatCat(c){return c==='M'||c==='P';}
+function isFlatCat(c){return c==='F';}
+function isSubCat(c){return c==='S';}
 const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP',F:'cF'};
 const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v4';
@@ -510,7 +517,9 @@ function reconcileTimeEntries(){
   alert('✅ Fixed '+fixed+' of '+orphaned.length+' entries.'+(fixed<orphaned.length?'\n⚠ '+(orphaned.length-fixed)+' could not be matched — check manually.':''));
 }
 function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
-function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
+// Materials bucket now excludes Flat Rate (F) and Subcontractor (S) — those have their own lines.
+function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isSummaryMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
+function projActualFlat(p){return projUnbilledPostedTEs(p).filter(te=>isFlatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
 // Outstanding actual = all UNBILLED posted entries (labor + materials + subcontractors).
 // Billed entries are excluded (they're represented by the pink "Billed" pill instead).
 function projUnbilledActualTotal(p){return projUnbilledPostedTEs(p).reduce((a,te)=>a+teAmount(te),0);}
@@ -538,8 +547,11 @@ function projOutstanding(p){return Math.max(0,projAllActualTotal(p)-projBilledTo
 // Combined total (scope + actual posted TEs) — used everywhere. T&M projects have no estimate, so scope contribution is zero.
 function projEstLabor(p){return(p.isTM?0:projScopeLabor(p))+projActualLabor(p);}
 function projEstMat(p){return(p.isTM?0:projScopeMat(p))+projActualMat(p);}
-function projEstSub(p){return p.isTM?0:projScopeSub(p);}
-function projEstTotal(p){return projEstLabor(p)+projEstMat(p)+projEstSub(p);}
+// Subcontractors: scope subs + actual posted S entries (previously S actuals leaked into Materials).
+function projEstSub(p){return(p.isTM?0:projScopeSub(p))+projActualSub(p);}
+// Flat Rate: actual posted F entries get their own summary line (no scope flat-rate field exists).
+function projEstFlat(p){return projActualFlat(p);}
+function projEstTotal(p){return projEstLabor(p)+projEstMat(p)+projEstSub(p)+projEstFlat(p);}
 function projEstHrs(p){
   const sh=(p.scopeTasks||[]).reduce((a,t)=>a+(t.hrs||0),0);
   const ah=projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);
@@ -602,6 +614,10 @@ function lockFlock(beId,invoiceNum,invoiceDate){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
   // Log invoice number change if it's different from what's stored (covers re-lock with different number)
   logFlockChange(be,'invoiceNum',be.invoiceNum,invoiceNum||'');
+  // Auto-graduate every posted entry on this event before locking. Locking is past graduation,
+  // and In-Progress entries that bill on the client doc may still carry graduated:false — mark
+  // them graduated so the engine's state matches the invoice and stays consistent if unlocked later.
+  timeEntries.forEach(te=>{if(te.billingEventId===be.id&&te.posted)te.graduated=true;});
   be.locked=true;
   be.isCurrent=false;
   be.invoiceNum=invoiceNum||'';
@@ -837,10 +853,11 @@ function renderSummary(){
     const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
     const gMat=actP.reduce((a,p)=>a+projEstMat(p),0);
     const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
-    const gSubtotal=gL+gMat+gSub;
+    const gFlat=actP.reduce((a,p)=>a+projEstFlat(p),0);
+    const gSubtotal=gL+gMat+gSub+gFlat;
     // Shop fee base excludes subcontractors — subs typically arrange their own overhead/markup,
-    // so charging shop fee on top would be double-dipping.
-    const gShop=(gL+gMat)*0.03;
+    // so charging shop fee on top would be double-dipping. Flat-rate work is shop labor, so it IS included.
+    const gShop=(gL+gMat+gFlat)*0.03;
     const _gTaxBase=gSubtotal+gShop;const gTaxState=settings.taxExempt?0:_gTaxBase*0.065;const gTaxCity=settings.taxExempt?0:_gTaxBase*0.026;const gTax=gTaxState+gTaxCity;
     const gTotal=gSubtotal+gShop+gTax;
     // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
@@ -855,6 +872,7 @@ function renderSummary(){
     gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
       +row('Labor',gL,false)
       +row('Materials',gMat,false)
+      +(gFlat>0?row('Flat Rate',gFlat,false):'')
       +row('Subcontractors',gSub,false)
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
       +row('Shop Fee (3%)',gShop,false)
@@ -3575,30 +3593,29 @@ function promptLockFlock(beId){
   const blockedDiv=document.getElementById('lockBeBlocked');
   const fields=document.getElementById('lockBeFields');
   const confirmBtn=document.getElementById('lockBeConfirm');
+  // Locking is "past graduation" (entries on a locked event read as billed regardless of the
+  // graduated flag). In-Progress entries routinely never get manually graduated yet still bill
+  // correctly on the client document, so ungraduated entries no longer BLOCK locking — they
+  // are auto-graduated at lock time (see lockFlock). We just show an informational heads-up.
   if(blocked.length>0){
-    // Hard-block: list ungraduated entries by project name + description, disable confirm
     const lines=blocked.map(({te,proj})=>{
       const pn=proj?proj.name:te.proj;
       const desc=(te.desc||'(no description)').slice(0,60);
       const amt=fmt(teAmount(te));
       return '• '+pn+' &mdash; '+desc+' &mdash; '+amt;
     }).join('<br>');
-    document.getElementById('lockBeBlockedDetail').innerHTML=blocked.length+' entr'+(blocked.length!==1?'ies':'y')+' on this billing event '+(blocked.length!==1?'have':'has')+' not been graduated. Graduate them first, or move them to a different billing event.<br><br>'+lines;
+    document.getElementById('lockBeBlockedDetail').innerHTML=blocked.length+' entr'+(blocked.length!==1?'ies':'y')+' on this billing event '+(blocked.length!==1?'have':'has')+' not been graduated (typically In-Progress work). '+(blocked.length!==1?'They':'It')+' will be graduated automatically and included on this invoice.<br><br>'+lines;
     blockedDiv.style.display='block';
-    fields.style.display='none';
-    confirmBtn.disabled=true;
-    confirmBtn.style.opacity='0.4';
-    confirmBtn.style.cursor='not-allowed';
   }else{
     blockedDiv.style.display='none';
-    fields.style.display='block';
-    confirmBtn.disabled=false;
-    confirmBtn.style.opacity='1';
-    confirmBtn.style.cursor='pointer';
-    // Default invoice number to the billing event name; default date to today
-    document.getElementById('lockBeInv').value=be.invoiceNum||be.name||'';
-    document.getElementById('lockBeDate').value=be.invoiceDate||new Date().toISOString().split('T')[0];
   }
+  // Lock is always allowed now — show the invoice fields and enable confirm regardless.
+  fields.style.display='block';
+  confirmBtn.disabled=false;
+  confirmBtn.style.opacity='1';
+  confirmBtn.style.cursor='pointer';
+  document.getElementById('lockBeInv').value=be.invoiceNum||be.name||'';
+  document.getElementById('lockBeDate').value=be.invoiceDate||new Date().toISOString().split('T')[0];
   document.getElementById('lockBeOverlay').style.display='flex';
   setTimeout(()=>{const inp=document.getElementById('lockBeInv');if(inp&&!confirmBtn.disabled)inp.focus();},50);
 }
@@ -3732,15 +3749,23 @@ function openClearModal(){
 
 // ─── LOCK BILLING EVENT MODAL ──────────────────────────────────────
 let lockBillingSelected={}; // { projId: true/false }
-function openLockBillingModal(){
-  // Eligible: status='complete', has at least one unbilled posted entry
-  const eligible=projects.filter(p=>{
-    if(p.status!=='complete')return false;
+// Projects eligible for locking into a billing event: any included project that is either
+// In Progress or Complete and has at least one unbilled posted entry. Previously this was
+// gated to status==='complete' only, which blocked locking In-Progress projects whose entries
+// were posted but not graduated — even though those entries bill correctly in the client doc.
+// Graduation is a UI convenience (the "Ready for Billing" rollup), not a hard requirement for locking.
+function lockBillingEligible(){
+  return projects.filter(p=>{
     if(p.include===false)return false;
+    if(p.status!=='complete'&&p.status!=='in_progress')return false;
     return projUnbilledPostedTEs(p).length>0;
   });
+}
+function openLockBillingModal(){
+  // Eligible: status In Progress or Complete, has at least one unbilled posted entry
+  const eligible=lockBillingEligible();
   if(eligible.length===0){
-    alert('No completed projects with unbilled posted entries.\n\nBump completed projects to "Complete — Ready for Billing" status and post their time entries first.');
+    alert('No In Progress or Completed projects with unbilled posted entries.\n\nPost time entries on an In Progress or Complete project first.');
     return;
   }
   // Default name: "Invoice YYYY-MM-DD"
@@ -3771,27 +3796,32 @@ function renderLockBillingList(eligible){
     cb.onchange=()=>{lockBillingSelected[p.id]=cb.checked;updateLockBillingTotal();};
     const numSpan=document.createElement('span');numSpan.style.cssText='font-size:10px;font-weight:700;background:#1a1a1a;color:#fff;border-radius:4px;padding:2px 6px;flex-shrink:0';numSpan.textContent=projNum;
     const nameSpan=document.createElement('span');nameSpan.style.cssText='flex:1;font-size:13px;color:#1a1a1a;font-weight:500';nameSpan.textContent=p.name;
+    const statusSpan=document.createElement('span');
+    const _sec=SECTIONS.find(s=>s.key===p.status);
+    const _slabel=p.status==='in_progress'?'In Progress':(p.status==='complete'?'Complete':(_sec?_sec.label:p.status));
+    statusSpan.style.cssText='font-size:9px;font-weight:600;border-radius:3px;padding:1px 5px;flex-shrink:0;'+(_sec?('background:'+_sec.bg+';color:'+_sec.color+';border:1px solid '+_sec.color):'background:#eee;color:#666');
+    statusSpan.textContent=_slabel;
     const countSpan=document.createElement('span');countSpan.style.cssText='font-size:10px;color:#888';countSpan.textContent=unbilled.length+' entr'+(unbilled.length!==1?'ies':'y');
     const totSpan=document.createElement('span');totSpan.style.cssText='font-size:13px;font-weight:600;color:#1D9E75;min-width:80px;text-align:right';totSpan.textContent=fmt(tot);
-    row.appendChild(cb);row.appendChild(numSpan);row.appendChild(nameSpan);row.appendChild(countSpan);row.appendChild(totSpan);
+    row.appendChild(cb);row.appendChild(numSpan);row.appendChild(nameSpan);row.appendChild(statusSpan);row.appendChild(countSpan);row.appendChild(totSpan);
     list.appendChild(row);
   });
   updateLockBillingTotal();
 }
 function updateLockBillingTotal(){
-  const eligible=projects.filter(p=>p.status==='complete'&&p.include!==false&&projUnbilledPostedTEs(p).length>0);
+  const eligible=lockBillingEligible();
   const tot=eligible.filter(p=>lockBillingSelected[p.id]!==false).reduce((a,p)=>a+projUnbilledPostedTEs(p).reduce((b,te)=>b+teAmount(te),0),0);
   document.getElementById('lockBillingTotal').textContent=fmt(tot);
 }
 function lockBillingSelectAll(val){
-  const eligible=projects.filter(p=>p.status==='complete'&&p.include!==false&&projUnbilledPostedTEs(p).length>0);
+  const eligible=lockBillingEligible();
   eligible.forEach(p=>{lockBillingSelected[p.id]=val;});
   renderLockBillingList(eligible);
 }
 function confirmLockBilling(){
   const name=(document.getElementById('lockBillingName').value||'').trim();
   if(!name){document.getElementById('lockBillingErr').textContent='Billing event name is required.';return;}
-  const eligible=projects.filter(p=>p.status==='complete'&&p.include!==false&&projUnbilledPostedTEs(p).length>0);
+  const eligible=lockBillingEligible();
   const selected=eligible.filter(p=>lockBillingSelected[p.id]!==false);
   if(selected.length===0){document.getElementById('lockBillingErr').textContent='Select at least one project.';return;}
   // Create new locked billing event
