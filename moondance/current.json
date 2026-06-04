@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-06-04T18:03:32.132Z",
+    "exportedAt": "2026-06-04T19:03:08.914Z",
     "engineVersion": 7
   },
   "projects": [
@@ -568,7 +568,7 @@
     {
       "id": 32,
       "name": "Flybridge Threaded Deck Plates x2 Replace",
-      "status": "holding",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1499,7 +1499,7 @@
       "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": true,
-      "co": true
+      "co": false
     },
     {
       "id": 1071,
@@ -1676,7 +1676,7 @@
       "needs_auth": true,
       "in_progress": true,
       "complete": true,
-      "ready_for_billing": false,
+      "ready_for_billing": true,
       "billed": true,
       "act_14": true,
       "est_1": false,
@@ -1718,7 +1718,7 @@
       2,
       33,
       37,
-      32
+      5
     ],
     "closedReadyProjs": [
       15,
@@ -1733,7 +1733,22 @@
       27,
       29,
       30,
-      31
+      31,
+      4,
+      5,
+      6,
+      36,
+      9,
+      12,
+      17,
+      18,
+      19,
+      21,
+      35,
+      25,
+      38,
+      39,
+      24
     ],
     "closedBilledProjs": [
       "504:15",
@@ -1759,6 +1774,7 @@
     "activeReadyBeId": 500,
     "openReadySubtotals": [
       500
-    ]
+    ],
+    "openBilledSubtotals": []
   }
 }

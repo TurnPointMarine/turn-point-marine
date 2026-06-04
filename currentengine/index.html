@@ -270,6 +270,21 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     </div>
   </div>
 </div>
+<div class="pin-overlay" id="mergeBeOverlay" style="display:none">
+  <div class="pin-box" style="width:430px;max-width:90vw">
+    <h2 style="font-size:16px;margin-bottom:4px">Merge Billing Event</h2>
+    <p style="margin-bottom:14px;font-size:12px;color:#888" id="mergeBeSubtitle">Move all entries from this billing event into another, then remove this one.</p>
+    <div class="vf-group" style="margin-bottom:12px;text-align:left">
+      <div class="vf-label" style="margin-bottom:4px">Merge into</div>
+      <select id="mergeBeTarget" style="width:100%;font-size:13px;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit"></select>
+    </div>
+    <p style="margin-bottom:14px;font-size:11px;color:#aaa;text-align:left">Locked invoices can't be a merge target. To fold this work into a sent invoice, unlock it first, merge, then re-lock. If this is the current ("Next Invoice") event, the target becomes current after the merge.</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn" style="flex:1" onclick="closeMergeBe()">Cancel</button>
+      <button class="btn btn-primary" style="flex:1" onclick="confirmMergeBe()">Merge</button>
+    </div>
+  </div>
+</div>
 <!-- ESTIMATE -->
 <div class="page active" id="page-estimate">
   <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap;gap:10px">
@@ -724,6 +739,29 @@ function renameFlock(beId,newName){
   logFlockChange(be,'name',be.name,newName);
   be.name=newName;
   saveData();renderTimeEntry();
+}
+function mergeFlock(sourceId,targetId){
+  // Fold one billing event into another: reassign all of the source's time entries onto the
+  // target, transfer the "current" flag if needed, then delete the source. Used to undo a
+  // premature lock/rollover when new posted entries have since landed on the new current event.
+  if(sourceId===targetId)return;
+  const src=billingEvents.find(b=>b.id===sourceId);
+  const tgt=billingEvents.find(b=>b.id===targetId);
+  if(!src||!tgt)return;
+  // Guard both ends: never silently un-bill a locked source, and never add new work to a locked
+  // (already-issued) invoice. The user unlocks first in those cases.
+  if(src.locked){alert('Unlock "'+(src.invoiceNum?'Invoice '+src.invoiceNum:src.name)+'" before merging it.');return;}
+  if(tgt.locked){alert('Cannot merge into a locked invoice. Unlock "'+(tgt.invoiceNum?'Invoice '+tgt.invoiceNum:tgt.name)+'" first, merge, then re-lock.');return;}
+  let moved=0;
+  timeEntries.forEach(te=>{if(te.billingEventId===sourceId){te.billingEventId=targetId;moved++;}});
+  // Keep exactly one current event: if the source was the current ("Next Invoice") event, the
+  // target inherits that role so we don't end up with zero current events after removing the source.
+  if(src.isCurrent)tgt.isCurrent=true;
+  logFlockChange(tgt,'merge','',moved+' entr'+(moved!==1?'ies':'y')+' moved from '+(src.name||('Event '+src.id)));
+  const idx=billingEvents.findIndex(b=>b.id===sourceId);
+  if(idx>=0)billingEvents.splice(idx,1);
+  ensureCurrentFlock(); // belt-and-suspenders: guarantee a current event still exists
+  saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 function setFlockInvoiceNum(beId,newNum){
   // Soft-lock edit path for changing invoice number on a locked billing event.
@@ -3792,6 +3830,9 @@ function renderTimeEntry(){
       }
       if(!be.locked){
         rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:4px" onclick="promptRenameFlock('+be.id+')" title="Rename">✎</button>';
+        if(billingEvents.filter(b=>b.id!==be.id&&!b.locked).length>0){
+          rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:4px" onclick="promptMergeFlock('+be.id+')" title="Merge this event into another">&#10549; Merge</button>';
+        }
       }
 
       sh.innerHTML='<span>'+leftHTML+'</span><span>'+rightHTML+'</span>';
@@ -3912,6 +3953,41 @@ function confirmRenameBe(){
   closeRenameBe();
   if(unlocked)renderEstimate();
 }
+let _mergeSourceBeId=null;
+function promptMergeFlock(sourceId){
+  const src=billingEvents.find(b=>b.id===sourceId);if(!src)return;
+  if(!unlocked){alert('Enter PIN on the Estimate Engine tab to merge billing events.');return;}
+  if(src.locked){alert('Unlock this invoice before merging it into another event.');return;}
+  // Eligible targets: any OTHER unlocked billing event (can't merge into a locked invoice).
+  const targets=billingEvents.filter(b=>b.id!==sourceId&&!b.locked);
+  if(targets.length===0){
+    alert('No other open billing event to merge into.\n\nTo fold this work into a sent invoice, unlock that invoice first, then merge.');
+    return;
+  }
+  _mergeSourceBeId=sourceId;
+  const sel=document.getElementById('mergeBeTarget');
+  // Most-recent-first so the natural "previous" event sits at the top as the default.
+  const ordered=targets.slice().sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));
+  sel.innerHTML=ordered.map(b=>{
+    const c=flockEntryCount(b);
+    return '<option value="'+b.id+'">'+(b.isCurrent?'\u2605 ':'')+(b.name||('Event '+b.id))+' \u2014 '+c+' entr'+(c!==1?'ies':'y')+'</option>';
+  }).join('');
+  const c=flockEntryCount(src);
+  document.getElementById('mergeBeSubtitle').textContent='Move '+c+' entr'+(c!==1?'ies':'y')+' from "'+(src.name||('Event '+src.id))+'" into the event below, then remove "'+(src.name||('Event '+src.id))+'".';
+  document.getElementById('mergeBeOverlay').style.display='flex';
+}
+function closeMergeBe(){document.getElementById('mergeBeOverlay').style.display='none';_mergeSourceBeId=null;}
+function confirmMergeBe(){
+  if(_mergeSourceBeId===null)return;
+  const tgtId=parseInt(document.getElementById('mergeBeTarget').value,10);
+  if(isNaN(tgtId))return;
+  const src=billingEvents.find(b=>b.id===_mergeSourceBeId);
+  const tgt=billingEvents.find(b=>b.id===tgtId);
+  if(src&&tgt&&!confirm('Merge "'+(src.name||('Event '+src.id))+'" into "'+(tgt.name||('Event '+tgt.id))+'"?\n\nAll its entries move over and "'+(src.name||('Event '+src.id))+'" is removed. This can be reversed by merging back.'))return;
+  mergeFlock(_mergeSourceBeId,tgtId);
+  closeMergeBe();
+  if(unlocked)renderEstimate();
+}
 // Enter-to-confirm on both modals
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter'){
@@ -3920,10 +3996,13 @@ document.addEventListener('keydown',e=>{
       if(!btn.disabled)confirmLockBe();
     }else if(document.getElementById('renameBeOverlay').style.display==='flex'){
       confirmRenameBe();
+    }else if(document.getElementById('mergeBeOverlay').style.display==='flex'){
+      confirmMergeBe();
     }
   }else if(e.key==='Escape'){
     if(document.getElementById('lockBeOverlay').style.display==='flex')closeLockBe();
     else if(document.getElementById('renameBeOverlay').style.display==='flex')closeRenameBe();
+    else if(document.getElementById('mergeBeOverlay').style.display==='flex')closeMergeBe();
   }
 });
 
@@ -3956,6 +4035,7 @@ function renderBillingEventStrip(){
     +'</div>'
     +'<div style="display:flex;gap:6px">'
     +'<button class="btn-sm" onclick="promptRenameFlock('+cur.id+')" title="Rename this billing event">&#9998; Rename</button>'
+    +(billingEvents.filter(b=>b.id!==cur.id&&!b.locked).length>0?'<button class="btn-sm" onclick="promptMergeFlock('+cur.id+')" title="Merge this event into another">&#10549; Merge</button>':'')
     +'<button class="btn-sm" style="'+lockStyle+';padding:5px 12px;font-weight:600" '
     +(canLock?'':'disabled ')+'onclick="promptLockFlock('+cur.id+')" title="'+lockTitle+'">&#128274; Lock Billing Event</button>'
     +'</div>'
