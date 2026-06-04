@@ -438,9 +438,8 @@ let activeReadyBeId=null;
 // Per-event subtotal panels in Ready-for-Billing start COLLAPSED; this Set tracks which the
 // user has expanded. Keyed on billing-event id. Persists via uiState.
 let openReadySubtotals=new Set();
-// The billing event chosen for the next client-doc export. undefined = not yet chosen (may prompt);
-// null = no scoping (export everything). Set by the export picker, reset after each export.
-let _docExportBeId=undefined;
+// Per-locked-event subtotal panels in the Billed section (collapsed by default). Keyed on event id.
+let openBilledSubtotals=new Set();
 // Billed section per-project collapse (same pattern). Tracks closed-deviations within each event group.
 // Composite key 'eventId:projectId' since the same project can appear under multiple events.
 let closedBilledProjs=new Set();
@@ -458,7 +457,8 @@ function serializeUiState(){
     closedReadyProjs:Array.from(closedReadyProjs),
     closedBilledProjs:Array.from(closedBilledProjs),
     activeReadyBeId:activeReadyBeId,
-    openReadySubtotals:Array.from(openReadySubtotals)
+    openReadySubtotals:Array.from(openReadySubtotals),
+    openBilledSubtotals:Array.from(openBilledSubtotals)
   };
 }
 function restoreUiState(ui){
@@ -480,6 +480,9 @@ function restoreUiState(ui){
   }
   if(Array.isArray(ui.openReadySubtotals)){
     openReadySubtotals=new Set(ui.openReadySubtotals);
+  }
+  if(Array.isArray(ui.openBilledSubtotals)){
+    openBilledSubtotals=new Set(ui.openBilledSubtotals);
   }
 }
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -994,6 +997,11 @@ function toggleReadySubtotal(beId){
   else openReadySubtotals.add(beId);
   saveData();renderEstimate();
 }
+function toggleBilledSubtotal(beId){
+  if(openBilledSubtotals.has(beId))openBilledSubtotals.delete(beId);
+  else openBilledSubtotals.add(beId);
+  saveData();renderEstimate();
+}
 
 function renderSummary(){
   const inc=projects.filter(p=>p.include!==false);
@@ -1205,6 +1213,35 @@ function renderBilledEventsBody(body){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0"><span style="font-size:10px;opacity:0.7">'+beTEs.length+' entr'+(beTEs.length!==1?'ies':'y')+'</span><span style="font-size:13px">'+fmt(beTotal)+'</span></div>';
     body.appendChild(beHdr);
+
+    // Collapsible financial breakdown for this locked event — same layout as the Billing-Event
+    // subtotals (Labor / Materials / Subs / Flat / Subtotal / Shop Fee / Tax / Total). Collapsed by default.
+    {
+      const bst=computeSubtotalsFromEntries(beTEs);
+      const isOpenB=openBilledSubtotals.has(be.id);
+      const bpanel=document.createElement('div');
+      bpanel.style.cssText='margin:0;border-bottom:1px solid #e5e7eb;background:#fff';
+      const bph=document.createElement('div');
+      bph.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:7px 16px 7px 24px;background:#f1f5f9;cursor:pointer;user-select:none;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#475569';
+      bph.title=isOpenB?'Click to collapse subtotals':'Click to expand subtotals';
+      bph.innerHTML='<span>Invoice Subtotals</span><span style="display:flex;align-items:center;gap:10px"><span style="font-weight:700;color:#155a3e">'+fmt(bst.total)+'</span><span class="chev'+(isOpenB?' open':'')+'">&#9654;</span></span>';
+      bph.onclick=()=>toggleBilledSubtotal(be.id);
+      bpanel.appendChild(bph);
+      if(isOpenB){
+        const brow=(label,val,strong)=>'<div style="display:flex;justify-content:space-between;padding:6px 16px 6px 24px;border-top:1px solid #f0f0ed;font-size:11px"><span style="color:'+(strong?'#1a1a1a':'#666')+';font-weight:'+(strong?'700':'400')+'">'+label+'</span><span style="font-weight:'+(strong?'700':'600')+';color:'+(strong?'#1a1a1a':'#444')+'">'+fmt(val)+'</span></div>';
+        let bb='<div>';
+        bb+=brow('Labor',bst.labor,false);
+        bb+=brow('Materials',bst.mat,false);
+        if(bst.sub>0)bb+=brow('Subcontractors',bst.sub,false);
+        if(bst.flat>0)bb+=brow('Flat Rate',bst.flat,false);
+        bb+=brow('Subtotal',bst.subtotal,true);
+        bb+=brow('Shop Fee (3%)',bst.shop,false);
+        if(!settings.taxExempt)bb+=brow('Tax (9.1%)',bst.tax,false);
+        bb+='<div style="display:flex;justify-content:space-between;padding:8px 16px 8px 24px;background:#155a3e;color:#fff;font-size:12px;font-weight:700"><span>Invoice Total</span><span>'+fmt(bst.total)+'</span></div></div>';
+        const bd=document.createElement('div');bd.innerHTML=bb;bpanel.appendChild(bd);
+      }
+      body.appendChild(bpanel);
+    }
     const byProj={};
     beTEs.forEach(te=>{
       if(!byProj[te.proj])byProj[te.proj]=[];
@@ -2145,22 +2182,13 @@ function ttMerged(proj){
 }
 
 function exportClientDoc(){
-  // ── Billing-event scope ─────────────────────────────────────────────────────
-  // Default: export the current "Next Invoice" event. When MORE THAN ONE billing
-  // event is unlocked at export time, ask which one to export (the user chose this).
-  // When exactly one is unlocked, use it automatically with no prompt.
-  const _openBEs=unlockedBillingEvents();
-  if(_openBEs.length>1 && _docExportBeId===undefined){
-    showExportBePicker(_openBEs);
-    return;
-  }
-  const _scopeBeId = (_docExportBeId!==undefined)
-    ? _docExportBeId
-    : (resolveActiveReadyBe()?resolveActiveReadyBe().id:null);
-  // Filter applied to UNBILLED posted entries so the doc covers just the chosen open event.
-  // (Locked/billed history is left unscoped — it always shows as prior context.)
-  const _scopeFlt = te => (_scopeBeId===null) || (te.billingEventId===_scopeBeId);
-  _docExportBeId=undefined; // reset so the next export re-prompts when needed
+  // The client doc reflects ONLY the current "Next Invoice" billing event. If any other event is
+  // also unlocked (e.g. a previously-locked invoice you've reopened), its entries are kept OUT of
+  // the doc. In the normal case of a single open event this changes nothing. Billed/locked history
+  // is left unscoped — it always shows as prior context. Scope tasks (the fixed estimate) aren't
+  // tied to an event, so they appear as before.
+  const _curBE=billingEvents.find(b=>b.isCurrent&&!b.locked);
+  const _scopeFlt=te=>!_curBE||te.billingEventId===_curBE.id;
 
   const vessel=document.getElementById('vfVessel').value||'Vessel';
   const client=document.getElementById('vfClient').value||'Client';
@@ -2718,11 +2746,12 @@ function exportClientDoc(){
     const compMat=docReadyTEs.filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
     const compSub=docReadyTEs.filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
     const compFlat=docReadyTEs.filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
-    const compSubtotal=compL+compMat+compSub+compFlat;
-    // Shop fee base excludes Flat Rate (flat-rate services are all-inclusive)
+    // Shop fee base excludes Flat Rate (flat-rate services are all-inclusive). Shop fee is now
+    // folded INTO the subtotal (listed above it), and tax is charged on that combined subtotal.
     const compShop=(compL+compMat)*0.03;
-    const _compTaxBase=compSubtotal+compShop;const compTaxState=settings.taxExempt?0:_compTaxBase*0.065;const compTaxCity=settings.taxExempt?0:_compTaxBase*0.026;const compTax=compTaxState+compTaxCity;
-    const compTotal=compSubtotal+compShop+compTax;
+    const compSubtotal=compL+compMat+compSub+compFlat+compShop;
+    const compTaxState=settings.taxExempt?0:compSubtotal*0.065;const compTaxCity=settings.taxExempt?0:compSubtotal*0.026;const compTax=compTaxState+compTaxCity;
+    const compTotal=compSubtotal+compTax;
     html+=`<div style="margin:10px -12px -6px;border-top:2px solid #c354d6;font-family:Arial,sans-serif">
       <div style="background:#fdf4ff;color:#b232c2;padding:12px 18px;font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;text-align:center">Billing Event Summary</div>
       <table style="width:100%;border-collapse:collapse">
@@ -2730,8 +2759,8 @@ function exportClientDoc(){
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compMat)}</td></tr>
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compSub)}</td></tr>
         ${compFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compFlat)}</td></tr>`:''}
-        <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(compSubtotal)}</td></tr>
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compShop)}</td></tr>
+        <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(compSubtotal)}</td></tr>
         ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTax)}</td></tr>`}
       </table>
       <div style="background:#fdf4ff;color:#b232c2;padding:14px 18px;border-top:2px solid #c354d6;border-radius:0 0 6px 6px;display:flex;justify-content:space-between;align-items:center">
@@ -2743,46 +2772,40 @@ function exportClientDoc(){
   }
 
   // ── ESTIMATE SUMMARY ────────────────────────────────────────────────────
-  // Buckets computed upstream by category (not by storage field). Math is straight
-  // bucket totals — no subtraction tricks. Shop fee base = Labor + Materials only
-  // (Subs and Flat Rate excluded — matches Billing Event Summary policy: subcontractors
-  // carry their own overhead; flat-rate services are all-inclusive).
-  // Money lines come from the one shared calculation (computeBillingSubtotals) that the
-  // engine summary also uses, so the client doc and the engine can never disagree.
-  // Scoped to the chosen billing event when more than one is unlocked (else the current event).
-  const _bs=computeBillingSubtotals(actP,_scopeFlt);
-  const _sub=_bs.subtotal;
-  const _shop=_bs.shop;
-  const _tax=_bs.tax;
-  const _total=_bs.total;
-  const _taxState=_bs.taxState;
-  const _taxCity=_bs.taxCity;
-  html+=`<div style="margin-top:28px;border:1px solid #ececec;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
-    <div onclick="var d=document.getElementById('estsum_detail');var c=this.querySelector('.sechev');var willOpen=d.style.display==='none';d.style.display=willOpen?'block':'none';c.style.transform=willOpen?'rotate(90deg)':'rotate(0deg)'" style="background:#faf9fb;padding:11px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
-      <span style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#999">Estimate Summary &mdash; Work in Progress &amp; Complete</span>
-      <span style="display:flex;align-items:center;gap:12px"><span style="font-size:11pt;font-weight:700;color:#888">${fd(_total)}</span><span class="sechev" style="font-size:11px;color:#bbb;transition:transform 0.2s;transform:rotate(0deg);display:inline-block">&#9654;</span></span>
-    </div>
-    <div id="estsum_detail" style="display:none">
-      <table style="width:100%;border-collapse:collapse;border-top:1px solid #eee">
-        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Labor</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allL)}</td></tr>
-        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Materials</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allMat)}</td></tr>
-        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
-        ${allFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allFlat)}</td></tr>`:''}
-        <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
-        <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (3% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>
-        ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.1%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>`}
-      </table>
-      <div style="background:#eef0ee;color:#555;padding:13px 18px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:11pt;font-weight:700">Total</span>
-        <span style="font-size:12pt;font-weight:700">${fd(_total)}</span>
-      </div>
-    </div>
-  </div>`;
+  // (Removed from the client-facing document per request — the per-project cards and the
+  // Billed section breakdowns remain; this roll-up no longer renders on the client doc.)
 
   // ── BILLED ──────────────────────────────────────────────────────────────
   if(billP.length>0){
     // Entry-driven: section total = sum of all locked entries
     const bt=docBilledTEs.reduce((a,te)=>a+teAmount(te),0);
+
+    // Per-locked-event financial breakdown (Labor / Materials / Subs / Flat / Shop Fee / Tax / Total),
+    // matching the Billing-Event subtotal format. One block per invoice represented in the billed set.
+    const _billedEventIds=[...new Set(docBilledTEs.map(te=>te.billingEventId))];
+    let billBreakdowns='';
+    _billedEventIds.forEach(eid=>{
+      const be=billingEvents.find(e=>e.id===eid);
+      const evTEs=docBilledTEs.filter(te=>te.billingEventId===eid);
+      const st=computeSubtotalsFromEntries(evTEs);
+      const invLbl=be?(be.invoiceNum?'Invoice #'+be.invoiceNum:(be.name||'Billing Event')):'Billing Event';
+      const dateLbl=be&&be.invoiceDate?' &middot; '+be.invoiceDate:'';
+      const r=(label,val,strong)=>`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:8px 16px;font-size:9.5pt;color:${strong?'#333':'#666'};font-weight:${strong?'700':'400'}">${label}</td><td style="padding:8px 16px;text-align:right;font-size:9.5pt;font-weight:${strong?'700':'600'};color:${strong?'#333':'#444'}">${fd(val)}</td></tr>`;
+      billBreakdowns+=`<div style="margin:0 0 1px;background:#fff">
+        <div style="padding:9px 16px;background:#f3f4f6;font-size:8.5pt;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em">${invLbl}${dateLbl}</div>
+        <table style="width:100%;border-collapse:collapse">
+          ${r('Labor',st.labor,false)}
+          ${r('Materials',st.mat,false)}
+          ${st.sub>0?r('Subcontractors',st.sub,false):''}
+          ${st.flat>0?r('Flat Rate Services',st.flat,false):''}
+          ${r('Subtotal',st.subtotal,true)}
+          ${r('Shop Fee (3% of labor &amp; materials)',st.shop,false)}
+          ${settings.taxExempt?'':r('Tax (9.1%)',st.tax,false)}
+        </table>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#eef0ee;color:#555"><span style="font-size:10pt;font-weight:700">Invoice Total</span><span style="font-size:11pt;font-weight:700">${fd(st.total)}</span></div>
+      </div>`;
+    });
+
     let billRows='';
     billP.forEach((proj,bi)=>{
       const bid='billed_'+bi;
@@ -2817,7 +2840,7 @@ function exportClientDoc(){
           <span class="bchev" style="font-size:9px;color:#aaa;display:inline-block;transition:transform 0.15s">&#9654;</span>
         </div>
       </div>
-      <div id="billedBody" style="display:none">${billRows}</div>
+      <div id="billedBody" style="display:none">${billBreakdowns}<div style="border-top:1px solid #eee">${billRows}</div></div>
     </div>`;
   }
 
@@ -2960,49 +2983,6 @@ function displayClientDoc(){
   exportClientDoc();
 }
 
-// Picker shown when MORE THAN ONE billing event is unlocked at export time. Lets the user choose
-// which open event the client doc should cover. Choosing sets _docExportBeId and re-runs the export,
-// preserving display-vs-download mode. "Cancel" aborts without exporting.
-function showExportBePicker(openBEs){
-  const wasDisplay=!!window._clientDocDisplayMode;
-  let ov=document.getElementById('exportBeOverlay');
-  if(ov)ov.remove();
-  ov=document.createElement('div');
-  ov.id='exportBeOverlay';
-  ov.style.cssText='position:fixed;inset:0;background:rgba(15,23,42,0.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px';
-  const card=document.createElement('div');
-  card.style.cssText='background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;font-family:Arial,sans-serif';
-  let inner='<div style="padding:18px 22px;background:#0f766e;color:#fff">'
-    +'<div style="font-size:15px;font-weight:700">Which billing event?</div>'
-    +'<div style="font-size:12px;opacity:0.9;margin-top:3px">More than one billing event is unlocked. Choose which one to export to the client document.</div>'
-    +'</div><div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">';
-  openBEs.forEach(be=>{
-    const st=computeEventSubtotals(be.id);
-    const label=be.isCurrent?'Next Invoice':(be.name||'Event');
-    const sub=(be.isCurrent?'✓ current · ':'🔓 unlocked · ')+st.count+' entr'+(st.count!==1?'ies':'y')+' · '+fmt(st.total);
-    inner+='<button data-be="'+be.id+'" style="text-align:left;border:1px solid #cbd5e1;border-radius:8px;padding:11px 14px;background:#f8fafc;cursor:pointer;display:flex;flex-direction:column;gap:2px">'
-      +'<span style="font-size:13px;font-weight:700;color:#0f172a">'+label+'</span>'
-      +'<span style="font-size:11px;color:#64748b">'+sub+'</span>'
-      +'</button>';
-  });
-  inner+='</div><div style="padding:0 16px 16px;text-align:right">'
-    +'<button id="exportBeCancel" style="border:1px solid #cbd5e1;background:#fff;color:#475569;border-radius:7px;padding:8px 16px;font-size:12px;cursor:pointer">Cancel</button>'
-    +'</div>';
-  card.innerHTML=inner;
-  ov.appendChild(card);
-  document.body.appendChild(ov);
-  card.querySelectorAll('button[data-be]').forEach(btn=>{
-    btn.onclick=()=>{
-      _docExportBeId=parseInt(btn.getAttribute('data-be'),10);
-      activeReadyBeId=_docExportBeId; // keep the engine's Ready-for-Billing tab in sync
-      ov.remove();
-      window._clientDocDisplayMode=wasDisplay;
-      exportClientDoc();
-    };
-  });
-  card.querySelector('#exportBeCancel').onclick=()=>{window._clientDocDisplayMode=false;ov.remove();};
-  ov.onclick=(e)=>{if(e.target===ov){window._clientDocDisplayMode=false;ov.remove();}};
-}
 
 
 
