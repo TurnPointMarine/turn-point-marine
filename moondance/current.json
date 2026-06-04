@@ -2,61 +2,61 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-06-04T19:56:18.253Z",
+    "exportedAt": "2026-06-04T20:06:34.162Z",
     "engineVersion": 7
   },
   "projects": [
     {
       "id": 1,
       "name": "Exterior Deep Clean",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 4,
       "name": "Watermaker – Troubleshoot & Repair",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Watermaker showed higher than normal / higher than okay water temperature on last use. Likely a sensor — troubleshoot and replace sensor or do whatever is necessary to fix.\n\n*Also check FW tank level; FW flushes from watermaker appear to be using too much water.",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 5,
       "name": "Watermaker Filter Replacement",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Replace watermaker filters.",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 6,
       "name": "Fuel Treatment 2025/2026",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Add Stanadyne treatment for topped off fuel.",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 7,
@@ -83,7 +83,7 @@
     {
       "id": 36,
       "name": "Helm Station 120v Outlet Trips *Test Outlet With Load",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -101,21 +101,21 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 9,
       "name": "Tender Service",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Bring tender to gill net crane load to trailer and bring to shop. \nService outboard\n  -Replace engine oil & filter\n  -Replace lower gear oil\n  -Replace raw water pump Impeller\n  -Secondary fuel filter\n  -Replace primary fuel filter (fuel water separator) element\n  -Grease steering\n",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 11,
@@ -131,15 +131,15 @@
     {
       "id": 12,
       "name": "Spigots – Function Check & Alignment",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Check all spigots for functionality. Clock the one spigot so it sits at a 45-degree angle matching the other one.",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 13,
@@ -187,7 +187,7 @@
     {
       "id": 17,
       "name": "Rust & Scratch Removal on Stainless Steel",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Remove rust and stubborn scratch marks from stainless steel throughout vessel.",
       "isTM": false,
@@ -235,13 +235,13 @@
       ],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 18,
       "name": "General Polish/Seal Stainless Steel",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "General polish on stainless steel throughout vessel.",
       "isTM": false,
@@ -281,13 +281,13 @@
       ],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 19,
       "name": "Pilothouse Windows – Exterior Cleaning (Waterspot Removal)",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "11 windows total including 2 aft flybridge windows.",
       "isTM": false,
@@ -303,13 +303,13 @@
       ],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 20,
       "name": "Pilothouse Windows – Aquapel Exterior",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "11 windows total including 2 aft flybridge windows.",
       "isTM": false,
@@ -325,8 +325,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 10,
@@ -342,15 +342,15 @@
     {
       "id": 21,
       "name": "Macerator",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "Recommend having spare macerator on board. Would you like us to order one?",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 22,
@@ -376,7 +376,7 @@
     {
       "id": 23,
       "name": "Replace Start Battery in Tender",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "The battery was super low and the battery should be replaced. With a new battery installed the charger functionality should be confirmed. ",
       "estimateTotal": null,
@@ -393,13 +393,13 @@
       ],
       "tasks": [],
       "cos": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 24,
       "name": "Starlink",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -417,13 +417,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 25,
       "name": "Replace Lifeline Cables on Bow",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -432,13 +432,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 26,
       "name": "Winter Watch 2024/2025",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -472,13 +472,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 27,
       "name": "Treat Diesel in Tanks with Standyne",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -496,13 +496,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 28,
       "name": "Starlink Install at Home",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -520,13 +520,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 29,
       "name": "Fire Suppression System Certifications",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -544,13 +544,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 30,
       "name": "Isolate Hydronic Heat Circulation to Water Heater",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -568,13 +568,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 31,
       "name": "Lazarette GFCI & Flybridge 120V Outlet Cover",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -592,8 +592,8 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 32,
@@ -620,7 +620,7 @@
     {
       "id": 35,
       "name": "Winter Watch 2025/2026",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -629,13 +629,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 38,
       "name": "Replace Fresh Water Filter",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -644,13 +644,13 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 39,
       "name": "Water in Forward and Midship Bilges",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -668,8 +668,8 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "invoiceNum": "",
-      "invoiceDate": ""
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04"
     },
     {
       "id": 41,
@@ -931,7 +931,7 @@
       "hrs": 53.52,
       "desc": "6\" Screw-out Deck Plate, White, \n (Smooth Plate) x2",
       "posted": true,
-      "billingEventId": 502,
+      "billingEventId": 503,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -1458,7 +1458,7 @@
       "hrs": 0,
       "desc": "Tested the tender battery charger (since the battery was found dead prior to the last engine service. Tested voltage of the battery, hooked up the battery charger and the voltage raised 2.4V, indicating the charger is functioning properly when it has 120v. Reassembled the canvas cover and secured the charger connected to the battery. ",
       "posted": true,
-      "billingEventId": 502,
+      "billingEventId": 503,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -1506,7 +1506,7 @@
       "hrs": 1,
       "desc": "Ran furnace isolated the head towel rack hydronic loops and bled them of air. Inspected the hydronic system it was holding proper pressure and found no leaks at the manifold. After bleeding the air from the towel rack loop the pressure needs to be topped off when servicing the Kabola. ",
       "posted": true,
-      "billingEventId": 502,
+      "billingEventId": 503,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -1671,9 +1671,9 @@
   "billingEvents": [
     {
       "id": 502,
-      "name": "Billing Event 2026-06-04",
-      "isCurrent": true,
-      "locked": false,
+      "name": "Invoice #23517",
+      "isCurrent": false,
+      "locked": true,
       "createdAt": "2026-06-04T19:09:55.955Z",
       "history": [
         {
@@ -1687,15 +1687,38 @@
           "from": "",
           "to": "13 entries moved from Invoice #23517  8/2024-3/2025",
           "at": "2026-06-04T19:38:36.870Z"
+        },
+        {
+          "field": "name",
+          "from": "Billing Event 2026-06-04",
+          "to": "Invoice #23517",
+          "at": "2026-06-04T20:03:45.625Z"
+        },
+        {
+          "field": "invoiceNum",
+          "from": "",
+          "to": "Invoice #23517",
+          "at": "2026-06-04T20:05:54.855Z"
         }
-      ]
+      ],
+      "invoiceNum": "Invoice #23517",
+      "invoiceDate": "2026-06-04",
+      "lockedAt": "2026-06-04T20:05:54.855Z"
+    },
+    {
+      "id": 503,
+      "name": "Billing Event 2026-06-04",
+      "isCurrent": true,
+      "locked": false,
+      "createdAt": "2026-06-04T20:05:54.855Z",
+      "history": []
     }
   ],
   "nextProjId": 42,
   "nextTaskId": 136,
   "nextCOId": 100,
   "nextTEId": 1080,
-  "nextBillingId": 503,
+  "nextBillingId": 504,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
