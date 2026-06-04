@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-06-03T21:34:15.090Z",
+    "exportedAt": "2026-06-04T17:07:45.956Z",
     "engineVersion": 7
   },
   "projects": [
@@ -10,30 +10,8 @@
       "id": 1,
       "name": "Exterior Deep Clean",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "",
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 2,
-      "name": "GFI Outlet Replacement – Lazarette (Davit Charger)",
-      "status": "in_progress",
-      "include": true,
-      "notes": "GFI plug in the lazarette that the davit charger is plugged into keeps popping. If not monitored the davit battery runs down. Replace outlet.",
-      "isTM": true,
-      "scopeTasks": [],
-      "tasks": [],
-      "cos": []
-    },
-    {
-      "id": 3,
-      "name": "Flybridge Outlet Cover Replacement",
-      "status": "in_progress",
-      "include": true,
-      "notes": "Cover on the outlet on the flybridge (side wall, right of the wheel) is worn out and no longer waterproof. Replace with weatherproof cover.",
       "isTM": true,
       "scopeTasks": [],
       "tasks": [],
@@ -43,7 +21,7 @@
       "id": 4,
       "name": "Watermaker – Troubleshoot & Repair",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "Watermaker showed higher than normal / higher than okay water temperature on last use. Likely a sensor — troubleshoot and replace sensor or do whatever is necessary to fix.\n\n*Also check FW tank level; FW flushes from watermaker appear to be using too much water.",
       "isTM": true,
       "scopeTasks": [],
@@ -65,7 +43,7 @@
       "id": 6,
       "name": "Fuel Treatment 2025/2026",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "Add Stanadyne treatment for topped off fuel.",
       "isTM": true,
       "scopeTasks": [],
@@ -86,7 +64,7 @@
     {
       "id": 8,
       "name": "Water Heater – Remove 240V Label",
-      "status": "in_progress",
+      "status": "holding",
       "include": false,
       "notes": "No 240V element in the new water heater. Remove the label so as not to confuse anyone.",
       "isTM": true,
@@ -120,7 +98,7 @@
       "id": 12,
       "name": "Spigots – Function Check & Alignment",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "Check all spigots for functionality. Clock the one spigot so it sits at a 45-degree angle matching the other one.",
       "isTM": true,
       "scopeTasks": [],
@@ -321,7 +299,7 @@
       "id": 21,
       "name": "Macerator",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "Recommend having spare macerator on board. Would you like us to order one?",
       "isTM": true,
       "scopeTasks": [],
@@ -353,7 +331,7 @@
       "id": 23,
       "name": "Replace Start Battery in Tender",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "The battery was super low and the battery should be replaced. With a new battery installed the charger functionality should be confirmed. ",
       "estimateTotal": null,
       "isTM": true,
@@ -365,14 +343,6 @@
           "hrs": 0.75,
           "mat": 0,
           "sub": 0
-        },
-        {
-          "id": 114,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
         }
       ],
       "tasks": [],
@@ -382,10 +352,10 @@
       "id": 24,
       "name": "Starlink",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "",
       "estimateTotal": null,
-      "isTM": false,
+      "isTM": true,
       "scopeTasks": [
         {
           "id": 115,
@@ -404,20 +374,11 @@
       "id": 25,
       "name": "Replace Lifeline Cables on Bow",
       "status": "in_progress",
-      "include": true,
+      "include": false,
       "notes": "",
       "estimateTotal": null,
       "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 116,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
+      "scopeTasks": [],
       "tasks": [],
       "cos": [],
       "billingEvents": []
@@ -425,7 +386,7 @@
     {
       "id": 26,
       "name": "Winter Watch 2024/2025",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -458,12 +419,14 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03"
     },
     {
       "id": 27,
       "name": "Treat Diesel in Tanks with Standyne",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -480,12 +443,14 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03"
     },
     {
       "id": 28,
       "name": "Starlink Install at Home",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -502,12 +467,14 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03"
     },
     {
       "id": 29,
       "name": "Fire Suppression System Certifications",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -524,12 +491,14 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03"
     },
     {
       "id": 30,
       "name": "Isolate Hydronic Heat Circulation to Water Heater",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -546,12 +515,14 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03"
     },
     {
       "id": 31,
       "name": "Lazarette GFCI & Flybridge 120V Outlet Cover",
-      "status": "complete",
+      "status": "billed",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -568,12 +539,14 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03"
     },
     {
       "id": 32,
       "name": "Flybridge Threaded Deck Plates x2 Replace",
-      "status": "in_progress",
+      "status": "holding",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -581,28 +554,6 @@
       "scopeTasks": [
         {
           "id": 126,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": []
-    },
-    {
-      "id": 33,
-      "name": "Winter Watch 2025/2026",
-      "status": "in_progress",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": true,
-      "scopeTasks": [
-        {
-          "id": 127,
           "cat": "T",
           "desc": "",
           "hrs": 0,
@@ -635,6 +586,98 @@
       "tasks": [],
       "cos": [],
       "billingEvents": []
+    },
+    {
+      "id": 35,
+      "name": "Winter Watch 2025/2026",
+      "status": "in_progress",
+      "include": false,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 36,
+      "name": "Helm Station 120v Outlet Trips *Test Outlet With Load",
+      "status": "in_progress",
+      "include": false,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 130,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 37,
+      "name": "New Project",
+      "status": "holding",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [
+        {
+          "id": 131,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 38,
+      "name": "Replace Fresh Water Filter",
+      "status": "in_progress",
+      "include": false,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 39,
+      "name": "Water in Forward and Midship Bilges",
+      "status": "in_progress",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 133,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
     }
   ],
   "timeEntries": [
@@ -646,7 +689,7 @@
       "hrs": 9,
       "desc": "Removed rust and stubborn scuff marks from the antennas, davit, and all stainless steel on the transom using Rolite polish and On/Off hull cleaner. Polished all door latches, fender latches, Selene plaques, gate hardware, cockpit rail stanchions, and touched up several areas on the Portuguese bridge, foredeck, and bow pulpit using Never-Dull polish. Recorded photos and rinsed down the vessel. ",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -658,7 +701,7 @@
       "hrs": 8.5,
       "desc": "Removed rust from the salon and pilothouse door hinges and handles, as well as the Portuguese bridge handrails, using Rolite metal polish and On/Off hull cleaner. Polished all cavil cleats and the Portuguese bridge handrails with Never-Dull polish.",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -849,8 +892,8 @@
       "cat": "M",
       "hrs": 0,
       "desc": "",
-      "posted": true,
-      "billingEventId": 500,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -862,7 +905,7 @@
       "hrs": 249.4,
       "desc": "Self-Priming Sealed Macerator Pump, 24V 8A (x1)",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -874,7 +917,7 @@
       "hrs": 53.52,
       "desc": "6\" Screw-out Deck Plate, White, \n (Smooth Plate) x2",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -884,9 +927,9 @@
       "proj": "Watermaker – Troubleshoot & Repair",
       "cat": "M",
       "hrs": 44.79,
-      "desc": "CHECK VALVE IN LINE 1/2 FIP (x1)",
-      "posted": true,
-      "billingEventId": 500,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -898,7 +941,7 @@
       "hrs": 208.8,
       "desc": "FCI TPMS Sensor with harness",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -910,7 +953,7 @@
       "hrs": 272.47,
       "desc": "Water Pump Kit\nOIl\nOil filter\nSpark Plugs\nLower Gear Oil\nFuel Filter",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -921,8 +964,8 @@
       "cat": "F",
       "hrs": 0,
       "desc": "",
-      "posted": true,
-      "billingEventId": 500,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "sortOrder": 1
@@ -933,9 +976,9 @@
       "proj": "Winter Watch 2025/2026",
       "cat": "M",
       "hrs": 22.79,
-      "desc": "Fleetguard Gallon of Coolant (x1)",
-      "posted": true,
-      "billingEventId": 500,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "sortOrder": 4
@@ -947,8 +990,8 @@
       "cat": "F",
       "hrs": 0,
       "desc": "",
-      "posted": true,
-      "billingEventId": 500,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "sortOrder": 2
@@ -960,8 +1003,8 @@
       "cat": "F",
       "hrs": 0,
       "desc": "",
-      "posted": true,
-      "billingEventId": 500,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "sortOrder": 3
@@ -986,7 +1029,7 @@
       "hrs": 20.95,
       "desc": "Primary Spin on Fuel Filter \n",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -998,7 +1041,7 @@
       "hrs": 75,
       "desc": "Stanadyne Fuel Treatment for both tanks",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -1010,7 +1053,555 @@
       "hrs": 0.75,
       "desc": "Acquired Stanadyne Fuel Additive and treated the fuel tanks for the winter.  \n",
       "posted": true,
-      "billingEventId": 500,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1031,
+      "date": "2026-06-03",
+      "proj": "Fuel Treatment 2025/2026",
+      "cat": "M",
+      "hrs": 22.79,
+      "desc": "Fleetguard Gallon of Coolant (x1)",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1032,
+      "date": "2026-06-03",
+      "proj": "Winter Watch 2025/2026",
+      "cat": "F",
+      "hrs": 275,
+      "desc": "January",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "sortOrder": 2
+    },
+    {
+      "id": 1033,
+      "date": "2026-06-03",
+      "proj": "Winter Watch 2025/2026",
+      "cat": "F",
+      "hrs": 275,
+      "desc": "February",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "sortOrder": 3
+    },
+    {
+      "id": 1034,
+      "date": "2026-06-03",
+      "proj": "Winter Watch 2025/2026",
+      "cat": "F",
+      "hrs": 275,
+      "desc": "March",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "sortOrder": 4
+    },
+    {
+      "id": 1035,
+      "date": "2026-06-03",
+      "proj": "Winter Watch 2025/2026",
+      "cat": "F",
+      "hrs": 275,
+      "desc": "December",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "sortOrder": 1
+    },
+    {
+      "id": 1036,
+      "date": "2026-06-03",
+      "proj": "Winter Watch 2025/2026",
+      "cat": "F",
+      "hrs": 0,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "sortOrder": 5
+    },
+    {
+      "id": 1038,
+      "date": "2026-03-19",
+      "proj": "Exterior Deep Clean",
+      "cat": "D",
+      "hrs": 4,
+      "desc": "Second pass of pressure washing. Cleaned all remaining marine growth missed during the first pass. including gelcoat cracks around the pilothouse, window seams, hardware, and handrails and door frames. Removed the stubborn marine growth inside the swim step ladder using On/Off hull cleaner and a brush. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1037,
+      "date": "2026-03-17",
+      "proj": "Exterior Deep Clean",
+      "cat": "D",
+      "hrs": 6.75,
+      "desc": "Pressure washed marine growth from the entire vessel, with focused attention on the non-skid decks, canvas, and cockpit overhead, then washed the vessel. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1039,
+      "date": "2026-06-03",
+      "proj": "Exterior Deep Clean",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Removed the old sealant from the starboard Portuguese drain fitting that fell out of the gelcoat, cleaned with acetone, and installed the fitting with 3M-4000UV sealant. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1040,
+      "date": "2026-03-20",
+      "proj": "Pilothouse Windows – Exterior Cleaning (Waterspot Removal)",
+      "cat": "D",
+      "hrs": 1,
+      "desc": "Cleaned a section of the forward port pilothouse window using Windex, recorded photos of the water deposits on the window, removed the deposits with Sud Factory water spot remover, and recorded after photos. (1.5)\nInspected the macerator and recorded specifications, checked thruster oil levels, searched for an extraction access point on the windlass to change the oil, inspected the steering fluid level, and collected outboard specifications. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1041,
+      "date": "2026-03-20",
+      "proj": "Replace Lifeline Cables on Bow",
+      "cat": "T",
+      "hrs": 1.75,
+      "desc": "Removed the bow railing lifelines, delivered them to Hardware Sales, and acquired an estimate for replacing. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1042,
+      "date": "2026-06-03",
+      "proj": "Replace Lifeline Cables on Bow",
+      "cat": "M",
+      "hrs": 251.11,
+      "desc": "Bow Lifelines: SWAGE MARINE TOGGLE 3/16\" (x2) TURNBUCKLE TOG/SWG 5/16\" X 5/32\" (x2) SS LEFT LAY STRAND IMP 1/4 1X19 USE WHITE COATED CABLE 2@152.5\" (x22) BP-BP",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1043,
+      "date": "2026-03-23",
+      "proj": "General Polish/Seal Stainless Steel",
+      "cat": "B",
+      "hrs": 3.25,
+      "desc": "Polished the foredeck handrails, anchor guards, and anchor safety cleat, aiming to bring out the stubborn rust and scratches that require a polisher.",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1044,
+      "date": "2026-03-25",
+      "proj": "General Polish/Seal Stainless Steel",
+      "cat": "B",
+      "hrs": 2.5,
+      "desc": "Polisheed the foredeck cavil cleats, windlass hardware, hatch lid, and latches, aiming to bring out the stubborn rust and scratches that require a polisher. Tape off the stainless steel and applied Rolite polish to the rust on the starboard foredeck handrailing, windlass hardware, and shore power outlet",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1045,
+      "date": "2026-03-30",
+      "proj": "Helm Station 120v Outlet Trips *Test Outlet With Load",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Delivered two heaters to the vessel and used them to test the starboard pilothouse helm station outlet after the breaker for the outlet kept tripping while Casey was buffing. Removed and inspected the outlet, finding no signs of burn marks or discoloration. Then plugged in a 1500W oil heater and allowed it to run for a few hours, confirming the outlet can pull 12 amps consistently. Plugged in an additional heater in the outlet, therefore drawing 17 amps, which then tripped the breaker. Given that 12 amps is sufficient, concluded the breaker was operating properly. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1046,
+      "date": "2026-03-30",
+      "proj": "General Polish/Seal Stainless Steel",
+      "cat": "B",
+      "hrs": 1.5,
+      "desc": "Applied On/Off hull cleaner to the rust bleed on the gelcoat around all the stainless steel on the foredeck, as well as the hand-railing joints that contained rust bleed, then wiped the areas clean with acetone. \nMasked off and polished stubborn rust and scratch marks on the foredeck stainless steel using Rolite polish. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1049,
+      "date": "2026-04-01",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 4.5,
+      "desc": "Replaced oil, oil filters, fuel filters, spark plugs, and a thermostat in the tender outboard. It was quite a pain to get at the thermostat and clean the corrosion from the housing*\n\nCleaned and applied corrosion block grease to the tender transom steering rail where to outboard pivots to turn the vessel. Exercised the helm may times while removing any dirt coming from the slider carriage. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1047,
+      "date": "2026-03-31",
+      "proj": "Tender Service",
+      "cat": "T",
+      "hrs": 1.25,
+      "desc": "Removed the lower gear assembly, drained the old gear oil.\nReplaced the impeller and water pump gasket. Installed the lower gear assembly onto the outboard. The gaskets for the water pump were very hard to remove and took some time",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1048,
+      "date": "2026-03-31",
+      "proj": "Spigots – Function Check & Alignment",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Removed the forward foredeck spigot, rotated the spigot to allow easy access for hose connections, then fastened both foredeck spigots in order prevent them from misalignment. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1050,
+      "date": "2026-04-06",
+      "proj": "General Polish/Seal Stainless Steel",
+      "cat": "B",
+      "hrs": 3,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1051,
+      "date": "2026-04-06",
+      "proj": "Pilothouse Windows – Exterior Cleaning (Waterspot Removal)",
+      "cat": "D",
+      "hrs": 2.5,
+      "desc": "Removed the watermarks on the center and port pilothouse windows using Sud Factory waterspot remover, cleaned with Windex, and applied Aquapel rain repellent. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1052,
+      "date": "2026-04-13",
+      "proj": "Pilothouse Windows – Aquapel Exterior",
+      "cat": "D",
+      "hrs": 3.25,
+      "desc": "Removed the watermarks on the starboard and aft pilothouse windows using Sud Factory waterspot remover, cleaned with Windex, and applied Aquapel rain repellent. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1053,
+      "date": "2026-06-03",
+      "proj": "General Polish/Seal Stainless Steel",
+      "cat": "B",
+      "hrs": 4,
+      "desc": "Polished the handrails, stainless steel hardware, and windscreen supports around the port flybridge brow using Never-Dull polish. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1054,
+      "date": "2026-04-17",
+      "proj": "Replace Start Battery in Tender",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Picked up a new battery at West Marine, installed the new battery, and tested for proper function. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1055,
+      "date": "2026-03-31",
+      "proj": "Replace Start Battery in Tender",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "We found the start battery for the tender at 10v. The battery switch was off and the charger hooked up. I am unsure if it was an outlet not having power or if the plug had been tugged and not providing power to the charger. I wiggled the plug on the outlet when we found the battery dead and then checked the charger light was on. I should have checked the light was on before wiggling the plug in the outlet... We brought a Victron battery charger from the shop and charged the battery to get it sufficient juice to run the outboard over to the crane.",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1056,
+      "date": "2026-04-17",
+      "proj": "Water in Forward and Midship Bilges",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Evacuated most of 10 gallons of water from the forward and midship sumps, then wiped them dry. Will monitor for source of freshwater. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "co": true
+    },
+    {
+      "id": 1057,
+      "date": "2026-06-03",
+      "proj": "Tender Service",
+      "cat": "D",
+      "hrs": 2,
+      "desc": "Tender Transport to and from Shop for servicing",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1058,
+      "date": "2026-04-17",
+      "proj": "Starlink",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Routed a new Starlink cable from the router below the helm station to the cable port in the overhead starboard pilothouse wiring panel. Secured the cable with zip ties. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1059,
+      "date": "2026-04-20",
+      "proj": "General Polish/Seal Stainless Steel",
+      "cat": "B",
+      "hrs": 4,
+      "desc": "Removed the kayaks on the flybridge and polished all handrails and hardware near the helm using Never-Dull polish. Removed all rust and scratch marks using Rolite polish. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1060,
+      "date": "2026-04-20",
+      "proj": "Watermaker – Troubleshoot & Repair",
+      "cat": "T",
+      "hrs": 2.75,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1061,
+      "date": "2026-04-22",
+      "proj": "Water in Forward and Midship Bilges",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Inspected the bilges and noticed the forward sump contained water, indicating an active leak as the sumps were just cleaned. \n\nNoticed a leak in a fill fitting at the top of the freshwater tank. Recorded photos and wiped up the water in the sump. Will continue to monitor. It should only leak when the water level is above the level of the top of the tank if this assessment is true",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "co": true
+    },
+    {
+      "id": 1062,
+      "date": "2026-06-03",
+      "proj": "Replace Tender Start Battery",
+      "cat": "T",
+      "hrs": 0,
+      "desc": "Tested the tender battery charger (since the battery was found dead prior to the last engine service. Tested voltage of the battery, hooked up the battery charger and the voltage raised 2.4V, indicating the charger is functioning properly when it has 120v. Reassembled the canvas cover and secured the charger connected to the battery. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1063,
+      "date": "2026-06-03",
+      "proj": "Replace Start Battery in Tender",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Tested the tender battery charger (since the battery was found dead prior to the last engine service. Tested voltage of the battery, hooked up the battery charger and the voltage raised 2.4V, indicating the charger is functioning properly when it has 120v. Reassembled the canvas cover and secured the charger connected to the battery. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1064,
+      "date": "2026-04-22",
+      "proj": "Watermaker – Troubleshoot & Repair",
+      "cat": "T",
+      "hrs": 4,
+      "desc": "Removed the old TDS sensor and cabling from the watermaker, cut the new TDS cable to length, installed ferrules on the wiring, installed the new sensor, secured the wiring with zip ties, tested the system, and flushed the watermaker with fresh water. \n*Needed to install the entire cable as the old sensor didn't have a plug. The new sensor does have a plug which will make for easier installation in the future*",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1065,
+      "date": "2026-04-22",
+      "proj": "Watermaker Filter Replacement",
+      "cat": "T",
+      "hrs": 0.75,
+      "desc": "Removed and replaced the watermaker filters, tested the system. \n\n",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1066,
+      "date": "2026-04-16",
+      "proj": "Kabola Furnace Service",
+      "cat": "T",
+      "hrs": 1,
+      "desc": "Ran furnace isolated the head towel rack hydronic loops and bled them of air. Inspected the hydronic system it was holding proper pressure and found no leaks at the manifold. After bleeding the air from the towel rack loop the pressure needs to be topped off when servicing the Kabola. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1067,
+      "date": "2026-04-16",
+      "proj": "Starlink",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "Rebooted the Starlink system with the new cable and got the system online and speed tested the internet. We had 264mbps downloading and 67mbps uploading.  Set the starlink to bypass its own router and hooked up the TP-Link. The TP-Link was not getting signal. Logged into the admin side of the TP-Link and rebooted the starlink and the TP-Link router. Got signal with the Starlink dish. \n\nNeed to install cable clam in the overhead for the new cable. The old cable has an ethernet plug in it and we need a waterproof cable gland for the new cable. \n",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1068,
+      "date": "2026-04-21",
+      "proj": "Starlink",
+      "cat": "T",
+      "hrs": 2,
+      "desc": "Installed cable clam in the pilothouse overhead through the pilothouse roof. Coiled extra cable up in overhead. Under the helm station zip tied the cables and the bypass adapter, positioned the Starlink router back up on its velcro footing, Replaced wire chase cable covers. Tested Starlink connection for proper operation. \n",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1069,
+      "date": "2026-04-21",
+      "proj": "Watermaker Filter Replacement",
+      "cat": "M",
+      "hrs": 44.79,
+      "desc": "CHECK VALVE IN LINE 1/2 FIP (x1)",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1070,
+      "date": "2026-04-22",
+      "proj": "Watermaker Filter Replacement",
+      "cat": "T",
+      "hrs": 1.25,
+      "desc": "*Found a check valve for the fw line was leaking due to a crack in the valve. Removed the valve, installed a new one, tested the system once more, and labeled the filter installation date. This was not due to rough service. Replaced old PVC valve with brass lead free valve. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false,
+      "co": true
+    },
+    {
+      "id": 1071,
+      "date": "2026-04-17",
+      "proj": "Replace Fresh Water Filter",
+      "cat": "T",
+      "hrs": 0.5,
+      "desc": "Installed a new freshwater filter, labeled the installation date, and ordered a spare macerator pump.",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1072,
+      "date": "2026-06-03",
+      "proj": "Macerator",
+      "cat": "M",
+      "hrs": 0,
+      "desc": "*Stowed in guest cabin with spares.",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1073,
+      "date": "2026-05-17",
+      "proj": "Replace Lifeline Cables on Bow",
+      "cat": "T",
+      "hrs": 1.5,
+      "desc": "Picked up the new lifeline cables from Hardware Sales, installed them on the foredeck, and cleaned up scuffing on the cables with acetone. ",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1074,
+      "date": "2026-06-03",
+      "proj": "Pilothouse Windows – Exterior Cleaning (Waterspot Removal)",
+      "cat": "M",
+      "hrs": 30,
+      "desc": "Aquapel",
+      "posted": true,
+      "billingEventId": 501,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1075,
+      "date": "2026-04-06",
+      "proj": "Rust & Scratch Removal on Stainless Steel",
+      "cat": "B",
+      "hrs": 3,
+      "desc": "Dropped the anchor onto the dock, repositioned the chain, and polished the anchor chain guide with Rolite polish. Applied cleaner wax around the stainless steel handrails in the foredeck where On/Off hull cleaner was applied to remove rust bleed in the gelcoat. ",
+      "posted": true,
+      "billingEventId": 501,
       "includeInClientDoc": true,
       "graduated": false
     }
@@ -1019,8 +1610,8 @@
     {
       "id": 500,
       "name": "Invoice #23517  8/2024-3/2025",
-      "isCurrent": true,
-      "locked": false,
+      "isCurrent": false,
+      "locked": true,
       "createdAt": "2026-06-03T17:45:03.362Z",
       "history": [
         {
@@ -1028,15 +1619,39 @@
           "from": "Billing Event 2026-06-03",
           "to": "Invoice #23517  8/2024-3/2025",
           "at": "2026-06-03T20:40:39.536Z"
+        },
+        {
+          "field": "invoiceNum",
+          "from": "",
+          "to": "Invoice #23517  8/2024-3/2025",
+          "at": "2026-06-03T21:51:44.580Z"
+        }
+      ],
+      "invoiceNum": "Invoice #23517  8/2024-3/2025",
+      "invoiceDate": "2026-06-03",
+      "lockedAt": "2026-06-04T17:07:35.723Z"
+    },
+    {
+      "id": 501,
+      "name": "Invoice #23517 11/2025-5/2026",
+      "isCurrent": true,
+      "locked": false,
+      "createdAt": "2026-06-03T21:51:44.580Z",
+      "history": [
+        {
+          "field": "name",
+          "from": "Billing Event 2026-06-03",
+          "to": "Invoice #23517 11/2025-5/2026",
+          "at": "2026-06-03T22:07:04.441Z"
         }
       ]
     }
   ],
-  "nextProjId": 35,
-  "nextTaskId": 129,
+  "nextProjId": 41,
+  "nextTaskId": 135,
   "nextCOId": 100,
-  "nextTEId": 1031,
-  "nextBillingId": 501,
+  "nextTEId": 1076,
+  "nextBillingId": 502,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
@@ -1053,7 +1668,7 @@
   },
   "uiState": {
     "secOpenState": {
-      "holding": false,
+      "holding": true,
       "needs_auth": true,
       "in_progress": true,
       "complete": true,
@@ -1067,17 +1682,17 @@
       "est_21": true,
       "est_15": false,
       "est_22": true,
-      "act_1": false,
+      "act_1": true,
       "act_15": true,
       "act_6": true,
       "est_6": true,
       "est_5": true,
       "est_2": true,
-      "act_3": false,
+      "act_3": true,
       "est_4": true,
-      "act_5": false,
+      "act_5": true,
       "act_11": false,
-      "act_23": false,
+      "act_23": true,
       "est_61": true,
       "est_60": true,
       "act_31": true,
@@ -1088,12 +1703,16 @@
       "act_27": true,
       "est_20": true,
       "est_17": true,
-      "est_26": false
+      "est_26": false,
+      "est_25": true
     },
     "openProjs": [
       60,
-      37,
-      34
+      34,
+      40,
+      3,
+      2,
+      33
     ],
     "closedReadyProjs": [
       15,
@@ -1103,7 +1722,12 @@
       23,
       1,
       61,
-      28
+      28,
+      26,
+      27,
+      29,
+      30,
+      31
     ],
     "closedBilledProjs": [
       "504:15",

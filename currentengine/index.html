@@ -432,6 +432,15 @@ let openProjs=new Set();
 // this Set tracks the deviations — projects the user explicitly collapsed. Persists via uiState.
 // Keyed on project ID (consistent with openProjs).
 let closedReadyProjs=new Set();
+// Which unlocked billing event is active in the Ready-for-Billing section (tab selection).
+// null = default to the current "Next Invoice" event. Persists via uiState.
+let activeReadyBeId=null;
+// Per-event subtotal panels in Ready-for-Billing start COLLAPSED; this Set tracks which the
+// user has expanded. Keyed on billing-event id. Persists via uiState.
+let openReadySubtotals=new Set();
+// The billing event chosen for the next client-doc export. undefined = not yet chosen (may prompt);
+// null = no scoping (export everything). Set by the export picker, reset after each export.
+let _docExportBeId=undefined;
 // Billed section per-project collapse (same pattern). Tracks closed-deviations within each event group.
 // Composite key 'eventId:projectId' since the same project can appear under multiple events.
 let closedBilledProjs=new Set();
@@ -447,7 +456,9 @@ function serializeUiState(){
     secOpenState:{...secOpenState},
     openProjs:Array.from(openProjs),
     closedReadyProjs:Array.from(closedReadyProjs),
-    closedBilledProjs:Array.from(closedBilledProjs)
+    closedBilledProjs:Array.from(closedBilledProjs),
+    activeReadyBeId:activeReadyBeId,
+    openReadySubtotals:Array.from(openReadySubtotals)
   };
 }
 function restoreUiState(ui){
@@ -463,6 +474,12 @@ function restoreUiState(ui){
   }
   if(Array.isArray(ui.closedBilledProjs)){
     closedBilledProjs=new Set(ui.closedBilledProjs);
+  }
+  if(ui.activeReadyBeId!==undefined){
+    activeReadyBeId=ui.activeReadyBeId;
+  }
+  if(Array.isArray(ui.openReadySubtotals)){
+    openReadySubtotals=new Set(ui.openReadySubtotals);
   }
 }
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -568,6 +585,16 @@ function checkScopeBump(p){
 }
 
 // ===== FLOCK HELPERS (Ship 1 — vessel-level billing events) =====
+// Billing-event membership for UNBILLED entries follows project status, not chronology.
+// An unbilled posted entry is "billable now" only when its project is Complete. Entries on
+// In-Progress projects are held out of the lockable billing event until the project completes.
+// (Locked/billed entries are historical and never re-derived — see isEntryBilled.)
+function isEntryBillable(te){
+  if(!te||!te.posted)return false;
+  if(isEntryBilled(te))return true; // already locked into a historical invoice
+  const proj=projects.find(p=>p.name===te.proj);
+  return !!(proj&&proj.status==='complete');
+}
 function ensureCurrentFlock(){
   let cur=billingEvents.find(b=>b.isCurrent&&!b.locked);
   if(!cur){
@@ -612,11 +639,27 @@ function logFlockChange(be,field,from,to){
 }
 function lockFlock(beId,invoiceNum,invoiceDate){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  // Membership follows status: before locking, release any entries whose project is NOT Complete
+  // (e.g. In Progress) out of this event. They move to the fresh current flock and wait there until
+  // their project is completed — so the invoice only freezes Complete-project work.
+  const heldBack=timeEntries.filter(te=>te.billingEventId===be.id&&te.posted&&!isEntryBillable(te));
+  if(heldBack.length>0){
+    const nextFlock=ensureCurrentFlock();
+    // ensureCurrentFlock returns THIS event if it's still current+unlocked; guard against that by
+    // only reusing it when it isn't the one being locked. Otherwise spawn a clean one.
+    let target=nextFlock;
+    if(target.id===be.id){
+      const today=new Date().toISOString().split('T')[0];
+      target={id:nextBillingId++,name:'Billing Event '+today,isCurrent:true,locked:false,createdAt:new Date().toISOString(),history:[]};
+      billingEvents.push(target);
+    }
+    heldBack.forEach(te=>{te.billingEventId=target.id;te.graduated=false;});
+    be.isCurrent=false; // this event is no longer the current one once we've spun a successor
+  }
   // Log invoice number change if it's different from what's stored (covers re-lock with different number)
   logFlockChange(be,'invoiceNum',be.invoiceNum,invoiceNum||'');
-  // Auto-graduate every posted entry on this event before locking. Locking is past graduation,
-  // and In-Progress entries that bill on the client doc may still carry graduated:false — mark
-  // them graduated so the engine's state matches the invoice and stays consistent if unlocked later.
+  // Auto-graduate every REMAINING posted entry on this event before locking. Locking is past
+  // graduation; the remaining entries are all Complete-project work that belongs on this invoice.
   timeEntries.forEach(te=>{if(te.billingEventId===be.id&&te.posted)te.graduated=true;});
   be.locked=true;
   be.isCurrent=false;
@@ -646,7 +689,32 @@ function lockFlock(beId,invoiceNum,invoiceDate){
 function unlockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be||!be.locked)return;
   be.locked=false;
-  saveData();renderTimeEntry();
+  // Reverse the lock's auto-flip: any project that was pushed to Billed by this invoice now has
+  // unbilled entries again, so it must leave the Billed section. Without this it "disappears" —
+  // status stays 'billed' while nothing is actually billed. Land it back in Complete (the only
+  // state a project flips to Billed from) and clear the invoice stamp this event applied.
+  const touchedProjNames=[...new Set(timeEntries.filter(te=>te.billingEventId===be.id&&te.posted).map(te=>te.proj))];
+  touchedProjNames.forEach(pname=>{
+    const proj=projects.find(p=>p.name===pname);
+    if(!proj||proj.status!=='billed')return;
+    // Determine billed-ness by FLOCK LOCK STATE only — not by proj.status (which is still 'billed'
+    // right now and would mask everything via isEntryBilled). An entry is "still billed" only if it
+    // sits in some OTHER event that remains locked. If any posted entry is no longer in a locked
+    // event, the project is no longer fully billed and must drop back to Complete.
+    const stillBilledByOtherLock=te=>{
+      if(!te.billingEventId)return false;
+      const ev=billingEvents.find(b=>b.id===te.billingEventId);
+      return !!(ev&&ev.locked);
+    };
+    const hasUnbilled=timeEntries.some(te=>te.proj===pname&&te.posted&&!stillBilledByOtherLock(te));
+    if(hasUnbilled){
+      proj.status='complete';
+      // Clear the invoice stamp only if it came from THIS event (don't wipe another invoice's stamp).
+      if(proj.invoiceNum&&be.invoiceNum&&proj.invoiceNum===be.invoiceNum)proj.invoiceNum='';
+      if(proj.invoiceDate&&be.invoiceDate&&proj.invoiceDate===be.invoiceDate)proj.invoiceDate='';
+    }
+  });
+  saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 function renameFlock(beId,newName){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
@@ -845,21 +913,99 @@ function removeLogo(){
   const fi=document.getElementById('stLogoFile');if(fi)fi.value='';
 }
 
+// ── SINGLE SOURCE OF TRUTH FOR BILLING SUBTOTALS ─────────────────────────────
+// Both the engine summary box AND the client document call this, so their
+// Labor / Materials / Subcontractors / Flat / Shop Fee / Tax / Total numbers
+// can never drift apart. `projList` is the set of projects to include
+// (normally the active, non-billed, non-holding projects).
+//
+// Bucketing (same convention used throughout the engine):
+//   Materials = `mat` field on any task whose cat is NOT S or F (M/P plus add-ons), and M/P time entries
+//   Subs      = `sub` field on any task + `mat` on cat=S tasks, and S time entries
+//   Flat      = `mat` on cat=F tasks, and F time entries
+//   Labor     = scope labor (estimate projects) or actual posted labor (T&M projects)
+// Shop fee is charged on labor + materials ONLY (subs arrange their own markup;
+// flat-rate is excluded here to match the client-facing document).
+function computeBillingSubtotals(projList,teFilter){
+  const flt=teFilter||(()=>true);
+  const upe =(p)=>projUnbilledPostedTEs(p).filter(flt);
+  const sMat =(p)=>(p.scopeTasks||[]).filter(t=>t.cat!=='S'&&t.cat!=='F').reduce((a,t)=>a+(t.mat||0),0);
+  const sSub =(p)=>(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0)+(p.scopeTasks||[]).filter(t=>t.cat==='S').reduce((a,t)=>a+(t.mat||0),0);
+  const sFlat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((a,t)=>a+(t.mat||0),0);
+  const aLab =(p)=>upe(p).filter(te=>te.cat==='T'||te.cat==='B'||te.cat==='D'||te.cat==='V').reduce((a,te)=>a+(RATES[te.cat]||0)*(te.hrs||0),0);
+  const aMat =(p)=>upe(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
+  const aSub =(p)=>upe(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const aFlat=(p)=>upe(p).filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
+  const labor=projList.reduce((a,p)=>a+(p.isTM?aLab(p):projScopeLabor(p)),0);
+  const mat  =projList.reduce((a,p)=>a+(p.isTM?aMat(p):sMat(p)),0);
+  const sub  =projList.reduce((a,p)=>a+(p.isTM?aSub(p):sSub(p)),0);
+  const flat =projList.reduce((a,p)=>a+(p.isTM?aFlat(p):sFlat(p)),0);
+  const subtotal=labor+mat+sub+flat;
+  const shop=(labor+mat)*0.03;
+  const taxBase=subtotal+shop;
+  const taxState=settings.taxExempt?0:taxBase*0.065;
+  const taxCity =settings.taxExempt?0:taxBase*0.026;
+  const tax=taxState+taxCity;
+  const total=subtotal+shop+tax;
+  return {labor,mat,sub,flat,subtotal,shop,taxState,taxCity,tax,total};
+}
+
+// Subtotals from an explicit list of time entries, bucketed by category. The building block for
+// both the per-event subtotal panels and the client-doc per-event export.
+function computeSubtotalsFromEntries(es){
+  const labor=es.filter(te=>te.cat==='T'||te.cat==='B'||te.cat==='D'||te.cat==='V').reduce((a,te)=>a+(RATES[te.cat]||0)*(te.hrs||0),0);
+  const mat  =es.filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
+  const sub  =es.filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const flat =es.filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
+  const subtotal=labor+mat+sub+flat;
+  const shop=(labor+mat)*0.03;
+  const taxBase=subtotal+shop;
+  const taxState=settings.taxExempt?0:taxBase*0.065;
+  const taxCity =settings.taxExempt?0:taxBase*0.026;
+  const tax=taxState+taxCity;
+  return {labor,mat,sub,flat,subtotal,shop,taxState,taxCity,tax,total:subtotal+shop+tax,count:es.length};
+}
+// Per-billing-event subtotals: all POSTED, unbilled entries assigned to ONE event.
+function computeEventSubtotals(beId){
+  return computeSubtotalsFromEntries(timeEntries.filter(te=>te.posted&&te.billingEventId===beId&&!isEntryBilled(te)));
+}
+
+// The billing events that are currently UNLOCKED (open): the current "Next Invoice" plus any
+// previously-locked invoice that has since been unlocked. Sorted oldest first, current last.
+function unlockedBillingEvents(){
+  return billingEvents.filter(b=>!b.locked).slice().sort((a,b)=>{
+    if(a.isCurrent&&!b.isCurrent)return 1;
+    if(b.isCurrent&&!a.isCurrent)return -1;
+    return String(a.createdAt||'').localeCompare(String(b.createdAt||''));
+  });
+}
+// Resolve the active unlocked event for the Ready-for-Billing tabs and export default:
+// remembered tab if it still exists & is unlocked, else the current event, else the last unlocked.
+function resolveActiveReadyBe(){
+  const open=unlockedBillingEvents();
+  if(open.length===0)return null;
+  let be=open.find(b=>b.id===activeReadyBeId);
+  if(!be)be=open.find(b=>b.isCurrent)||open[open.length-1];
+  return be;
+}
+function selectReadyBe(id){activeReadyBeId=id;saveData();renderEstimate();}
+function toggleReadySubtotal(beId){
+  if(openReadySubtotals.has(beId))openReadySubtotals.delete(beId);
+  else openReadySubtotals.add(beId);
+  saveData();renderEstimate();
+}
+
 function renderSummary(){
   const inc=projects.filter(p=>p.include!==false);
   const gt=document.getElementById('grandTotal');
   if(gt){
     const actP=inc.filter(p=>p.status!=='billed'&&p.status!=='holding');
-    const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
-    const gMat=actP.reduce((a,p)=>a+projEstMat(p),0);
-    const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
-    const gFlat=actP.reduce((a,p)=>a+projEstFlat(p),0);
-    const gSubtotal=gL+gMat+gSub+gFlat;
-    // Shop fee base excludes subcontractors — subs typically arrange their own overhead/markup,
-    // so charging shop fee on top would be double-dipping. Flat-rate work is shop labor, so it IS included.
-    const gShop=(gL+gMat+gFlat)*0.03;
-    const _gTaxBase=gSubtotal+gShop;const gTaxState=settings.taxExempt?0:_gTaxBase*0.065;const gTaxCity=settings.taxExempt?0:_gTaxBase*0.026;const gTax=gTaxState+gTaxCity;
-    const gTotal=gSubtotal+gShop+gTax;
+    const _bs=computeBillingSubtotals(actP);
+    const gL=_bs.labor, gMat=_bs.mat, gSub=_bs.sub, gFlat=_bs.flat;
+    const gSubtotal=_bs.subtotal;
+    const gShop=_bs.shop;
+    const gTaxState=_bs.taxState, gTaxCity=_bs.taxCity, gTax=_bs.tax;
+    const gTotal=_bs.total;
     // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
     const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
     const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+(t.mat||0),0),0);
@@ -890,11 +1036,74 @@ function renderSummary(){
 // Cross-project rollup: shows entries that are graduated but not yet locked into a billing event
 // Entries appear here as a derived view; they still live in their project bodies (with graduated badge)
 function renderReadyForBillingBody(body){
-  const readyTEs=timeEntries.filter(te=>te.posted&&isEntryGraduated(te)&&!isEntryBilled(te));
-  if(readyTEs.length===0){
+  const allReady=timeEntries.filter(te=>te.posted&&isEntryGraduated(te)&&!isEntryBilled(te));
+  if(allReady.length===0){
     const em=document.createElement('div');em.className='sec-empty';em.textContent='No entries ready for billing.';body.appendChild(em);
     return;
   }
+
+  // Unlocked billing events drive the tabs. Tabs only appear when MORE THAN ONE event is open
+  // (e.g. the current "Next Invoice" plus a previously-locked invoice you've unlocked).
+  const openBEs=unlockedBillingEvents();
+  const multi=openBEs.length>1;
+  const activeBe=resolveActiveReadyBe();
+
+  // ── Tab strip (only when multiple events are unlocked) ──────────────────────
+  if(multi){
+    const tabStrip=document.createElement('div');
+    tabStrip.style.cssText='display:flex;flex-wrap:wrap;gap:4px;margin:8px 12px 0;border-bottom:2px solid #e5e7eb';
+    openBEs.forEach(be=>{
+      const isActive=activeBe&&be.id===activeBe.id;
+      const cnt=allReady.filter(te=>te.billingEventId===be.id).length;
+      const label=be.isCurrent?'Next Invoice':(be.name||'Event');
+      const tab=document.createElement('button');
+      tab.style.cssText='border:1px solid #e5e7eb;border-bottom:none;border-radius:8px 8px 0 0;padding:7px 13px;font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;position:relative;top:2px;'
+        +(isActive?'background:#fff;color:#155a3e;border-bottom:2px solid #fff;z-index:2'
+                  :'background:'+(be.isCurrent?'#dcfce7':'#eef7f1')+';color:#155a3e;opacity:0.75');
+      tab.innerHTML=(be.isCurrent?'✓ ':'🔓 ')+label+' <span style="font-weight:400;opacity:0.7;font-size:10px">('+cnt+')</span>';
+      tab.onclick=()=>selectReadyBe(be.id);
+      tabStrip.appendChild(tab);
+    });
+    body.appendChild(tabStrip);
+  }
+
+  // Which ready entries to show: scoped to the active event when multiple are open; otherwise all.
+  const readyTEs=multi&&activeBe?allReady.filter(te=>te.billingEventId===activeBe.id):allReady;
+
+  // ── Collapsible per-event subtotal panel ────────────────────────────────────
+  // Totals exactly the ready entries shown above, bucketed Labor/Materials/Subs/Flat + Shop Fee + Tax.
+  // Collapsed by default; the user expands it per event via the chevron.
+  const subtBe=activeBe||openBEs[0]||null;
+  if(subtBe){
+    const st=computeSubtotalsFromEntries(readyTEs);
+    const isOpenS=openReadySubtotals.has(subtBe.id);
+    const panel=document.createElement('div');
+    panel.style.cssText='margin:'+(multi?'0':'8px')+' 12px 4px;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden;background:#fff';
+    const ph=document.createElement('div');
+    ph.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#f1f5f9;cursor:pointer;user-select:none;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:#475569';
+    ph.title=isOpenS?'Click to collapse subtotals':'Click to expand subtotals';
+    ph.innerHTML='<span>Billing-Event Subtotals'+(multi?' — '+(subtBe.isCurrent?'Next Invoice':(subtBe.name||'Event')):'')+'</span>'
+      +'<span style="display:flex;align-items:center;gap:10px"><span style="font-weight:700;color:#155a3e">'+fmt(st.total)+'</span>'
+      +'<span class="chev'+(isOpenS?' open':'')+'">&#9654;</span></span>';
+    ph.onclick=()=>toggleReadySubtotal(subtBe.id);
+    panel.appendChild(ph);
+    if(isOpenS){
+      const srow=(label,val,strong)=>'<div style="display:flex;justify-content:space-between;padding:7px 14px;border-top:1px solid #f0f0ed;font-size:12px"><span style="color:'+(strong?'#1a1a1a':'#666')+';font-weight:'+(strong?'700':'400')+'">'+label+'</span><span style="font-weight:'+(strong?'700':'600')+';color:'+(strong?'#1a1a1a':'#444')+'">'+fmt(val)+'</span></div>';
+      let bd='<div>';
+      bd+=srow('Labor',st.labor,false);
+      bd+=srow('Materials',st.mat,false);
+      if(st.sub>0)bd+=srow('Subcontractors',st.sub,false);
+      if(st.flat>0)bd+=srow('Flat Rate',st.flat,false);
+      bd+=srow('Subtotal',st.subtotal,true);
+      bd+=srow('Shop Fee (3%)',st.shop,false);
+      if(!settings.taxExempt)bd+=srow('Tax (9.1%)',st.tax,false);
+      bd+='<div style="display:flex;justify-content:space-between;padding:9px 14px;background:#155a3e;color:#fff;font-size:13px;font-weight:700"><span>Total</span><span>'+fmt(st.total)+'</span></div>';
+      bd+='</div>';
+      const det=document.createElement('div');det.innerHTML=bd;panel.appendChild(det);
+    }
+    body.appendChild(panel);
+  }
+
   const statusLabelMap={};
   SECTIONS.forEach(s=>{statusLabelMap[s.key]=s.label.replace(' — Ready for Billing','');});
   const projOrder={};
@@ -1936,6 +2145,23 @@ function ttMerged(proj){
 }
 
 function exportClientDoc(){
+  // ── Billing-event scope ─────────────────────────────────────────────────────
+  // Default: export the current "Next Invoice" event. When MORE THAN ONE billing
+  // event is unlocked at export time, ask which one to export (the user chose this).
+  // When exactly one is unlocked, use it automatically with no prompt.
+  const _openBEs=unlockedBillingEvents();
+  if(_openBEs.length>1 && _docExportBeId===undefined){
+    showExportBePicker(_openBEs);
+    return;
+  }
+  const _scopeBeId = (_docExportBeId!==undefined)
+    ? _docExportBeId
+    : (resolveActiveReadyBe()?resolveActiveReadyBe().id:null);
+  // Filter applied to UNBILLED posted entries so the doc covers just the chosen open event.
+  // (Locked/billed history is left unscoped — it always shows as prior context.)
+  const _scopeFlt = te => (_scopeBeId===null) || (te.billingEventId===_scopeBeId);
+  _docExportBeId=undefined; // reset so the next export re-prompts when needed
+
   const vessel=document.getElementById('vfVessel').value||'Vessel';
   const client=document.getElementById('vfClient').value||'Client';
   const dateStr=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
@@ -1944,7 +2170,7 @@ function exportClientDoc(){
   // Collapsible line-entry detail panel for a client-doc project card. Lists posted, unbilled entries
   // (category, description, date, hrs, amount) — the same read-out the engine shows the operator.
   function clientEntryPanel(proj,panelId,startOpen){
-    const tes=projUnbilledPostedTEs(proj).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
+    const tes=projUnbilledPostedTEs(proj).filter(_scopeFlt).slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||'')));
     if(tes.length===0)return {rows:'',has:false};
     let rows='<div id="'+panelId+'" style="display:'+(startOpen?'block':'none')+';background:#fff;border-top:1px solid #e5e7eb">';
     tes.forEach((te,ei)=>{
@@ -1967,7 +2193,7 @@ function exportClientDoc(){
   const coProjs=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding'&&((p.scopeTasks||[]).some(t=>t.co)||projCoTEs(p).length>0));
   const inPP=projects.filter(p=>p.include!==false&&p.status==='in_progress');
   // Entry-driven derived sets — replace old status-based filters
-  const docReadyTEs=timeEntries.filter(te=>te.posted&&isEntryGraduated(te)&&!isEntryBilled(te));
+  const docReadyTEs=timeEntries.filter(te=>te.posted&&isEntryGraduated(te)&&!isEntryBilled(te)&&_scopeFlt(te));
   const docBilledTEs=timeEntries.filter(te=>te.posted&&isEntryBilled(te));
   const _readyProjNames=new Set(docReadyTEs.map(te=>te.proj));
   const _billedProjNames=new Set(docBilledTEs.map(te=>te.proj));
@@ -1976,7 +2202,7 @@ function exportClientDoc(){
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
   const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
-  const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
+  const allL=actP.reduce((a,p)=>a+(p.isTM?projUnbilledPostedTEs(p).filter(_scopeFlt).filter(te=>!isMatCat(te.cat)).reduce((x,te)=>x+(te.hrs||0)*(RATES[te.cat]||0),0):projScopeLabor(p)),0);
   // Bucket by CATEGORY, but respecting that labor-category tasks (T/B/D/V) can also have
   // per-task add-on amounts in their `mat`/`sub` fields (the Materials/SBCNTRCT columns on
   // each task row). The engine's data convention has historically stored cat=S amounts
@@ -1988,9 +2214,9 @@ function exportClientDoc(){
   const _scopeMat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat!=='S'&&t.cat!=='F').reduce((a,t)=>a+(t.mat||0),0);
   const _scopeSub=(p)=>(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0)+(p.scopeTasks||[]).filter(t=>t.cat==='S').reduce((a,t)=>a+(t.mat||0),0);
   const _scopeFlat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((a,t)=>a+(t.mat||0),0);
-  const _actualMat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
-  const _actualSub=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
-  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
+  const _actualMat=(p)=>projUnbilledPostedTEs(p).filter(_scopeFlt).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
+  const _actualSub=(p)=>projUnbilledPostedTEs(p).filter(_scopeFlt).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(_scopeFlt).filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
   const allMat=actP.reduce((a,p)=>a+(p.isTM?_actualMat(p):_scopeMat(p)),0);
   const allSub=actP.reduce((a,p)=>a+(p.isTM?_actualSub(p):_scopeSub(p)),0);
   const allFlat=actP.reduce((a,p)=>a+(p.isTM?_actualFlat(p):_scopeFlat(p)),0);
@@ -2521,13 +2747,16 @@ function exportClientDoc(){
   // bucket totals — no subtraction tricks. Shop fee base = Labor + Materials only
   // (Subs and Flat Rate excluded — matches Billing Event Summary policy: subcontractors
   // carry their own overhead; flat-rate services are all-inclusive).
-  const _sub=allL+allMat+allSub+allFlat;
-  const _shop=(allL+allMat)*0.03;
-  const _tax=settings.taxExempt?0:(_sub+_shop)*0.091;
-  const _total=_sub+_shop+_tax;
-  const _estTaxBase=_sub+_shop;
-  const _taxState=settings.taxExempt?0:_estTaxBase*0.065;
-  const _taxCity=settings.taxExempt?0:_estTaxBase*0.026;
+  // Money lines come from the one shared calculation (computeBillingSubtotals) that the
+  // engine summary also uses, so the client doc and the engine can never disagree.
+  // Scoped to the chosen billing event when more than one is unlocked (else the current event).
+  const _bs=computeBillingSubtotals(actP,_scopeFlt);
+  const _sub=_bs.subtotal;
+  const _shop=_bs.shop;
+  const _tax=_bs.tax;
+  const _total=_bs.total;
+  const _taxState=_bs.taxState;
+  const _taxCity=_bs.taxCity;
   html+=`<div style="margin-top:28px;border:1px solid #ececec;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
     <div onclick="var d=document.getElementById('estsum_detail');var c=this.querySelector('.sechev');var willOpen=d.style.display==='none';d.style.display=willOpen?'block':'none';c.style.transform=willOpen?'rotate(90deg)':'rotate(0deg)'" style="background:#faf9fb;padding:11px 18px;display:flex;justify-content:space-between;align-items:center;cursor:pointer">
       <span style="font-size:9pt;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#999">Estimate Summary &mdash; Work in Progress &amp; Complete</span>
@@ -2729,6 +2958,50 @@ function exportClientDoc(){
 function displayClientDoc(){
   window._clientDocDisplayMode=true;
   exportClientDoc();
+}
+
+// Picker shown when MORE THAN ONE billing event is unlocked at export time. Lets the user choose
+// which open event the client doc should cover. Choosing sets _docExportBeId and re-runs the export,
+// preserving display-vs-download mode. "Cancel" aborts without exporting.
+function showExportBePicker(openBEs){
+  const wasDisplay=!!window._clientDocDisplayMode;
+  let ov=document.getElementById('exportBeOverlay');
+  if(ov)ov.remove();
+  ov=document.createElement('div');
+  ov.id='exportBeOverlay';
+  ov.style.cssText='position:fixed;inset:0;background:rgba(15,23,42,0.55);display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px';
+  const card=document.createElement('div');
+  card.style.cssText='background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);overflow:hidden;font-family:Arial,sans-serif';
+  let inner='<div style="padding:18px 22px;background:#0f766e;color:#fff">'
+    +'<div style="font-size:15px;font-weight:700">Which billing event?</div>'
+    +'<div style="font-size:12px;opacity:0.9;margin-top:3px">More than one billing event is unlocked. Choose which one to export to the client document.</div>'
+    +'</div><div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">';
+  openBEs.forEach(be=>{
+    const st=computeEventSubtotals(be.id);
+    const label=be.isCurrent?'Next Invoice':(be.name||'Event');
+    const sub=(be.isCurrent?'✓ current · ':'🔓 unlocked · ')+st.count+' entr'+(st.count!==1?'ies':'y')+' · '+fmt(st.total);
+    inner+='<button data-be="'+be.id+'" style="text-align:left;border:1px solid #cbd5e1;border-radius:8px;padding:11px 14px;background:#f8fafc;cursor:pointer;display:flex;flex-direction:column;gap:2px">'
+      +'<span style="font-size:13px;font-weight:700;color:#0f172a">'+label+'</span>'
+      +'<span style="font-size:11px;color:#64748b">'+sub+'</span>'
+      +'</button>';
+  });
+  inner+='</div><div style="padding:0 16px 16px;text-align:right">'
+    +'<button id="exportBeCancel" style="border:1px solid #cbd5e1;background:#fff;color:#475569;border-radius:7px;padding:8px 16px;font-size:12px;cursor:pointer">Cancel</button>'
+    +'</div>';
+  card.innerHTML=inner;
+  ov.appendChild(card);
+  document.body.appendChild(ov);
+  card.querySelectorAll('button[data-be]').forEach(btn=>{
+    btn.onclick=()=>{
+      _docExportBeId=parseInt(btn.getAttribute('data-be'),10);
+      activeReadyBeId=_docExportBeId; // keep the engine's Ready-for-Billing tab in sync
+      ov.remove();
+      window._clientDocDisplayMode=wasDisplay;
+      exportClientDoc();
+    };
+  });
+  card.querySelector('#exportBeCancel').onclick=()=>{window._clientDocDisplayMode=false;ov.remove();};
+  ov.onclick=(e)=>{if(e.target===ov){window._clientDocDisplayMode=false;ov.remove();}};
 }
 
 
@@ -3491,42 +3764,36 @@ function renderTimeEntry(){
     wrap.appendChild(sec);
   }
 
-  // Posted section — grouped by flock
+  // Posted section — billing events stacked, oldest first, current/next-invoice last.
+  // (The tab UI for choosing the active unlocked event now lives in the engine's
+  // Ready-for-Billing section; this tab just lists every event with its entries.)
   if(posted.length>0){
-    // Build display order: current flock first, then other unlocked, then locked (chronological by invoiceDate desc)
-    const sortedFlocks=[...billingEvents].sort((a,b)=>{
-      if(a.isCurrent&&!a.locked)return -1;
-      if(b.isCurrent&&!b.locked)return 1;
-      if(a.locked&&!b.locked)return 1;
-      if(!a.locked&&b.locked)return -1;
-      if(a.locked&&b.locked){
-        return (b.invoiceDate||'').localeCompare(a.invoiceDate||'');
-      }
-      return (a.createdAt||'').localeCompare(b.createdAt||'');
-    });
 
-    sortedFlocks.forEach(be=>{
+    const eventList=[...billingEvents]
+      .filter(be=>be.isCurrent||posted.some(te=>te.billingEventId===be.id))
+      .sort((a,b)=>{
+        const aCur=a.isCurrent&&!a.locked, bCur=b.isCurrent&&!b.locked;
+        if(aCur&&!bCur)return 1;
+        if(bCur&&!aCur)return -1;
+        const ak=a.locked?(a.invoiceDate||a.lockedAt||a.createdAt||''):(a.createdAt||'');
+        const bk=b.locked?(b.invoiceDate||b.lockedAt||b.createdAt||''):(b.createdAt||'');
+        return ak.localeCompare(bk);
+      });
+
+    eventList.forEach(be=>{
       const flockEntries=posted.filter(te=>te.billingEventId===be.id);
-      if(flockEntries.length===0&&!be.isCurrent)return; // skip empty non-current flocks
-
       const sec=document.createElement('div');sec.style.marginBottom='16px';
       const sh=document.createElement('div');
 
-      // Header style varies by flock state
       let bg,fg,border;
-      if(be.locked){
-        bg='#f8fafc';fg='#475569';border='#cbd5e1';
-      }else if(be.isCurrent){
-        bg='#f0fdf4';fg='#166534';border='#86efac';
-      }else{
-        bg='#f0faf6';fg='#155a3e';border='#a7d8c5';
-      }
+      if(be.locked){bg='#f8fafc';fg='#475569';border='#cbd5e1';}
+      else if(be.isCurrent){bg='#f0fdf4';fg='#166534';border='#86efac';}
+      else{bg='#f0faf6';fg='#155a3e';border='#a7d8c5';}
       sh.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;background:'+bg+';color:'+fg+';border:1px solid '+border+';border-bottom:none';
 
       const total=flockTotal(be);
       const cnt=flockEntries.length;
 
-      // Left side: name, pill, lock indicator
       let leftHTML='';
       if(be.locked){
         leftHTML='🔒 <span>'+(be.invoiceNum?'Invoice '+be.invoiceNum:be.name)+'</span>';
@@ -3537,14 +3804,12 @@ function renderTimeEntry(){
         leftHTML='✓ '+be.name;
       }
 
-      // Right side: count, total, action button
       let rightHTML='<span style="font-weight:400;font-size:10px;text-transform:none">'+cnt+' entr'+(cnt!==1?'ies':'y')+' · <strong>'+fmt(total)+'</strong></span>';
       if(!be.locked&&cnt>0){
         rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:8px;background:#0f766e;color:#fff;border:none;padding:3px 10px;border-radius:6px;cursor:pointer" onclick="promptLockFlock('+be.id+')">Lock 🔒</button>';
       }else if(be.locked){
         rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:8px" onclick="promptUnlockFlock('+be.id+')">Unlock</button>';
       }
-      // Rename button (not for locked flocks)
       if(!be.locked){
         rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:4px" onclick="promptRenameFlock('+be.id+')" title="Rename">✎</button>';
       }
@@ -3555,7 +3820,6 @@ function renderTimeEntry(){
       if(flockEntries.length>0){
         sec.appendChild(buildTETable(flockEntries,true,be));
       }else{
-        // Empty current flock — show a hint
         const empty=document.createElement('div');
         empty.style.cssText='background:#fff;border:1px solid '+border+';border-top:none;border-radius:0 0 8px 8px;padding:14px;text-align:center;color:#9ca3af;font-size:11px';
         empty.textContent='No entries yet — newly posted entries will land here.';
@@ -3572,6 +3836,9 @@ function renderTimeEntry(){
 // ===== FLOCK PROMPT UI =====
 // Module state for the lock modal — which billing event is being locked
 let _lockTargetBeId=null;
+// Which billing-event tab is active on the Time Entry tab (persists across re-renders).
+let activeFlockTab=null;
+function selectFlockTab(id){activeFlockTab=id;renderTimeEntry();}
 
 // Count ungraduated entries on a billing event. Returns array of {te, proj} for blocked entries.
 function ungraduatedOnFlock(be){
@@ -3586,30 +3853,40 @@ function promptLockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
   if(!unlocked){alert('Enter PIN on the Estimate Engine tab to lock invoices.');return;}
   _lockTargetBeId=beId;
-  const cnt=flockEntryCount(be);
-  const tot=flockTotal(be);
-  const blocked=ungraduatedOnFlock(be);
-  document.getElementById('lockBeSubtitle').textContent=be.name+' · '+cnt+' entr'+(cnt!==1?'ies':'y')+' · '+fmt(tot);
+  // Split this event's posted entries by billability (project status). Only Complete-project
+  // entries will be invoiced; In-Progress entries are held back to the next billing event.
+  const flockEntries=timeEntries.filter(te=>te.billingEventId===be.id&&te.posted);
+  const heldBack=flockEntries.filter(te=>!isEntryBillable(te));
+  const willBill=flockEntries.filter(te=>isEntryBillable(te));
+  const billTot=willBill.reduce((a,te)=>a+teAmount(te),0);
+  document.getElementById('lockBeSubtitle').textContent=be.name+' · '+willBill.length+' to invoice · '+fmt(billTot)+(heldBack.length?' · '+heldBack.length+' held back':'');
   const blockedDiv=document.getElementById('lockBeBlocked');
   const fields=document.getElementById('lockBeFields');
   const confirmBtn=document.getElementById('lockBeConfirm');
-  // Locking is "past graduation" (entries on a locked event read as billed regardless of the
-  // graduated flag). In-Progress entries routinely never get manually graduated yet still bill
-  // correctly on the client document, so ungraduated entries no longer BLOCK locking — they
-  // are auto-graduated at lock time (see lockFlock). We just show an informational heads-up.
-  if(blocked.length>0){
-    const lines=blocked.map(({te,proj})=>{
+  // Membership follows status. In-Progress entries are NOT billed yet — list them as held back so
+  // it's clear they'll roll to the next invoice once their project is marked Complete.
+  if(heldBack.length>0){
+    const lines=heldBack.map(te=>{
+      const proj=projects.find(p=>p.name===te.proj);
       const pn=proj?proj.name:te.proj;
       const desc=(te.desc||'(no description)').slice(0,60);
-      const amt=fmt(teAmount(te));
-      return '• '+pn+' &mdash; '+desc+' &mdash; '+amt;
+      return '• '+pn+' &mdash; '+desc+' &mdash; '+fmt(teAmount(te));
     }).join('<br>');
-    document.getElementById('lockBeBlockedDetail').innerHTML=blocked.length+' entr'+(blocked.length!==1?'ies':'y')+' on this billing event '+(blocked.length!==1?'have':'has')+' not been graduated (typically In-Progress work). '+(blocked.length!==1?'They':'It')+' will be graduated automatically and included on this invoice.<br><br>'+lines;
+    document.getElementById('lockBeBlockedDetail').innerHTML=heldBack.length+' entr'+(heldBack.length!==1?'ies':'y')+' on In-Progress project'+(heldBack.length!==1?'s':'')+' will be HELD BACK (not invoiced) and moved to the next billing event. Mark the project Complete to include '+(heldBack.length!==1?'them':'it')+' on a future invoice.<br><br>'+lines;
     blockedDiv.style.display='block';
   }else{
     blockedDiv.style.display='none';
   }
-  // Lock is always allowed now — show the invoice fields and enable confirm regardless.
+  // If nothing is billable, there's nothing to lock — block with a clear message.
+  if(willBill.length===0){
+    document.getElementById('lockBeBlockedDetail').innerHTML='Nothing to invoice yet — every entry on this billing event belongs to an In-Progress project. Mark at least one project Complete first.';
+    blockedDiv.style.display='block';
+    fields.style.display='none';
+    confirmBtn.disabled=true;confirmBtn.style.opacity='0.4';confirmBtn.style.cursor='not-allowed';
+    document.getElementById('lockBeOverlay').style.display='flex';
+    return;
+  }
+  // Lock allowed — show invoice fields and enable confirm.
   fields.style.display='block';
   confirmBtn.disabled=false;
   confirmBtn.style.opacity='1';
@@ -3749,15 +4026,13 @@ function openClearModal(){
 
 // ─── LOCK BILLING EVENT MODAL ──────────────────────────────────────
 let lockBillingSelected={}; // { projId: true/false }
-// Projects eligible for locking into a billing event: any included project that is either
-// In Progress or Complete and has at least one unbilled posted entry. Previously this was
-// gated to status==='complete' only, which blocked locking In-Progress projects whose entries
-// were posted but not graduated — even though those entries bill correctly in the client doc.
-// Graduation is a UI convenience (the "Ready for Billing" rollup), not a hard requirement for locking.
+// Projects eligible to lock into a billing event: included, status Complete, with at least one
+// unbilled posted entry. Billing-event membership follows project status — In-Progress work is
+// held out of invoices until its project is marked Complete (so this list is Complete-only).
 function lockBillingEligible(){
   return projects.filter(p=>{
     if(p.include===false)return false;
-    if(p.status!=='complete'&&p.status!=='in_progress')return false;
+    if(p.status!=='complete')return false;
     return projUnbilledPostedTEs(p).length>0;
   });
 }
