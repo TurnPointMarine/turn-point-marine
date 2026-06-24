@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-06-01T18:10:38.182Z",
+    "exportedAt": "2026-06-10T18:41:16.286Z",
     "engineVersion": 7
   },
   "projects": [
@@ -68,7 +68,7 @@
     },
     {
       "id": 4,
-      "name": "Throttle Sticky at Low RPM — Repair",
+      "name": "Tender Throttle Sticky at Low RPM — Repair",
       "status": "in_progress",
       "include": true,
       "notes": "My guess is shift and throttle cables need to be replaced. SeaStar TFXtreme cable ~$70.",
@@ -497,16 +497,29 @@
       "billingEvents": []
     },
     {
-      "id": 25,
-      "name": "New Project",
-      "status": "holding",
+      "id": 27,
+      "name": "Pre-Season Dive Inspection & Clean",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": false,
+      "scopeTasks": [],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": []
+    },
+    {
+      "id": 28,
+      "name": "Thruster Helm Station Control Pad Replace",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
         {
-          "id": 122,
+          "id": 125,
           "cat": "T",
           "desc": "",
           "hrs": 0,
@@ -519,16 +532,16 @@
       "billingEvents": []
     },
     {
-      "id": 26,
-      "name": "New Project",
-      "status": "holding",
+      "id": 29,
+      "name": "Tender Fuel/Water Separator Replace",
+      "status": "needs_auth",
       "include": true,
       "notes": "",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
         {
-          "id": 123,
+          "id": 126,
           "cat": "T",
           "desc": "",
           "hrs": 0,
@@ -736,6 +749,66 @@
       "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
+    },
+    {
+      "id": 1016,
+      "date": "2026-06-10",
+      "proj": "Pre-Season Dive Inspection & Clean",
+      "cat": "S",
+      "hrs": 261.1,
+      "desc": "Dive Inspect/Clean Hull & Running gear.",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1017,
+      "date": "2026-06-10",
+      "proj": "Tender Fuel/Water Separator Replace",
+      "cat": "M",
+      "hrs": 151.7,
+      "desc": "120R-RAC Series Gasoline Filter, Gas\nOutboard Filter - Plastic Bowl, 10 (x1)\nS3240 Marine Spin-On Filter Element -\nGasoline, 10 Micron (x1)",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1018,
+      "date": "2026-06-10",
+      "proj": "Thruster Helm Station Control Pad Replace",
+      "cat": "M",
+      "hrs": 212.39,
+      "desc": "",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1019,
+      "date": "2026-06-10",
+      "proj": "Transmission Shift Cables - Replace",
+      "cat": "M",
+      "hrs": 31.19,
+      "desc": "Titanium Pipe Shield 12\"x6\", Exhaust Heat Shield, 2 Layer Motorcycle Exhaust Heat Shield, Muffler Heat Shield Exhaust Wrap Pipe Heat Insulation,Heat Protection up to 2500°F (x1)",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1020,
+      "date": "2026-06-10",
+      "proj": "Transmission Shift Cables - Replace",
+      "cat": "M",
+      "hrs": 143.27,
+      "desc": "TFXtreme Hi-Performance Universal\nControl Cables - 3300CC Series, \nx2",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": false
     }
   ],
   "billingEvents": [
@@ -759,7 +832,7 @@
     },
     {
       "id": 504,
-      "name": "Billing Event 2026-05-14",
+      "name": "Invoice #23520",
       "isCurrent": false,
       "locked": false,
       "createdAt": "2026-05-14T18:52:59.127Z",
@@ -769,6 +842,12 @@
           "from": "",
           "to": "Billing Event 2026-05-14",
           "at": "2026-05-15T14:04:40.459Z"
+        },
+        {
+          "field": "name",
+          "from": "Billing Event 2026-05-14",
+          "to": "Invoice #23520",
+          "at": "2026-06-10T18:39:10.050Z"
         }
       ],
       "invoiceNum": "Billing Event 2026-05-14",
@@ -784,10 +863,10 @@
       "history": []
     }
   ],
-  "nextProjId": 27,
-  "nextTaskId": 124,
+  "nextProjId": 30,
+  "nextTaskId": 127,
   "nextCOId": 100,
-  "nextTEId": 1016,
+  "nextTEId": 1021,
   "nextBillingId": 506,
   "settings": {
     "company": "Turn Point Marine",
@@ -805,7 +884,7 @@
   },
   "uiState": {
     "secOpenState": {
-      "holding": false,
+      "holding": true,
       "needs_auth": true,
       "in_progress": true,
       "complete": true,
@@ -829,14 +908,27 @@
       "est_4": true,
       "act_5": false,
       "act_11": false,
-      "act_23": false
+      "act_23": false,
+      "est_61": true,
+      "est_60": true,
+      "act_31": true,
+      "est_14": true,
+      "est_33": true,
+      "act_16": true,
+      "est_16": true,
+      "act_27": true,
+      "est_20": true,
+      "est_17": true,
+      "est_26": false,
+      "est_25": true,
+      "est_41": false,
+      "est_27": true
     },
     "openProjs": [
       61,
       2,
       25,
-      26,
-      18
+      26
     ],
     "closedReadyProjs": [
       15,
@@ -848,6 +940,17 @@
     ],
     "closedBilledProjs": [
       "504:15"
+    ],
+    "activeReadyBeId": 504,
+    "openReadySubtotals": [
+      500,
+      501,
+      502,
+      505,
+      504
+    ],
+    "openBilledSubtotals": [
+      500
     ]
   }
 }
