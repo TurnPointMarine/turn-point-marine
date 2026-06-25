@@ -213,6 +213,26 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     </div>
   </div>
 </div>
+<!-- Remove photo from tray: permanent vs temporary -->
+<div class="clear-modal-overlay" id="removePhotoOverlay" onclick="closeRemovePhotoModal(event)">
+  <div class="clear-modal" style="width:460px;max-width:95vw">
+    <h3>Remove from tray</h3>
+    <p id="removePhotoCount" style="margin-bottom:14px">Remove this photo from the capture tray.</p>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn" style="text-align:left;padding:12px 14px;background:#c0392b;color:#fff;border-color:#c0392b" onclick="confirmRemovePhotos(true)">
+        <div style="font-weight:700;font-size:13px">Remove permanently</div>
+        <div style="font-size:11px;opacity:0.92;margin-top:3px;font-weight:400">Gone for good &mdash; won't come back on Refresh. The photo stays in Blob storage; the engine just remembers to skip it.</div>
+      </button>
+      <button class="btn" style="text-align:left;padding:12px 14px" onclick="confirmRemovePhotos(false)">
+        <div style="font-weight:700;font-size:13px">Remove for now</div>
+        <div style="font-size:11px;color:#888;margin-top:3px;font-weight:400">Clears it from the tray, but it returns next time you hit Refresh (it's still in the manifest).</div>
+      </button>
+    </div>
+    <div class="clear-modal-btns" style="margin-top:14px">
+      <button class="btn" onclick="closeRemovePhotoModalDirect()">Cancel</button>
+    </div>
+  </div>
+</div>
 <div class="tab-bar">
   <div class="tab active" id="tab-estimate" onclick="switchTab('estimate')">Estimate Engine <span id="lock-icon" style="font-size:10px;color:#bbb">&#128274;</span></div>
   <div class="tab" id="tab-timeentry" onclick="switchTab('timeentry')">Time Entry</div>
@@ -434,6 +454,9 @@ let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000,nextBillingId=500;
 // Field-capture tray: photos that have arrived (e.g. via the catch-folder pipeline) but
 // are not yet tethered to a project. Drops onto a project card never land here.
 let unassignedPhotos=[];
+let traySelected=new Set(); // photo object refs currently selected in the capture tray
+let dismissedPhotoKeys=new Set(); // dismiss-keys (blob GUID) of photos permanently removed — fetchPendingPhotos skips these
+let _removeTargets=[]; // photos pending the remove-choice modal
 let projects=[];
 let timeEntries=[];
 let billingEvents=[];
@@ -2179,23 +2202,7 @@ function exportClientDoc(){
     // Section frame encompasses individual project cards with gaps (mirrors Complete + Billing Event).
     html+='<div id="secbody_inprog" style="border:2px solid #6b7280;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     inPP.forEach(proj=>{
-      const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
-      const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
-      const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
-      const noteHtml=proj.notes?'<div style="font-size:8.5pt;color:#888;font-style:italic;padding:0 16px 10px;background:#f9fafb;font-family:Arial,sans-serif">'+nl2br(proj.notes)+'</div>':'';
-      // Each project = its own rounded bordered card (grey, all In Progress), with a gap.
-      html+='<div style="border:1px solid #6b7280;border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#f9fafb">'
-        +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
-          +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
-          +'<span style="font-size:10.5pt;font-weight:700;color:#374151;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
-          +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">In Progress</span>'
-        +'</div>'
-        +'<span style="font-size:10px;font-weight:700;color:#374151;background:#f3f4f6;border:1px solid #6b7280;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
-        +'</div>'
-        +noteHtml
-        +'</div>';
+      html+=projBlock(proj,'#6b7280',false,true);
     });
     html+='</div>';
   }
@@ -3111,6 +3118,7 @@ function importData(event){
       if(d.nextTEId)nextTEId=d.nextTEId;
       if(d.nextBillingId)nextBillingId=d.nextBillingId;
       unassignedPhotos=Array.isArray(d.unassignedPhotos)?d.unassignedPhotos:[];
+      dismissedPhotoKeys=new Set(Array.isArray(d.dismissedPhotoKeys)?d.dismissedPhotoKeys:[]);
       if(d.settings){const prevLogo=settings.logoB64;const prevMime=settings.logoMime;Object.assign(settings,d.settings);if(!settings.logoB64){settings.logoB64=prevLogo;settings.logoMime=prevMime;}if(settings.email==='abram@turnpointmarine.com')settings.email='Abram@turnpointmarine.com';}
       if(d.uiState)restoreUiState(d.uiState);
       // Migrate change_of_scope status to in_progress
@@ -3659,7 +3667,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
-  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
+  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
 }
 function loadData(){
   try{
@@ -3671,6 +3679,7 @@ function loadData(){
     if(d.nextCOId)nextCOId=d.nextCOId;if(d.nextTEId)nextTEId=d.nextTEId;
     if(d.nextBillingId)nextBillingId=d.nextBillingId;
     if(Array.isArray(d.unassignedPhotos))unassignedPhotos=d.unassignedPhotos;
+    if(Array.isArray(d.dismissedPhotoKeys))dismissedPhotoKeys=new Set(d.dismissedPhotoKeys);
     if(d.settings){const prevLogo=settings.logoB64;const prevMime=settings.logoMime;Object.assign(settings,d.settings);if(!settings.logoB64){settings.logoB64=prevLogo;settings.logoMime=prevMime;}if(settings.email==='abram@turnpointmarine.com')settings.email='Abram@turnpointmarine.com';}
     if(d.vessel){const v=document.getElementById('vfVessel');const n=document.getElementById('navVessel');if(v)v.value=d.vessel;if(n)n.textContent=d.vessel;}
     if(d.client){const c=document.getElementById('vfClient');if(c)c.value=d.client;}
@@ -3781,6 +3790,17 @@ populateTEDropdowns();
 try{syncSettingsUI();}catch(e){}
 try{fetchPendingPhotos({manual:false});}catch(e){}
 
+// Safety net: a drag out of the macOS Photos app carries a file:// URL into the engine's
+// own Photos Library. If such a drop lands anywhere the page didn't explicitly handle,
+// Safari would NAVIGATE to that URL and replace the engine page. These window-level
+// guards keep an unhandled drop from doing anything at all. Handled drops (project
+// reorder, TE reassign, photo add/reorder) call preventDefault themselves, so this only
+// catches the strays.
+try{
+  window.addEventListener('dragover',function(e){e.preventDefault();},false);
+  window.addEventListener('drop',function(e){if(!e.defaultPrevented)e.preventDefault();},false);
+}catch(e){}
+
 /* ===================== PHOTOS ===================== *
  * Data model: each project carries a `photos` array of refs:
  *   { id, projId, thumb, full, caption, includeInClientDoc, ts, pendingUpload }
@@ -3806,10 +3826,21 @@ async function makeThumbBlob(drawable,maxDim){const w=drawable.width||drawable.n
 function blobToBase64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=()=>rej(r.error);r.readAsDataURL(blob);});}
 async function uploadPhotoToPA(url,payload){const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});if(!res.ok)throw new Error('upload '+res.status);return await res.json().catch(()=>null);}
 
+function photoNote(proj,msg){
+  const w=document.querySelector('[data-photo-proj="'+proj.id+'"]');
+  if(w&&typeof showPhotoDropHint==='function'){showPhotoDropHint(w,msg);return;}
+  try{alert(msg);}catch(e){}
+}
 async function addPhotosToProject(proj,fileList){
   if(!fileList||!fileList.length)return;
-  const files=Array.from(fileList).filter(f=>/^image\//.test(f.type)||/\.(heic|heif|jpe?g|png|webp)$/i.test(f.name));
-  if(!files.length){alert('No image files found in that drop.');return;}
+  const all=Array.from(fileList);
+  const isImg=f=>/^image\//.test(f.type)||/\.(heic|heif|jpe?g|png|webp|gif|tiff?)$/i.test(f.name)||!f.type;
+  const files=all.filter(isImg);
+  const skipped=all.filter(f=>!isImg(f));
+  if(!files.length){
+    photoNote(proj,skipped.length?('Skipped '+skipped.length+' file'+(skipped.length>1?'s':'')+' \u2014 only images can be added. Videos and other files would show up broken in the gallery.'):'No image files found in that drop.');
+    return;
+  }
   for(const file of files){
     const id='ph_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
     let thumbBlob=null;
@@ -3827,21 +3858,66 @@ async function addPhotosToProject(proj,fileList){
   }
   saveData();
   rerenderPhotoBlock(proj);
+  if(skipped.length)photoNote(proj,'Added '+files.length+' image'+(files.length>1?'s':'')+'; skipped '+skipped.length+' non-image file'+(skipped.length>1?'s':'')+' (videos can\u2019t run through the photo system).');
 }
-async function deletePhoto(proj,photoId){
-  proj.photos=(proj.photos||[]).filter(p=>p.id!==photoId);
-  await idbDeleteThumb(photoId);
+async function deletePhoto(proj,photo){
+  proj.photos=(proj.photos||[]).filter(p=>p!==photo);
+  try{await idbDeleteThumb(photoCacheKey(photo));}catch(e){}
   saveData();
   rerenderPhotoBlock(proj);
 }
 async function setTileImg(img,photo){
-  const cached=await idbGetThumb(photo.id);
+  const ck=photoCacheKey(photo);
+  const cached=await idbGetThumb(ck);
   if(cached){img.src=URL.createObjectURL(cached);return;}
-  if(photo.thumb){img.src=photo.thumb;try{const resp=await fetch(photo.thumb);const b=await resp.blob();await idbPutThumb(photo.id,b);}catch(e){}return;}
+  if(photo.thumb){img.src=photo.thumb;try{const resp=await fetch(photo.thumb);const b=await resp.blob();await idbPutThumb(ck,b);}catch(e){}return;}
   if(photo.full){img.src=photo.full;return;}
   img.alt='(processing)';
 }
+/* photoCacheKey: thumbnail cache key. Uses the unique blob GUID when the photo has a
+ * URL (so field photos that share the colliding "<vessel>-" id each cache separately),
+ * else the local id (unique for Door-1 uploads). Fixes identical-image tiles in the tray. */
+function photoCacheKey(photo){
+  const u=(photo&&(photo.thumb||photo.full||photo.thumbUrl||photo.fullUrl))||'';
+  const m=u.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+  if(m)return 'g:'+m[0].toLowerCase();
+  return (photo&&photo.id)||'';
+}
+/* photoSortMs: epoch ms used to order the tray oldest-first (the order shot). Priority:
+ * capture date encoded in the id (…-yyyyMMdd-HHmmss) > capturedAt field > ts
+ * (auto-detects epoch ms / epoch s / .NET ticks). Returns 0 when nothing is parseable. */
+function photoSortMs(p){
+  if(!p)return 0;
+  const idm=String(p.id||'').match(/(\d{4})(\d{2})(\d{2})-(\d{2})(\d{2})(\d{2})/);
+  if(idm){const t=Date.parse(idm[1]+'-'+idm[2]+'-'+idm[3]+'T'+idm[4]+':'+idm[5]+':'+idm[6]);if(!isNaN(t))return t;}
+  if(p.capturedAt){const t=Date.parse(p.capturedAt);if(!isNaN(t))return t;}
+  const ts=Number(p.ts);
+  if(!isNaN(ts)&&ts>0){
+    if(ts>1e17)return Math.round((ts-621355968000000000)/10000); // .NET ticks -> epoch ms
+    if(ts<1e12)return ts*1000;                                    // epoch seconds
+    return ts;                                                    // epoch ms
+  }
+  return 0;
+}
+function fmtPhotoDate(ms){
+  if(!ms)return '';
+  try{return new Date(ms).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'});}catch(e){return '';}
+}
 
+let photoDragSrcId=null;
+function showPhotoDropHint(wrap,msg){
+  let note=wrap.querySelector('[data-photo-drophint]');
+  if(!note){
+    note=document.createElement('div');
+    note.setAttribute('data-photo-drophint','1');
+    note.style.cssText='margin:6px 0 2px;font-size:11px;line-height:1.5;color:#a05a00;background:#fff3e0;border:1px solid #f0d9b8;border-radius:6px;padding:6px 8px';
+    const hdr=wrap.firstChild;
+    if(hdr&&hdr.nextSibling)wrap.insertBefore(note,hdr.nextSibling);else wrap.appendChild(note);
+  }
+  note.textContent=msg;
+  clearTimeout(note._t);
+  note._t=setTimeout(()=>{if(note.parentNode)note.parentNode.removeChild(note);},9000);
+}
 function buildPhotoBlock(proj){
   const wrap=document.createElement('div');
   wrap.setAttribute('data-photo-proj',String(proj.id));
@@ -3854,6 +3930,29 @@ function rerenderPhotoBlock(proj){const el=document.querySelector('[data-photo-p
 function fillPhotoBlock(wrap,proj){
   while(wrap.firstChild)wrap.removeChild(wrap.firstChild);
   const photos=proj.photos||[];
+  // Accept dropped image files anywhere in the Photos section — and keep the drop from
+  // bubbling up to the project-card wrapper, which would otherwise swallow it.
+  wrap.ondragover=e=>{
+    if(photoDragSrcId!=null)return;                 // internal reorder is handled on the tiles
+    const dt=e.dataTransfer;if(!dt)return;
+    const types=Array.from(dt.types||[]);
+    if(!types.length)return;
+    e.preventDefault();e.stopPropagation();
+    dt.dropEffect=types.indexOf('Files')>=0?'copy':'none';
+    wrap.style.background='#f3fbf8';
+  };
+  wrap.ondragleave=e=>{if(e.target===wrap)wrap.style.background='#fff';};
+  wrap.ondrop=e=>{
+    if(photoDragSrcId!=null)return;
+    const dt=e.dataTransfer;if(!dt)return;
+    e.preventDefault();e.stopPropagation();
+    wrap.style.background='#fff';
+    const f=dt.files;
+    if(f&&f.length){addPhotosToProject(proj,f);return;}
+    // Something was dragged but macOS handed over no actual file — almost always a drag
+    // straight out of the Photos app (it sends a preview promise, not the image bytes).
+    showPhotoDropHint(wrap,'macOS didn\u2019t pass the actual image (the Photos app sends a preview, not the file). Use the \u201cclick to add\u201d button below, drag the photo from Finder instead, or send it through the field-capture Shortcut.');
+  };
   const hdr=document.createElement('div');
   hdr.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em';
   hdr.textContent='Photos'+(photos.length?' \u00b7 '+photos.length:'');
@@ -3868,16 +3967,51 @@ function fillPhotoBlock(wrap,proj){
   fi.type='file';fi.accept='image/*,.heic,.heif';fi.multiple=true;fi.style.display='none';
   fi.onchange=()=>{addPhotosToProject(proj,fi.files);fi.value='';};
   dz.onclick=()=>fi.click();
-  dz.ondragover=e=>{e.preventDefault();dz.style.borderColor='#1D9E75';dz.style.color='#1D9E75';};
+  dz.ondragover=e=>{e.preventDefault();e.stopPropagation();dz.style.borderColor='#1D9E75';dz.style.color='#1D9E75';};
   dz.ondragleave=()=>{dz.style.borderColor='#cfcfca';dz.style.color='#999';};
-  dz.ondrop=e=>{e.preventDefault();dz.style.borderColor='#cfcfca';dz.style.color='#999';addPhotosToProject(proj,e.dataTransfer.files);};
+  dz.ondrop=e=>{e.preventDefault();e.stopPropagation();dz.style.borderColor='#cfcfca';dz.style.color='#999';addPhotosToProject(proj,e.dataTransfer.files);};
   dz.appendChild(fi);
   grid.appendChild(dz);
   photos.forEach(photo=>grid.appendChild(buildPhotoTile(proj,photo)));
 }
 function buildPhotoTile(proj,photo){
   const tile=document.createElement('div');
-  tile.style.cssText='width:150px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;background:#fff;box-sizing:border-box';
+  tile.style.cssText='width:150px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;background:#fff;box-sizing:border-box;transition:opacity .12s,outline-color .12s';
+  // Drag-to-reorder (armed by the grab handle so it never fights the caption field or checkbox)
+  tile.draggable=false;
+  tile.ondragstart=e=>{
+    if(!tile.draggable){e.preventDefault();return;}
+    photoDragSrcId=photo.id;
+    e.dataTransfer.effectAllowed='move';
+    try{e.dataTransfer.setData('text/plain',String(photo.id));}catch(_){}
+    setTimeout(()=>{tile.style.opacity='0.4';},0);
+  };
+  tile.ondragend=()=>{
+    tile.draggable=false;tile.style.opacity='1';photoDragSrcId=null;
+    document.querySelectorAll('[data-photo-tile]').forEach(el=>{el.style.outline='';el.style.outlineOffset='';});
+  };
+  tile.ondragover=e=>{
+    if(photoDragSrcId==null||photoDragSrcId===photo.id)return;
+    e.preventDefault();e.dataTransfer.dropEffect='move';
+    tile.style.outline='2px solid #1D9E75';tile.style.outlineOffset='-2px';
+  };
+  tile.ondragleave=()=>{tile.style.outline='';tile.style.outlineOffset='';};
+  tile.ondrop=e=>{
+    e.preventDefault();
+    tile.style.outline='';tile.style.outlineOffset='';
+    if(photoDragSrcId==null||photoDragSrcId===photo.id)return;
+    const arr=proj.photos||[];
+    const from=arr.findIndex(p=>p.id===photoDragSrcId);
+    if(from<0)return;
+    const [moved]=arr.splice(from,1);
+    let to=arr.findIndex(p=>p.id===photo.id);
+    if(to<0)to=arr.length;          // safety: drop at end if target vanished
+    arr.splice(to,0,moved);          // insert immediately before the target tile
+    photoDragSrcId=null;
+    saveData();
+    rerenderPhotoBlock(proj);
+  };
+  tile.setAttribute('data-photo-tile',String(photo.id));
   const imgWrap=document.createElement('div');
   imgWrap.style.cssText='position:relative;height:108px;background:#f5f5f3;display:flex;align-items:center;justify-content:center;overflow:hidden';
   const img=document.createElement('img');
@@ -3885,17 +4019,25 @@ function buildPhotoTile(proj,photo){
   img.alt=photo.caption||'photo';
   setTileImg(img,photo);
   imgWrap.appendChild(img);
+  // Grab handle — arms the drag only while held, so clicks elsewhere behave normally
+  const handle=document.createElement('div');
+  handle.textContent='\u283f';
+  handle.title='Drag to reorder';
+  handle.style.cssText='position:absolute;top:6px;left:6px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;cursor:grab;font-size:13px;line-height:1;user-select:none';
+  handle.onmousedown=e=>{e.stopPropagation();tile.draggable=true;handle.style.cursor='grabbing';};
+  handle.onmouseup=()=>{tile.draggable=false;handle.style.cursor='grab';};
+  imgWrap.appendChild(handle);
   if(photo.pendingUpload){
     const badge=document.createElement('div');
     badge.textContent='not uploaded';
     badge.title='Stored locally. Visible to the client once the upload endpoint is configured.';
-    badge.style.cssText='position:absolute;top:6px;left:6px;background:#fff3e0;color:#a05a00;font-size:9px;font-weight:600;padding:2px 6px;border-radius:6px';
+    badge.style.cssText='position:absolute;top:6px;left:34px;background:#fff3e0;color:#a05a00;font-size:9px;font-weight:600;padding:2px 6px;border-radius:6px';
     imgWrap.appendChild(badge);
   }
   const del=document.createElement('button');
   del.textContent='\u00d7';del.title='Remove photo';
   del.style.cssText='position:absolute;top:6px;right:6px;width:22px;height:22px;border:none;border-radius:50%;background:rgba(0,0,0,0.55);color:#fff;cursor:pointer;font-size:15px;line-height:1';
-  del.onclick=()=>deletePhoto(proj,photo.id);
+  del.onclick=()=>deletePhoto(proj,photo);
   imgWrap.appendChild(del);
   tile.appendChild(imgWrap);
   const body=document.createElement('div');body.style.cssText='padding:8px';
@@ -3914,38 +4056,79 @@ function buildPhotoTile(proj,photo){
 }
 
 function buildCaptureTray(){
-  if(!unassignedPhotos||!unassignedPhotos.length)return null;
+  const hasPhotos=!!(unassignedPhotos&&unassignedPhotos.length);
+  if(!hasPhotos){traySelected.clear();}
+  else{const live=new Set(unassignedPhotos);[...traySelected].forEach(p=>{if(!live.has(p))traySelected.delete(p);});}
   const wrap=document.createElement('div');
   wrap.style.cssText='border:1px solid #e0d6c8;background:#fbf7f0;border-radius:10px;padding:12px 14px;margin-bottom:14px';
   const hdr=document.createElement('div');
   hdr.style.cssText='display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#7a5a1e;margin-bottom:10px';
   const hlabel=document.createElement('span');
-  hlabel.textContent='From field capture \u00b7 '+unassignedPhotos.length+' photo'+(unassignedPhotos.length!==1?'s':'')+' waiting to be assigned';
+  hlabel.textContent=hasPhotos
+    ?('From field capture \u00b7 '+unassignedPhotos.length+' photo'+(unassignedPhotos.length!==1?'s':'')+' waiting to be assigned')
+    :'Field capture \u00b7 no photos waiting';
   hdr.appendChild(hlabel);
+  const spacer=document.createElement('span');spacer.style.cssText='flex:1';hdr.appendChild(spacer);
+  if(hasPhotos){
+    const n0=traySelected.size;
+    const selAll=document.createElement('button');
+    selAll.type='button';selAll.id='traySelAllBtn';
+    selAll.textContent=(n0===unassignedPhotos.length)?'Deselect all':'Select all';
+    selAll.style.cssText='background:none;border:none;color:#7a5a1e;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline';
+    selAll.onclick=()=>toggleTraySelectAll();
+    hdr.appendChild(selAll);
+    const clrSel=document.createElement('button');
+    clrSel.type='button';clrSel.id='trayClearSelBtn';
+    clrSel.textContent='Clear selected'+(n0?' ('+n0+')':'');
+    clrSel.disabled=n0===0;
+    clrSel.style.cssText='background:none;border:none;color:#c0392b;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;opacity:'+(n0===0?'0.45':'1');
+    clrSel.onclick=()=>clearSelectedTrayPhotos();
+    hdr.appendChild(clrSel);
+  }
   const refresh=document.createElement('button');
   refresh.type='button';refresh.textContent='Refresh';
   refresh.style.cssText='background:none;border:none;color:#1D9E75;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline';
   refresh.onclick=()=>fetchPendingPhotos({manual:false});
   hdr.appendChild(refresh);
   wrap.appendChild(hdr);
-  const grid=document.createElement('div');
-  grid.style.cssText='display:flex;flex-wrap:wrap;gap:10px';
-  wrap.appendChild(grid);
-  unassignedPhotos.forEach(photo=>grid.appendChild(buildTrayTile(photo)));
+  if(hasPhotos){
+    const grid=document.createElement('div');
+    grid.style.cssText='display:flex;flex-wrap:wrap;gap:10px';
+    wrap.appendChild(grid);
+    const ordered=[...unassignedPhotos].sort((a,b)=>photoSortMs(a)-photoSortMs(b));
+    ordered.forEach(photo=>grid.appendChild(buildTrayTile(photo)));
+  }else{
+    const empty=document.createElement('div');
+    empty.style.cssText='font-size:12px;color:#a08a63;font-style:italic;padding:4px 2px';
+    empty.textContent='Photos sent from the field land here. Hit Refresh to check for new ones.';
+    wrap.appendChild(empty);
+  }
   return wrap;
 }
 function buildTrayTile(photo){
   const tile=document.createElement('div');
   tile.style.cssText='width:160px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;background:#fff';
   const imgWrap=document.createElement('div');
-  imgWrap.style.cssText='height:108px;background:#f5f5f3;display:flex;align-items:center;justify-content:center;overflow:hidden';
-  const img=document.createElement('img');img.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
-  setTileImg(img,photo);imgWrap.appendChild(img);tile.appendChild(imgWrap);
+  imgWrap.style.cssText='position:relative;height:108px;background:#f5f5f3;display:flex;align-items:center;justify-content:center;overflow:hidden';
+  const img=document.createElement('img');img.style.cssText='width:100%;height:100%;object-fit:contain;display:block';
+  setTileImg(img,photo);imgWrap.appendChild(img);
+  const selChk=document.createElement('input');selChk.type='checkbox';selChk.checked=traySelected.has(photo);selChk.title='Select';
+  selChk.style.cssText='position:absolute;top:6px;left:6px;width:18px;height:18px;cursor:pointer;accent-color:#1255a0;z-index:2';
+  selChk.onclick=e=>e.stopPropagation();
+  selChk.onchange=()=>{if(selChk.checked)traySelected.add(photo);else traySelected.delete(photo);updateTraySelUI();};
+  imgWrap.appendChild(selChk);
+  const dz=document.createElement('button');dz.type='button';dz.textContent='\u00d7';dz.title='Remove from tray';
+  dz.style.cssText='position:absolute;top:6px;right:6px;width:22px;height:22px;border:none;border-radius:50%;background:rgba(0,0,0,0.55);color:#fff;cursor:pointer;font-size:15px;line-height:1;z-index:2';
+  dz.onclick=e=>{e.stopPropagation();dismissTrayPhoto(photo);};
+  imgWrap.appendChild(dz);
+  tile.appendChild(imgWrap);
   const body=document.createElement('div');body.style.cssText='padding:8px';
+  const dtStr=fmtPhotoDate(photoSortMs(photo));
+  if(dtStr){const dl=document.createElement('div');dl.textContent=dtStr;dl.title='Capture date';dl.style.cssText='font-size:10px;color:#999;margin:0 0 6px';body.appendChild(dl);}
   const sel=document.createElement('select');
   sel.style.cssText='width:100%;font-size:12px;padding:4px;border:1px solid #ddd;border-radius:6px;font-family:inherit';
   const opt0=document.createElement('option');opt0.value='';opt0.textContent='Assign to project\u2026';sel.appendChild(opt0);
-  projects.forEach((p,i)=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
+  projects.forEach((p,i)=>{if(p.status==='billed')return;const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
   body.appendChild(sel);
   const btn=document.createElement('button');btn.textContent='Assign';btn.className='btn-sm blue';btn.style.cssText='margin-top:8px;width:100%';
   btn.onclick=()=>{if(sel.value)assignCaptureToProject(photo.id,parseInt(sel.value));};
@@ -3960,6 +4143,53 @@ function assignCaptureToProject(photoId,projId){
   photo.projId=proj.id;
   proj.photos=proj.photos||[];proj.photos.push(photo);
   saveData();
+  renderEstimate();
+}
+function updateTraySelUI(){
+  const n=traySelected.size;
+  const clr=document.getElementById('trayClearSelBtn');
+  if(clr){clr.textContent='Clear selected'+(n?' ('+n+')':'');clr.disabled=n===0;clr.style.opacity=n===0?'0.45':'1';}
+  const sa=document.getElementById('traySelAllBtn');
+  if(sa)sa.textContent=(unassignedPhotos.length>0&&n===unassignedPhotos.length)?'Deselect all':'Select all';
+}
+function toggleTraySelectAll(){
+  const all=unassignedPhotos.length>0&&traySelected.size===unassignedPhotos.length;
+  traySelected.clear();
+  if(!all)unassignedPhotos.forEach(p=>traySelected.add(p));
+  renderEstimate();
+}
+function dismissTrayPhoto(photo){openRemovePhotoModal([photo]);}
+function clearSelectedTrayPhotos(){
+  if(!traySelected.size)return;
+  openRemovePhotoModal([...traySelected]);
+}
+/* photoDismissKey: stable unique key per photo, taken from the GUID embedded in its
+ * blob filename (…/sandi-louise--<GUID>.jpg). This is unique even though the entry.id
+ * field currently collides (always "sandi-louise-"). Falls back to id+ts if no GUID. */
+function photoDismissKey(photo){
+  const u=(photo&&(photo.full||photo.thumb||photo.fullUrl||photo.thumbUrl))||'';
+  const m=u.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+  if(m)return m[0].toLowerCase();
+  return 'k:'+((photo&&photo.id)||'')+':'+((photo&&photo.ts)||'');
+}
+function openRemovePhotoModal(photos){
+  _removeTargets=(photos||[]).slice();
+  const n=_removeTargets.length;
+  if(!n)return;
+  const c=document.getElementById('removePhotoCount');
+  if(c)c.textContent=n===1?'Remove this photo from the capture tray.':('Remove these '+n+' photos from the capture tray.');
+  document.getElementById('removePhotoOverlay').classList.add('open');
+}
+function closeRemovePhotoModal(e){if(e.target===document.getElementById('removePhotoOverlay'))closeRemovePhotoModalDirect();}
+function closeRemovePhotoModalDirect(){document.getElementById('removePhotoOverlay').classList.remove('open');_removeTargets=[];}
+function confirmRemovePhotos(permanent){
+  const photos=(_removeTargets||[]).slice();
+  if(!photos.length){closeRemovePhotoModalDirect();return;}
+  if(permanent)photos.forEach(p=>dismissedPhotoKeys.add(photoDismissKey(p)));
+  unassignedPhotos=unassignedPhotos.filter(p=>photos.indexOf(p)<0);
+  photos.forEach(p=>traySelected.delete(p));
+  saveData();
+  closeRemovePhotoModalDirect();
   renderEstimate();
 }
 function slugifyVessel(name){return String(name||'').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');}
@@ -3992,21 +4222,25 @@ async function fetchPendingPhotos(opts){
     const list=await res.json();
     if(!Array.isArray(list)){setStatus('Manifest format not recognized.');return 0;}
     const known=new Set();
-    (unassignedPhotos||[]).forEach(p=>known.add(p.id));
-    projects.forEach(p=>(p.photos||[]).forEach(ph=>known.add(ph.id)));
+    (unassignedPhotos||[]).forEach(p=>known.add(photoDismissKey(p)));
+    projects.forEach(p=>(p.photos||[]).forEach(ph=>known.add(photoDismissKey(ph))));
     let added=0;
     list.forEach(entry=>{
-      if(!entry||!entry.id||known.has(entry.id))return;
+      if(!entry||!entry.id)return;
+      const key=photoDismissKey(entry);
+      if(known.has(key))return;
+      if(dismissedPhotoKeys.has(key))return;
       unassignedPhotos.push({
         id:entry.id,projId:null,
         thumb:entry.thumbUrl||entry.thumb||'',
         full:entry.fullUrl||entry.full||'',
         caption:entry.caption||'',
+        capturedAt:entry.capturedAt||'',
         includeInClientDoc:false,
         ts:entry.ts||Date.now(),
         pendingUpload:false
       });
-      known.add(entry.id);
+      known.add(key);
       added++;
     });
     if(added>0){saveData();if(typeof unlocked==='undefined'||unlocked){renderEstimate();}}
