@@ -73,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .proj-hdr{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fafaf8;border-bottom:1px solid #e5e5e0;cursor:pointer;user-select:none}
 .proj-hdr:hover{background:#f3f3f0}
 .proj-num{font-size:11px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0}
-.proj-name-inp{flex:1;font-size:14px;font-weight:600;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text}
+.proj-name-inp{flex:1;min-width:0;font-size:14px;font-weight:600;border:none;background:transparent;color:#1a1a1a;font-family:inherit;cursor:text;text-overflow:ellipsis}
 .proj-name-inp:focus{outline:none;background:#fff;border-radius:4px;padding:2px 6px;border:1px solid #ddd}
 .status-sel{font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:8px;background:#fff;color:#555;font-family:inherit;flex-shrink:0}
 .proj-badge{font-size:12px;font-weight:700;color:#1D9E75;flex-shrink:0;min-width:80px;text-align:right}
@@ -219,11 +219,11 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <h3>Remove from tray</h3>
     <p id="removePhotoCount" style="margin-bottom:14px">Remove this photo from the capture tray.</p>
     <div style="display:flex;flex-direction:column;gap:10px">
-      <button class="btn" style="text-align:left;padding:12px 14px;background:#c0392b;color:#fff;border-color:#c0392b" onclick="confirmRemovePhotos(true)">
+      <button class="btn" style="text-align:left;padding:12px 14px;white-space:normal;background:#c0392b;color:#fff;border-color:#c0392b" onclick="confirmRemovePhotos(true)">
         <div style="font-weight:700;font-size:13px">Remove permanently</div>
         <div style="font-size:11px;opacity:0.92;margin-top:3px;font-weight:400">Gone for good &mdash; won't come back on Refresh. The photo stays in Blob storage; the engine just remembers to skip it.</div>
       </button>
-      <button class="btn" style="text-align:left;padding:12px 14px" onclick="confirmRemovePhotos(false)">
+      <button class="btn" style="text-align:left;padding:12px 14px;white-space:normal" onclick="confirmRemovePhotos(false)">
         <div style="font-weight:700;font-size:13px">Remove for now</div>
         <div style="font-size:11px;color:#888;margin-top:3px;font-weight:400">Clears it from the tray, but it returns next time you hit Refresh (it's still in the manifest).</div>
       </button>
@@ -1188,7 +1188,7 @@ function renderEstimate(){
         showDocLbl.onclick=e=>{e.stopPropagation();showDocChk.click();};
       }
       const num=document.createElement('span');num.className='proj-num';num.textContent=String(pi+1).padStart(2,'0');
-      const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.onchange=()=>{
+      const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.title=proj.name;nameInp.onchange=()=>{
         const oldName=proj.name;
         const newName=nameInp.value.trim();
         if(!newName||newName===oldName)return;
@@ -1983,10 +1983,10 @@ function exportClientDoc(){
     // Lives in the informational detail block, never inside the signed authorization PDF.
     const _cphotos=(proj.photos||[]).filter(p=>p.includeInClientDoc&&p.full);
     if(_cphotos.length){
-      inner+=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e5e7eb"><div style="font-size:9pt;font-weight:700;color:#555;margin-bottom:8px;font-family:Arial,sans-serif">Project photos</div><div style="display:flex;flex-wrap:wrap;gap:12px">`;
+      inner+=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e5e7eb"><div style="font-size:9pt;font-weight:700;color:#555;margin-bottom:8px;font-family:Arial,sans-serif">Project photos</div><div data-lb-gallery style="display:flex;flex-wrap:wrap;gap:12px">`;
       _cphotos.forEach(ph=>{
         const cap=ph.caption?nl2br(ph.caption):'';
-        inner+=`<figure style="margin:0;width:150px"><a href="${ph.full}" target="_blank" rel="noopener" style="display:block"><img src="${ph.thumb||ph.full}" loading="lazy" style="width:150px;height:108px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block"></a>${cap?`<figcaption style="font-size:8pt;color:#777;margin-top:5px;line-height:1.4;font-family:Arial,sans-serif">${cap}</figcaption>`:''}</figure>`;
+        inner+=`<figure style="margin:0;width:150px"><a href="${ph.full}" data-lb data-cap="${cap?cap.replace(/"/g,'&quot;'):''}" onclick="return tpeOpenLb(this)" target="_blank" rel="noopener" style="display:block;cursor:zoom-in"><img src="${ph.thumb||ph.full}" onerror="this.onerror=null;this.src='${ph.full}'" loading="lazy" style="width:150px;height:108px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block"></a>${cap?`<figcaption style="font-size:8pt;color:#777;margin-top:5px;line-height:1.4;font-family:Arial,sans-serif">${cap}</figcaption>`:''}</figure>`;
       });
       inner+=`</div></div>`;
     }
@@ -2062,7 +2062,15 @@ function exportClientDoc(){
     .submit-btn{display:block;width:100%;padding:14px;background:#1D9E75;color:#fff;border:none;border-radius:8px;font-size:13pt;font-weight:700;cursor:pointer;margin-top:16px;font-family:Arial,sans-serif}
     .submit-btn:hover{background:#178a65}
     .submit-btn:disabled{background:#aaa;cursor:default}
-    @media print{body{background:#fff}.wrap{padding:20px}}
+    .tpe-lb{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;z-index:9999;align-items:center;justify-content:center}
+    .tpe-lb.open{display:flex}
+    .tpe-lb img{max-width:92vw;max-height:86vh;object-fit:contain;border-radius:4px;box-shadow:0 4px 40px rgba(0,0,0,.55)}
+    .tpe-lb-cap{position:absolute;bottom:18px;left:0;right:0;text-align:center;color:#eee;font-size:11pt;font-family:Arial,sans-serif;padding:0 40px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+    .tpe-lb-x{position:absolute;top:14px;right:20px;color:#fff;font-size:30px;line-height:1;cursor:pointer;background:none;border:none;padding:8px;opacity:.85}
+    .tpe-lb-nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:46px;line-height:1;cursor:pointer;background:none;border:none;padding:10px 18px;opacity:.7;user-select:none}
+    .tpe-lb-nav:hover,.tpe-lb-x:hover{opacity:1}
+    .tpe-lb-prev{left:6px}.tpe-lb-next{right:6px}
+    @media print{body{background:#fff}.wrap{padding:20px}.tpe-lb{display:none!important}}
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>
@@ -2505,7 +2513,45 @@ function exportClientDoc(){
   }
   <\/script>`;
 
-  html+='</div></body></html>';
+  html+='</div>';
+  html+=`<div class="tpe-lb" id="tpeLb" onclick="if(event.target===this)tpeCloseLb()">
+    <button class="tpe-lb-x" onclick="tpeCloseLb()" aria-label="Close">&times;</button>
+    <button class="tpe-lb-nav tpe-lb-prev" onclick="tpeStepLb(-1)" aria-label="Previous">&#8249;</button>
+    <img id="tpeLbImg" src="" alt="">
+    <button class="tpe-lb-nav tpe-lb-next" onclick="tpeStepLb(1)" aria-label="Next">&#8250;</button>
+    <div class="tpe-lb-cap" id="tpeLbCap"></div>
+  </div>
+  <script>
+  (function(){
+    var gallery=[],idx=0;
+    function show(){
+      var g=gallery[idx]||{};
+      document.getElementById('tpeLbImg').src=g.src||'';
+      var cap=document.getElementById('tpeLbCap');
+      cap.innerHTML=g.cap||'';cap.style.display=g.cap?'block':'none';
+      var multi=gallery.length>1;
+      document.querySelector('.tpe-lb-prev').style.display=multi?'block':'none';
+      document.querySelector('.tpe-lb-next').style.display=multi?'block':'none';
+    }
+    window.tpeOpenLb=function(a){
+      var box=a.closest('[data-lb-gallery]');
+      var links=box?box.querySelectorAll('a[data-lb]'):[a];
+      gallery=Array.prototype.map.call(links,function(l){return{src:l.getAttribute('href'),cap:l.getAttribute('data-cap')||''};});
+      idx=Array.prototype.indexOf.call(links,a);if(idx<0)idx=0;
+      show();document.getElementById('tpeLb').classList.add('open');
+      return false;
+    };
+    window.tpeStepLb=function(d){if(!gallery.length)return;idx=(idx+d+gallery.length)%gallery.length;show();};
+    window.tpeCloseLb=function(){document.getElementById('tpeLb').classList.remove('open');};
+    document.addEventListener('keydown',function(e){
+      var lb=document.getElementById('tpeLb');if(!lb||!lb.classList.contains('open'))return;
+      if(e.key==='Escape')tpeCloseLb();
+      else if(e.key==='ArrowLeft')tpeStepLb(-1);
+      else if(e.key==='ArrowRight')tpeStepLb(1);
+    });
+  })();
+  <\/script>`;
+  html+='</body></html>';
 
   const blob=new Blob([html],{type:'text/html'});
   if(window._clientDocDisplayMode){
@@ -3868,10 +3914,31 @@ async function deletePhoto(proj,photo){
 }
 async function setTileImg(img,photo){
   const ck=photoCacheKey(photo);
-  const cached=await idbGetThumb(ck);
-  if(cached){img.src=URL.createObjectURL(cached);return;}
-  if(photo.thumb){img.src=photo.thumb;try{const resp=await fetch(photo.thumb);const b=await resp.blob();await idbPutThumb(ck,b);}catch(e){}return;}
-  if(photo.full){img.src=photo.full;return;}
+  try{const cached=await idbGetThumb(ck);if(cached){img.src=URL.createObjectURL(cached);return;}}catch(e){}
+  const thumb=photo.thumb||'';
+  const full=photo.full||'';
+  // Try thumb, then full. Fetch the bytes and re-wrap as image/jpeg so display works
+  // regardless of the blob's stored content-type (Power Automate writes octet-stream),
+  // and so an empty/invalid thumbnail transparently falls back to the full image.
+  const sources=[thumb,full].filter(Boolean);
+  for(const u of sources){
+    try{
+      const resp=await fetch(u,{cache:'no-store'});
+      if(!resp.ok)continue;
+      const raw=await resp.blob();
+      if(!raw||raw.size===0)continue;
+      const typed=new Blob([raw],{type:'image/jpeg'});
+      img.src=URL.createObjectURL(typed);
+      try{await idbPutThumb(ck,typed);}catch(e){}
+      return;
+    }catch(e){/* CORS or network: try next source, then direct fallback below */}
+  }
+  // Fetch blocked (e.g. CORS not allowing this origin): fall back to direct src.
+  const direct=thumb||full;
+  if(direct){
+    img.onerror=function(){img.onerror=null;if(full&&img.src!==full){img.src=full;}else{img.alt='(unavailable)';}};
+    img.src=direct;return;
+  }
   img.alt='(processing)';
 }
 /* photoCacheKey: thumbnail cache key. Uses the unique blob GUID when the photo has a
@@ -4193,56 +4260,134 @@ function confirmRemovePhotos(permanent){
   renderEstimate();
 }
 function slugifyVessel(name){return String(name||'').trim().toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');}
+/* resolvePhotoManifestUrl: LEGACY single-shared-manifest URL. Only used as a fallback when a
+ * photoManifestUrl is explicitly set in Settings. The current pipeline uses per-photo marker
+ * files under _pending/ instead (see resolvePhotoListBase + fetchPendingPhotos below).         */
 function resolvePhotoManifestUrl(){
   if(settings.photoManifestUrl&&settings.photoManifestUrl.trim())return settings.photoManifestUrl.trim();
+  return '';
+}
+/* resolvePhotoListBase: derives the Azure Blob *container* URL from photoPublicBase so we can hit
+ * the Blob List API. photoPublicBase looks like https://tpmphotos.blob.core.windows.net/tpm-photos/
+ * -> container URL is the same string with any trailing slash removed. Returns '' if not set.    */
+function resolvePhotoListBase(){
+  // 1) explicit public base if configured (no UI for this today, but honored if set)
   if(settings.photoPublicBase&&settings.photoPublicBase.trim()){
-    let base=settings.photoPublicBase.trim();if(base.slice(-1)!=='/')base+='/';
-    const vesselEl=document.getElementById('vfVessel');
-    const slug=slugifyVessel(vesselEl?vesselEl.value:'');
-    if(slug)return base+'_pending_'+slug+'.json';
+    let base=settings.photoPublicBase.trim();
+    while(base.slice(-1)==='/')base=base.slice(0,-1);
+    return base;
+  }
+  // 2) derive the container URL from the existing Field-capture URL field. That field is usually
+  //    https://<acct>.blob.core.windows.net/<container>/_pending.json — strip the trailing
+  //    /<file>.json to get the container root we list under (prefix _pending/). This lets the new
+  //    per-photo pipeline work with the field the user already has set, no extra config.
+  if(settings.photoManifestUrl&&settings.photoManifestUrl.trim()){
+    let u=settings.photoManifestUrl.trim().split('#')[0].split('?')[0];
+    if(/blob\.core\.windows\.net/i.test(u)&&/\.json$/i.test(u)){
+      const i=u.lastIndexOf('/');
+      if(i>0)return u.slice(0,i);
+    }
   }
   return '';
 }
-/* fetchPendingPhotos: pulls field-captured photos (Shortcut -> Blob -> manifest) into the
- * capture tray. Reads a JSON array of {id, fullUrl/full, thumbUrl/thumb, filename, ts} over
- * the network (container is anonymous-read, so a manifest is required — blobs can't be listed).
- * Dedupes by id against the tray AND every project's photos. Never throws into the UI; a missing
- * manifest (404 / not configured) is a silent no-op. Engine-only tooling — the client doc never
- * shows a tray, so this does not affect exportClientDoc.                                        */
+/* listPendingMarkers: enumerates the _pending/ prefix via the Azure Blob List REST API
+ * (?restype=container&comp=list&prefix=_pending/). Container must have anonymous LIST access on
+ * (Step 1). Returns [{name, len}] for every marker blob, following NextMarker pagination (capped).
+ * Zero-length blobs (leftovers from old failed burst uploads) are skipped here so they never reach
+ * the tray. The response is XML; we parse it with DOMParser.                                      */
+async function listPendingMarkers(containerUrl){
+  const out=[];let marker='';let guard=0;
+  do{
+    let u=containerUrl+'?restype=container&comp=list&prefix=_pending/';
+    if(marker)u+='&marker='+encodeURIComponent(marker);
+    const res=await fetch(u,{cache:'no-store'});
+    if(!res.ok)throw new Error('list '+res.status);
+    const xml=await res.text();
+    const doc=new DOMParser().parseFromString(xml,'application/xml');
+    const blobs=doc.getElementsByTagName('Blob');
+    for(let i=0;i<blobs.length;i++){
+      const nameEl=blobs[i].getElementsByTagName('Name')[0];
+      if(!nameEl)continue;
+      const name=nameEl.textContent||'';
+      if(!/\.json$/i.test(name))continue;            // markers are .json
+      let len=0;const lenEl=blobs[i].getElementsByTagName('Content-Length')[0];
+      if(lenEl)len=parseInt(lenEl.textContent||'0',10)||0;
+      if(len<=0)continue;                              // skip 0-byte leftovers
+      out.push({name:name,len:len});
+    }
+    const nm=doc.getElementsByTagName('NextMarker')[0];
+    marker=nm?(nm.textContent||''):'';
+    guard++;
+  }while(marker&&guard<10);
+  return out;
+}
+/* fetchPendingPhotos: pulls field-captured photos into the capture tray. Current pipeline:
+ * the Shortcut POSTs each photo to Power Automate, which writes one _pending/<id>.json marker
+ * blob per photo (no shared manifest = no race on multi-photo bursts). Here we LIST that folder,
+ * fetch each marker JSON {id, vessel, project, filename, mime, fullUrl, thumbUrl, ts}, and feed
+ * the existing tray. Dedupe/dismiss is keyed on the blob GUID via photoDismissKey, so distinct
+ * photos with colliding ids all land correctly and permanently-dismissed ones stay gone.
+ * Falls back to the legacy single-manifest reader if a photoManifestUrl is explicitly configured.
+ * Never throws into the UI; a missing/empty folder is a silent no-op. Engine-only — the client
+ * doc never shows a tray, so this does not affect exportClientDoc.                               */
 async function fetchPendingPhotos(opts){
   opts=opts||{};
   const statusEl=document.getElementById('photoFetchStatus');
   function setStatus(msg){if(opts.manual&&statusEl)statusEl.textContent=msg||'';}
+  const known=new Set();
+  (unassignedPhotos||[]).forEach(p=>known.add(photoDismissKey(p)));
+  projects.forEach(p=>(p.photos||[]).forEach(ph=>known.add(photoDismissKey(ph))));
+  function intake(entry){
+    if(!entry)return false;
+    const key=photoDismissKey(entry);
+    if(!key)return false;
+    if(known.has(key))return false;
+    if(dismissedPhotoKeys.has(key))return false;
+    unassignedPhotos.push({
+      id:entry.id||key,projId:null,
+      thumb:entry.thumbUrl||entry.thumb||'',
+      full:entry.fullUrl||entry.full||'',
+      caption:entry.caption||'',
+      capturedAt:entry.capturedAt||'',
+      includeInClientDoc:false,
+      ts:entry.ts||Date.now(),
+      pendingUpload:false
+    });
+    known.add(key);
+    return true;
+  }
+  const containerUrl=resolvePhotoListBase();
+  // ---- Current pipeline: list per-photo markers under _pending/ ----
+  if(containerUrl){
+    setStatus('Checking\u2026');
+    try{
+      const markers=await listPendingMarkers(containerUrl);
+      if(!markers.length){setStatus('No field photos waiting.');return 0;}
+      let added=0;
+      const results=await Promise.all(markers.map(async m=>{
+        try{
+          const r=await fetch(containerUrl+'/'+m.name,{cache:'no-store'});
+          if(!r.ok)return null;
+          return await r.json();
+        }catch(e){return null;}
+      }));
+      results.forEach(entry=>{if(intake(entry))added++;});
+      if(added>0){saveData();if(typeof unlocked==='undefined'||unlocked){renderEstimate();}}
+      setStatus(added>0?('Added '+added+' photo'+(added!==1?'s':'')+' to the tray.'):'No new field photos.');
+      return added;
+    }catch(e){setStatus('Could not reach photo storage.');return 0;}
+  }
+  // ---- Legacy fallback: single shared manifest (only if photoManifestUrl is set) ----
   const url=resolvePhotoManifestUrl();
-  if(!url){setStatus('No manifest URL set (Settings \u2192 Photos).');return 0;}
+  if(!url){setStatus('No photo storage set (Settings \u2192 Photos).');return 0;}
   setStatus('Checking\u2026');
   try{
     const res=await fetch(url,{cache:'no-store'});
     if(!res.ok){setStatus(res.status===404?'No field photos waiting.':'Manifest unavailable ('+res.status+').');return 0;}
     const list=await res.json();
     if(!Array.isArray(list)){setStatus('Manifest format not recognized.');return 0;}
-    const known=new Set();
-    (unassignedPhotos||[]).forEach(p=>known.add(photoDismissKey(p)));
-    projects.forEach(p=>(p.photos||[]).forEach(ph=>known.add(photoDismissKey(ph))));
     let added=0;
-    list.forEach(entry=>{
-      if(!entry||!entry.id)return;
-      const key=photoDismissKey(entry);
-      if(known.has(key))return;
-      if(dismissedPhotoKeys.has(key))return;
-      unassignedPhotos.push({
-        id:entry.id,projId:null,
-        thumb:entry.thumbUrl||entry.thumb||'',
-        full:entry.fullUrl||entry.full||'',
-        caption:entry.caption||'',
-        capturedAt:entry.capturedAt||'',
-        includeInClientDoc:false,
-        ts:entry.ts||Date.now(),
-        pendingUpload:false
-      });
-      known.add(key);
-      added++;
-    });
+    list.forEach(entry=>{if(entry&&entry.id&&intake(entry))added++;});
     if(added>0){saveData();if(typeof unlocked==='undefined'||unlocked){renderEstimate();}}
     setStatus(added>0?('Added '+added+' photo'+(added!==1?'s':'')+' to the tray.'):'No new field photos.');
     return added;
