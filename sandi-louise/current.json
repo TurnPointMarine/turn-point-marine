@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-06-27T19:21:52.363Z",
+    "exportedAt": "2026-06-28T15:02:28.144Z",
     "engineVersion": 8
   },
   "projects": [
@@ -59,6 +59,17 @@
           "capturedAt": "",
           "includeInClientDoc": false,
           "ts": 639180189741360500,
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-06-28-39aafa9f-7f88-47c4-8fde-845213406fe8",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-39aafa9f-7f88-47c4-8fde-845213406fe8-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-39aafa9f-7f88-47c4-8fde-845213406fe8.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": false,
+          "ts": "2026-06-28T13:02:12.5605442Z",
           "pendingUpload": false
         }
       ]
@@ -395,6 +406,127 @@
       "capturedAt": "",
       "includeInClientDoc": false,
       "ts": 639180241602210700,
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-00044e93-1940-4ace-9721-e67c2878c93c",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-00044e93-1940-4ace-9721-e67c2878c93c-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-00044e93-1940-4ace-9721-e67c2878c93c.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:26:10.7013328Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-0681a067-8d2f-4858-a634-d5f281a12244",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-0681a067-8d2f-4858-a634-d5f281a12244-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-0681a067-8d2f-4858-a634-d5f281a12244.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T13:01:06.2576525Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-10eeaf59-485a-4215-a27a-66ee46fbbdb1",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-10eeaf59-485a-4215-a27a-66ee46fbbdb1-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-10eeaf59-485a-4215-a27a-66ee46fbbdb1.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T13:45:20.7097383Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-31738666-ff73-47ec-8237-d9523597980d",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-31738666-ff73-47ec-8237-d9523597980d-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-31738666-ff73-47ec-8237-d9523597980d.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T13:45:24.6404113Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-326e9494-3bdf-4628-8d9b-02b87404fc8d",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-326e9494-3bdf-4628-8d9b-02b87404fc8d-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-326e9494-3bdf-4628-8d9b-02b87404fc8d.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:28:30.1593519Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-75e0c57d-6288-47e8-b7d9-32dfc35150fd",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-75e0c57d-6288-47e8-b7d9-32dfc35150fd-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-75e0c57d-6288-47e8-b7d9-32dfc35150fd.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:28:40.9911717Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-8003f946-915b-4985-aed0-58214ae2b701",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-8003f946-915b-4985-aed0-58214ae2b701-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-8003f946-915b-4985-aed0-58214ae2b701.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:26:17.7868054Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-879074d8-eb98-43aa-ae36-32fff6578f6d",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-879074d8-eb98-43aa-ae36-32fff6578f6d-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-879074d8-eb98-43aa-ae36-32fff6578f6d.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:26:21.5979518Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-af3fb9dc-7193-4d29-ad47-6a3f605ddedf",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-af3fb9dc-7193-4d29-ad47-6a3f605ddedf-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-af3fb9dc-7193-4d29-ad47-6a3f605ddedf.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:26:24.5978538Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-bd62ac8d-805f-47ac-b5ef-86de5e095c28",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-bd62ac8d-805f-47ac-b5ef-86de5e095c28-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-bd62ac8d-805f-47ac-b5ef-86de5e095c28.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:28:19.4736845Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-06-28-f19ab112-c9b0-4bf8-b054-c1a8641393b0",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-f19ab112-c9b0-4bf8-b054-c1a8641393b0-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-f19ab112-c9b0-4bf8-b054-c1a8641393b0.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": false,
+      "ts": "2026-06-28T14:26:13.7719752Z",
       "pendingUpload": false
     }
   ],
