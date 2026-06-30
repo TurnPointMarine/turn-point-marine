@@ -455,8 +455,10 @@ let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000,nextBillingId=500;
 // are not yet tethered to a project. Drops onto a project card never land here.
 let unassignedPhotos=[];
 let traySelected=new Set(); // photo object refs currently selected in the capture tray
+let traySeen=new Set(); // photoDismissKeys the tray has already shown this session (ephemeral) — used to default new photos to selected without re-selecting ones the user deselected
 let dismissedPhotoKeys=new Set(); // dismiss-keys (blob GUID) of photos permanently removed — fetchPendingPhotos skips these
 let _removeTargets=[]; // photos pending the remove-choice modal
+let photoBlockCollapsed=new Set(); // proj ids whose Photos section is collapsed (session-only UI state)
 let projects=[];
 let timeEntries=[];
 let billingEvents=[];
@@ -1250,7 +1252,9 @@ function renderEstimate(){
         showDocLbl2.onclick=e=>{e.stopPropagation();showDocChk.click();};
         ph.appendChild(showDocChk);ph.appendChild(showDocLbl2);
       }
-      ph.appendChild(num);ph.appendChild(nameInp);ph.appendChild(ssel);ph.appendChild(invWrap);if(gradBadge)ph.appendChild(gradBadge);ph.appendChild(badge);ph.appendChild(chev);
+      const _camCount=(proj.photos||[]).length;
+      const camIcon=_camCount>0?makeCameraIcon(pSec.color,_camCount):null;
+      ph.appendChild(num);ph.appendChild(nameInp);if(camIcon)ph.appendChild(camIcon);ph.appendChild(ssel);ph.appendChild(invWrap);if(gradBadge)ph.appendChild(gradBadge);ph.appendChild(badge);ph.appendChild(chev);
       ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);saveData();renderEstimate();});
       // Drop target for TE drag-reassign
       ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
@@ -2016,6 +2020,7 @@ function exportClientDoc(){
         <div style="display:flex;align-items:center;gap:14px">
           ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
           <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
+          ${_cphotos.length?`<span title="${_cphotos.length} photo${_cphotos.length!==1?'s':''}" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;margin-right:2px"><svg width="28" height="20" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="${_accent}"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>`:''}
           ${totalsHtml}
           <span class="chev" style="font-size:11px;color:#bbb;margin-left:6px;transition:transform 0.2s">&#9654;</span>
         </div>
@@ -2025,7 +2030,7 @@ function exportClientDoc(){
     </div>`;
   }
 
-  function sectionHdr(color,label,count,total,note,breakdown,textColor,bodyId,connectColor){
+  function sectionHdr(color,label,count,total,note,breakdown,textColor,bodyId,connectColor,hasPhotos){
     textColor=textColor||'#fff';
     let totalHtml;
     if(breakdown){
@@ -2037,6 +2042,7 @@ function exportClientDoc(){
     } else {
       totalHtml='<div style="font-size:13pt;font-weight:700">'+total+'</div>';
     }
+    const camHtml=hasPhotos?'<span title="Includes project photos" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0"><svg width="30" height="22" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="'+textColor+'"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>':'';
     const chevHtml=bodyId?'<span class="sechev" style="font-size:12px;margin-left:4px;transition:transform 0.2s;transform:rotate(90deg);display:inline-block">&#9654;</span>':'';
     const onclick=bodyId?' onclick="var d=document.getElementById(\''+bodyId+'\');var c=this.querySelector(\'.sechev\');var willOpen=d.style.display===\'none\';d.style.display=willOpen?\'block\':\'none\';c.style.transform=willOpen?\'rotate(90deg)\':\'rotate(0deg)\'"':'';
     const hdrBorder=(textColor&&textColor!=='#fff')?textColor:darkenC(color);
@@ -2046,9 +2052,11 @@ function exportClientDoc(){
     return '<div'+onclick+' style="background:'+color+';color:'+textColor+';border:2px solid '+hdrBdr+';padding:12px 18px;border-radius:'+radius+';margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;'+(bodyId?'cursor:pointer':'')+'">'
       +'<div><div style="font-size:12pt;font-weight:700">'+label+'</div>'
       +'<div style="font-size:8.5pt;opacity:0.8;margin-top:2px">'+count+' project'+(count!==1?'s':'')+' &mdash; '+note+'</div></div>'
-      +'<div style="display:flex;align-items:center;gap:12px">'+totalHtml+chevHtml+'</div>'
+      +'<div style="display:flex;align-items:center;gap:12px">'+camHtml+totalHtml+chevHtml+'</div>'
       +'</div>';
   }
+  // True when any project in the list has a photo that's opted-in AND uploaded (visible in the client doc).
+  const secHasPhotos=arr=>(arr||[]).some(p=>(p.photos||[]).some(ph=>ph.includeInClientDoc&&ph.full));
 
   // ── BUILD HTML ────────────────────────────────────────────────────────────
   let html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -2105,6 +2113,7 @@ function exportClientDoc(){
         <div style="font-size:8.5pt;opacity:0.85;margin-top:2px">${futureP.length} project${futureP.length!==1?'s':''} — Upcoming projects — not yet authorized</div>
       </div>
       <div style="display:flex;align-items:center;gap:14px">
+        ${secHasPhotos(futureP)?`<span title="Includes project photos" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0"><svg width="30" height="22" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="#ffffff"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>`:''}
         <span style="font-size:12pt;font-weight:700">${fd(futureTotal)}</span>
         <span id="futureArr" style="font-size:11px;opacity:0.8;display:inline-block;transition:transform 0.2s">&#9654;</span>
       </div>
@@ -2114,11 +2123,23 @@ function exportClientDoc(){
     futureP.forEach((proj,fi)=>{
       const fid='future'+fi;
       const fTotal=projDisplayTotal(proj);
+      // Client-facing photo gallery — same markup other statuses get via projBlock.
+      const _cphotos=(proj.photos||[]).filter(p=>p.includeInClientDoc&&p.full);
+      let _photosHtml='';
+      if(_cphotos.length){
+        _photosHtml=`<div style="margin-top:12px;padding-top:10px;border-top:1px solid #e5e7eb"><div style="font-size:9pt;font-weight:700;color:#555;margin-bottom:8px;font-family:Arial,sans-serif">Project photos</div><div data-lb-gallery style="display:flex;flex-wrap:wrap;gap:12px">`;
+        _cphotos.forEach(ph=>{
+          const cap=ph.caption?nl2br(ph.caption):'';
+          _photosHtml+=`<figure style="margin:0;width:150px"><a href="${ph.full}" data-lb data-cap="${cap?cap.replace(/"/g,'&quot;'):''}" onclick="return tpeOpenLb(this)" target="_blank" rel="noopener" style="display:block;cursor:zoom-in"><img src="${ph.thumb||ph.full}" onerror="this.onerror=null;this.src='${ph.full}'" loading="lazy" style="width:150px;height:108px;object-fit:cover;border-radius:6px;border:1px solid #e5e7eb;display:block"></a>${cap?`<figcaption style="font-size:8pt;color:#777;margin-top:5px;line-height:1.4;font-family:Arial,sans-serif">${cap}</figcaption>`:''}</figure>`;
+        });
+        _photosHtml+=`</div></div>`;
+      }
       html+=`<div style="border:1px solid #c9bfea;border-radius:8px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
         <div onclick="var d=document.getElementById('${fid}');var a=document.getElementById('${fid}arr');if(d.style.display==='none'){d.style.display='block';a.style.transform='rotate(90deg)';}else{d.style.display='none';a.style.transform='rotate(0deg)';}"
           style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f3f0fa;cursor:pointer;user-select:none">
           <span style="font-size:10pt;font-weight:700;color:#4a3f6b">${proj.name}</span>
           <div style="display:flex;align-items:center;gap:12px">
+            ${_cphotos.length?`<span title="${_cphotos.length} photo${_cphotos.length!==1?'s':''}" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;margin-right:2px"><svg width="28" height="20" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="#7c6f9f"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>`:''}
             <span style="font-size:10pt;font-weight:700;color:#7c6f9f">${fd(fTotal)}</span>
             <span id="${fid}arr" style="font-size:10px;color:#7c6f9f;display:inline-block;transition:transform 0.2s">&#9654;</span>
           </div>
@@ -2126,6 +2147,7 @@ function exportClientDoc(){
         <div id="${fid}" style="display:none;padding:10px 14px;border-top:1px solid #c9bfea;background:#faf8ff">
           ${proj.notes?`<div style="font-size:8.5pt;color:#888;font-style:italic;margin-bottom:8px;line-height:1.5">${nl2br(proj.notes)}</div>`:''}
           ${mergedTable(proj)}
+          ${_photosHtml}
         </div>
       </div>`;
     });
@@ -2140,7 +2162,7 @@ function exportClientDoc(){
       return a+taskT+teT;
     },0);
     const authTotal=authP.reduce((a,p)=>a+projDisplayTotal(p),0)+coTotal;
-    html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed',null,null,'secbody_auth');
+    html+=sectionHdr('#1D9E75','AUTHORIZATION NEEDED',authP.length+(coProjs.length>0?1:0),fd(authTotal),'Please review each project and sign below to proceed',null,null,'secbody_auth',null,secHasPhotos(authP));
     html+='<div id="secbody_auth">';
     html+=`<div style="background:#f0faf6;border-left:4px solid #1D9E75;padding:10px 14px;margin-top:8px;font-size:9pt;color:#155a3e;font-style:italic">${s.authText}</div>`;
     authP.forEach(proj=>{html+=projBlock(proj,'#2d8a6a',true,false);});
@@ -2206,7 +2228,7 @@ function exportClientDoc(){
       tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
       actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
-    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog','#6b7280');
+    html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog','#6b7280',secHasPhotos(inPP));
     // Section frame encompasses individual project cards with gaps (mirrors Complete + Billing Event).
     html+='<div id="secbody_inprog" style="border:2px solid #6b7280;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     inPP.forEach(proj=>{
@@ -2227,7 +2249,7 @@ function exportClientDoc(){
       tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
       actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
     };
-    html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80');
+    html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80',secHasPhotos(completeP));
     // Section frame encompasses individual project cards with gaps (mirrors the engine Complete + Billing Event layout).
     html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     completeP.forEach((proj,bi)=>{
@@ -2262,7 +2284,7 @@ function exportClientDoc(){
       tm:0,
       actual:ct
     };
-    html+=sectionHdr('#fdf4ff','BILLING EVENT',compP.length,fd(ct),'Work complete, invoice pending',compP_brk,'#b232c2','secbody_billing','#c354d6');
+    html+=sectionHdr('#fdf4ff','BILLING EVENT',compP.length,fd(ct),'Work complete, invoice pending',compP_brk,'#b232c2','secbody_billing','#c354d6',secHasPhotos(compP));
     // Section frame encompasses individual status-colored project cards (mirrors the engine Complete layout).
     html+='<div id="secbody_billing" style="border:2px solid #c354d6;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     compP.forEach((proj,bi)=>{
@@ -3892,7 +3914,7 @@ async function addPhotosToProject(proj,fileList){
     let thumbBlob=null;
     try{const dr=await loadDrawable(file);thumbBlob=await makeThumbBlob(dr,400);}catch(e){}
     if(thumbBlob)await idbPutThumb(id,thumbBlob);
-    const photo={id,projId:proj.id,thumb:'',full:'',caption:'',includeInClientDoc:false,ts:Date.now(),pendingUpload:true};
+    const photo={id,projId:proj.id,thumb:'',full:'',caption:'',includeInClientDoc:true,ts:Date.now(),pendingUpload:true};
     if(settings.photoUploadUrl){
       try{
         const payload={id,project:proj.name,vessel:(document.getElementById('vfVessel')||{}).value||'',filename:file.name,mime:file.type||'image/jpeg',fullB64:await blobToBase64(file),thumbB64:thumbBlob?await blobToBase64(thumbBlob):''};
@@ -3905,6 +3927,29 @@ async function addPhotosToProject(proj,fileList){
   saveData();
   rerenderPhotoBlock(proj);
   if(skipped.length)photoNote(proj,'Added '+files.length+' image'+(files.length>1?'s':'')+'; skipped '+skipped.length+' non-image file'+(skipped.length>1?'s':'')+' (videos can\u2019t run through the photo system).');
+}
+async function retryPendingUploads(proj){
+  if(!settings.photoUploadUrl){photoNote(proj,'Set the photo upload endpoint in Settings first \u2014 there\u2019s nowhere to upload to.');return;}
+  const pend=(proj.photos||[]).filter(p=>p.pendingUpload||!p.full);
+  if(!pend.length){photoNote(proj,'Nothing pending \u2014 every photo on this project already has a cloud URL.');return;}
+  photoNote(proj,'Uploading '+pend.length+' photo'+(pend.length!==1?'s':'')+' to Blob\u2026');
+  let ok=0,fail=0,lastErr='';
+  for(const photo of pend){
+    try{
+      const blob=await idbGetThumb(photoCacheKey(photo));
+      if(!blob){fail++;lastErr='no cached image in this browser (re-drop this one)';continue;}
+      const b64=await blobToBase64(blob);
+      const payload={id:photo.id,project:proj.name,vessel:(document.getElementById('vfVessel')||{}).value||'',filename:(photo.id||'photo')+'.jpg',mime:'image/jpeg',fullB64:b64,thumbB64:b64};
+      const r=await uploadPhotoToPA(settings.photoUploadUrl,payload);
+      if(r&&(r.fullUrl||r.thumbUrl)){photo.full=r.fullUrl||r.thumbUrl;photo.thumb=r.thumbUrl||r.fullUrl;photo.pendingUpload=false;ok++;}
+      else{fail++;lastErr='endpoint accepted the upload but returned no URL (check the PA flow\u2019s response step)';}
+    }catch(e){fail++;lastErr=(e&&e.message)||String(e);}
+  }
+  saveData();
+  rerenderPhotoBlock(proj);
+  let msg=ok?('Uploaded '+ok+' photo'+(ok!==1?'s':'')+' \u2014 they\u2019ll now appear in the client doc.'):'';
+  if(fail)msg+=(msg?' ':'')+fail+' failed'+(lastErr?': '+lastErr:'')+'.';
+  photoNote(proj,msg||'Nothing happened.');
 }
 async function deletePhoto(proj,photo){
   proj.photos=(proj.photos||[]).filter(p=>p!==photo);
@@ -4020,10 +4065,34 @@ function fillPhotoBlock(wrap,proj){
     // straight out of the Photos app (it sends a preview promise, not the image bytes).
     showPhotoDropHint(wrap,'macOS didn\u2019t pass the actual image (the Photos app sends a preview, not the file). Use the \u201cclick to add\u201d button below, drag the photo from Finder instead, or send it through the field-capture Shortcut.');
   };
+  const collapsed=photoBlockCollapsed.has(proj.id);
   const hdr=document.createElement('div');
-  hdr.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em';
-  hdr.textContent='Photos'+(photos.length?' \u00b7 '+photos.length:'');
+  hdr.style.cssText='display:flex;align-items:center;gap:6px;margin-bottom:8px;font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.04em;cursor:pointer;user-select:none';
+  const caret=document.createElement('span');
+  caret.textContent='\u25b6';
+  caret.style.cssText='font-size:9px;color:#aaa;display:inline-block;transition:transform 0.15s;transform:rotate('+(collapsed?'0deg':'90deg')+')';
+  const lbl=document.createElement('span');
+  lbl.textContent='Photos'+(photos.length?' \u00b7 '+photos.length:'');
+  hdr.appendChild(caret);hdr.appendChild(lbl);
+  if(collapsed){const hint=document.createElement('span');hint.textContent='(hidden)';hint.style.cssText='font-weight:400;text-transform:none;letter-spacing:0;color:#bbb;font-size:10px';hdr.appendChild(hint);}
+  hdr.onclick=()=>{if(photoBlockCollapsed.has(proj.id))photoBlockCollapsed.delete(proj.id);else photoBlockCollapsed.add(proj.id);fillPhotoBlock(wrap,proj);};
   wrap.appendChild(hdr);
+  // Surface a retry button when any photo lacks a cloud URL — those are invisible in the client doc.
+  const _pending=photos.filter(p=>p.pendingUpload||!p.full);
+  if(_pending.length){
+    const upRow=document.createElement('div');
+    upRow.style.cssText='display:flex;align-items:center;gap:8px;margin:-2px 0 8px;font-size:11px';
+    const warn=document.createElement('span');
+    warn.textContent='\u26a0 '+_pending.length+' photo'+(_pending.length!==1?'s':'')+' local-only \u2014 not in client doc';
+    warn.style.cssText='color:#a05a00';
+    const btn=document.createElement('button');
+    btn.type='button';btn.textContent='Upload to cloud';
+    btn.style.cssText='font-size:11px;padding:3px 10px;border:1px solid #1D9E75;color:#1D9E75;background:#fff;border-radius:6px;cursor:pointer;font-weight:600';
+    btn.onclick=e=>{e.stopPropagation();btn.disabled=true;btn.textContent='Uploading\u2026';retryPendingUploads(proj);};
+    upRow.appendChild(warn);upRow.appendChild(btn);
+    wrap.appendChild(upRow);
+  }
+  if(collapsed)return;
   const grid=document.createElement('div');
   grid.style.cssText='display:flex;flex-wrap:wrap;gap:10px';
   wrap.appendChild(grid);
@@ -4122,14 +4191,51 @@ function buildPhotoTile(proj,photo){
   return tile;
 }
 
+/* makeCameraIcon: small status-colored chip with a camera glyph, shown in a project's header row
+ * only when that project has photos. fillColor = the project's status color (pSec.color) so the
+ * chip blends with the card's status; count drives the hover tooltip only. Built as a fresh span
+ * with a single innerHTML assignment of inline SVG — there are no listeners to clobber, so this is
+ * distinct from the innerHTML+= pattern the engine avoids on live re-renders. flex-shrink:0 keeps
+ * it from squishing; the header's flex gap:8px gives it a constant distance from the status
+ * dropdown to its right. Engine-editor UI only — the client doc has no such header row. */
+function makeCameraIcon(fillColor,count){
+  const span=document.createElement('span');
+  span.className='proj-cam';
+  span.style.cssText='display:inline-flex;align-items:center;flex-shrink:0;line-height:0';
+  span.title=count+' photo'+(count!==1?'s':'')+' in this project';
+  span.setAttribute('aria-label',span.title);
+  span.innerHTML='<svg width="30" height="22" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">'
+    +'<rect x="0" y="0" width="76" height="56" rx="10" fill="'+fillColor+'"/>'
+    +'<g transform="translate(6,5)">'
+    +'<rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/>'
+    +'<rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/>'
+    +'<rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/>'
+    +'<circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/>'
+    +'<circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/>'
+    +'<circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/>'
+    +'<circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/>'
+    +'<circle cx="32" cy="27" r="10" fill="#333333"/>'
+    +'<circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/>'
+    +'<ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/>'
+    +'</g></svg>';
+  return span;
+}
+
 function buildCaptureTray(){
   const hasPhotos=!!(unassignedPhotos&&unassignedPhotos.length);
   if(!hasPhotos){traySelected.clear();}
-  else{const live=new Set(unassignedPhotos);[...traySelected].forEach(p=>{if(!live.has(p))traySelected.delete(p);});}
+  else{
+    const live=new Set(unassignedPhotos);
+    [...traySelected].forEach(p=>{if(!live.has(p))traySelected.delete(p);});
+    // Default any photo the tray hasn't shown yet this session to selected. Marking it "seen"
+    // means a deliberate deselect sticks (a later re-render won't re-select it). traySeen is
+    // ephemeral, so after a page reload the tray again defaults its photos to selected.
+    unassignedPhotos.forEach(p=>{const k=photoDismissKey(p);if(!traySeen.has(k)){traySelected.add(p);traySeen.add(k);}});
+  }
   const wrap=document.createElement('div');
   wrap.style.cssText='border:1px solid #e0d6c8;background:#fbf7f0;border-radius:10px;padding:12px 14px;margin-bottom:14px';
   const hdr=document.createElement('div');
-  hdr.style.cssText='display:flex;align-items:center;gap:10px;font-size:12px;font-weight:700;color:#7a5a1e;margin-bottom:10px';
+  hdr.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;color:#7a5a1e;margin-bottom:10px';
   const hlabel=document.createElement('span');
   hlabel.textContent=hasPhotos
     ?('From field capture \u00b7 '+unassignedPhotos.length+' photo'+(unassignedPhotos.length!==1?'s':'')+' waiting to be assigned')
@@ -4144,9 +4250,24 @@ function buildCaptureTray(){
     selAll.style.cssText='background:none;border:none;color:#7a5a1e;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline';
     selAll.onclick=()=>toggleTraySelectAll();
     hdr.appendChild(selAll);
+    // Bulk-assign: send all checked photos to one project in a single action. Operates on the
+    // selected photo OBJECT refs (traySelected), so it stays correct even if photo ids collide.
+    const asgSel=document.createElement('select');
+    asgSel.id='traySelAssignSel';
+    asgSel.style.cssText='font-size:12px;padding:2px 5px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600';
+    const a0=document.createElement('option');a0.value='';a0.textContent='Add selected to\u2026';asgSel.appendChild(a0);
+    projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;asgSel.appendChild(o);});
+    hdr.appendChild(asgSel);
+    const asgBtn=document.createElement('button');
+    asgBtn.type='button';asgBtn.id='traySelAssignBtn';
+    asgBtn.textContent='Add'+(n0?' ('+n0+')':'');
+    asgBtn.disabled=n0===0;
+    asgBtn.style.cssText='background:none;border:none;color:#1f6feb;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;opacity:'+(n0===0?'0.45':'1');
+    asgBtn.onclick=()=>assignSelectedTrayPhotos(document.getElementById('traySelAssignSel').value);
+    hdr.appendChild(asgBtn);
     const clrSel=document.createElement('button');
     clrSel.type='button';clrSel.id='trayClearSelBtn';
-    clrSel.textContent='Clear selected'+(n0?' ('+n0+')':'');
+    clrSel.textContent='Delete selected'+(n0?' ('+n0+')':'');
     clrSel.disabled=n0===0;
     clrSel.style.cssText='background:none;border:none;color:#c0392b;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline;opacity:'+(n0===0?'0.45':'1');
     clrSel.onclick=()=>clearSelectedTrayPhotos();
@@ -4195,7 +4316,7 @@ function buildTrayTile(photo){
   const sel=document.createElement('select');
   sel.style.cssText='width:100%;font-size:12px;padding:4px;border:1px solid #ddd;border-radius:6px;font-family:inherit';
   const opt0=document.createElement('option');opt0.value='';opt0.textContent='Assign to project\u2026';sel.appendChild(opt0);
-  projects.forEach((p,i)=>{if(p.status==='billed')return;const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
+  projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
   body.appendChild(sel);
   const btn=document.createElement('button');btn.textContent='Assign';btn.className='btn-sm blue';btn.style.cssText='margin-top:8px;width:100%';
   btn.onclick=()=>{if(sel.value)assignCaptureToProject(photo.id,parseInt(sel.value));};
@@ -4215,9 +4336,11 @@ function assignCaptureToProject(photoId,projId){
 function updateTraySelUI(){
   const n=traySelected.size;
   const clr=document.getElementById('trayClearSelBtn');
-  if(clr){clr.textContent='Clear selected'+(n?' ('+n+')':'');clr.disabled=n===0;clr.style.opacity=n===0?'0.45':'1';}
+  if(clr){clr.textContent='Delete selected'+(n?' ('+n+')':'');clr.disabled=n===0;clr.style.opacity=n===0?'0.45':'1';}
   const sa=document.getElementById('traySelAllBtn');
   if(sa)sa.textContent=(unassignedPhotos.length>0&&n===unassignedPhotos.length)?'Deselect all':'Select all';
+  const asg=document.getElementById('traySelAssignBtn');
+  if(asg){asg.textContent='Add'+(n?' ('+n+')':'');asg.disabled=n===0;asg.style.opacity=n===0?'0.45':'1';}
 }
 function toggleTraySelectAll(){
   const all=unassignedPhotos.length>0&&traySelected.size===unassignedPhotos.length;
@@ -4229,6 +4352,28 @@ function dismissTrayPhoto(photo){openRemovePhotoModal([photo]);}
 function clearSelectedTrayPhotos(){
   if(!traySelected.size)return;
   openRemovePhotoModal([...traySelected]);
+}
+/* assignSelectedTrayPhotos: bulk-move every checked tray photo into one project. Works on object
+ * refs (not ids) so colliding photo ids can't misroute a photo. Skips billed projects (not offered
+ * in the dropdown). No-op if no project chosen or nothing selected. */
+function assignSelectedTrayPhotos(projIdStr){
+  const projId=parseInt(projIdStr,10);
+  if(!projId)return;
+  const proj=projects.find(p=>p.id===projId);
+  if(!proj)return;
+  const photos=[...traySelected];
+  if(!photos.length)return;
+  proj.photos=proj.photos||[];
+  photos.forEach(photo=>{
+    const idx=unassignedPhotos.indexOf(photo);
+    if(idx<0)return;
+    unassignedPhotos.splice(idx,1);
+    photo.projId=proj.id;
+    proj.photos.push(photo);
+  });
+  traySelected.clear();
+  saveData();
+  renderEstimate();
 }
 /* photoDismissKey: stable unique key per photo, taken from the GUID embedded in its
  * blob filename (…/sandi-louise--<GUID>.jpg). This is unique even though the entry.id
@@ -4343,16 +4488,18 @@ async function fetchPendingPhotos(opts){
     if(!key)return false;
     if(known.has(key))return false;
     if(dismissedPhotoKeys.has(key))return false;
-    unassignedPhotos.push({
+    const photoObj={
       id:entry.id||key,projId:null,
       thumb:entry.thumbUrl||entry.thumb||'',
       full:entry.fullUrl||entry.full||'',
       caption:entry.caption||'',
       capturedAt:entry.capturedAt||'',
-      includeInClientDoc:false,
+      includeInClientDoc:true,
       ts:entry.ts||Date.now(),
       pendingUpload:false
-    });
+    };
+    unassignedPhotos.push(photoObj);
+    traySelected.add(photoObj); // newly-landed photos default to selected
     known.add(key);
     return true;
   }
@@ -4361,19 +4508,36 @@ async function fetchPendingPhotos(opts){
   if(containerUrl){
     setStatus('Checking\u2026');
     try{
+      // Per-vessel scoping. All vessel instances share one _pending/ folder, so each marker is
+      // tagged with its vessel and we intake only the ones for THIS engine's vessel. Match on the
+      // marker's `vessel` field (slug-normalized so "Sandi Louise" and "sandi-louise" are equal);
+      // if a marker lacks that field, fall back to the blob-name prefix (_pending/<slug>-...).
+      const myVessel=slugifyVessel(document.getElementById('vfVessel').value||'');
       const markers=await listPendingMarkers(containerUrl);
       if(!markers.length){setStatus('No field photos waiting.');return 0;}
-      let added=0;
+      let added=0,skipped=0;
       const results=await Promise.all(markers.map(async m=>{
         try{
           const r=await fetch(containerUrl+'/'+m.name,{cache:'no-store'});
           if(!r.ok)return null;
-          return await r.json();
+          const entry=await r.json();
+          return {entry:entry,name:m.name};
         }catch(e){return null;}
       }));
-      results.forEach(entry=>{if(intake(entry))added++;});
+      results.forEach(rec=>{
+        if(!rec||!rec.entry)return;
+        if(myVessel){
+          const markerVessel=slugifyVessel(rec.entry.vessel||'');
+          const bare=rec.name.replace(/^_pending\//i,'').toLowerCase();
+          const belongs=markerVessel?(markerVessel===myVessel):(bare.indexOf(myVessel+'-')===0);
+          if(!belongs){skipped++;return;}
+        }
+        if(intake(rec.entry))added++;
+      });
       if(added>0){saveData();if(typeof unlocked==='undefined'||unlocked){renderEstimate();}}
-      setStatus(added>0?('Added '+added+' photo'+(added!==1?'s':'')+' to the tray.'):'No new field photos.');
+      let msg=added>0?('Added '+added+' photo'+(added!==1?'s':'')+' to the tray.'):'No new field photos.';
+      if(skipped>0)msg+=' ('+skipped+' for other vessels.)';
+      setStatus(msg);
       return added;
     }catch(e){setStatus('Could not reach photo storage.');return 0;}
   }
