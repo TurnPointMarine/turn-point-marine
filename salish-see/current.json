@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-06-30T22:12:40.725Z",
+    "exportedAt": "2026-07-01T15:44:15.645Z",
     "engineVersion": 8
   },
   "projects": [
@@ -706,6 +706,17 @@
           "includeInClientDoc": true,
           "ts": "2026-06-30T22:11:49.6537056Z",
           "pendingUpload": false
+        },
+        {
+          "id": "salish-see-2026-06-30-92a630ac-374d-4a77-bfa3-58f6677f9873",
+          "projId": 21,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-06-30-92a630ac-374d-4a77-bfa3-58f6677f9873-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-06-30-92a630ac-374d-4a77-bfa3-58f6677f9873.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-06-30T22:11:57.5542673Z",
+          "pendingUpload": false
         }
       ]
     },
@@ -1004,7 +1015,7 @@
       "name": "Flybridge Hatch Lid Rollers Repair",
       "status": "needs_auth",
       "include": true,
-      "notes": "",
+      "notes": "Four of the six rollers are broken out of the Lexan lid. ",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
@@ -1096,6 +1107,50 @@
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-06-29T18:36:21.8843441Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "salish-see-2026-07-01-07279c9a-d0bf-4a64-a7f0-5e117cafb763",
+          "projId": 32,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-07279c9a-d0bf-4a64-a7f0-5e117cafb763-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-07279c9a-d0bf-4a64-a7f0-5e117cafb763.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-01T15:42:50.6247750Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "salish-see-2026-07-01-a657825e-0fe5-4ffe-9461-e1900c1c7c46",
+          "projId": 32,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-a657825e-0fe5-4ffe-9461-e1900c1c7c46-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-a657825e-0fe5-4ffe-9461-e1900c1c7c46.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-01T15:42:59.5212681Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "salish-see-2026-07-01-b17671d0-7b9f-4ae6-941e-06be76488af9",
+          "projId": 32,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-b17671d0-7b9f-4ae6-941e-06be76488af9-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-b17671d0-7b9f-4ae6-941e-06be76488af9.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-01T15:42:44.8792819Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "salish-see-2026-07-01-b417c2de-9f20-4775-b4a7-8bca75791471",
+          "projId": 32,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-b417c2de-9f20-4775-b4a7-8bca75791471-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/salish-see-2026-07-01-b417c2de-9f20-4775-b4a7-8bca75791471.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-01T15:43:04.5687657Z",
           "pendingUpload": false
         }
       ]
@@ -1628,7 +1683,8 @@
       61,
       2,
       25,
-      26
+      26,
+      32
     ],
     "closedReadyProjs": [
       15,
