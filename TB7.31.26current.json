@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Tackle Bait",
     "client": "Chris White",
-    "exportedAt": "2026-07-30T21:20:29.162Z",
+    "exportedAt": "2026-07-31T18:45:38.696Z",
     "engineVersion": 8
   },
   "projects": [
@@ -385,16 +385,7 @@
       "notes": "Engine oil, spark plugs, ",
       "estimateTotal": null,
       "isTM": true,
-      "scopeTasks": [
-        {
-          "id": 102,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
+      "scopeTasks": [],
       "tasks": [],
       "cos": [],
       "billingEvents": []
@@ -407,24 +398,7 @@
       "notes": "",
       "estimateTotal": null,
       "isTM": true,
-      "scopeTasks": [
-        {
-          "id": 103,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 104,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
+      "scopeTasks": [],
       "tasks": [],
       "cos": [],
       "billingEvents": [],
@@ -476,7 +450,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1001,
@@ -488,7 +462,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1002,
@@ -496,11 +470,11 @@
       "proj": "Hull Paint Repair",
       "cat": "T",
       "hrs": 2,
-      "desc": "Inspected the bottom paint and sanded areas needing more of a transition between paint layers. Scuffed the epoxy barrier coat used to seal off the fiberglass and gelcoat below the waterline, and wiped it down with water and rags (according to Interprotect's instructions for applying two coats of epoxy below the water line.) ",
+      "desc": "Inspected the bottom paint and sanded areas needing more of a transition between layers. Scuffed the epoxy barrier coat used to seal off the fiberglass and gelcoat below the waterline, and wiped it down with water and rags (according to Interprotect's instructions for applying two coats of epoxy below the water line.) ",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1003,
@@ -512,7 +486,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1004,
@@ -524,7 +498,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1005,
@@ -536,7 +510,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     },
     {
       "id": 1006,
@@ -548,7 +522,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false
+      "graduated": true
     }
   ],
   "billingEvents": [
@@ -596,11 +570,18 @@
     },
     {
       "id": 505,
-      "name": "Billing Event 2026-05-15",
+      "name": "Invoice #23521",
       "isCurrent": true,
       "locked": false,
       "createdAt": "2026-05-15T14:04:40.459Z",
-      "history": []
+      "history": [
+        {
+          "field": "name",
+          "from": "Billing Event 2026-05-15",
+          "to": "Invoice #23521",
+          "at": "2026-07-31T18:27:58.490Z"
+        }
+      ]
     }
   ],
   "nextProjId": 5,
@@ -669,12 +650,13 @@
       "est_27": true,
       "est_24": false,
       "est_11": true,
-      "act_4": false
+      "act_4": true
     },
     "openProjs": [
-      4,
+      1,
       2,
-      1
+      3,
+      4
     ],
     "closedReadyProjs": [
       15,
