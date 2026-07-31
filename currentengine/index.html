@@ -404,12 +404,26 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
         <input type="checkbox" id="stShopFeeEnabled" onchange="settings.shopFeeEnabled=this.checked;saveData();renderSummary()">
         Apply shop fee to labor &amp; materials
       </label>
-      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-left:28px">
-        <span style="font-size:13px;color:#555">Shop fee rate</span>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-left:28px;flex-wrap:wrap">
+        <span style="font-size:13px;color:#555">Label</span>
+        <input type="text" id="stShopFeeName" placeholder="Shop Fee" maxlength="40" onchange="settings.shopFeeName=this.value;saveData();renderSummary()" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:180px">
+        <span style="font-size:13px;color:#555;margin-left:8px">Rate</span>
         <input type="number" id="stShopFeePct" min="0" step="0.1" value="3" onchange="settings.shopFeePct=(this.value===''?3:parseFloat(this.value));saveData();renderSummary()" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:72px">
         <span style="font-size:13px;color:#555">% of labor &amp; materials</span>
       </div>
       <div style="font-size:11px;color:#888;margin-top:8px;line-height:1.5">Uncheck to drop the shop-fee line from estimates and client docs entirely. When applied, this rate is charged on labor + materials (not subcontractors or flat-rate services) and is included in the taxable base.</div>
+      <label style="display:flex;align-items:center;gap:10px;font-size:13px;cursor:pointer;margin-top:18px;padding-top:14px;border-top:1px solid #f0f0ed">
+        <input type="checkbox" id="stCcFeeEnabled" onchange="settings.ccFeeEnabled=this.checked;saveData();renderSummary()">
+        Apply credit card fee
+      </label>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:10px;padding-left:28px;flex-wrap:wrap">
+        <span style="font-size:13px;color:#555">Label</span>
+        <input type="text" id="stCcFeeName" placeholder="Credit Card Fee" maxlength="40" onchange="settings.ccFeeName=this.value;saveData();renderSummary()" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:180px">
+        <span style="font-size:13px;color:#555;margin-left:8px">Rate</span>
+        <input type="number" id="stCcFeePct" min="0" step="0.1" value="3" onchange="settings.ccFeePct=(this.value===''?3:parseFloat(this.value));saveData();renderSummary()" style="font-size:13px;padding:7px 10px;border:1px solid #ddd;border-radius:8px;font-family:inherit;width:72px">
+        <span style="font-size:13px;color:#555">% of subtotal + shop fee</span>
+      </div>
+      <div style="font-size:11px;color:#888;margin-top:8px;line-height:1.5">Charged when the client pays by card. Percentage of (subtotal + shop fee), shown as its own line just above tax and included in the taxable base. Uncheck to drop it entirely.</div>
     </div>
     <div style="background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:20px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0ed">Photos</div>
@@ -443,6 +457,13 @@ function isMatCat(c){return c==='M'||c==='S'||c==='P'||c==='F';}
 // Defaults to enabled at 3% when unset (preserves prior behavior).
 function shopFeePct(){if(settings.shopFeeEnabled===false)return 0;var p=(settings.shopFeePct===undefined||settings.shopFeePct===null||settings.shopFeePct==='')?3:Number(settings.shopFeePct);return isNaN(p)||p<0?0:p;}
 function shopFeeRate(){return shopFeePct()/100;}
+// Editable label for the shop-fee line (Settings → Billing). Returns HTML-safe text.
+function shopFeeName(){var n=(settings.shopFeeName&&(''+settings.shopFeeName).trim())?(''+settings.shopFeeName).trim():'Shop Fee';return n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+// Credit card fee — configurable like the shop fee (Settings → Billing): on/off, editable %, label.
+// Applied to (subtotal + shop fee) and kept in the tax base. OFF unless explicitly enabled.
+function ccFeePct(){if(settings.ccFeeEnabled!==true)return 0;var p=(settings.ccFeePct===undefined||settings.ccFeePct===null||settings.ccFeePct==='')?3:Number(settings.ccFeePct);return isNaN(p)||p<0?0:p;}
+function ccFeeRate(){return ccFeePct()/100;}
+function ccFeeName(){var n=(settings.ccFeeName&&(''+settings.ccFeeName).trim())?(''+settings.ccFeeName).trim():'Credit Card Fee';return n.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP',F:'cF'};
 const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v4';
@@ -785,6 +806,10 @@ function syncSettingsUI(){
     try{document.getElementById('stTaxExempt').checked=settings.taxExempt||false;}catch(e){}
     try{document.getElementById('stShopFeeEnabled').checked=(settings.shopFeeEnabled!==false);}catch(e){}
     try{document.getElementById('stShopFeePct').value=(settings.shopFeePct===undefined||settings.shopFeePct===null||settings.shopFeePct==='')?3:settings.shopFeePct;}catch(e){}
+    try{document.getElementById('stShopFeeName').value=settings.shopFeeName||'';}catch(e){}
+    try{document.getElementById('stCcFeeEnabled').checked=(settings.ccFeeEnabled===true);}catch(e){}
+    try{document.getElementById('stCcFeePct').value=(settings.ccFeePct===undefined||settings.ccFeePct===null||settings.ccFeePct==='')?3:settings.ccFeePct;}catch(e){}
+    try{document.getElementById('stCcFeeName').value=settings.ccFeeName||'';}catch(e){}
     try{document.getElementById('stPhotoUploadUrl').value=settings.photoUploadUrl||'';}catch(e){}
     try{document.getElementById('stPhotoManifestUrl').value=settings.photoManifestUrl||'';}catch(e){}
     // Logo preview
@@ -846,14 +871,17 @@ function renderSummary(){
   if(gt){
     const actP=inc.filter(p=>p.status!=='billed'&&p.status!=='holding');
     const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
-    const gMat=actP.reduce((a,p)=>a+projEstMat(p),0);
-    const gSub=actP.reduce((a,p)=>a+projEstSub(p),0);
+    // Materials = M/P only; Subcontractors = S only (previously S was lumped into Materials here).
+    const gMat=actP.reduce((a,p)=>a+((p.isTM?0:projScopeMat(p))+projActualMatOnly(p)),0);
+    const gSub=actP.reduce((a,p)=>a+((p.isTM?0:projScopeSub(p))+projActualSub(p)),0);
     const gSubtotal=gL+gMat+gSub;
     // Shop fee base excludes subcontractors — subs typically arrange their own overhead/markup,
     // so charging shop fee on top would be double-dipping.
     const gShop=(gL+gMat)*shopFeeRate();
-    const _gTaxBase=gSubtotal+gShop;const gTaxState=settings.taxExempt?0:_gTaxBase*0.065;const gTaxCity=settings.taxExempt?0:_gTaxBase*0.027;const gTax=gTaxState+gTaxCity;
-    const gTotal=gSubtotal+gShop+gTax;
+    // Invoice-level credit card fee (current billing event) — matches the client doc summaries.
+    const gCC=(gSubtotal+gShop)*ccFeeRate();
+    const _gTaxBase=gSubtotal+gShop+gCC;const gTaxState=settings.taxExempt?0:_gTaxBase*0.065;const gTaxCity=settings.taxExempt?0:_gTaxBase*0.027;const gTax=gTaxState+gTaxCity;
+    const gTotal=gSubtotal+gShop+gCC+gTax;
     // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
     const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
     const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+(t.mat||0),0),0);
@@ -868,7 +896,8 @@ function renderSummary(){
       +row('Materials',gMat,false)
       +row('Subcontractors',gSub,false)
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
-      +(shopFeePct()>0?row('Shop Fee ('+shopFeePct()+'%)',gShop,false):'')
+      +(shopFeePct()>0?row(shopFeeName()+' ('+shopFeePct()+'%)',gShop,false):'')
+      +(ccFeePct()>0?row(ccFeeName()+' ('+ccFeePct()+'%)',gCC,false):'')
       +(settings.taxExempt?'':row('Tax (9.2%)',gTax,false))
       +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px 0;background:#1D9E75"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>'
       +(totalDeductions>0
@@ -1883,9 +1912,7 @@ function exportClientDoc(){
   const billP=projects.filter(p=>p.include!==false&&_billedProjNames.has(p.name));
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
   const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
-  // Invoice-level credit card fee — lives on the current billing event, NOT on any project.
-  // Rendered only in the summaries (its own line, above tax); never appears in project detail.
-  const _cc=(billingEvents.find(b=>b.isCurrent)||{}).ccFee||0;
+  // Credit card fee is computed per-summary from ccFeeRate() on that summary's (subtotal + shop fee).
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
   // Bucket by CATEGORY, but respecting that labor-category tasks (T/B/D/V) can also have
@@ -2098,7 +2125,15 @@ function exportClientDoc(){
     .tpe-lb-nav{position:absolute;top:50%;transform:translateY(-50%);color:#fff;font-size:46px;line-height:1;cursor:pointer;background:none;border:none;padding:10px 18px;opacity:.7;user-select:none}
     .tpe-lb-nav:hover,.tpe-lb-x:hover{opacity:1}
     .tpe-lb-prev{left:6px}.tpe-lb-next{right:6px}
-    @media print{body{background:#fff}.wrap{padding:20px}.tpe-lb{display:none!important}}
+    @media print{
+      body{background:#fff}.wrap{padding:20px}.tpe-lb{display:none!important}
+      /* Full-record printing: force every collapsible project/section open so the client's PDF
+         captures all line items and photos, not just names and totals. */
+      [id$="_detail"],[id$="_d"],[id^="future"],[id^="billed"],[id^="co"],#estsum_detail{display:block!important}
+      .chev,.sechev,.bchev{transform:rotate(90deg)!important}
+      figure{break-inside:avoid}
+      tr{break-inside:avoid}
+    }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"><\/script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>
@@ -2352,15 +2387,14 @@ function exportClientDoc(){
     // Sourced from graduated-not-locked entries only (the entries that will actually appear on the next invoice).
     // Buckets: Labor (T/B/D/V) | Materials (M+P) | Subcontractors (S) | Flat Rate (F)
     const compL=docReadyTEs.filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);
-    // Credit card fee: invoice-level (billing event), shown as its own line just above tax.
-    const compCC=_cc;
     const compMat=docReadyTEs.filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
     const compSub=docReadyTEs.filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
     const compFlat=docReadyTEs.filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
     const compSubtotal=compL+compMat+compSub+compFlat;
     // Shop fee base excludes Flat Rate (flat-rate services are all-inclusive)
     const compShop=(compL+compMat)*shopFeeRate();
-    // CC fee stays in the tax base (matches the QuickBooks invoice, where it's taxable).
+    // Credit card fee: % of (subtotal + shop fee); stays in the tax base like the QuickBooks invoice.
+    const compCC=(compSubtotal+compShop)*ccFeeRate();
     const _compTaxBase=compSubtotal+compShop+compCC;const compTaxState=settings.taxExempt?0:_compTaxBase*0.065;const compTaxCity=settings.taxExempt?0:_compTaxBase*0.027;const compTax=compTaxState+compTaxCity;
     const compTotal=compSubtotal+compShop+compCC+compTax;
     html+=`<div style="margin-top:20px;border:2px solid #d946ef;border-radius:8px;overflow:hidden;font-family:Arial,sans-serif">
@@ -2371,8 +2405,8 @@ function exportClientDoc(){
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compSub)}</td></tr>
         ${compFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compFlat)}</td></tr>`:''}
         <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(compSubtotal)}</td></tr>
-        ${shopFeePct()>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (${shopFeePct()}% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compShop)}</td></tr>`:''}
-        ${compCC>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Credit Card Fee (3%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compCC)}</td></tr>`:''}
+        ${shopFeePct()>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">${shopFeeName()} (${shopFeePct()}% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compShop)}</td></tr>`:''}
+        ${ccFeePct()>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">${ccFeeName()} (${ccFeePct()}%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compCC)}</td></tr>`:''}
         ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.2%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(compTax)}</td></tr>`}
       </table>
       <div style="background:#fdf4ff;color:#c026d3;padding:14px 18px;border-top:2px solid #d946ef;display:flex;justify-content:space-between;align-items:center">
@@ -2389,7 +2423,8 @@ function exportClientDoc(){
   // carry their own overhead; flat-rate services are all-inclusive).
   const _sub=allL+allMat+allSub+allFlat;
   const _shop=(allL+allMat)*shopFeeRate();
-  // CC fee (invoice-level) sits below shop fee, in the tax base, but never in a project or the shop-fee base.
+  // CC fee: % of (subtotal + shop), below shop fee, in the tax base, never in a project or the shop-fee base.
+  const _cc=(_sub+_shop)*ccFeeRate();
   const _estTaxBase=_sub+_shop+_cc;
   const _tax=settings.taxExempt?0:_estTaxBase*0.092;
   const _total=_sub+_shop+_cc+_tax;
@@ -2407,8 +2442,8 @@ function exportClientDoc(){
         <tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Subcontractors</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allSub)}</td></tr>
         ${allFlat>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Flat Rate Services</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(allFlat)}</td></tr>`:''}
         <tr style="border-bottom:2px solid #e5e5e0;background:#fafaf8"><td style="padding:10px 18px;font-size:10pt;font-weight:700">Subtotal</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:700">${fd(_sub)}</td></tr>
-        ${shopFeePct()>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Shop Fee (${shopFeePct()}% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>`:''}
-        ${_cc>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Credit Card Fee</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_cc)}</td></tr>`:''}
+        ${shopFeePct()>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">${shopFeeName()} (${shopFeePct()}% of labor &amp; materials)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_shop)}</td></tr>`:''}
+        ${ccFeePct()>0?`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">${ccFeeName()} (${ccFeePct()}%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_cc)}</td></tr>`:''}
         ${settings.taxExempt?'':`<tr style="border-bottom:1px solid #f0f0ed"><td style="padding:10px 18px;font-size:10pt;color:#444">Tax (9.2%)</td><td style="padding:10px 18px;text-align:right;font-size:10pt;font-weight:600">${fd(_tax)}</td></tr>`}
       </table>
       <div style="background:#eef0ee;color:#555;padding:13px 18px;display:flex;justify-content:space-between;align-items:center">
@@ -2614,6 +2649,21 @@ function exportClientDoc(){
       else if(e.key==='ArrowLeft')tpeStepLb(-1);
       else if(e.key==='ArrowRight')tpeStepLb(1);
     });
+    // Full-record printing: on print, expand every collapsed project/section and eagerly load
+    // all photos so the saved PDF is a complete record; restore the on-screen state afterward.
+    var _tpeExpanded=[];
+    function _tpeExpandForPrint(){
+      _tpeExpanded=[];
+      var sel='[id$="_detail"],[id$="_d"],[id^="future"],[id^="billed"],[id^="co"],#estsum_detail';
+      Array.prototype.forEach.call(document.querySelectorAll(sel),function(el){
+        if(el.style.display==='none'){_tpeExpanded.push(el);el.style.display='block';}
+      });
+      Array.prototype.forEach.call(document.querySelectorAll('img[loading="lazy"]'),function(img){img.setAttribute('loading','eager');});
+    }
+    function _tpeRestore(){Array.prototype.forEach.call(_tpeExpanded,function(el){el.style.display='none';});_tpeExpanded=[];}
+    window.addEventListener('beforeprint',_tpeExpandForPrint);
+    window.addEventListener('afterprint',_tpeRestore);
+    if(window.matchMedia){var _mq=window.matchMedia('print');(_mq.addEventListener?_mq.addEventListener('change',function(e){e.matches?_tpeExpandForPrint():_tpeRestore();}):_mq.addListener&&_mq.addListener(function(e){e.matches?_tpeExpandForPrint():_tpeRestore();}));}
   })();
   <\/script>`;
   html+='</body></html>';
