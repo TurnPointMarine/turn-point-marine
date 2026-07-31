@@ -2259,15 +2259,18 @@ function exportClientDoc(){
       const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
       const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
       // Each project = its own rounded bordered card (navy, all Complete), with a gap.
+      const cardId='ccard'+bi;
       html+='<div style="border:1px solid #3d5a80;border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
-        +'<div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe">'
+        +'<div onclick="var d=document.getElementById(\''+cardId+'_detail\');var open=d.style.display===\'none\';d.style.display=open?\'block\':\'none\';this.querySelector(\'.chev\').style.transform=open?\'rotate(90deg)\':\'\'" style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:#dbeafe;cursor:pointer">'
         +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
+          +'<span class="chev" style="font-size:11px;color:#1a3a5c;display:inline-block;transition:transform 0.2s;flex-shrink:0">&#9654;</span>'
           +'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:2px 6px;flex-shrink:0;font-family:Arial,sans-serif">'+pnum+'</span>'
           +'<span style="font-size:10.5pt;font-weight:700;color:#1a3a5c;font-family:Arial,sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+proj.name+'</span>'
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
         +'</div>'
         +'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
         +'</div>'
+        +'<div id="'+cardId+'_detail" style="display:none;background:#f7faff;border-top:1px solid #c5d4e8;padding:8px 14px"><div class="task-wrap">'+mergedTable(proj)+'</div></div>'
         +'</div>';
     });
     html+='</div>';

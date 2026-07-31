@@ -653,19 +653,6 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false
-    },
-    {
-      "id": 1016,
-      "date": "2026-07-31",
-      "proj": "Hull Paint Repair",
-      "cat": "M",
-      "hrs": 56.0,
-      "desc": "3% credit card fee",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "ccFee": true
     }
   ],
   "billingEvents": [
@@ -724,7 +711,8 @@
           "to": "Invoice #23521",
           "at": "2026-07-31T18:27:58.490Z"
         }
-      ]
+      ],
+      "ccFee": 56.0
     }
   ],
   "nextProjId": 6,
