@@ -1938,30 +1938,39 @@ function exportClientDoc(){
   const docData=JSON.stringify({vessel,client,projects:projects.filter(p=>p.include!==false).map(p=>({id:p.id,name:p.name,status:p.status,total:projDisplayTotal(p),cos:(p.cos||[]).map(co=>({id:co.id,title:co.title,authorized:co.authorized,total:co.tasks.reduce((a,t)=>a+taskTotal(t),0)}))}))})
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
-  function taskTable(tasks){
+  function taskTable(tasks,showDate){
     if(!tasks||tasks.length===0)return'';
+    const fdate=function(s){if(!s)return'';var p=(''+s).split('-');return p.length===3?(parseInt(p[1],10)+'/'+parseInt(p[2],10)+'/'+p[0].slice(2)):s;};
+    const bb='border-bottom:1px solid #f0f0f0';
     let rows='';
     tasks.forEach(t=>{
       const labor=(RATES[t.cat]||0)*(t.hrs||0);
       const ms=(t.mat||0)+(t.sub||0);
       const isMS=isMatCat(t.cat);
-      rows+=`<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${CAT_LABELS[t.cat]}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap">${isMS?'\u2014':(t.hrs||0)+'h'}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;font-weight:600">${fd(isMS?ms:labor+ms)}</td></tr>`;
+      const desc=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>`;
+      const hrs=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${isMS?'\u2014':(t.hrs||0)+'h'}</td>`;
+      const tot=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;font-weight:600;vertical-align:top">${fd(isMS?ms:labor+ms)}</td>`;
+      if(showDate){
+        // QuickBooks-style order: Date \u00b7 Category \u00b7 Description \u00b7 Hrs \u00b7 Total (all leading columns left-aligned).
+        const date=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt;white-space:nowrap;color:#666">${fdate(t.date)||'\u2014'}</td>`;
+        const cat=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt;white-space:nowrap;color:#555">${CAT_LABELS[t.cat]}</td>`;
+        rows+=`<tr>${date}${cat}${desc}${hrs}${tot}</tr>`;
+      } else {
+        const cat=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${CAT_LABELS[t.cat]}</td>`;
+        rows+=`<tr>${desc}${cat}${hrs}${tot}</tr>`;
+      }
     });
     const pL=tasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
     const pM=tasks.reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
+    const th=(txt,align)=>`<th style="padding:5px 8px;text-align:${align};border-bottom:2px solid #ddd;font-size:8pt;color:#555">${txt}</th>`;
+    const head=showDate
+      ? th('Date','left')+th('Category','left')+th('Scope / Task','left')+th('Hrs','right')+th('Total','right')
+      : th('Scope / Task','left')+th('Category','right')+th('Hrs','right')+th('Total','right');
     return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
-      <thead><tr style="background:#f8f8f8">
-        <th style="padding:5px 8px;text-align:left;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Scope / Task</th>
-        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Category</th>
-        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Hrs</th>
-        <th style="padding:5px 8px;text-align:right;border-bottom:2px solid #ddd;font-size:8pt;color:#555">Total</th>
-      </tr></thead>
+      <thead><tr style="background:#f8f8f8">${head}</tr></thead>
       <tbody>${rows}
         <tr style="background:#f5f5f5">
-          <td colspan="3" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
+          <td colspan="${showDate?4:3}" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
           <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">${fd(pL+pM)}</td>
         </tr>
       </tbody></table>`;
@@ -1970,7 +1979,7 @@ function exportClientDoc(){
   function mergedTable(proj){
     const scopeTasks=proj.scopeTasks||[];
     const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
-    const postedTasks=postedTEs.map(te=>({cat:te.cat,desc:te.desc,hrs:isMatCat(te.cat)?0:te.hrs,mat:isMatCat(te.cat)?te.hrs:0,sub:0}));
+    const postedTasks=postedTEs.map(te=>({cat:te.cat,desc:te.desc,date:te.date,hrs:isMatCat(te.cat)?0:te.hrs,mat:isMatCat(te.cat)?te.hrs:0,sub:0}));
     const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
     const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
     const scopeOnly=(tasks)=>{
@@ -1987,7 +1996,7 @@ function exportClientDoc(){
         h+='<div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div>'+taskTable(scopeTasks);
       }
     }
-    if(postedTasks.length>0){h+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:10px;font-family:Arial,sans-serif">Actual to Date</div>'+taskTable(postedTasks);}
+    if(postedTasks.length>0){h+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:10px;font-family:Arial,sans-serif">Actual to Date</div>'+taskTable(postedTasks,true);}
     h+='<div style="display:flex;gap:8px;margin-top:10px">';
     if(!proj.isTM){
       h+='<div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px"><div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div><div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">'+fd(estT)+'</div></div>';
