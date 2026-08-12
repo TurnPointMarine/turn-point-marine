@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-08-12T18:27:29.825Z",
+    "exportedAt": "2026-08-12T19:23:13.343Z",
     "engineVersion": 7
   },
   "projects": [
@@ -707,7 +707,7 @@
           "cat": "B",
           "desc": "Polish Oxidation from gel coat:\n\n-Inboard gelcoat under the cap rails on the foredeck and around the windlass (9hrs)\n-Pilothouse eyebrow (6hrs)\n-Portuguese bridge cap rails (5hrs)\n-Gelcoat on the pilothouse fwd of the steps (9hrs)\n-Upper deck eyebrow (8hrs)\n-Flybridge brow (8hrs)\n-Both sides of the house aft of the top steps. (14hrs)",
           "hrs": 59,
-          "mat": 200,
+          "mat": 0,
           "sub": 0
         },
         {
@@ -715,8 +715,16 @@
           "cat": "T",
           "desc": "Waxing gel coat:\n\n-Inboard gelcoat under the cap rails on the foredeck and around the windlass (2hrs)\n-Pilothouse eyebrow (0.75hrs)\n-Portuguese bridge cap rails (0.75hrs)\n-Gelcoat on the pilothouse fwd of the steps (2hrs)\n-Upper deck eyebrow (1hr)\n-Flybridge brow (1hr)\n-Both sides of the house aft of the top steps. (3hrs)",
           "hrs": 11,
-          "mat": 50,
+          "mat": 0,
           "sub": 0
+        },
+        {
+          "id": 138,
+          "cat": "M",
+          "desc": "$260-5L of compound \n$50-2L of wax \n$25-we recycle/wash the polishing rags and use fresh rags for the waxing so just a small cost  \n$40-2 boxes of gloves \n$25-2 rolls of tape of 1.5” tape\n$75-We'll use up 3 Mirka 7\" wool polishing pads. ",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 475
         }
       ],
       "tasks": [],
@@ -1745,7 +1753,7 @@
     }
   ],
   "nextProjId": 43,
-  "nextTaskId": 138,
+  "nextTaskId": 140,
   "nextCOId": 100,
   "nextTEId": 1080,
   "nextBillingId": 504,
