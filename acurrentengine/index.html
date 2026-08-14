@@ -2927,6 +2927,15 @@ function exportClientDoc(){
     const a=document.createElement('a');a.href=URL.createObjectURL(blob);
     a.download=vessel.replace(/\s+/g,'_')+(_authSel?'_Authorization_':'_ClientDoc_')+new Date().toISOString().split('T')[0]+'.html';
     a.click();URL.revokeObjectURL(a.href);
+    // Reminder: the live client link only updates once the repo is pushed
+    try{
+      var _t=document.createElement('div');
+      _t.textContent='\u2757 Doc exported \u2014 Push Through GitHub to update the live client link';
+      _t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:13px;font-weight:700;padding:13px 22px;border-radius:10px;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,0.35);font-family:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;max-width:90vw;text-align:center';
+      document.body.appendChild(_t);
+      setTimeout(function(){_t.style.opacity='1';},30);
+      setTimeout(function(){_t.style.opacity='0';setTimeout(function(){_t.remove();},400);},8000);
+    }catch(e){}
   }
 }
 
@@ -3412,7 +3421,7 @@ window.clearSig=function(){var c=document.getElementById('sigCanvas');if(c)c.get
 function emailClient(){
   const vessel=document.getElementById("vfVessel").value||"Vessel";
   const slug=vessel.trim().toLowerCase().replace(/\s+/g,"-");
-  const url="https://client.turnpointmarine.com/"+slug;
+  const url="https://client.turnpointmarine.com/"+slug+"/client-doc.html";
   navigator.clipboard.writeText(url).then(()=>{
     const btn=document.querySelector("[onclick=\"emailClient()\"]");
     const orig=btn.innerHTML;
