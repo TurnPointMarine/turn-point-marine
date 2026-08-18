@@ -147,6 +147,10 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 <div class="topnav">
   <div style="display:flex;align-items:center;gap:8px">
     <h1>Turn Point Engine</h1>
+    <!-- Build stamp (KEEP IN EVERY BUILD, added 8/17): ENGINE_VERSION is the DATA SCHEMA version
+         and must not be bumped for UI work — migrateData/importData branch on it. ENGINE_BUILD is
+         the human "which copy am I running" marker. Filled in by _stampBuild() on load. -->
+    <span id="navBuild" style="font-size:11px;color:#8a8a8a;font-weight:600;white-space:nowrap" title="Engine data-schema version · build date"></span>
     <span class="vessel" id="navVessel"></span>
   </div>
   <div class="nav-btn-group">
@@ -485,6 +489,16 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 </div>
 <script>
 const ENGINE_VERSION=8;
+/* ENGINE_BUILD (KEEP IN EVERY BUILD, added 8/17): bump this string on EVERY build you ship.
+ * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
+ * migrated" warning on every import when no migration exists. Every build of v8 looked
+ * identical before this, which made "is this the current engine?" unanswerable.            */
+const ENGINE_BUILD='2026-08-17b';
+function _stampBuild(){
+  const el=document.getElementById('navBuild');
+  if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
+}
+try{if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',_stampBuild);else _stampBuild();}catch(e){}
 const PIN='1248';
 const RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0,F:0};
 const CAT_LABELS={T:'Technician',B:'Buff & Wax',D:'Detail',V:'Travel',M:'Materials',S:'SBCNTRCT',P:'Mat - Deposit Paid',F:'Flat Rate'};
@@ -3450,7 +3464,8 @@ function _tpmExportJSON(){
       vessel:v,
       client:c,
       exportedAt:new Date().toISOString(),
-      engineVersion:ENGINE_VERSION
+      engineVersion:ENGINE_VERSION,
+      engineBuild:ENGINE_BUILD
     },
     projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,
     dismissedPhotoKeys:[...dismissedPhotoKeys],
@@ -4349,12 +4364,18 @@ async function addPhotosToProject(proj,fileList){
     let thumbBlob=null;
     try{const dr=await loadDrawable(file);thumbBlob=await makeThumbBlob(dr,400);}catch(e){}
     if(thumbBlob)await idbPutThumb(id,thumbBlob);
+    /* Stash the ORIGINAL under 'o:<id>' (KEEP IN EVERY BUILD, added 8/17). Only the 400px thumb
+     * used to be cached, so a later retryPendingUploads had nothing else to send and uploaded
+     * that thumb as the "full" image — permanently losing resolution for any photo whose first
+     * upload attempt failed. The original is deleted once the upload succeeds.                */
+    try{await idbPutThumb('o:'+id,file);}catch(e){}
     const photo={id,projId:proj.id,thumb:'',full:'',caption:'',includeInClientDoc:true,ts:Date.now(),pendingUpload:true};
     if(settings.photoUploadUrl){
       try{
         const payload={id,project:proj.name,vessel:(document.getElementById('vfVessel')||{}).value||'',filename:file.name,mime:file.type||'image/jpeg',fullB64:await blobToBase64(file),thumbB64:thumbBlob?await blobToBase64(thumbBlob):''};
         const r=await uploadPhotoToPA(settings.photoUploadUrl,payload);
-        if(r&&(r.fullUrl||r.thumbUrl)){photo.full=r.fullUrl||r.thumbUrl;photo.thumb=r.thumbUrl||r.fullUrl;photo.pendingUpload=false;}
+        if(r&&(r.fullUrl||r.thumbUrl)){photo.full=r.fullUrl||r.thumbUrl;photo.thumb=r.thumbUrl||r.fullUrl;photo.pendingUpload=false;
+          try{await idbDeleteThumb('o:'+id);}catch(e){}}
       }catch(e){}
     }
     proj.photos=proj.photos||[];proj.photos.push(photo);
@@ -4371,12 +4392,22 @@ async function retryPendingUploads(proj){
   let ok=0,fail=0,lastErr='';
   for(const photo of pend){
     try{
-      const blob=await idbGetThumb(photoCacheKey(photo));
-      if(!blob){fail++;lastErr='no cached image in this browser (re-drop this one)';continue;}
-      const b64=await blobToBase64(blob);
-      const payload={id:photo.id,project:proj.name,vessel:(document.getElementById('vfVessel')||{}).value||'',filename:(photo.id||'photo')+'.jpg',mime:'image/jpeg',fullB64:b64,thumbB64:b64};
+      /* Send a REAL thumbnail (KEEP IN EVERY BUILD, fixed 8/17). This used to read the cached
+       * 400px thumb and send it as BOTH fullB64 and thumbB64 — the same bytes twice, which is
+       * the identical mistake the field-capture Shortcut was making. Prefer the stashed original
+       * ('o:<id>') for fullB64 and derive a fresh 480px thumb from it; fall back to the cached
+       * thumb for both only when the original is gone (older photos predate the 'o:' stash).  */
+      const cachedThumb=await idbGetThumb(photoCacheKey(photo));
+      const original=await idbGetThumb('o:'+photo.id);
+      const fullBlob=original||cachedThumb;
+      if(!fullBlob){fail++;lastErr='no cached image in this browser (re-drop this one)';continue;}
+      let thumbBlob=cachedThumb;
+      if(original){try{const dr=await loadDrawable(original);thumbBlob=await makeThumbBlob(dr,480);}catch(e){}}
+      if(!thumbBlob)thumbBlob=fullBlob;
+      const payload={id:photo.id,project:proj.name,vessel:(document.getElementById('vfVessel')||{}).value||'',filename:(photo.id||'photo')+'.jpg',mime:'image/jpeg',fullB64:await blobToBase64(fullBlob),thumbB64:await blobToBase64(thumbBlob)};
       const r=await uploadPhotoToPA(settings.photoUploadUrl,payload);
-      if(r&&(r.fullUrl||r.thumbUrl)){photo.full=r.fullUrl||r.thumbUrl;photo.thumb=r.thumbUrl||r.fullUrl;photo.pendingUpload=false;ok++;}
+      if(r&&(r.fullUrl||r.thumbUrl)){photo.full=r.fullUrl||r.thumbUrl;photo.thumb=r.thumbUrl||r.fullUrl;photo.pendingUpload=false;ok++;
+        try{await idbDeleteThumb('o:'+photo.id);}catch(e){}}
       else{fail++;lastErr='endpoint accepted the upload but returned no URL (check the PA flow\u2019s response step)';}
     }catch(e){fail++;lastErr=(e&&e.message)||String(e);}
   }
@@ -4392,7 +4423,72 @@ async function deletePhoto(proj,photo){
   saveData();
   rerenderPhotoBlock(proj);
 }
-async function setTileImg(img,photo){
+/* =========== LAZY TILE LOADING + LOCAL DOWNSCALE (KEEP IN EVERY BUILD, added 8/17) ==========
+ * Field-capture "-thumb.jpg" blobs are sometimes written FULL SIZE upstream (the Power Automate
+ * resize step silently stopped shrinking — observed 8/17: thumb byte-size identical to full, up
+ * to 1.95 MB each). The old setTileImg fired for every tile the instant the tray rendered, so 86
+ * photos meant ~150 MB of simultaneous fetches; Safari never errored, it just never painted.
+ *
+ * Three defenses, all engine-side so a bad upstream thumbnail can never wedge the tray again:
+ *   1. LAZY  — tiles load only when scrolled into view (IntersectionObserver, 300px lookahead).
+ *   2. THROTTLE — at most TILE_MAX_CONCURRENT fetches in flight, the rest queue.
+ *   3. DOWNSCALE — whatever arrives is re-encoded to TILE_MAX_PX before it is cached, so the IDB
+ *      cache holds REAL thumbnails (~30 KB) and the second view is instant regardless of upstream.
+ * Downscaling happens ONLY on the network path. Locally-dropped photos cache their own thumb in
+ * addPhotosToProject and short-circuit at the cache check, so retryPendingUploads still uploads
+ * full-resolution bytes — do not "simplify" that by downscaling in the cache-hit branch.        */
+const TILE_MAX_CONCURRENT=4;
+const TILE_MAX_PX=480;
+let _tileActive=0;
+const _tileQueue=[];
+function _tilePump(){
+  while(_tileActive<TILE_MAX_CONCURRENT&&_tileQueue.length){
+    const job=_tileQueue.shift();
+    _tileActive++;
+    Promise.resolve().then(job).catch(()=>{}).then(()=>{_tileActive--;_tilePump();});
+  }
+}
+function _tileEnqueue(job){_tileQueue.push(job);_tilePump();}
+/* _tileObserver: fires once per tile, then unobserves. rootMargin gives a screen's worth of
+ * lookahead so scrolling feels instant. Tiles inside the collapsed tray never intersect, which
+ * is exactly right — opening the tray is what starts the loading.                              */
+const _tileObserver=(typeof IntersectionObserver!=='undefined')?new IntersectionObserver(function(entries){
+  entries.forEach(function(en){
+    if(!en.isIntersecting)return;
+    const img=en.target;
+    _tileObserver.unobserve(img);
+    if(!img._tpmPhoto||!img._tpmPending)return;
+    img._tpmPending=false;
+    _tileEnqueue(function(){return _loadTileImg(img,img._tpmPhoto);});
+  });
+},{root:null,rootMargin:'300px 0px',threshold:0.01}):null;
+function setTileImg(img,photo){
+  img._tpmPhoto=photo;
+  if(!_tileObserver){_tileEnqueue(function(){return _loadTileImg(img,photo);});return;}
+  img._tpmPending=true;
+  _tileObserver.observe(img);
+}
+/* Printing must not silently drop the tiles that were never scrolled to. */
+try{window.addEventListener('beforeprint',function(){
+  document.querySelectorAll('img').forEach(function(img){
+    if(!img._tpmPending||!img._tpmPhoto)return;
+    img._tpmPending=false;
+    if(_tileObserver)_tileObserver.unobserve(img);
+    _tileEnqueue(function(){return _loadTileImg(img,img._tpmPhoto);});
+  });
+});}catch(e){}
+/* _tileDownscale: shrink a fetched blob to TILE_MAX_PX. Returns the ORIGINAL blob when it is
+ * already small or when decoding fails, so a weird file degrades to old behavior, never blank. */
+async function _tileDownscale(blob){
+  if(!blob||blob.size<60000)return blob;
+  try{
+    const dr=await loadDrawable(blob);
+    const out=await makeThumbBlob(dr,TILE_MAX_PX);
+    if(dr&&dr.close)dr.close();
+    return (out&&out.size&&out.size<blob.size)?out:blob;
+  }catch(e){return blob;}
+}
+async function _loadTileImg(img,photo){
   const ck=photoCacheKey(photo);
   try{const cached=await idbGetThumb(ck);if(cached){img.src=URL.createObjectURL(cached);return;}}catch(e){}
   const thumb=photo.thumb||'';
@@ -4408,8 +4504,9 @@ async function setTileImg(img,photo){
       const raw=await resp.blob();
       if(!raw||raw.size===0)continue;
       const typed=new Blob([raw],{type:'image/jpeg'});
-      img.src=URL.createObjectURL(typed);
-      try{await idbPutThumb(ck,typed);}catch(e){}
+      const small=await _tileDownscale(typed);
+      img.src=URL.createObjectURL(small);
+      try{await idbPutThumb(ck,small);}catch(e){}
       return;
     }catch(e){/* CORS or network: try next source, then direct fallback below */}
   }
@@ -4672,17 +4769,26 @@ function buildCaptureTray(){
   const hdr=document.createElement('div');
   hdr.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;color:#7a5a1e;margin-bottom:10px';
   if(typeof window._trayOpen==='undefined')window._trayOpen=false;
+  /* Header affordance (KEEP IN EVERY BUILD, fixed 8/17): the toggle used to be a bare
+   * left-side caret in low-contrast brown, which read as decoration \u2014 users assumed the
+   * collapsed line WAS the tray and concluded photos "don't load". The chevron now sits on
+   * the RIGHT of the label with an explicit verb ("Show photos" / "Hide"), matching the
+   * chevron-after-the-pill convention used by Complete and Billing Event cards.          */
   const hlabel=document.createElement('span');
-  hlabel.style.cssText='cursor:pointer;user-select:none';
+  hlabel.style.cssText='cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:8px';
   hlabel.title='Click to expand or collapse';
-  const caret=document.createElement('span');
-  caret.textContent=window._trayOpen?'\u25be ':'\u25b8 ';
-  hlabel.appendChild(caret);
   const htext=document.createElement('span');
   htext.textContent=hasPhotos
     ?('From field capture \u00b7 '+unassignedPhotos.length+' photo'+(unassignedPhotos.length!==1?'s':'')+' waiting to be assigned')
     :'Field capture \u00b7 no photos waiting';
   hlabel.appendChild(htext);
+  const caret=document.createElement('span');
+  caret.style.cssText='font-weight:700;text-decoration:underline;white-space:nowrap';
+  function _trayCaretLabel(){return (window._trayOpen?'\u25be Hide':'\u25b8 Show photos');}
+  caret.textContent=_trayCaretLabel();
+  hlabel.appendChild(caret);
+  hlabel.onmouseenter=()=>{hlabel.style.opacity='0.72';};
+  hlabel.onmouseleave=()=>{hlabel.style.opacity='1';};
   hdr.appendChild(hlabel);
   const spacer=document.createElement('span');spacer.style.cssText='flex:1';hdr.appendChild(spacer);
   const ctrls=document.createElement('span');
@@ -4719,16 +4825,26 @@ function buildCaptureTray(){
     ctrls.appendChild(clrSel);
   }
   hdr.appendChild(ctrls);
+  /* Refresh MUST run with manual:true (KEEP IN EVERY BUILD, fixed 8/17). It previously passed
+   * manual:false, and setStatus() is gated on opts.manual \u2014 so the link reported nothing at all:
+   * not "Checking\u2026", not "No new field photos", not "Could not reach photo storage". A working
+   * refresh and a broken one looked identical. trayFetchStatus renders that feedback in the tray
+   * itself, since the original #photoFetchStatus lives over in Settings.                        */
   const refresh=document.createElement('button');
   refresh.type='button';refresh.textContent='Refresh';
   refresh.style.cssText='background:none;border:none;color:#1D9E75;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline';
-  refresh.onclick=()=>fetchPendingPhotos({manual:false});
+  refresh.onclick=()=>{refresh.disabled=true;refresh.style.opacity='0.5';
+    Promise.resolve(fetchPendingPhotos({manual:true})).catch(()=>{}).then(()=>{refresh.disabled=false;refresh.style.opacity='1';});};
   hdr.appendChild(refresh);
+  const tstatus=document.createElement('span');
+  tstatus.id='trayFetchStatus';
+  tstatus.style.cssText='font-size:12px;font-weight:600;color:#8a7a5e;white-space:nowrap';
+  hdr.appendChild(tstatus);
   wrap.appendChild(hdr);
   const content=document.createElement('div');
   content.style.cssText='margin-top:10px;display:'+(window._trayOpen?'block':'none');
   wrap.appendChild(content);
-  hlabel.onclick=()=>{window._trayOpen=!window._trayOpen;const on=window._trayOpen;content.style.display=on?'block':'none';ctrls.style.display=on?'inline-flex':'none';caret.textContent=on?'\u25be ':'\u25b8 ';};
+  hlabel.onclick=()=>{window._trayOpen=!window._trayOpen;const on=window._trayOpen;content.style.display=on?'block':'none';ctrls.style.display=on?'inline-flex':'none';caret.textContent=_trayCaretLabel();};
   if(hasPhotos){
     const grid=document.createElement('div');
     grid.style.cssText='display:flex;flex-wrap:wrap;gap:10px';
@@ -4927,8 +5043,16 @@ async function listPendingMarkers(containerUrl){
  * doc never shows a tray, so this does not affect exportClientDoc.                               */
 async function fetchPendingPhotos(opts){
   opts=opts||{};
+  /* setStatus writes to BOTH status slots: #photoFetchStatus (Settings → "Check for field
+   * photos") and #trayFetchStatus (the tray's own Refresh link). The tray element is rebuilt
+   * on every render, so look it up at call time rather than caching it.                     */
   const statusEl=document.getElementById('photoFetchStatus');
-  function setStatus(msg){if(opts.manual&&statusEl)statusEl.textContent=msg||'';}
+  function setStatus(msg){
+    if(!opts.manual)return;
+    if(statusEl)statusEl.textContent=msg||'';
+    const trayEl=document.getElementById('trayFetchStatus');
+    if(trayEl)trayEl.textContent=msg||'';
+  }
   const known=new Set();
   (unassignedPhotos||[]).forEach(p=>known.add(photoDismissKey(p)));
   projects.forEach(p=>(p.photos||[]).forEach(ph=>known.add(photoDismissKey(ph))));
