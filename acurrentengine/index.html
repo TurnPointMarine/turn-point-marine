@@ -130,6 +130,11 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 .te-table td{padding:0;border-bottom:1px solid #f5f5f3;vertical-align:middle}
 .te-table tr:last-child td{border-bottom:none}
 .te-inp{width:100%;border:none;background:transparent;font-size:12px;color:#1a1a1a;font-family:inherit;padding:8px 10px}
+/* Number-input steppers hidden (KEEP IN EVERY BUILD, fixed 8/18, restored 8/19): Safari renders
+   always-visible spinner arrows inside number inputs that eclipse the value in tight cells
+   ("6.5" half-hidden). Typing and arrow keys still work. */
+.tinp::-webkit-inner-spin-button,.tinp::-webkit-outer-spin-button,.te-inp::-webkit-inner-spin-button,.te-inp::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
+.tinp[type=number],.te-inp[type=number]{-moz-appearance:textfield;padding-right:6px}
 .te-inp:focus{outline:none;background:#fffbe6}
 .te-desc{width:100%;border:none;background:transparent;font-size:12px;color:#1a1a1a;font-family:inherit;padding:8px 10px;resize:none;overflow:hidden;line-height:1.4;display:block;min-height:32px}
 .te-desc:focus{outline:none;background:#fffbe6}
@@ -224,6 +229,22 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     <div class="clear-modal-btns">
       <button class="btn" onclick="closeLockBillingModalDirect()">Cancel</button>
       <button class="btn" style="background:#1D9E75;color:#fff;border-color:#1D9E75" onclick="confirmLockBilling()">&#128274; Lock &amp; Bump to Billed</button>
+    </div>
+  </div>
+</div>
+<!-- Move line items between projects (added 8/19): estimate lines and/or actual entries, one or many -->
+<div class="clear-modal-overlay" id="moveItemsOverlay" onclick="if(event.target===this)closeMoveItemsModalDirect()">
+  <div class="clear-modal" style="width:560px;max-width:95vw;max-height:85vh;display:flex;flex-direction:column">
+    <h3>&#8644; Move line items</h3>
+    <p id="moveItemsSub" style="margin-bottom:10px"></p>
+    <div id="moveItemsList" style="overflow:auto;border:1px solid #eee;border-radius:8px;margin-bottom:12px;max-height:45vh"></div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <label style="font-size:12px;font-weight:600;color:#555;white-space:nowrap">Move to:</label>
+      <select id="moveItemsDest" style="flex:1;font-size:12px;padding:6px;border:1px solid #ddd;border-radius:6px;font-family:inherit"></select>
+    </div>
+    <div class="clear-modal-btns" style="margin-top:14px">
+      <button class="btn" onclick="closeMoveItemsModalDirect()">Cancel</button>
+      <button class="btn" style="background:#1D9E75;color:#fff;border-color:#1D9E75" onclick="confirmMoveItems()">Move selected</button>
     </div>
   </div>
 </div>
@@ -357,7 +378,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
         <option value="V">Travel</option><option value="F">Flat Rate</option><option value="M">Materials</option><option value="S">SBCNTRCT</option>
       </select>
     </div>
-    <div class="vf-group"><div class="vf-label">Hours / Amount</div><input type="number" id="teHrs" min="0" step="0.25" placeholder="0.0" style="width:90px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
+    <div class="vf-group"><div class="vf-label">Hours / Unit Cost $</div><input type="number" id="teHrs" min="0" step="0.25" placeholder="0.0" title="Hours for labor categories · cost per item for materials (qty starts at 1, adjustable in the table)" style="width:90px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
     <div class="vf-group" style="flex:1"><div class="vf-label">Description</div><input type="text" id="teDesc" placeholder="Task description..." style="width:100%;min-width:200px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
     <div style="align-self:flex-end"><button class="btn btn-primary" onclick="addTimeEntry()">+ Add entry</button></div>
   </div>
@@ -489,6 +510,28 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 </div>
 <script>
 const ENGINE_VERSION=8;
+
+/* ─── Textarea auto-fit via ResizeObserver (KEEP IN EVERY BUILD, fixed 8/18, restored 8/19) ───
+ * Description cells (estimate task tables, ACTUAL posted-entry table) and project Notes must
+ * always show their full content. A one-shot rAF measure of scrollHeight at build time reads
+ * the height while the card/section is hidden or mid-layout and locks in a clipped box that
+ * PANS with the cursor instead of growing ("little window" bug). autosizeTA(ta) registers the
+ * textarea with ONE global ResizeObserver that re-fits whenever its WIDTH changes (first
+ * layout, fonts, window resize, column shifts, collapsed→expanded 0→N). Width-guarded so our
+ * own height writes can't loop it; disconnected nodes are unobserved in the callback.
+ * The Time Entry tab's te-desc collapse-until-focus behavior is separate and intentional. */
+const _taWidths=new WeakMap();
+function _fitTA(ta){ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';}
+const _taRO=(typeof ResizeObserver!=='undefined')?new ResizeObserver(entries=>{
+  entries.forEach(en=>{const ta=en.target;
+    if(!ta.isConnected){_taRO.unobserve(ta);_taWidths.delete(ta);return;}
+    const w=ta.clientWidth;
+    if(_taWidths.get(ta)===w)return; // height-only change (our own write) — ignore
+    _taWidths.set(ta,w);
+    if(w>0)_fitTA(ta);
+  });
+}):null;
+function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()=>_fitTA(ta));}
 /* ENGINE_BUILD (KEEP IN EVERY BUILD, added 8/17): bump this string on EVERY build you ship.
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
@@ -520,6 +563,26 @@ function ccFeeName(){var n=(settings.ccFeeName&&(''+settings.ccFeeName).trim())?
 const CAT_CLS={T:'cT',B:'cB',D:'cD',V:'cV',M:'cM',S:'cS',P:'cP',F:'cF'};
 const nl2br=s=>(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
 const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/gi,'_').toLowerCase()+'_v4';
+/* ─── STYLE CONTRACT (KEEP IN EVERY BUILD — added 8/19) ────────────────────────
+ * Rule for ALL surgical edits: do not change colors, spacing, fonts, or labels on
+ * any element outside the one(s) named in the request. Any visual change beyond the
+ * ask is PROPOSED to Abram before it ships — never silently applied.
+ * Design tokens (locked):
+ *   Section bars (SECTIONS below): holding #7c6f9f · needs_auth #2d8a6a ·
+ *     in_progress #6b7280 · complete #3d5a80 · billing event #fdf4ff/#b232c2
+ *     (border #c354d6) · billed #374151 · FIELD CAPTURE #b5822d (border #e2c07f,
+ *     body #fbf7f0 — warmed to true amber per Abram 8/19; was olive #a8873c).
+ *   Accents: money green #1D9E75 · deep green #155a3e · danger red #c0392b ·
+ *     estimate navy #3b4a6b · CO amber #d97706 · unposted amber #b45309
+ *     (section bg #fff8ee, row bg #fffdf5).
+ *   Labels: "Qty" = hours on labor rows / quantity on material rows · "Hourly" =
+ *     labor rate only (— on material rows) · "Materials" = cost of ONE item,
+ *     Amount = Qty × Materials (actual table mirrors the estimate table) · "Outstanding
+ *     Subtotal" = UNBILLED posted entries (projActualTotal); paid money shows under
+ *     "Billed to Date".
+ *   Collapsible pattern: sec-wrap / sec-hdr / sec-body + right-side rotating .chev,
+ *     open state persisted in secOpenState.
+ * ─────────────────────────────────────────────────────────────────────────────── */
 const SECTIONS=[
   {key:'holding',label:'Holding Pattern',color:'#7c6f9f',textColor:'#fff',bg:'#f3f0fa',border:'#c9bfea',defaultOpen:true},
   {key:'needs_auth',label:'Authorization Needed',color:'#2d8a6a',textColor:'#fff',bg:'#e6f5ee',border:'#2d8a6a',defaultOpen:true},
@@ -578,19 +641,58 @@ function restoreUiState(ui){
   }
 }
 function fmt(n){if(!n||n===0)return'—';return'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
-function taskLabor(t){return(RATES[t.cat]||0)*(t.hrs||0);}
-function taskTotal(t){return taskLabor(t)+(t.mat||0)+(t.sub||0);}
+// ─── QTY × UNIT-COST MODEL ─────────────────────────────────────────────
+// For material-category rows (M/S/P/F) the `hrs` field holds QUANTITY (defaults to 1)
+// and the cost field holds the UNIT cost: M/P/F cost lives in `mat`, S cost lives in `sub`.
+// Line total = qty × unit cost. Labor rows are unchanged: hrs × rate, with `mat`/`sub`
+// as flat per-task add-on amounts. migrateQtyModel() upgrades legacy data on load.
+function taskQty(t){const q=parseFloat(t.hrs);return q>0?q:1;}
+function taskLabor(t){return isMatCat(t.cat)?0:(RATES[t.cat]||0)*(t.hrs||0);}
+// Materials-bucket amount for a task: M/P/F extended (qty × unit); labor flat add-on; S contributes 0 here
+function taskMatAmt(t){if(!isMatCat(t.cat))return t.mat||0;if(t.cat==='S')return 0;return taskQty(t)*(t.mat||0);}
+// Subcontract-bucket amount: S extended (qty × unit); labor flat add-on; M/P/F contribute 0 here
+function taskSubAmt(t){if(!isMatCat(t.cat))return t.sub||0;if(t.cat==='S')return taskQty(t)*(t.sub||0);return 0;}
+function taskMS(t){return taskMatAmt(t)+taskSubAmt(t);}
+function taskTotal(t){return taskLabor(t)+taskMS(t);}
 
 // Scope tasks (manually entered estimate)
 function projScopeLabor(p){return(p.scopeTasks||[]).reduce((a,t)=>a+taskLabor(t),0);}
-function projScopeMat(p){return(p.scopeTasks||[]).reduce((a,t)=>a+(t.mat||0),0);}
-function projScopeSub(p){return(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0);}
+function projScopeMat(p){return(p.scopeTasks||[]).reduce((a,t)=>a+taskMatAmt(t),0);}
+function projScopeSub(p){return(p.scopeTasks||[]).reduce((a,t)=>a+taskSubAmt(t),0);}
 function projScopeTotal(p){return projScopeLabor(p)+projScopeMat(p)+projScopeSub(p);}
+
+// One-time (idempotent) migration of legacy data to the qty × unit-cost model:
+//  - tasks: material rows get qty=1; S-row money moves mat→sub, other mat rows fold sub→mat
+//  - time entries: material $ amount moves from `hrs` into `mat`, qty (`hrs`) becomes 1
+function migrateQtyModel(){
+  const migTasks=ts=>(ts||[]).forEach(t=>{
+    if(!isMatCat(t.cat))return;
+    if(t.cat==='S'){if(t.mat){t.sub=(t.sub||0)+(t.mat||0);t.mat=0;}}
+    else{if(t.sub){t.mat=(t.mat||0)+(t.sub||0);t.sub=0;}}
+    if(!(parseFloat(t.hrs)>0))t.hrs=1;
+  });
+  projects.forEach(p=>{
+    migTasks(p.scopeTasks);
+    migTasks(p.tasks);
+    (p.cos||[]).forEach(co=>migTasks(co.tasks));
+  });
+  timeEntries.forEach(te=>{
+    if(isMatCat(te.cat)&&(te.mat===undefined||te.mat===null)){te.mat=te.hrs||0;te.hrs=1;}
+  });
+}
 
 // Posted time entries (actual work) — includes billed entries
 function projPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted);}
 function projCoTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted&&te.co);}
-function teAmount(te){return isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*(RATES[te.cat]||0);}
+// TE qty × unit cost: for material-category entries `hrs` = qty (default 1), `mat` = unit cost $
+function teQty(te){const q=parseFloat(te.hrs);return q>0?q:1;}
+function teAmount(te){return isMatCat(te.cat)?teQty(te)*(te.mat||0):(te.hrs||0)*(RATES[te.cat]||0);}
+// Convert a time entry to a task-shaped object (client-doc tables).
+// Material entries carry qty in hrs + unit cost in mat (S: unit cost goes to sub so it buckets as subcontract).
+function teAsTask(te){
+  if(!isMatCat(te.cat))return{id:te.id,cat:te.cat,desc:te.desc,date:te.date,hrs:te.hrs||0,mat:0,sub:0};
+  return{id:te.id,cat:te.cat,desc:te.desc,date:te.date,hrs:teQty(te),mat:te.cat==='S'?0:(te.mat||0),sub:te.cat==='S'?(te.mat||0):0};
+}
 // Posted, unbilled time entries — used for "outstanding to bill" math
 function projUnbilledPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted&&!isEntryBilled(te));}
 
@@ -628,23 +730,20 @@ function reconcileTimeEntries(){
   saveData();renderEstimate();renderTimeEntry();
   alert('✅ Fixed '+fixed+' of '+orphaned.length+' entries.'+(fixed<orphaned.length?'\n⚠ '+(orphaned.length-fixed)+' could not be matched — check manually.':''));
 }
-function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
-function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
-function projActualMatOnly(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);}
-function projActualSub(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);}
+function projActualLabor(p){return projUnbilledPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projActualMat(p){return projUnbilledPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projActualMatOnly(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+teAmount(te),0);}
+function projActualSub(p){return projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+teAmount(te),0);}
 function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
 // "All actual" — includes billed entries. Used for T&M projDisplayTotal (life-to-date) and Progress hours.
-function projAllActualLabor(p){return projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0)*(RATES[te.cat]||0),0);}
-function projAllActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
+function projAllActualLabor(p){return projPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projAllActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
 function projAllActualTotal(p){return projAllActualLabor(p)+projAllActualMat(p);}
 function projBilledTotal(p){
   // Ship 1: billed total = sum of posted time entries in locked flocks tagged with this project
   return timeEntries
     .filter(te=>te.proj===p.name&&te.posted&&isEntryBilled(te))
-    .reduce((a,te)=>{
-      const rate=RATES[te.cat]||0;
-      return a+(isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate);
-    },0);
+    .reduce((a,te)=>a+teAmount(te),0);
 }
 function projDisplayTotal(p){return p.isTM?projAllActualTotal(p):projScopeTotal(p);}
 
@@ -654,11 +753,11 @@ function projEstMat(p){return(p.isTM?0:projScopeMat(p))+projActualMat(p);}
 function projEstSub(p){return p.isTM?0:projScopeSub(p);}
 function projEstTotal(p){return projEstLabor(p)+projEstMat(p)+projEstSub(p);}
 function projEstHrs(p){
-  const sh=(p.scopeTasks||[]).reduce((a,t)=>a+(t.hrs||0),0);
-  const ah=projPostedTEs(p).filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const sh=(p.scopeTasks||[]).filter(t=>!isMatCat(t.cat)).reduce((a,t)=>a+(t.hrs||0),0);
+  const ah=projPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);
   return sh+ah;
 }
-function projActHrs(p){return timeEntries.filter(te=>te.proj===p.name&&te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);}
+function projActHrs(p){return timeEntries.filter(te=>te.proj===p.name&&!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);}
 
 // Check scope bump — auto flip to change_of_scope if actual exceeds estimate
 function checkScopeBump(p){
@@ -695,10 +794,7 @@ function entryFlock(te){
 function flockTotal(be){
   if(!be)return 0;
   const tes=timeEntries.filter(te=>te.billingEventId===be.id&&te.posted);
-  return tes.reduce((a,te)=>{
-    const rate=RATES[te.cat]||0;
-    return a+(isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate);
-  },0);
+  return tes.reduce((a,te)=>a+teAmount(te),0);
 }
 function flockEntryCount(be){
   if(!be)return 0;
@@ -940,8 +1036,8 @@ function renderSummary(){
     const _gTaxBase=gSubtotal+gShop+gCC;const gTax=settings.taxExempt?0:_gTaxBase*taxRateVal();
     const gTotal=gSubtotal+gShop+gCC+gTax;
     // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
-    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+(te.hrs||0),0);
-    const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+(t.mat||0),0),0);
+    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+teAmount(te),0);
+    const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+taskMatAmt(t),0),0);
     const totalDeposits=gDepositsTEs+gDepositsScope;
     // Billed entries on active projects — already excluded from gSubtotal via projEstLabor/Mat now, so this is just for display
     const totalBilled=actP.reduce((a,p)=>a+projBilledTotal(p),0);
@@ -1364,6 +1460,12 @@ function renderEstimate(){
       ph.addEventListener('dragleave',()=>{ph.style.background='';});
       ph.addEventListener('drop',e=>{
         e.preventDefault();ph.style.background='';
+        // Estimate/CO task line dropped on this project's header → move it into this project's scope (8/19)
+        const dragTaskId=parseInt(e.dataTransfer.getData('taskId'));
+        if(dragTaskId){
+          if(moveTaskToProject(dragTaskId,proj.id)){openProjs.add(proj.id);saveData();renderSummary();renderEstimate();}
+          return;
+        }
         const teId=parseInt(e.dataTransfer.getData('teId'));
         const fromProjName=e.dataTransfer.getData('fromProjName');
         if(!teId||fromProjName===proj.name)return;
@@ -1422,7 +1524,7 @@ function renderEstimate(){
       estSecWrap.appendChild(estHdr);
 
       // Notes row
-      const nr=document.createElement('div');nr.className='notes-row';const nl=document.createElement('label');nl.textContent='Notes:';const ni=document.createElement('textarea');ni.className='notes-inp';ni.rows=1;ni.value=proj.notes||'';ni.placeholder='Scope narrative, estimated hours, internal notes...';ni.oninput=()=>{proj.notes=ni.value;ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';saveData();};if(proj.notes)requestAnimationFrame(()=>{ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';});nr.appendChild(nl);nr.appendChild(ni);estSecWrap.appendChild(nr);
+      const nr=document.createElement('div');nr.className='notes-row';const nl=document.createElement('label');nl.textContent='Notes:';const ni=document.createElement('textarea');ni.className='notes-inp';ni.rows=1;ni.value=proj.notes||'';ni.placeholder='Scope narrative, estimated hours, internal notes...';ni.oninput=()=>{proj.notes=ni.value;ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';saveData();};autosizeTA(ni);nr.appendChild(nl);nr.appendChild(ni);estSecWrap.appendChild(nr);
 
       // Photos — drop-on-card add + thumbnail strip, tethered to this project
       estSecWrap.appendChild(buildPhotoBlock(proj));
@@ -1431,14 +1533,14 @@ function renderEstimate(){
       // Helper to build a task table
       function buildTaskTable(tasks,editable){
         const tbl=document.createElement('table');tbl.className='ttable';
-        tbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:50px">Hrs</th><th class="r" style="width:55px">Rate</th><th class="r" style="width:80px">Labor</th><th class="r" style="width:70px">Materials</th><th class="r" style="width:75px">SBCNTRCT</th><th class="r" style="width:80px">Total</th><th style="width:28px"></th></tr></thead>';
+        tbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:58px" title="Hours for labor rows · quantity for materials">Qty</th><th class="r" style="width:55px" title="Hourly rate for labor rows">Hourly</th><th class="r" style="width:80px">Labor</th><th class="r" style="width:76px">Materials</th><th class="r" style="width:82px">SBCNTRCT</th><th class="r" style="width:92px">Total</th><th style="width:28px"></th></tr></thead>';
         const tbody=document.createElement('tbody');
         tasks.forEach((task,ti)=>{
           const tr=document.createElement('tr');
           if(task.co)tr.style.background='#fff8ed';
           if(editable){
             tr.draggable=false;
-            tr.ondragstart=e=>{if(!tr.draggable)return;e.stopPropagation();e.dataTransfer.setData('taskProjId',String(proj.id));e.dataTransfer.setData('taskIdx',String(ti));e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
+            tr.ondragstart=e=>{if(!tr.draggable)return;e.stopPropagation();e.dataTransfer.setData('taskProjId',String(proj.id));e.dataTransfer.setData('taskIdx',String(ti));if(task.id)e.dataTransfer.setData('taskId',String(task.id));e.dataTransfer.effectAllowed='move';setTimeout(()=>tr.style.opacity='0.4',0);};
             tr.ondragend=e=>{tr.draggable=false;tr.style.opacity='1';document.querySelectorAll('tr.task-drag-over').forEach(el=>el.classList.remove('task-drag-over'));};
             tr.ondragover=e=>{e.preventDefault();e.stopPropagation();document.querySelectorAll('tr.task-drag-over').forEach(el=>el.classList.remove('task-drag-over'));tr.classList.add('task-drag-over');};
             tr.ondrop=e=>{
@@ -1451,14 +1553,26 @@ function renderEstimate(){
               saveData();renderEstimate();
             };
           }
-          const dhtd=document.createElement('td');dhtd.style.cssText='width:20px;padding:0 4px;cursor:'+(editable?'grab':'default')+';color:#ccc;text-align:center;font-size:14px';dhtd.textContent=editable?'⠿':'';
+          const dhtd=document.createElement('td');dhtd.style.cssText='width:20px;padding:0 4px;cursor:'+(editable?'grab':'default')+';color:#ccc;text-align:center;font-size:14px';dhtd.textContent=editable?'⠿':'';if(editable)dhtd.title='Drag to reorder, or drop on another project\'s header to move it there';
           if(editable){dhtd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};dhtd.onmouseup=()=>{tr.draggable=false;};}
           tr.appendChild(dhtd);
+          // Commit helper: every numeric/category edit persists AND refreshes all totals
+          // (subtotal row, section header, project header, summary cards) via full re-render.
+          const commitTask=()=>{saveData();renderSummary();renderEstimate();};
           const ctd=document.createElement('td');ctd.className=CAT_CLS[task.cat];
           if(editable){
             const csel=document.createElement('select');csel.className='cat-sel';
             Object.entries(CAT_LABELS).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===task.cat)o.selected=true;csel.appendChild(o);});
-            csel.onchange=()=>{task.cat=csel.value;ctd.className=CAT_CLS[task.cat];rtd.textContent=isMatCat(task.cat)?'—':'$'+(RATES[task.cat]||0);ltd.textContent=isMatCat(task.cat)?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();};
+            csel.onchange=()=>{
+              task.cat=csel.value;
+              if(isMatCat(task.cat)){
+                // Qty defaults to 1 on material-type rows; keep the money in the right column
+                if(!(parseFloat(task.hrs)>0))task.hrs=1;
+                if(task.cat==='S'){if(task.mat){task.sub=(task.sub||0)+(task.mat||0);task.mat=0;}}
+                else{if(task.sub){task.mat=(task.mat||0)+(task.sub||0);task.sub=0;}}
+              }
+              commitTask();
+            };
             ctd.appendChild(csel);
           } else {
             ctd.style.cssText='padding:4px 8px;font-size:11px;color:#155a3e';ctd.textContent=CAT_LABELS[task.cat]||task.cat;
@@ -1466,14 +1580,23 @@ function renderEstimate(){
           tr.appendChild(ctd);
           const dta=document.createElement('textarea');dta.className='tinp';dta.value=task.desc||'';dta.placeholder='Task description...';dta.rows=1;dta.readOnly=!editable;dta.style.cssText='resize:none;overflow:hidden;line-height:1.4;min-height:24px;'+(editable?'':'background:#fafffe;color:#444;');
           if(editable){dta.oninput=()=>{task.desc=dta.value;dta.style.height='auto';dta.style.height=dta.scrollHeight+'px';};dta.onchange=()=>{task.desc=dta.value;saveData();};}
-          if(task.desc)requestAnimationFrame(()=>{dta.style.height='auto';dta.style.height=dta.scrollHeight+'px';});
+          autosizeTA(dta); // ResizeObserver auto-fit — never a one-shot rAF measure (8/18 fix)
           const dtd=document.createElement('td');dtd.style.verticalAlign='top';dtd.appendChild(dta);tr.appendChild(dtd);
-          const mkn=(val,cls,type,step,cb,ro)=>{const td=document.createElement('td');const inp=document.createElement('input');inp.className='tinp'+(cls?' '+cls:'');inp.value=val||'';if(type)inp.type=type;if(step)inp.step=step;if(type==='number')inp.min=0;inp.readOnly=ro||false;if(ro)inp.style.cssText='background:#fafffe;color:#444;';if(cb)inp.onchange=cb;td.appendChild(inp);return td;};
-          const htd=mkn(task.hrs,'r','number',0.25,editable?e=>{task.hrs=parseFloat(e.target.value)||0;ltd.textContent=isMatCat(task.cat)?'—':fmt(taskLabor(task));totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(htd);
-          const rtd=document.createElement('td');rtd.className='cell-r';rtd.textContent=isMatCat(task.cat)?'—':'$'+(RATES[task.cat]||0);tr.appendChild(rtd);
-          const ltd=document.createElement('td');ltd.className='cell-r';ltd.textContent=isMatCat(task.cat)?'—':fmt(taskLabor(task));tr.appendChild(ltd);
-          const mttd=mkn(task.mat,'r','number',0.01,editable?e=>{task.mat=parseFloat(e.target.value)||0;totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(mttd);
-          const sbtd=mkn(task.sub,'r','number',0.01,editable?e=>{task.sub=parseFloat(e.target.value)||0;totd.textContent=fmt(taskTotal(task));renderSummary();}:null,!editable);tr.appendChild(sbtd);
+          const mkn=(val,cls,type,step,cb,ro,hidden)=>{const td=document.createElement('td');const inp=document.createElement('input');inp.className='tinp'+(cls?' '+cls:'');inp.value=val||'';if(type)inp.type=type;if(step)inp.step=step;if(type==='number')inp.min=0;inp.readOnly=ro||false;if(ro)inp.style.cssText='background:#fafffe;color:#444;';if(cb)inp.onchange=cb;if(hidden){inp.style.display='none';const dash=document.createElement('span');dash.style.cssText='display:block;text-align:right;padding:4px 8px;color:#ccc;font-size:12px';dash.textContent='—';td.appendChild(dash);}td.appendChild(inp);return td;};
+          const isMatRow=isMatCat(task.cat);
+          const isSubRow=task.cat==='S';
+          // Qty column: hours for labor rows, quantity (default 1) for material-type rows
+          const htd=mkn(isMatRow?taskQty(task):task.hrs,'r','number',0.25,editable?e=>{
+            let v=parseFloat(e.target.value)||0;
+            if(isMatCat(task.cat)&&v<=0){v=1;}
+            task.hrs=v;commitTask();
+          }:null,!editable);tr.appendChild(htd);
+          const rtd=document.createElement('td');rtd.className='cell-r';rtd.textContent=isMatRow?'—':'$'+(RATES[task.cat]||0);tr.appendChild(rtd);
+          const ltd=document.createElement('td');ltd.className='cell-r';ltd.textContent=isMatRow?'—':fmt(taskLabor(task));tr.appendChild(ltd);
+          // Materials column = UNIT cost on M/P/F rows (total = qty × unit); hidden on SBCNTRCT rows
+          const mttd=mkn(task.mat,'r','number',0.01,editable?e=>{task.mat=parseFloat(e.target.value)||0;commitTask();}:null,!editable,isSubRow);tr.appendChild(mttd);
+          // SBCNTRCT column = UNIT cost on S rows; hidden on Materials-type rows (use an SBCNTRCT line item instead)
+          const sbtd=mkn(task.sub,'r','number',0.01,editable?e=>{task.sub=parseFloat(e.target.value)||0;commitTask();}:null,!editable,isMatRow&&!isSubRow);tr.appendChild(sbtd);
           const totd=document.createElement('td');totd.className='cell-bold';totd.textContent=fmt(taskTotal(task));tr.appendChild(totd);
           const dltd=document.createElement('td');dltd.style.whiteSpace='nowrap';
           if(editable){
@@ -1483,7 +1606,7 @@ function renderEstimate(){
             coBtn.textContent='🔶';
             coBtn.onclick=()=>{task.co=!task.co;saveData();renderEstimate();};
             dltd.appendChild(coBtn);
-            const dlb=document.createElement('button');dlb.className='del-btn';dlb.textContent='×';dlb.onclick=()=>{tasks.splice(ti,1);renderEstimate();};
+            const dlb=document.createElement('button');dlb.className='del-btn';dlb.textContent='×';dlb.onclick=()=>{tasks.splice(ti,1);saveData();renderSummary();renderEstimate();};
             dltd.appendChild(dlb);
           }
           tr.appendChild(dltd);
@@ -1514,16 +1637,18 @@ function renderEstimate(){
         const estWrap=document.createElement('div');estWrap.style.display=estIsOpen?'block':'none';
         estWrap.appendChild(buildTaskTable(proj.scopeTasks||[],true));
         const estSubWrap=document.createElement('div');
-        // Grid matches task table: drag(20) cat(110) desc(1fr) hrs(50) rate(55) labor(80) mat(70) sub(75) total(80) del(28)
-        estSubWrap.style.cssText='display:grid;grid-template-columns:20px 110px 1fr 50px 55px 80px 70px 75px 80px 28px;padding:6px 0;background:#eef1ff;border-bottom:2px solid #c5cef5;font-size:11px;font-weight:600;color:#3b4a6b;text-align:right';
+        // Grid matches task table (KEEP IN SYNC with thead widths — fixed 8/18, restored 8/19):
+        // drag(20) cat(110) desc(1fr) qty(58) hourly(55) labor(80) mat(76) sub(82) total(92) del(28)
+        estSubWrap.style.cssText='display:grid;grid-template-columns:20px 110px 1fr 58px 55px 80px 76px 82px 92px 28px;padding:6px 0;background:#eef1ff;border-bottom:2px solid #c5cef5;font-size:11px;font-weight:600;color:#3b4a6b;text-align:right';
+        // Subtotal cells: nowrap + left padding so adjacent figures can never mash together
         estSubWrap.innerHTML=
           '<div></div><div></div>'+
-          '<div style="text-align:right;padding-right:8px;color:#3b4a6b">'+(isTM?'Work Plan Subtotal':'Estimated Subtotal')+'</div>'+
+          '<div style="text-align:right;padding-right:8px;color:#3b4a6b;white-space:nowrap">'+'Estimated Subtotal'+'</div>'+
           '<div></div><div></div>'+
-          '<div style="padding-right:8px">'+fmt(projScopeLabor(proj))+'</div>'+
-          '<div style="padding-right:8px">'+fmt(projScopeMat(proj))+'</div>'+
-          '<div style="padding-right:8px">'+fmt(projScopeSub(proj))+'</div>'+
-          '<div style="padding-right:8px;font-size:12px;font-weight:700">'+fmt(scopeTotal)+'</div>'+
+          '<div style="padding-right:8px;padding-left:6px;white-space:nowrap">'+fmt(projScopeLabor(proj))+'</div>'+
+          '<div style="padding-right:8px;padding-left:6px;white-space:nowrap">'+fmt(projScopeMat(proj))+'</div>'+
+          '<div style="padding-right:8px;padding-left:6px;white-space:nowrap">'+fmt(projScopeSub(proj))+'</div>'+
+          '<div style="padding-right:8px;padding-left:6px;font-size:12px;font-weight:700;white-space:nowrap">'+fmt(scopeTotal)+'</div>'+
           '<div></div>';
         estWrap.appendChild(estSubWrap);
         pb.appendChild(estWrap);
@@ -1558,7 +1683,7 @@ function renderEstimate(){
 
       if(postedTEs.length>0){
         const actTbl=document.createElement('table');actTbl.className='ttable';
-        actTbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:80px">Date</th><th class="r" style="width:50px">Hrs</th><th class="r" style="width:55px">Rate</th><th class="r" style="width:80px">Amount</th><th style="width:90px"></th></tr></thead>';
+        actTbl.innerHTML='<thead><tr><th style="width:20px"></th><th style="width:110px">Category</th><th>Description</th><th class="r" style="width:110px">Date</th><th class="r" style="width:58px" title="Hours for labor rows · quantity for materials">Qty</th><th class="r" style="width:55px" title="Hourly rate — labor rows only">Hourly</th><th class="r" style="width:76px" title="Cost of one item — Amount = Qty × this">Materials</th><th class="r" style="width:92px">Amount</th><th style="width:90px"></th></tr></thead>';
         const actBody=document.createElement('tbody');
         let teDragSrcId=null;
         // Sub-row divider state: when we transition from non-graduated to graduated entries,
@@ -1574,18 +1699,18 @@ function renderEstimate(){
           if(showSubHeaders){
             if(!isEntryGraduated(te)&&!inflightHeaderInserted){
               const subH=document.createElement('tr');
-              subH.innerHTML='<td colspan="8" style="padding:6px 10px;background:#fffaed;border-top:1px solid #fde68a;border-bottom:1px solid #fde68a;font-size:9px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.06em">In Flight</td>';
+              subH.innerHTML='<td colspan="9" style="padding:6px 10px;background:#fffaed;border-top:1px solid #fde68a;border-bottom:1px solid #fde68a;font-size:9px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:0.06em">In Flight</td>';
               actBody.appendChild(subH);
               inflightHeaderInserted=true;
             }else if(isEntryGraduated(te)&&!graduatedHeaderInserted){
               const subH=document.createElement('tr');
-              subH.innerHTML='<td colspan="8" style="padding:6px 10px;background:#eff6ff;border-top:2px solid #93c5fd;border-bottom:1px solid #bfdbfe;font-size:9px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.06em">Graduated — Ready for Billing</td>';
+              subH.innerHTML='<td colspan="9" style="padding:6px 10px;background:#eff6ff;border-top:2px solid #93c5fd;border-bottom:1px solid #bfdbfe;font-size:9px;font-weight:700;color:#1e40af;text-transform:uppercase;letter-spacing:0.06em">Graduated — Ready for Billing</td>';
               actBody.appendChild(subH);
               graduatedHeaderInserted=true;
             }
           }
           const rate=RATES[te.cat]||0;
-          const amt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*rate;
+          const amt=teAmount(te);
           const isBilled=isEntryBilled(te);
           const isGrad=isEntryGraduated(te);
           const tr=document.createElement('tr');
@@ -1659,8 +1784,8 @@ function renderEstimate(){
           catSel.onchange=()=>{
             te.cat=catSel.value;
             catTd.className=CAT_CLS[te.cat]||'';
-            const newAmt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);
-            amtTd.textContent=fmt(newAmt);
+            if(isMatCat(te.cat)&&(te.mat===undefined||te.mat===null)){te.mat=0;te.hrs=1;}
+            amtTd.textContent=fmt(teAmount(te));
             saveData();renderSummary();renderEstimate();renderTimeEntry();
           };
           catTd.appendChild(catSel);tr.appendChild(catTd);
@@ -1669,30 +1794,42 @@ function renderEstimate(){
           if(isBilled)descTa.readOnly=true;
           descTa.oninput=()=>{te.desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
           descTa.onchange=()=>{te.desc=descTa.value;saveData();renderTimeEntry();};
-          if(te.desc)requestAnimationFrame(()=>{descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';});
+          autosizeTA(descTa); // ResizeObserver auto-fit — never a one-shot rAF measure (8/18 fix)
           const descTd=document.createElement('td');descTd.style.verticalAlign='top';descTd.appendChild(descTa);tr.appendChild(descTd);
           // Date — editable input
           const dateTd=document.createElement('td');dateTd.style.cssText='padding:0;text-align:right';
-          const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:120px;text-align:right';
+          const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:106px;text-align:right';
           if(isBilled)dateInp.readOnly=true;
           dateInp.onchange=()=>{te.date=dateInp.value;saveData();renderTimeEntry();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
-          // Hrs or Amount — hide hrs for M/S, show dollar input instead
+          // Hrs/Qty + Rate/Unit-cost — material rows use Qty × unit cost $
           const isMatCatLocal=isMatCat(te.cat);
           const hrsTd=document.createElement('td');hrsTd.style.cssText='padding:0;text-align:right';
           if(isMatCatLocal){
-            hrsTd.setAttribute('colspan','2');
-            const amtInp=document.createElement('input');amtInp.type='number';amtInp.min=0;amtInp.step=0.01;amtInp.value=te.hrs||'';amtInp.placeholder='$0.00';amtInp.className='tinp r';amtInp.style.cssText='font-size:12px;width:90px;text-align:right';
-            if(isBilled)amtInp.readOnly=true;
-            amtInp.onchange=()=>{te.hrs=parseFloat(amtInp.value)||0;amtTd.textContent=fmt(te.hrs);saveData();renderSummary();renderEstimate();renderTimeEntry();};
-            hrsTd.appendChild(amtInp);tr.appendChild(hrsTd);
+            // Qty input (defaults to 1)
+            const qtyInp=document.createElement('input');qtyInp.type='number';qtyInp.min=0;qtyInp.step=1;qtyInp.value=teQty(te);qtyInp.title='Quantity';qtyInp.className='tinp r';qtyInp.style.cssText='font-size:12px;width:50px;text-align:right';
+            if(isBilled)qtyInp.readOnly=true;
+            qtyInp.oninput=()=>{amtTd.textContent=fmt((parseFloat(qtyInp.value)||1)*(te.mat||0));};
+            qtyInp.onchange=()=>{let v=parseFloat(qtyInp.value)||0;if(v<=0)v=1;te.hrs=v;saveData();renderSummary();renderEstimate();renderTimeEntry();};
+            hrsTd.appendChild(qtyInp);tr.appendChild(hrsTd);
+            // Hourly — n/a on material rows (rates belong to labor only)
+            const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent='—';tr.appendChild(rateTd);
+            // MATERIALS column = cost of ONE item; Amount = Qty × this. Mirrors the estimate table (Abram 8/19).
+            const matTd=document.createElement('td');matTd.style.cssText='padding:0;text-align:right';
+            const costInp=document.createElement('input');costInp.type='number';costInp.min=0;costInp.step=0.01;costInp.value=te.mat?te.mat:'';costInp.title='Cost of one item — Amount = Qty × this';costInp.className='tinp r';costInp.style.cssText='font-size:12px;width:70px;text-align:right;'+(isBilled?'':'background:#fff;border:1px solid #d8d8d2;border-radius:5px;padding:4px 6px;margin:2px 6px 2px 0;box-sizing:border-box');
+            if(isBilled)costInp.readOnly=true;
+            costInp.oninput=()=>{amtTd.textContent=fmt(teQty(te)*(parseFloat(costInp.value)||0));};
+            costInp.onchange=()=>{te.mat=parseFloat(costInp.value)||0;saveData();renderSummary();renderEstimate();renderTimeEntry();};
+            matTd.appendChild(costInp);tr.appendChild(matTd);
           } else {
             const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
             if(isBilled)hrsInp.readOnly=true;
-            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(isMatCat(te.cat)?te.hrs:(te.hrs||0)*(RATES[te.cat]||0));saveData();renderSummary();renderEstimate();renderTimeEntry();};
+            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(teAmount(te));saveData();renderSummary();renderEstimate();renderTimeEntry();};
             hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
             // Rate
             const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent='$'+rate;tr.appendChild(rateTd);
+            // Materials — n/a on labor rows
+            const matTd=document.createElement('td');matTd.className='cell-r';matTd.style.fontSize='12px';matTd.textContent='—';tr.appendChild(matTd);
           }
           // Amount
           const amtTd=document.createElement('td');amtTd.className='cell-bold';amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);tr.appendChild(amtTd);
@@ -1735,14 +1872,16 @@ function renderEstimate(){
         const actL=projAllActualLabor(proj);const actM=projAllActualMat(proj);
         if(actL>0&&actM>0){
           const labSubRow=document.createElement('tr');labSubRow.className='sub-row';
-          labSubRow.innerHTML='<td colspan="6" style="text-align:right;color:#3b4a6b;padding:4px 8px;font-size:11px;font-weight:600">Labor Subtotal</td><td style="text-align:right;color:#3b4a6b;padding:4px 8px;font-weight:600">'+fmt(actL)+'</td><td></td>';
+          labSubRow.innerHTML='<td colspan="7" style="text-align:right;color:#3b4a6b;padding:4px 8px;font-size:11px;font-weight:600">Labor Subtotal</td><td style="text-align:right;color:#3b4a6b;padding:4px 8px;font-weight:600">'+fmt(actL)+'</td><td></td>';
           actBody.appendChild(labSubRow);
           const matSubRow=document.createElement('tr');matSubRow.className='sub-row';
-          matSubRow.innerHTML='<td colspan="6" style="text-align:right;color:#059669;padding:4px 8px;font-size:11px;font-weight:600">Materials Subtotal</td><td style="text-align:right;color:#059669;padding:4px 8px;font-weight:600">'+fmt(actM)+'</td><td></td>';
+          matSubRow.innerHTML='<td colspan="7" style="text-align:right;color:#059669;padding:4px 8px;font-size:11px;font-weight:600">Materials Subtotal</td><td style="text-align:right;color:#059669;padding:4px 8px;font-weight:600">'+fmt(actM)+'</td><td></td>';
           actBody.appendChild(matSubRow);
         }
         const actSubWrap2=document.createElement('tr');actSubWrap2.className='sub-row';
-        actSubWrap2.innerHTML='<td colspan="6" style="text-align:right;color:#155a3e;padding:6px 8px;font-size:11px;font-weight:600">Actual Subtotal</td><td style="text-align:right;color:#1D9E75;padding:6px 8px;font-weight:700">'+fmt(actL+actM)+'</td><td></td>';
+        // Outstanding = UNBILLED posted entries only — what still needs to be paid via a
+        // billing event. Billed money shows separately under "Billed to Date" below.
+        actSubWrap2.innerHTML='<td colspan="7" style="text-align:right;color:#155a3e;padding:6px 8px;font-size:11px;font-weight:600">Outstanding Subtotal</td><td style="text-align:right;color:#1D9E75;padding:6px 8px;font-weight:700">'+fmt(projActualTotal(proj))+'</td><td></td>';
         actBody.appendChild(actSubWrap2);actTbl.appendChild(actBody);actWrap.appendChild(actTbl);
       } else {
         const noAct=document.createElement('div');noAct.style.cssText='padding:10px 16px;font-size:12px;color:#bbb;font-style:italic';noAct.textContent='No posted time entries. Post entries from the Time Entry tab.';actWrap.appendChild(noAct);
@@ -1760,7 +1899,7 @@ function renderEstimate(){
         sumBar.style.cssText='display:grid;grid-template-columns:repeat(2,1fr);background:#f5f5f3;border-top:1px solid #e5e5e0';
         sumBar.innerHTML=
           '<div style="padding:10px 14px;border-right:1px solid #e5e5e0"><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Estimated</div><div style="font-size:14px;font-weight:700;color:#3b4a6b">'+fmt(estT)+'</div></div>'
-          +'<div style="padding:10px 14px"><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Actual to Date</div><div style="font-size:14px;font-weight:700;color:#1D9E75">'+fmt(actT)+'</div></div>';
+          +'<div style="padding:10px 14px"><div style="font-size:9px;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Outstanding Subtotal</div><div style="font-size:14px;font-weight:700;color:#1D9E75">'+fmt(projActualTotal(proj))+'</div></div>';
       }
       pb.appendChild(sumBar);
 
@@ -1773,9 +1912,7 @@ function renderEstimate(){
           const f=entryFlock(te);
           if(f){
             if(!flocksTouched[f.id]){flocksTouched[f.id]={flock:f,total:0,count:0};}
-            const rate=RATES[te.cat]||0;
-            const amt=isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*rate;
-            flocksTouched[f.id].total+=amt;
+            flocksTouched[f.id].total+=teAmount(te);
             flocksTouched[f.id].count++;
           }
         });
@@ -1813,7 +1950,7 @@ function renderEstimate(){
       }
 
       const foot=document.createElement('div');foot.className='proj-footer';
-      const ata=document.createElement('button');ata.className='btn-sm blue';ata.textContent=proj.isTM?'+ Add work line':'+ Add estimated task';ata.onclick=()=>{if(!proj.scopeTasks)proj.scopeTasks=[];proj.scopeTasks.push({id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0});openProjs.add(proj.id);renderEstimate();};
+      const ata=document.createElement('button');ata.className='btn-sm blue';ata.textContent=proj.isTM?'+ Add work line':'+ Add estimated task';ata.onclick=()=>{if(!proj.scopeTasks)proj.scopeTasks=[];proj.scopeTasks.push({id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0});openProjs.add(proj.id);saveData();renderEstimate();};
       const mup=document.createElement('button');mup.className='btn-sm';mup.textContent='▲';mup.title='Move up';
       mup.onclick=(e)=>{e.stopPropagation();const idx=projects.indexOf(proj);if(idx>0){projects.splice(idx,1);projects.splice(idx-1,0,proj);saveData();renderEstimate();}};
       const mdn=document.createElement('button');mdn.className='btn-sm';mdn.textContent='▼';mdn.title='Move down';
@@ -1836,7 +1973,7 @@ function renderEstimate(){
         atm.onclick=()=>{
           const today=new Date().toISOString().split('T')[0];
           const cur=ensureCurrentFlock();
-          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:0,desc:'',posted:true,billingEventId:cur.id,includeInClientDoc:true,graduated:false});
+          timeEntries.push({id:nextTEId++,date:today,proj:proj.name,cat:'M',hrs:1,mat:0,desc:'',posted:true,billingEventId:cur.id,includeInClientDoc:true,graduated:false});
           openProjs.add(proj.id);saveData();renderEstimate();renderTimeEntry();
         };
         foot.appendChild(atm);
@@ -1852,6 +1989,13 @@ function renderEstimate(){
           openProjs.add(proj.id);saveData();renderEstimate();
         };
         foot.appendChild(aco);
+      }
+      // ⇄ Move line items — menu path for cross-project moves (drag-to-header is the quick path)
+      if(proj.status!=='billed'){
+        const mvb=document.createElement('button');mvb.className='btn-sm';mvb.textContent='⇄ Move line items';
+        mvb.title='Move estimate lines or actual entries to another project';
+        mvb.onclick=()=>openMoveItemsModal(proj.id);
+        foot.appendChild(mvb);
       }
       foot.appendChild(mup);foot.appendChild(mdn);foot.appendChild(dpr);pb.appendChild(foot);
       pw.appendChild(pb);body.appendChild(pw);
@@ -1916,24 +2060,19 @@ function ttMerged(proj){
   const fd=n=>n===0?'\u2014':'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const scopeTasks=proj.scopeTasks||[];
   const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
-  const postedTasks=postedTEs.map(te=>({
-    id:te.id,cat:te.cat,desc:te.desc,
-    hrs:isMatCat(te.cat)?0:te.hrs,
-    mat:isMatCat(te.cat)?te.hrs:0,
-    sub:0
-  }));
-  const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
-  const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
+  const postedTasks=postedTEs.map(te=>teAsTask(te));
+  const estT=scopeTasks.reduce((a,t)=>a+taskTotal(t),0);
+  const actT=postedTasks.reduce((a,t)=>a+taskTotal(t),0);
   function ttInner(tasks){
     let rows='';
     tasks.forEach(task=>{
-      const labor=(RATES[task.cat]||0)*(task.hrs||0);
-      const ms=(task.mat||0)+(task.sub||0);
+      const labor=taskLabor(task);
+      const ms=taskMS(task);
       const isMS=isMatCat(task.cat);
       rows+=`<div style="display:grid;grid-template-columns:1fr auto auto auto;gap:4px;padding:4px 0;border-bottom:1px solid #f0f0f0;font-size:9pt">
         <div style="white-space:pre-wrap">${nl2br(task.desc)||'—'}</div>
         <div style="color:#888;white-space:nowrap">${CAT_LABELS[task.cat]}</div>
-        <div style="color:#888;white-space:nowrap">${isMS?'—':(task.hrs||0)+'h'}</div>
+        <div style="color:#888;white-space:nowrap">${isMS?(taskQty(task)!==1?taskQty(task)+'×':'—'):(task.hrs||0)+'h'}</div>
         <div style="font-weight:600;white-space:nowrap">${fd(isMS?ms:labor+ms)}</div>
       </div>`;
     });
@@ -1999,20 +2138,17 @@ function exportClientDoc(){
   // Credit card fee is computed per-summary from ccFeeRate() on that summary's (subtotal + shop fee).
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
   const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
-  // Bucket by CATEGORY, but respecting that labor-category tasks (T/B/D/V) can also have
-  // per-task add-on amounts in their `mat`/`sub` fields (the Materials/SBCNTRCT columns on
-  // each task row). The engine's data convention has historically stored cat=S amounts
-  // in `mat` (the `sub` field is largely unused on tasks). Bucketing rules:
-  //   Materials = mat field for any task with cat NOT in {S, F}  (includes M/P plus add-ons on labor tasks)
-  //   Subs      = sub field for any task   +   mat field for cat=S tasks
-  //   Flat      = mat field for cat=F tasks
-  // For TM projects, the same rules apply but to time entries (where the dollar amount lives in `hrs`).
-  const _scopeMat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat!=='S'&&t.cat!=='F').reduce((a,t)=>a+(t.mat||0),0);
-  const _scopeSub=(p)=>(p.scopeTasks||[]).reduce((a,t)=>a+(t.sub||0),0)+(p.scopeTasks||[]).filter(t=>t.cat==='S').reduce((a,t)=>a+(t.mat||0),0);
-  const _scopeFlat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((a,t)=>a+(t.mat||0),0);
-  const _actualMat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
-  const _actualSub=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
-  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
+  // Bucket by CATEGORY under the qty × unit-cost model (extended amounts via taskMatAmt/taskSubAmt):
+  //   Materials = M/P rows (qty × unit) plus flat mat add-ons on labor tasks
+  //   Subs      = S rows (qty × unit) plus flat sub add-ons on labor tasks
+  //   Flat      = F rows (qty × unit)
+  // For TM projects, the same rules apply to time entries via teAmount (qty × unit for materials).
+  const _scopeMat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat!=='F').reduce((a,t)=>a+taskMatAmt(t),0);
+  const _scopeSub=(p)=>(p.scopeTasks||[]).reduce((a,t)=>a+taskSubAmt(t),0);
+  const _scopeFlat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((a,t)=>a+taskMatAmt(t),0);
+  const _actualMat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+teAmount(te),0);
+  const _actualSub=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+teAmount(te),0);
+  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((a,te)=>a+teAmount(te),0);
   const allMat=actP.reduce((a,p)=>a+(p.isTM?_actualMat(p):_scopeMat(p)),0);
   const allSub=actP.reduce((a,p)=>a+(p.isTM?_actualSub(p):_scopeSub(p)),0);
   const allFlat=actP.reduce((a,p)=>a+(p.isTM?_actualFlat(p):_scopeFlat(p)),0);
@@ -2032,8 +2168,8 @@ function exportClientDoc(){
   coProjs.forEach(p=>{
     _cototals[p.name]=(p.scopeTasks||[]).filter(t=>t.co).reduce((a,t)=>a+taskTotal(t),0)+projCoTEs(p).reduce((a,te)=>a+teAmount(te),0);
     let _cb=0;
-    (p.scopeTasks||[]).filter(t=>t.co).forEach(t=>{if(t.cat!=='S'&&t.cat!=='F')_cb+=taskLabor(t)+(t.mat||0);});
-    projCoTEs(p).forEach(te=>{if(te.cat==='S'||te.cat==='F')return;_cb+=isMatCat(te.cat)?(te.hrs||0):(te.hrs||0)*(RATES[te.cat]||0);});
+    (p.scopeTasks||[]).filter(t=>t.co).forEach(t=>{if(t.cat!=='S'&&t.cat!=='F')_cb+=taskLabor(t)+taskMatAmt(t);});
+    projCoTEs(p).forEach(te=>{if(te.cat==='S'||te.cat==='F')return;_cb+=teAmount(te);});
     _cobase[p.name]=_cb;
   });
 
@@ -2044,11 +2180,11 @@ function exportClientDoc(){
     const bb='border-bottom:1px solid #f0f0f0';
     let rows='';
     tasks.forEach(t=>{
-      const labor=(RATES[t.cat]||0)*(t.hrs||0);
-      const ms=(t.mat||0)+(t.sub||0);
+      const labor=taskLabor(t);
+      const ms=taskMS(t);
       const isMS=isMatCat(t.cat);
       const desc=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>`;
-      const hrs=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${isMS?'\u2014':(t.hrs||0)+'h'}</td>`;
+      const hrs=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${isMS?(taskQty(t)!==1?taskQty(t)+'\u00d7':'\u2014'):(t.hrs||0)+'h'}</td>`;
       const tot=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;font-weight:600;vertical-align:top">${fd(isMS?ms:labor+ms)}</td>`;
       if(showDate){
         // QuickBooks-style order: Date \u00b7 Category \u00b7 Description \u00b7 Hrs \u00b7 Total (all leading columns left-aligned).
@@ -2060,8 +2196,8 @@ function exportClientDoc(){
         rows+=`<tr>${desc}${cat}${hrs}${tot}</tr>`;
       }
     });
-    const pL=tasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
-    const pM=tasks.reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
+    const pL=tasks.reduce((a,t)=>a+taskLabor(t),0);
+    const pM=tasks.reduce((a,t)=>a+taskMS(t),0);
     const th=(txt,align)=>`<th style="padding:5px 8px;text-align:${align};border-bottom:2px solid #ddd;font-size:8pt;color:#555">${txt}</th>`;
     const head=showDate
       ? th('Date','left')+th('Category','left')+th('Scope / Task','left')+th('Hrs','right')+th('Total','right')
@@ -2079,9 +2215,9 @@ function exportClientDoc(){
   function mergedTable(proj){
     const scopeTasks=proj.scopeTasks||[];
     const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
-    const postedTasks=postedTEs.map(te=>({cat:te.cat,desc:te.desc,date:te.date,hrs:isMatCat(te.cat)?0:te.hrs,mat:isMatCat(te.cat)?te.hrs:0,sub:0}));
-    const estT=scopeTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0)+(t.sub||0),0);
-    const actT=postedTasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0)+(t.mat||0),0);
+    const postedTasks=postedTEs.map(te=>teAsTask(te));
+    const estT=scopeTasks.reduce((a,t)=>a+taskTotal(t),0);
+    const actT=postedTasks.reduce((a,t)=>a+taskTotal(t),0);
     const scopeOnly=(tasks)=>{
       let r='';
       tasks.forEach(t=>{r+='<tr><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;font-size:9pt;vertical-align:top">'+(nl2br(t.desc)||'\u2014')+'</td><td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-size:9pt;white-space:nowrap;color:#888">'+CAT_LABELS[t.cat]+'</td></tr>';});
@@ -2360,7 +2496,7 @@ function exportClientDoc(){
       coProjs.forEach(p=>{
         const coTasks=(p.scopeTasks||[]).filter(t=>t.co);
         const coTEs=projCoTEs(p);
-        const coTEsAsTasks=coTEs.map(te=>({id:te.id,cat:te.cat,desc:te.desc,hrs:isMatCat(te.cat)?0:(te.hrs||0),mat:isMatCat(te.cat)?(te.hrs||0):0,sub:0}));
+        const coTEsAsTasks=coTEs.map(te=>teAsTask(te));
         const allCoItems=coTasks.concat(coTEsAsTasks);
         const coT=coTasks.reduce((a,t)=>a+taskTotal(t),0)+coTEs.reduce((a,te)=>a+teAmount(te),0);
         const cid='coexp_'+p.id;
@@ -2504,7 +2640,7 @@ function exportClientDoc(){
       const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
       // Each project = its own rounded bordered card, status-colored, with a gap.
       const cardId='becard'+bi;
-      const asTasks=projTEs.map(te=>({id:te.id,cat:te.cat,desc:te.desc,hrs:isMatCat(te.cat)?0:(te.hrs||0),mat:isMatCat(te.cat)?(te.hrs||0):0,sub:0}));
+      const asTasks=projTEs.map(te=>teAsTask(te));
       const _cphotos=(proj.photos||[]).filter(p=>p.includeInClientDoc&&p.full);
       const _photosHtml=photoGalleryHtml(proj.photos);
       html+='<div style="border:1px solid '+cardBorder+';border-radius:8px;margin:6px 0;overflow:hidden;font-family:Arial,sans-serif">'
@@ -2527,9 +2663,9 @@ function exportClientDoc(){
     // Sourced from graduated-not-locked entries only (the entries that will actually appear on the next invoice).
     // Buckets: Labor (T/B/D/V) | Materials (M+P) | Subcontractors (S) | Flat Rate (F)
     const compL=docReadyTEs.filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);
-    const compMat=docReadyTEs.filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+(te.hrs||0),0);
-    const compSub=docReadyTEs.filter(te=>te.cat==='S').reduce((a,te)=>a+(te.hrs||0),0);
-    const compFlat=docReadyTEs.filter(te=>te.cat==='F').reduce((a,te)=>a+(te.hrs||0),0);
+    const compMat=docReadyTEs.filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+teAmount(te),0);
+    const compSub=docReadyTEs.filter(te=>te.cat==='S').reduce((a,te)=>a+teAmount(te),0);
+    const compFlat=docReadyTEs.filter(te=>te.cat==='F').reduce((a,te)=>a+teAmount(te),0);
     const compSubtotal=compL+compMat+compSub+compFlat;
     // Shop fee base excludes Flat Rate (flat-rate services are all-inclusive)
     const compShop=(compL+compMat)*shopFeeRate();
@@ -2631,7 +2767,7 @@ function exportClientDoc(){
         const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
         const pnum=proj?String(projects.indexOf(proj)+1).padStart(2,'0'):'??';
         const did='bev_'+ei+'_p'+pi;
-        const asTasks=projTEs.map(te=>({cat:te.cat,desc:te.desc,hrs:isMatCat(te.cat)?0:te.hrs,mat:isMatCat(te.cat)?te.hrs:0,sub:0}));
+        const asTasks=projTEs.map(te=>teAsTask(te));
         html+='<div style="border:1px solid #e5e7eb;border-radius:6px;margin:5px 0;overflow:hidden">'
           +'<div onclick="var d=document.getElementById(\''+did+'\');var c=this.querySelector(\'.bpchev\');var op=d.style.display===\'none\';d.style.display=op?\'block\':\'none\';c.style.transform=op?\'rotate(90deg)\':\'\'" style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:#f9fafb;cursor:pointer">'
           +'<div style="display:flex;align-items:center;gap:10px;min-width:0">'
@@ -3064,22 +3200,22 @@ function exportClientPDF(){
   function tt(tasks){
     let rows='';
     tasks.forEach(task=>{
-      const labor=(RATES[task.cat]||0)*(task.hrs||0);
-      const ms=(task.mat||0)+(task.sub||0);
+      const labor=taskLabor(task);
+      const ms=taskMS(task);
       const isMS=isMatCat(task.cat);
       rows+=`<tr>
 
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;vertical-align:top">${task.desc}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${CAT_LABELS[task.cat]}</td>
-        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?'\u2014':(task.hrs||0)+'h'}</td>
+        <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?(taskQty(task)!==1?taskQty(task)+'\u00d7':'\u2014'):(task.hrs||0)+'h'}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?'\u2014':'$'+(RATES[task.cat]||0)+'/hr'}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${isMS?'\u2014':fd(labor)}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right">${ms>0?fd(ms):'\u2014'}</td>
         <td style="padding:6px 8px;border-bottom:1px solid #f0f0f0;text-align:right;font-weight:700">${fd(labor+ms)}</td>
       </tr>`;
     });
-    const pL=tasks.reduce((a,t)=>a+(RATES[t.cat]||0)*(t.hrs||0),0);
-    const pM=tasks.reduce((a,t)=>a+(t.mat||0)+(t.sub||0),0);
+    const pL=tasks.reduce((a,t)=>a+taskLabor(t),0);
+    const pM=tasks.reduce((a,t)=>a+taskMS(t),0);
     return `<table style="width:100%;border-collapse:collapse;font-size:9pt">
       <thead><tr style="background:#f8f8f8">
 
@@ -3660,6 +3796,8 @@ function importData(event){
       if(d.uiState)restoreUiState(d.uiState);
       // Migrate change_of_scope status to in_progress
       projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
+      // Migrate imported data to the qty × unit-cost model (idempotent)
+      migrateQtyModel();
       // Ship 1: ensure current flock and auto-attach orphan posted entries
       const cur=ensureCurrentFlock();
       timeEntries.forEach(te=>{
@@ -3683,10 +3821,10 @@ function importData(event){
   reader.readAsText(file);
 }
 function exportCSV(){
-  const rows=[['Type','Project','Category','Description','Est Hrs','Rate','Labor','Materials','SBCNTRCT','Task Total']];
-  projects.forEach(p=>{(p.scopeTasks||[]).forEach(t=>rows.push(['Scope',p.name,CAT_LABELS[t.cat],t.desc,t.hrs,RATES[t.cat]||0,taskLabor(t),t.mat,t.sub,taskTotal(t)]));});
-  rows.push([]);rows.push(['DATE','PROJECT','CATEGORY','DESCRIPTION','HOURS','AMOUNT']);
-  timeEntries.forEach(te=>{const amt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*(RATES[te.cat]||0);rows.push([te.date,te.proj,CAT_LABELS[te.cat],te.desc,te.hrs,amt]);});
+  const rows=[['Type','Project','Category','Description','Hrs/Qty','Rate/Unit $','Labor','Materials','SBCNTRCT','Task Total']];
+  projects.forEach(p=>{(p.scopeTasks||[]).forEach(t=>rows.push(['Scope',p.name,CAT_LABELS[t.cat],t.desc,t.hrs,isMatCat(t.cat)?(t.cat==='S'?(t.sub||0):(t.mat||0)):(RATES[t.cat]||0),taskLabor(t),taskMatAmt(t),taskSubAmt(t),taskTotal(t)]));});
+  rows.push([]);rows.push(['DATE','PROJECT','CATEGORY','DESCRIPTION','HOURS/QTY','UNIT $','AMOUNT']);
+  timeEntries.forEach(te=>{rows.push([te.date,te.proj,CAT_LABELS[te.cat],te.desc,te.hrs,isMatCat(te.cat)?(te.mat||0):(RATES[te.cat]||0),teAmount(te)]);});
   const csv=rows.map(r=>r.map(v=>'"'+v+'"').join(',')).join('\n');
   const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);a.download='TPM_'+document.getElementById('vfVessel').value+'_'+new Date().toISOString().split('T')[0]+'.csv';a.click();
 }
@@ -3756,12 +3894,13 @@ function renderTimeEntry(){
     const tbl=document.createElement('table');tbl.className='te-table';
     const borderColor=flockCtx&&flockCtx.locked?'#cbd5e1':(isPosted?'#a7d8c5':'#fcd34d');
     tbl.style.cssText='border-radius:0 0 8px 8px;border:1px solid '+borderColor+';border-top:none';
-    tbl.innerHTML='<thead><tr><th style="width:90px">Date</th><th style="width:140px">Project</th><th style="width:95px">Cat</th><th>Description</th><th class="r" style="width:55px">Hrs</th><th class="r" style="width:70px">Amount</th><th style="width:130px">Invoice</th><th style="width:90px"></th></tr></thead>';
+    tbl.innerHTML='<thead><tr><th style="width:90px">Date</th><th style="width:140px">Project</th><th style="width:95px">Cat</th><th>Description</th><th class="r" style="width:55px" title="Hours for labor · quantity for materials">Qty</th><th class="r" style="width:80px">Amount</th><th style="width:130px">Invoice</th><th style="width:90px"></th></tr></thead>';
     const tbody=document.createElement('tbody');
     entries.forEach(te=>{
       const ri=timeEntries.indexOf(te);
       const rate=RATES[te.cat]||0;
-      const amt=isMatCat(te.cat)?te.hrs:(te.hrs||0)*rate;
+      const isMatRow=isMatCat(te.cat);
+      const amt=teAmount(te);
       const isLocked=isEntryBilled(te);
       const flock=entryFlock(te);
       const isCurrent=flock&&flock.isCurrent&&!flock.locked;
@@ -3779,16 +3918,22 @@ function renderTimeEntry(){
 
       const lockedTextStyle=isLocked?'text-decoration:line-through;color:#94a3b8;':'';
       const flockSelectDisabled=isLocked?'disabled':'';
-      const flockCellContent=isLocked
-        ?'🔒 <span style="font-size:10px;color:#64748b">'+(flock&&flock.invoiceNum?flock.invoiceNum:(flock?flock.name:''))+'</span>'
-        :'<select class="te-sel" '+flockSelectDisabled+' onchange="assignEntryToFlock('+te.id+',this.value)" style="font-size:10px;width:100%">'+flockOptionsHTML(te)+'</select>';
+      // Unposted entries are not attached to any billing event — make that unmistakable
+      const flockCellContent=!te.posted
+        ?'<span style="font-size:10px;color:#b45309;font-style:italic">— not posted —</span>'
+        :(isLocked
+          ?'🔒 <span style="font-size:10px;color:#64748b">'+(flock&&flock.invoiceNum?flock.invoiceNum:(flock?flock.name:''))+'</span>'
+          :'<select class="te-sel" '+flockSelectDisabled+' onchange="assignEntryToFlock('+te.id+',this.value)" style="font-size:10px;width:100%">'+flockOptionsHTML(te)+'</select>');
 
       tr.innerHTML='<td style="'+lockedTextStyle+'"><input class="te-inp" value="'+(te.date||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].date=this.value;saveData();if(unlocked)renderEstimate();"></td>'
         +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].proj=this.value;saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+projects.map(p=>'<option value="'+p.name.replace(/"/g,'&quot;')+'"'+(p.name===te.proj?' selected':'')+'>'+String(projects.indexOf(p)+1).padStart(2,'0')+' — '+p.name.replace(/</g,'&lt;')+'</option>').join('')+'</select></td>'
-        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].cat=this.value;saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
+        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="var t=timeEntries['+ri+'];t.cat=this.value;if(isMatCat(t.cat)&&(t.mat===undefined||t.mat===null)){t.mat=0;t.hrs=1;}saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
         +'<td class="desc-cell" data-desc-cell="1" style="'+lockedTextStyle+'"></td>'
-        +'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="0.25" value="'+(te.hrs||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].hrs=parseFloat(this.value)||0;saveData();renderTimeEntry();if(unlocked)renderEstimate();" style="width:55px"></td>'
-        +'<td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;vertical-align:top;'+lockedTextStyle+'">'+fmt(amt)+'</td>'
+        +(isMatRow
+          ?'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="1" title="Quantity" value="'+teQty(te)+'" '+(isLocked?'readonly':'')+' onchange="var t=timeEntries['+ri+'];var v=parseFloat(this.value)||0;t.hrs=v>0?v:1;saveData();renderTimeEntry();if(unlocked)renderEstimate();" style="width:55px"></td>'
+          +'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="0.01" title="Cost of one item — Amount = Qty × this" value="'+(te.mat?te.mat:'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].mat=parseFloat(this.value)||0;saveData();renderTimeEntry();if(unlocked)renderEstimate();" style="width:75px;'+(isLocked?'':'background:#fff;border:1px solid #d8d8d2;border-radius:5px;padding:4px 6px;margin:2px 4px;box-sizing:border-box')+'">'+(teQty(te)!==1?'<div style="font-size:9px;color:#888;padding:0 10px 4px;white-space:nowrap">= '+fmt(amt)+'</div>':'')+'</td>'
+          :'<td style="text-align:right;padding:0;vertical-align:top;'+lockedTextStyle+'"><input class="te-inp r" type="number" min="0" step="0.25" value="'+(te.hrs||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].hrs=parseFloat(this.value)||0;saveData();renderTimeEntry();if(unlocked)renderEstimate();" style="width:55px"></td>'
+          +'<td style="text-align:right;padding:8px 10px;font-size:12px;font-weight:500;vertical-align:top;'+lockedTextStyle+'">'+fmt(amt)+'</td>')
         +'<td style="padding:4px 6px;vertical-align:middle">'+flockCellContent+'</td>'
         +'<td style="padding:2px 6px;white-space:nowrap;text-align:right;vertical-align:top">'
         +(isLocked
@@ -4045,13 +4190,16 @@ function renderBillingEventStrip(){
 function addTimeEntry(){
   const p=document.getElementById('teProj').value;const h=parseFloat(document.getElementById('teHrs').value)||0;
   if(!p||!h)return;
-  timeEntries.push({id:nextTEId++,date:document.getElementById('teDate').value,proj:p,cat:document.getElementById('teCat').value,hrs:h,desc:document.getElementById('teDesc').value.trim(),includeInClientDoc:true,graduated:false});
+  const cat=document.getElementById('teCat').value;
+  const isMat=isMatCat(cat);
+  // Material entries: the $ entered is the UNIT cost; qty starts at 1 (adjustable in the table)
+  timeEntries.push({id:nextTEId++,date:document.getElementById('teDate').value,proj:p,cat:cat,hrs:isMat?1:h,mat:isMat?h:undefined,desc:document.getElementById('teDesc').value.trim(),includeInClientDoc:true,graduated:false});
   document.getElementById('teHrs').value='';document.getElementById('teDesc').value='';
   renderTimeEntry();renderProgress();saveData();
 }
 function renderProgress(){
   const tEst=projects.reduce((a,p)=>a+projEstHrs(p),0);
-  const tAct=timeEntries.filter(te=>te.cat!=='M'&&te.cat!=='S').reduce((a,te)=>a+(te.hrs||0),0);
+  const tAct=timeEntries.filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(te.hrs||0),0);
   const v=tAct-tEst;
   document.getElementById('progEstHrs').textContent=tEst.toFixed(2);
   document.getElementById('progActHrs').textContent=tAct.toFixed(2);
@@ -4223,6 +4371,8 @@ function loadData(){
     if(d.uiState)restoreUiState(d.uiState);
     // Migrate any change_of_scope status projects to in_progress
     projects.forEach(p=>{if(p.status==='change_of_scope')p.status='in_progress';});
+    // Migrate legacy data to the qty × unit-cost model (idempotent)
+    migrateQtyModel();
     // Ship 1: ensure a current "Next Invoice" flock exists, then auto-attach orphan posted entries
     const cur=ensureCurrentFlock();
     timeEntries.forEach(te=>{
@@ -4307,7 +4457,7 @@ function confirmMaterialsImport(){
   _matParsed.forEach((item,i)=>{
     const sel=document.getElementById('matProj_'+i);
     if(!sel||sel.value==='__skip__'){skipped++;return;}
-    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:item.amount,desc:item.desc,posted:true,billingEventId:cur.id,includeInClientDoc:true,graduated:false});
+    timeEntries.push({id:nextTEId++,date:item.date||today,proj:sel.value,cat:'M',hrs:1,mat:item.amount,desc:item.desc,posted:true,billingEventId:cur.id,includeInClientDoc:true,graduated:false});
     added++;
   });
   saveData();
@@ -4783,35 +4933,26 @@ function buildCaptureTray(){
     // ephemeral, so after a page reload the tray again defaults its photos to selected.
     unassignedPhotos.forEach(p=>{const k=photoDismissKey(p);if(!traySeen.has(k)){traySelected.add(p);traySeen.add(k);}});
   }
+  /* Collapsible section (consistency fix): the tray now uses the SAME pattern as every
+   * other engine section (Holding Pattern, Authorization Needed, ...): a full-width
+   * sec-wrap/sec-hdr colored bar with the rotating chevron on the right, click-anywhere
+   * header toggle, and open state persisted in secOpenState (key '_tray') so it survives
+   * reloads like the rest. Action links live in a toolbar INSIDE the body so header
+   * clicks always toggle. Default collapsed. */
+  const isOpen=secOpenState['_tray']!==undefined?secOpenState['_tray']:false;
+  const TRAY_COLOR='#b5822d',TRAY_BORDER='#e2c07f'; // true amber (warmed from olive #a8873c per Abram 8/19)
   const wrap=document.createElement('div');
-  wrap.style.cssText='border:1px solid #e0d6c8;background:#fbf7f0;border-radius:10px;padding:12px 14px;margin-bottom:14px';
+  wrap.className='sec-wrap';wrap.style.border='2px solid '+TRAY_BORDER;
   const hdr=document.createElement('div');
-  hdr.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-size:12px;font-weight:700;color:#7a5a1e;margin-bottom:10px';
-  if(typeof window._trayOpen==='undefined')window._trayOpen=false;
-  /* Header affordance (KEEP IN EVERY BUILD, fixed 8/17): the toggle used to be a bare
-   * left-side caret in low-contrast brown, which read as decoration \u2014 users assumed the
-   * collapsed line WAS the tray and concluded photos "don't load". The chevron now sits on
-   * the RIGHT of the label with an explicit verb ("Show photos" / "Hide"), matching the
-   * chevron-after-the-pill convention used by Complete and Billing Event cards.          */
-  const hlabel=document.createElement('span');
-  hlabel.style.cssText='cursor:pointer;user-select:none;display:inline-flex;align-items:center;gap:8px';
-  hlabel.title='Click to expand or collapse';
-  const htext=document.createElement('span');
-  htext.textContent=hasPhotos
-    ?('From field capture \u00b7 '+unassignedPhotos.length+' photo'+(unassignedPhotos.length!==1?'s':'')+' waiting to be assigned')
-    :'Field capture \u00b7 no photos waiting';
-  hlabel.appendChild(htext);
-  const caret=document.createElement('span');
-  caret.style.cssText='font-weight:700;text-decoration:underline;white-space:nowrap';
-  function _trayCaretLabel(){return (window._trayOpen?'\u25be Hide':'\u25b8 Show photos');}
-  caret.textContent=_trayCaretLabel();
-  hlabel.appendChild(caret);
-  hlabel.onmouseenter=()=>{hlabel.style.opacity='0.72';};
-  hlabel.onmouseleave=()=>{hlabel.style.opacity='1';};
-  hdr.appendChild(hlabel);
-  const spacer=document.createElement('span');spacer.style.cssText='flex:1';hdr.appendChild(spacer);
+  hdr.className='sec-hdr';hdr.style.cssText='background:'+TRAY_COLOR+';color:#fff';
+  const countLabel=hasPhotos
+    ?(unassignedPhotos.length+' photo'+(unassignedPhotos.length!==1?'s':'')+' waiting to be assigned')
+    :'no photos waiting';
+  const statsHtml='<span style="font-size:12px;opacity:0.9">'+(hasPhotos?unassignedPhotos.length+' waiting':'\u2014')+'</span>';
+  hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">FIELD CAPTURE</span><span style="font-size:11px;opacity:0.8">'+countLabel+'</span></div><div style="display:flex;align-items:center;gap:10px">'+statsHtml+'<span class="chev'+(isOpen?' open':'')+'" style="opacity:0.7;color:inherit">&#9654;</span></div>';
+  hdr.onclick=()=>{secOpenState['_tray']=!isOpen;saveData();renderEstimate();};
   const ctrls=document.createElement('span');
-  ctrls.style.cssText='display:'+(window._trayOpen?'inline-flex':'none')+';align-items:center;gap:10px;flex-wrap:wrap';
+  ctrls.style.cssText='display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap';
   if(hasPhotos){
     const n0=traySelected.size;
     const selAll=document.createElement('button');
@@ -4843,7 +4984,6 @@ function buildCaptureTray(){
     clrSel.onclick=()=>clearSelectedTrayPhotos();
     ctrls.appendChild(clrSel);
   }
-  hdr.appendChild(ctrls);
   /* Refresh MUST run with manual:true (KEEP IN EVERY BUILD, fixed 8/17). It previously passed
    * manual:false, and setStatus() is gated on opts.manual \u2014 so the link reported nothing at all:
    * not "Checking\u2026", not "No new field photos", not "Could not reach photo storage". A working
@@ -4854,27 +4994,36 @@ function buildCaptureTray(){
   refresh.style.cssText='background:none;border:none;color:#1D9E75;font-size:12px;font-weight:600;cursor:pointer;padding:0;text-decoration:underline';
   refresh.onclick=()=>{refresh.disabled=true;refresh.style.opacity='0.5';
     Promise.resolve(fetchPendingPhotos({manual:true})).catch(()=>{}).then(()=>{refresh.disabled=false;refresh.style.opacity='1';});};
-  hdr.appendChild(refresh);
   const tstatus=document.createElement('span');
   tstatus.id='trayFetchStatus';
   tstatus.style.cssText='font-size:12px;font-weight:600;color:#8a7a5e;white-space:nowrap';
-  hdr.appendChild(tstatus);
   wrap.appendChild(hdr);
-  const content=document.createElement('div');
-  content.style.cssText='margin-top:10px;display:'+(window._trayOpen?'block':'none');
-  wrap.appendChild(content);
-  hlabel.onclick=()=>{window._trayOpen=!window._trayOpen;const on=window._trayOpen;content.style.display=on?'block':'none';ctrls.style.display=on?'inline-flex':'none';caret.textContent=_trayCaretLabel();};
+  // Body \u2014 hidden/shown by the standard sec-body pattern; toolbar + photo grid live here
+  const body=document.createElement('div');
+  body.className='sec-body'+(isOpen?' open':'');
+  body.style.background='#fbf7f0';
+  const inner=document.createElement('div');
+  inner.style.cssText='padding:12px 14px';
+  body.appendChild(inner);
+  wrap.appendChild(body);
+  const toolbar=document.createElement('div');
+  toolbar.style.cssText='display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:10px';
+  toolbar.appendChild(ctrls);
+  const tspacer=document.createElement('span');tspacer.style.cssText='flex:1';toolbar.appendChild(tspacer);
+  toolbar.appendChild(refresh);
+  toolbar.appendChild(tstatus);
+  inner.appendChild(toolbar);
   if(hasPhotos){
     const grid=document.createElement('div');
     grid.style.cssText='display:flex;flex-wrap:wrap;gap:10px';
-    content.appendChild(grid);
+    inner.appendChild(grid);
     const ordered=[...unassignedPhotos].sort((a,b)=>photoSortMs(a)-photoSortMs(b));
     ordered.forEach(photo=>grid.appendChild(buildTrayTile(photo)));
   }else{
     const empty=document.createElement('div');
     empty.style.cssText='font-size:12px;color:#a08a63;font-style:italic;padding:4px 2px';
     empty.textContent='Photos sent from the field land here. Hit Refresh to check for new ones.';
-    content.appendChild(empty);
+    inner.appendChild(empty);
   }
   return wrap;
 }
@@ -4968,6 +5117,83 @@ function photoDismissKey(photo){
   const m=u.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
   if(m)return m[0].toLowerCase();
   return 'k:'+((photo&&photo.id)||'')+':'+((photo&&photo.ts)||'');
+}
+/* ─── MOVE LINE ITEMS BETWEEN PROJECTS (added 8/19) ────────────────────────────
+ * Two paths: (1) drag a row's ⠿ handle onto another project's HEADER bar — works for
+ * actual entries (pre-existing) AND estimate/CO task lines (via 'taskId' drag data);
+ * (2) the "⇄ Move line items" footer button opens this modal to move ONE OR MANY
+ * estimate lines and/or actual entries at once. Billed (locked) entries never move.
+ * Moved estimate lines land at the END of the destination's scope table; moved
+ * entries keep their posted state, flock assignment, and graduation flag.          */
+let _moveSrcProjId=null;
+function findTaskById(taskId){
+  for(const p of projects){
+    let arr=p.scopeTasks||[],i=arr.findIndex(t=>t.id===taskId);
+    if(i>=0)return{proj:p,arr,idx:i};
+    for(const co of (p.cos||[])){const a=co.tasks||[];i=a.findIndex(t=>t.id===taskId);if(i>=0)return{proj:p,arr:a,idx:i};}
+  }
+  return null;
+}
+function moveTaskToProject(taskId,destProjId){
+  const hit=findTaskById(taskId);if(!hit)return false;
+  const dest=projects.find(p=>p.id===destProjId);if(!dest)return false;
+  if(!dest.scopeTasks)dest.scopeTasks=[];
+  if(hit.arr===dest.scopeTasks)return false;
+  dest.scopeTasks.push(hit.arr.splice(hit.idx,1)[0]);
+  return true;
+}
+function openMoveItemsModal(projId){
+  const proj=projects.find(p=>p.id===projId);if(!proj)return;
+  _moveSrcProjId=projId;
+  document.getElementById('moveItemsSub').textContent='Pick line items from “'+proj.name+'” and choose a destination. Estimate lines land in the destination’s estimate; actual entries keep their posted state and invoice assignment.';
+  const list=document.getElementById('moveItemsList');list.innerHTML='';
+  const mkRow=(kind,id,label,amt,extra)=>{
+    const row=document.createElement('label');
+    row.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid #f2f2ee;cursor:pointer;font-size:12px';
+    const cb=document.createElement('input');cb.type='checkbox';cb.dataset.kind=kind;cb.dataset.id=String(id);cb.style.cssText='width:15px;height:15px;flex-shrink:0';
+    const badge=document.createElement('span');
+    badge.textContent=kind==='task'?'EST':'ACTUAL';
+    badge.style.cssText='font-size:9px;font-weight:700;letter-spacing:0.04em;padding:2px 6px;border-radius:4px;flex-shrink:0;'+(kind==='task'?'background:#eef1ff;color:#3b4a6b':'background:#e8f8f0;color:#155a3e');
+    const txt=document.createElement('span');txt.style.cssText='flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#444';txt.textContent=label||'(no description)';
+    const amtSpan=document.createElement('span');amtSpan.style.cssText='font-weight:600;color:#155a3e;flex-shrink:0';amtSpan.textContent=amt;
+    row.appendChild(cb);row.appendChild(badge);if(extra)row.appendChild(extra);row.appendChild(txt);row.appendChild(amtSpan);
+    list.appendChild(row);
+  };
+  (proj.scopeTasks||[]).forEach(t=>{if(!t.id)t.id=nextTaskId++;mkRow('task',t.id,t.desc,fmt(taskTotal(t)));});
+  (proj.cos||[]).forEach(co=>(co.tasks||[]).forEach(t=>{
+    if(!t.id)t.id=nextTaskId++;
+    const coTag=document.createElement('span');coTag.textContent='CO';coTag.title=co.title||'';coTag.style.cssText='font-size:9px;font-weight:700;color:#d97706;flex-shrink:0';
+    mkRow('task',t.id,(co.title?co.title+' — ':'')+(t.desc||''),fmt(taskTotal(t)),coTag);
+  }));
+  timeEntries.filter(te=>te.proj===proj.name&&!isEntryBilled(te)).forEach(te=>{
+    let tag=null;
+    if(!te.posted){tag=document.createElement('span');tag.textContent='draft';tag.style.cssText='font-size:9px;font-weight:700;color:#b45309;flex-shrink:0';}
+    mkRow('te',te.id,(te.date?te.date+' · ':'')+(te.desc||''),fmt(teAmount(te)),tag);
+  });
+  if(!list.children.length){const em=document.createElement('div');em.style.cssText='padding:16px;font-size:12px;color:#999;font-style:italic';em.textContent='No movable line items (billed entries are locked to their invoice).';list.appendChild(em);}
+  const dest=document.getElementById('moveItemsDest');dest.innerHTML='';
+  const d0=document.createElement('option');d0.value='';d0.textContent='Choose destination project…';dest.appendChild(d0);
+  projects.forEach((p,i)=>{
+    if(p.id===projId||p.status==='billed')return;
+    const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' — '+p.name;dest.appendChild(o);
+  });
+  document.getElementById('moveItemsOverlay').classList.add('open');
+}
+function closeMoveItemsModalDirect(){document.getElementById('moveItemsOverlay').classList.remove('open');_moveSrcProjId=null;}
+function confirmMoveItems(){
+  const destId=parseInt(document.getElementById('moveItemsDest').value);
+  const dest=projects.find(p=>p.id===destId);
+  if(!dest){alert('Choose a destination project first.');return;}
+  const checks=[...document.querySelectorAll('#moveItemsList input[type=checkbox]:checked')];
+  if(!checks.length){alert('Select at least one line item to move.');return;}
+  let nT=0,nE=0;
+  checks.forEach(cb=>{
+    const id=parseInt(cb.dataset.id);
+    if(cb.dataset.kind==='task'){if(moveTaskToProject(id,destId))nT++;}
+    else{const te=timeEntries.find(t=>t.id===id);if(te&&!isEntryBilled(te)){te.proj=dest.name;nE++;}}
+  });
+  openProjs.add(destId);
+  saveData();closeMoveItemsModalDirect();renderSummary();renderEstimate();renderTimeEntry();
 }
 function openRemovePhotoModal(photos){
   _removeTargets=(photos||[]).slice();
