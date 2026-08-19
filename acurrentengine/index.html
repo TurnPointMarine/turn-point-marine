@@ -1375,6 +1375,24 @@ function renderEstimate(){
       pw.appendChild(ph);
       const pb=document.createElement('div');pb.className='proj-body'+(isProjOpen?' open':'');
 
+      // ESTIMATE SECTION — collapsible wrapper around the Original Estimate bar, Notes, and Photos.
+      // Default collapsed (frees screen space for Scope/Actual); per-project state persists via secOpenState.
+      const estSecKey='estinfo_'+proj.id;
+      const estSecOpen=secOpenState[estSecKey]===true; // default collapsed
+      const estSecHdr=document.createElement('div');
+      estSecHdr.style.cssText='padding:5px 16px;background:#faf8f0;border-bottom:1px solid #e8e2cf;font-size:10px;font-weight:700;color:#8a7a52;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
+      {
+        const _estAmt=proj.estimateTotal?fmt(proj.estimateTotal):(proj.isTM?'T&M':'—');
+        const _phCount=(proj.photos||[]).length;
+        const _noteHint=(proj.notes&&!estSecOpen)?'<span style="font-weight:600;color:#b0a67f;font-size:9px;text-transform:none;letter-spacing:0;margin-left:8px">notes</span>':'';
+        const _phHint=_phCount>0?'<span style="font-weight:600;color:#b0a67f;font-size:9px;text-transform:none;letter-spacing:0;margin-right:10px">'+_phCount+' photo'+(_phCount!==1?'s':'')+'</span>':'';
+        estSecHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px">'+(estSecOpen?'▼':'▶')+'</span>Estimate'+_noteHint+'</span><span>'+_phHint+'<span style="font-weight:700;color:#8a7a52">'+_estAmt+'</span></span>';
+      }
+      estSecHdr.onclick=()=>{secOpenState[estSecKey]=!estSecOpen;saveData();renderEstimate();};
+      pb.appendChild(estSecHdr);
+      const estSecWrap=document.createElement('div');
+      estSecWrap.style.display=estSecOpen?'block':'none';
+
       // Estimate header row — original estimate $ + T&M toggle
       const estHdr=document.createElement('div');
       estHdr.style.cssText='display:flex;align-items:center;gap:12px;padding:8px 16px;background:#f5f5f3;border-bottom:1px solid #e5e5e0;flex-wrap:wrap';
@@ -1401,13 +1419,14 @@ function renderEstimate(){
         sdLbl.appendChild(sdChk);sdLbl.appendChild(document.createTextNode('Show $ to client'));
         estHdr.appendChild(sdLbl);
       }
-      pb.appendChild(estHdr);
+      estSecWrap.appendChild(estHdr);
 
       // Notes row
-      const nr=document.createElement('div');nr.className='notes-row';const nl=document.createElement('label');nl.textContent='Notes:';const ni=document.createElement('textarea');ni.className='notes-inp';ni.rows=1;ni.value=proj.notes||'';ni.placeholder='Scope narrative, estimated hours, internal notes...';ni.oninput=()=>{proj.notes=ni.value;ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';saveData();};if(proj.notes)requestAnimationFrame(()=>{ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';});nr.appendChild(nl);nr.appendChild(ni);pb.appendChild(nr);
+      const nr=document.createElement('div');nr.className='notes-row';const nl=document.createElement('label');nl.textContent='Notes:';const ni=document.createElement('textarea');ni.className='notes-inp';ni.rows=1;ni.value=proj.notes||'';ni.placeholder='Scope narrative, estimated hours, internal notes...';ni.oninput=()=>{proj.notes=ni.value;ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';saveData();};if(proj.notes)requestAnimationFrame(()=>{ni.style.height='auto';ni.style.height=ni.scrollHeight+'px';});nr.appendChild(nl);nr.appendChild(ni);estSecWrap.appendChild(nr);
 
       // Photos — drop-on-card add + thumbnail strip, tethered to this project
-      pb.appendChild(buildPhotoBlock(proj));
+      estSecWrap.appendChild(buildPhotoBlock(proj));
+      pb.appendChild(estSecWrap);
 
       // Helper to build a task table
       function buildTaskTable(tasks,editable){
