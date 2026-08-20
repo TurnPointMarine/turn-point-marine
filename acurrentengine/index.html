@@ -536,7 +536,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-17b';
+const ENGINE_BUILD='2026-08-20a';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -1109,7 +1109,7 @@ function renderReadyForBillingBody(body){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
       +'<span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:2px 6px;white-space:nowrap">'+projTEs.length+' · '+fmt(projTotal)+'</span>'
-      +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
+      +'<span class="chev'+(isOpen?' open':'')+'" style="color:#b232c2">&#9654;</span>'
       +'</div>';
     phdr.onclick=()=>{
       if(!proj)return;
@@ -2651,9 +2651,9 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">'+statusLabel+'</span>'
         +'</div>'
         +'<span style="display:flex;align-items:center;gap:8px;flex-shrink:0"><span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+projTEs.length+' &middot; '+fd(projTotal)+'</span>'
-          +(_condensed?'':'<span class="chev" style="font-size:11px;color:'+nameColor+';display:inline-block;transition:transform 0.2s;flex-shrink:0">&#9654;</span>')+'</span>'
+          +(_condensed?'':'<span class="chev" style="font-size:11px;color:#b232c2;display:inline-block;transition:transform 0.2s;'+(_open?'transform:rotate(90deg);':'')+'flex-shrink:0">&#9654;</span>')+'</span>'
         +'</div>'
-        +(_condensed?'':'<div id="'+cardId+'_detail" style="display:none;background:#fefbff;border-top:1px solid #ecd5f2;padding:8px 14px"><div class="task-wrap">'+taskTable(asTasks)+'</div>'+_photosHtml+'</div>')
+        +(_condensed?'':'<div id="'+cardId+'_detail" style="display:'+(_open?'block':'none')+';background:#fefbff;border-top:1px solid #ecd5f2;padding:8px 14px"><div class="task-wrap">'+taskTable(asTasks)+'</div>'+_photosHtml+'</div>')
         +'</div>';
     });
     html+='</div>';
