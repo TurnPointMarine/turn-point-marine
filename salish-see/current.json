@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-08-20T15:49:38.301Z",
+    "exportedAt": "2026-08-20T17:59:13.103Z",
     "engineVersion": 8,
     "engineBuild": "2026-08-20b"
   },
@@ -2619,7 +2619,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 219.6
     },
     {
@@ -2986,12 +2986,11 @@
       39,
       5,
       35,
-      24
+      10
     ],
     "closedReadyProjs": [
       15,
       16,
-      20,
       22,
       23,
       4,
