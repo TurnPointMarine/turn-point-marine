@@ -2,9 +2,9 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-08-20T15:16:06.756Z",
+    "exportedAt": "2026-08-20T15:49:38.301Z",
     "engineVersion": 8,
-    "engineBuild": "2026-08-20f"
+    "engineBuild": "2026-08-20b"
   },
   "projects": [
     {
@@ -2821,7 +2821,7 @@
     "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
     "showCompleteDetail": true,
     "taxExempt": false,
-    "taxRate": 0.092,
+    "taxRate": 0.091,
     "clientDocView": "expanded",
     "photoUploadUrl": "https://default141dc0adf2b54539836e80cbaa77fc.3e.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/d0b688f7751a4b028880bf0b039419d5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=WHp_mhxRq2TAbJGrBS0jt_4mWtO9QM5Nyw24k4QMhfA",
     "photoManifestUrl": "https://tpmphotos.blob.core.windows.net/tpm-photos/_pending.json",
@@ -2996,8 +2996,7 @@
       23,
       4,
       7,
-      10,
-      18
+      10
     ],
     "closedBilledProjs": [
       "504:15"

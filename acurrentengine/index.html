@@ -536,7 +536,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-20a';
+const ENGINE_BUILD='2026-08-20b';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -570,7 +570,8 @@ const STORAGE_KEY='tpe_'+location.pathname.split('/').pop().replace(/[^a-z0-9]/g
  * Design tokens (locked):
  *   Section bars (SECTIONS below): holding #7c6f9f · needs_auth #2d8a6a ·
  *     in_progress #6b7280 · complete #3d5a80 · billing event #fdf4ff/#b232c2
- *     (border #c354d6) · billed #374151 · FIELD CAPTURE #b5822d (border #e2c07f,
+ *     (border #c354d6; summary card's ACTUAL — UNBILLED column wears this family:
+ *     magenta #b232c2 bars, #c354d6 border, #fdf4ff bg) · billed #374151 · FIELD CAPTURE #b5822d (border #e2c07f,
  *     body #fbf7f0 — warmed to true amber per Abram 8/19; was olive #a8873c).
  *   Accents: money green #1D9E75 · deep green #155a3e · danger red #c0392b ·
  *     estimate navy #3b4a6b · CO amber #d97706 · unposted amber #b45309
@@ -1051,8 +1052,11 @@ function renderSummary(){
     }
     const E=_sumCol(eL,eM,eS,depE),A=_sumCol(aL,aM,aS,depA);
     const line=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:11px;color:'+(bold?'#1a1a1a':'#888')+';font-weight:'+(bold?'700':'400')+'">'+label+'</span><span style="font-size:11px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
-    function colHtml(title,accent,C,outLabel){
-      let h='<div style="flex:1;min-width:220px">';
+    function colHtml(title,accent,C,outLabel,frame,outBg){
+      // frame: optional wrapper styling — the ACTUAL column wears the BILLING EVENT pink
+      // family (border #c354d6, bg #fdf4ff, magenta #b232c2 bars) per Abram 8/20, since
+      // unbilled actuals are billing-event money, not "estimate calculator" money.
+      let h='<div style="flex:1;min-width:220px;'+(frame||'')+'">';
       h+='<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:'+accent+';padding:4px 0 6px;border-bottom:2px solid '+accent+'">'+title+'</div>';
       h+=line('Labor',C.L)+line('Materials',C.M)+line('Subcontractors',C.S)+line('Subtotal',C.sub,true);
       if(shopFeePct()>0)h+=line(shopFeeName()+' ('+shopFeePct()+'%)',C.shop);
@@ -1061,15 +1065,15 @@ function renderSummary(){
       h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-top:8px;background:'+accent+';border-radius:8px"><span style="font-size:12px;font-weight:700;color:#fff">Total</span><span style="font-size:13px;font-weight:700;color:#fff">'+fmt(C.total)+'</span></div>';
       if(C.dep>0){
         h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 2px"><span style="font-size:11px;color:#155a3e">Deposits Paid</span><span style="font-size:11px;font-weight:600;color:#155a3e">−'+fmt(C.dep)+'</span></div>';
-        h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#155a3e;border-radius:8px"><span style="font-size:11px;font-weight:700;color:#fff">'+outLabel+'</span><span style="font-size:12px;font-weight:700;color:#fff">'+fmt(C.out)+'</span></div>';
+        h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:'+(outBg||'#155a3e')+';border-radius:8px"><span style="font-size:11px;font-weight:700;color:#fff">'+outLabel+'</span><span style="font-size:12px;font-weight:700;color:#fff">'+fmt(C.out)+'</span></div>';
       }
       h+='</div>';
       return h;
     }
     gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Summary — Excludes Billed · estimate and actual tallied independently</div>'
       +'<div style="display:flex;gap:22px;flex-wrap:wrap">'
-      +colHtml('Estimated (scope)','#3b4a6b',E,'Estimated Outstanding')
-      +colHtml('Actual — Unbilled','#1D9E75',A,'Outstanding')
+      +colHtml('Estimated (scope)','#3b4a6b',E,'Estimated Outstanding','','#155a3e')
+      +colHtml('Actual — Unbilled','#b232c2',A,'Outstanding','border:2px solid #c354d6;border-radius:10px;padding:10px 14px;background:#fdf4ff','#7c1d87')
       +'</div>';
   }
   saveData();
