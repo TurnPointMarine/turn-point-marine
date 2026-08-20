@@ -182,7 +182,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
         <button class="nav-drop-item" onclick="displayClientDoc();closeDrop('dropClient')">&#128065; Display Client Doc</button>
         <button class="nav-drop-item" onclick="exportClientDoc();closeDrop('dropClient')">&#11015; Export Client Doc</button>
         <button class="nav-drop-item" onclick="openAuthPicker();closeDrop('dropClient')">&#9997; Authorization Only&hellip;</button>
-        <button class="nav-drop-item" onclick="emailClient();closeDrop('dropClient')">&#128279; Copy Client Doc html Link to Clipboard</button>
+        <button class="nav-drop-item" onclick="emailClient();closeDrop('dropClient')">&#128279; Copy Client Doc Address</button>
         <div style="height:1px;background:#333;margin:2px 0"></div>
         <button class="nav-drop-item" onclick="switchTab('settings');setTimeout(function(){var e=document.getElementById('clientDocSettings');if(e)e.scrollIntoView({behavior:'smooth',block:'center'});},60);closeDrop('dropClient')">&#9881; Client Doc Settings</button>
       </div>
@@ -536,7 +536,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-20f';
+const ENGINE_BUILD='2026-08-20a';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -1022,42 +1022,55 @@ function renderSummary(){
   const inc=projects.filter(p=>p.include!==false);
   const gt=document.getElementById('grandTotal');
   if(gt){
+    /* SUMMARY CARD — TWO INDEPENDENT TALLIES (KEEP IN EVERY BUILD, reworked 8/19 per Abram):
+     * ESTIMATED column = fixed-price scope lines ONLY (the quotes). ACTUAL — UNBILLED column
+     * = posted, unbilled entries ONLY (the true billable). The two are NEVER added together.
+     * The old card summed estimate + actual into one bucket, double-counting any fixed-price
+     * project whose work was both quoted and posted (Bimini: $5,500 est + $4,500 act rolled
+     * into one $10,884 "Subcontractors" figure). The projEst* blended helpers are no longer
+     * used by this card — do not reintroduce them here.                                     */
     const actP=inc.filter(p=>p.status!=='billed'&&p.status!=='holding');
-    const gL=actP.reduce((a,p)=>a+projEstLabor(p),0);
-    // Materials = M/P only; Subcontractors = S only (previously S was lumped into Materials here).
-    const gMat=actP.reduce((a,p)=>a+((p.isTM?0:projScopeMat(p))+projActualMatOnly(p)),0);
-    const gSub=actP.reduce((a,p)=>a+((p.isTM?0:projScopeSub(p))+projActualSub(p)),0);
-    const gSubtotal=gL+gMat+gSub;
-    // Shop fee base excludes subcontractors — subs typically arrange their own overhead/markup,
-    // so charging shop fee on top would be double-dipping.
-    const gShop=(gL+gMat)*shopFeeRate();
-    // Invoice-level credit card fee (current billing event) — matches the client doc summaries.
-    const gCC=(gSubtotal+gShop)*ccFeeRate();
-    const _gTaxBase=gSubtotal+gShop+gCC;const gTax=settings.taxExempt?0:_gTaxBase*taxRateVal();
-    const gTotal=gSubtotal+gShop+gCC+gTax;
-    // Deposits paid (Mat - Deposit Paid entries) — only un-billed deposits, since billed ones already excluded from totals above
-    const gDepositsTEs=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+teAmount(te),0);
-    const gDepositsScope=actP.reduce((a,p)=>a+(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+taskMatAmt(t),0),0);
-    const totalDeposits=gDepositsTEs+gDepositsScope;
-    // Billed entries on active projects — already excluded from gSubtotal via projEstLabor/Mat now, so this is just for display
-    const totalBilled=actP.reduce((a,p)=>a+projBilledTotal(p),0);
-    const totalDeductions=totalDeposits;
-    const gOutstanding=gTotal-totalDeductions;
-    const row=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:12px;color:'+(bold?'#1a1a1a':'#888')+'">'+label+'</span><span style="font-size:12px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
-    gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Estimate Summary — Excludes Billed</div>'
-      +row('Labor',gL,false)
-      +row('Materials',gMat,false)
-      +row('Subcontractors',gSub,false)
-      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #e5e5e0;border-top:1px solid #e5e5e0"><span style="font-size:12px;font-weight:700;color:#1a1a1a">Subtotal</span><span style="font-size:12px;font-weight:700;color:#1a1a1a">'+fmt(gSubtotal)+'</span></div>'
-      +(shopFeePct()>0?row(shopFeeName()+' ('+shopFeePct()+'%)',gShop,false):'')
-      +(ccFeePct()>0?row(ccFeeName()+' ('+ccFeePct()+'%)',gCC,false):'')
-      +(settings.taxExempt?'':row('Tax ('+taxPctLabel()+'%)',gTax,false))
-      +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:10px -20px 0;background:#1D9E75"><span style="font-size:14px;font-weight:700;color:#fff">Total</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gTotal)+'</span></div>'
-      +(totalDeductions>0
-        ?(totalDeposits>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 14px;margin:0 -20px;background:#e8f5ee;border-top:1px solid #c3e0cf"><span style="font-size:12px;color:#155a3e">Deposits Paid</span><span style="font-size:12px;font-weight:600;color:#155a3e">−'+fmt(totalDeposits)+'</span></div>':'')
-        +(totalBilled>0?'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 14px;margin:0 -20px;background:#e8f5ee;border-top:1px solid #c3e0cf"><span style="font-size:12px;color:#155a3e">Billed to Date</span><span style="font-size:12px;font-weight:600;color:#155a3e">−'+fmt(totalBilled)+'</span></div>':'')
-        +'<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;margin:0 -20px -16px;background:#155a3e;border-radius:0 0 12px 12px"><span style="font-size:14px;font-weight:700;color:#fff">Estimated Outstanding</span><span style="font-size:16px;font-weight:700;color:#fff">'+fmt(gOutstanding)+'</span></div>'
-        :'<div style="border-radius:0 0 12px 12px;overflow:hidden;margin:0 -20px -16px;height:0"></div>');
+    // ESTIMATED — scope lines of fixed-price projects (T&M has no estimate to tally)
+    const eL=actP.reduce((a,p)=>a+(p.isTM?0:projScopeLabor(p)),0);
+    const eM=actP.reduce((a,p)=>a+(p.isTM?0:projScopeMat(p)),0);
+    const eS=actP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
+    // ACTUAL — UNBILLED — posted entries not yet locked into an invoice. Materials = M/P/F.
+    const aL=actP.reduce((a,p)=>a+projActualLabor(p),0);
+    const aM=actP.reduce((a,p)=>a+(projActualMat(p)-projActualSub(p)),0);
+    const aS=actP.reduce((a,p)=>a+projActualSub(p),0);
+    // Deposits: planned (scope P lines) net the ESTIMATED column; posted deposit entries net ACTUAL
+    const depE=actP.reduce((a,p)=>a+(p.isTM?0:(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+taskMatAmt(t),0)),0);
+    const depA=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+teAmount(te),0);
+    function _sumCol(L,M,S,dep){
+      const sub=L+M+S;
+      const shop=(L+M)*shopFeeRate();
+      const cc=(sub+shop)*ccFeeRate();
+      const tax=settings.taxExempt?0:(sub+shop+cc)*taxRateVal();
+      const total=sub+shop+cc+tax;
+      return {L,M,S,sub,shop,cc,tax,total,dep,out:total-dep};
+    }
+    const E=_sumCol(eL,eM,eS,depE),A=_sumCol(aL,aM,aS,depA);
+    const line=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:11px;color:'+(bold?'#1a1a1a':'#888')+';font-weight:'+(bold?'700':'400')+'">'+label+'</span><span style="font-size:11px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
+    function colHtml(title,accent,C,outLabel){
+      let h='<div style="flex:1;min-width:220px">';
+      h+='<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:'+accent+';padding:4px 0 6px;border-bottom:2px solid '+accent+'">'+title+'</div>';
+      h+=line('Labor',C.L)+line('Materials',C.M)+line('Subcontractors',C.S)+line('Subtotal',C.sub,true);
+      if(shopFeePct()>0)h+=line(shopFeeName()+' ('+shopFeePct()+'%)',C.shop);
+      if(ccFeePct()>0)h+=line(ccFeeName()+' ('+ccFeePct()+'%)',C.cc);
+      if(!settings.taxExempt)h+=line('Tax ('+taxPctLabel()+'%)',C.tax);
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-top:8px;background:'+accent+';border-radius:8px"><span style="font-size:12px;font-weight:700;color:#fff">Total</span><span style="font-size:13px;font-weight:700;color:#fff">'+fmt(C.total)+'</span></div>';
+      if(C.dep>0){
+        h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 2px"><span style="font-size:11px;color:#155a3e">Deposits Paid</span><span style="font-size:11px;font-weight:600;color:#155a3e">−'+fmt(C.dep)+'</span></div>';
+        h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:#155a3e;border-radius:8px"><span style="font-size:11px;font-weight:700;color:#fff">'+outLabel+'</span><span style="font-size:12px;font-weight:700;color:#fff">'+fmt(C.out)+'</span></div>';
+      }
+      h+='</div>';
+      return h;
+    }
+    gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Summary — Excludes Billed · estimate and actual tallied independently</div>'
+      +'<div style="display:flex;gap:22px;flex-wrap:wrap">'
+      +colHtml('Estimated (scope)','#3b4a6b',E,'Estimated Outstanding')
+      +colHtml('Actual — Unbilled','#1D9E75',A,'Outstanding')
+      +'</div>';
   }
   saveData();
 }
@@ -1109,7 +1122,7 @@ function renderReadyForBillingBody(body){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
       +'<span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:2px 6px;white-space:nowrap">'+projTEs.length+' · '+fmt(projTotal)+'</span>'
-      +'<span class="chev'+(isOpen?' open':'')+'" style="color:#b232c2">&#9654;</span>'
+      +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
       +'</div>';
     phdr.onclick=()=>{
       if(!proj)return;
@@ -1406,10 +1419,7 @@ function renderEstimate(){
       const invN=document.createElement('input');invN.placeholder='Inv #';invN.value=proj.invoiceNum||'';invN.style.cssText='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;width:70px;font-family:inherit';invN.onclick=e=>e.stopPropagation();invN.onmousedown=e=>e.stopPropagation();invN.onchange=()=>{proj.invoiceNum=invN.value;saveData();};
       const invD=document.createElement('input');invD.type='date';invD.value=proj.invoiceDate||'';invD.style.cssText='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;width:120px;font-family:inherit';invD.onclick=e=>e.stopPropagation();invD.onmousedown=e=>e.stopPropagation();invD.onchange=()=>{proj.invoiceDate=invD.value;saveData();};
       invWrap.appendChild(invLbl);invWrap.appendChild(invN);invWrap.appendChild(invD);
-      // T&M projects show NO green total (green = estimate money; T&M actuals live in the pink
-      // graduated pill). A would-be '—' dash also renders as empty space. Span kept (min-width 80px)
-      // so the pink pill and chevron stay aligned across cards. (8/20 per Abram)
-      const badge=document.createElement('span');badge.className='proj-badge';badge.textContent=(proj.isTM||!pTotal)?'':fmt(pTotal);
+      const badge=document.createElement('span');badge.className='proj-badge';badge.textContent=fmt(pTotal);
       // Graduated indicator: small badge showing count + dollar total of graduated-and-not-locked entries.
       // Only renders when there's at least one such entry on this project.
       const gradEntries=timeEntries.filter(t=>t.proj===proj.name&&t.posted&&t.graduated===true&&!isEntryBilled(t));
@@ -1484,15 +1494,10 @@ function renderEstimate(){
       // Default collapsed (frees screen space for Scope/Actual); per-project state persists via secOpenState.
       const estSecKey='estinfo_'+proj.id;
       const estSecOpen=secOpenState[estSecKey]===true; // default collapsed
-      // AUTO-TALLIED ESTIMATE (changed 2026-08-20e, per Abram): proj.estimateTotal is no longer
-      // hand-typed — it always mirrors the scope lines' Estimated Subtotal (projScopeTotal, CO
-      // lines included), so everything in the Estimate section tallies unto itself. The field is
-      // still stored/exported for back-compat. T&M projects carry null (their header shows 'T&M').
-      proj.estimateTotal=(!proj.isTM&&projScopeTotal(proj)>0)?projScopeTotal(proj):null;
       const estSecHdr=document.createElement('div');
       estSecHdr.style.cssText='padding:5px 16px;background:#faf8f0;border-bottom:1px solid #e8e2cf;font-size:10px;font-weight:700;color:#8a7a52;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
       {
-        const _estAmt=proj.estimateTotal?fmt(proj.estimateTotal):(proj.isTM?'T&M':'—');
+        const _estAmt=proj.isTM?'T&M':(projScopeTotal(proj)>0?fmt(projScopeTotal(proj)):'—'); // estimate = scope lines (Original Estimate box removed 8/20)
         const _phCount=(proj.photos||[]).length;
         const _noteHint=(proj.notes&&!estSecOpen)?'<span style="font-weight:600;color:#b0a67f;font-size:9px;text-transform:none;letter-spacing:0;margin-left:8px">notes</span>':'';
         const _phHint=_phCount>0?'<span style="font-weight:600;color:#b0a67f;font-size:9px;text-transform:none;letter-spacing:0;margin-right:10px">'+_phCount+' photo'+(_phCount!==1?'s':'')+'</span>':'';
@@ -1503,22 +1508,22 @@ function renderEstimate(){
       const estSecWrap=document.createElement('div');
       estSecWrap.style.display=estSecOpen?'block':'none';
 
-      // Estimate header row — auto-tallied estimate $ (display-only, mirrors scope subtotal) + T&M toggle
+      // Estimate header row — original estimate $ + T&M toggle
       const estHdr=document.createElement('div');
       estHdr.style.cssText='display:flex;align-items:center;gap:12px;padding:8px 16px;background:#f5f5f3;border-bottom:1px solid #e5e5e0;flex-wrap:wrap';
-      const estLbl=document.createElement('span');estLbl.style.cssText='font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.04em';estLbl.textContent='Original Estimate:';
-      const estVal=document.createElement('span');
-      estVal.style.cssText='font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;width:130px;box-sizing:border-box;display:inline-block;text-align:right;background:#fafaf8;color:#555;font-family:inherit';
-      estVal.textContent=proj.estimateTotal?fmt(proj.estimateTotal):(proj.isTM?'T&M':'—');
-      estVal.title='Auto-tallied from the scope lines below (Estimated Subtotal, CO lines included). Edit the line items to change it.';
-      estVal.onclick=e=>e.stopPropagation();estVal.onmousedown=e=>e.stopPropagation();
+      /* "Original Estimate" $ box REMOVED 8/20 per Abram: the estimate is its scope line
+       * items — a separate free-typed figure duplicated them, and (worse) having a value in
+       * it silently HID the Time & Materials checkbox, locking the project's billing mode.
+       * Change orders remain the record of estimate changes. proj.estimateTotal stays in the
+       * data model for historical exports but is no longer displayed or edited anywhere.
+       * The T&M checkbox is now ALWAYS visible.                                            */
       const tmLbl=document.createElement('label');
-      tmLbl.style.cssText='display:'+(proj.estimateTotal?'none':'flex')+';align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer';
+      tmLbl.style.cssText='display:flex;align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer';
       const tmChk=document.createElement('input');tmChk.type='checkbox';tmChk.checked=proj.isTM||false;
       tmChk.onchange=()=>{proj.isTM=tmChk.checked;saveData();renderEstimate();};
       tmChk.onclick=e=>e.stopPropagation();tmChk.onmousedown=e=>e.stopPropagation();
       tmLbl.appendChild(tmChk);tmLbl.appendChild(document.createTextNode('Time & Materials'));
-      estHdr.appendChild(estLbl);estHdr.appendChild(estVal);estHdr.appendChild(tmLbl);
+      estHdr.appendChild(tmLbl);
       if(proj.isTM){
         const sdLbl=document.createElement('label');
         sdLbl.style.cssText='display:flex;align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer';
@@ -2590,11 +2595,6 @@ function exportClientDoc(){
       const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
       const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
       const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
-      // Pill mirrors the engine exactly: purple graduated badge (count · total) when entries are
-      // ready for billing; plain money-green total (engine .proj-badge) when there's no count.
-      const pillStyle=teCount>0
-        ?'font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif'
-        :'font-size:10.5px;font-weight:700;color:#1D9E75;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif';
       // Each project = its own rounded bordered card (navy, all Complete), with a gap.
       const cardId='ccard'+bi;
       // Client-facing photo gallery — same markup other statuses get via projBlock.
@@ -2609,7 +2609,7 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'+_camIcon
-          +'<span style="'+pillStyle+'">'+pillLabel+'</span>'
+          +'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
           +(_condensed?'':'<span class="chev" style="font-size:11px;color:#1a3a5c;display:inline-block;transition:transform 0.2s;flex-shrink:0">&#9654;</span>')
         +'</div>'
         +'</div>'
@@ -2664,9 +2664,9 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">'+statusLabel+'</span>'
         +'</div>'
         +'<span style="display:flex;align-items:center;gap:8px;flex-shrink:0"><span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+projTEs.length+' &middot; '+fd(projTotal)+'</span>'
-          +(_condensed?'':'<span class="chev" style="font-size:11px;color:#b232c2;display:inline-block;transition:transform 0.2s;'+(_open?'transform:rotate(90deg);':'')+'flex-shrink:0">&#9654;</span>')+'</span>'
+          +(_condensed?'':'<span class="chev" style="font-size:11px;color:'+nameColor+';display:inline-block;transition:transform 0.2s;flex-shrink:0">&#9654;</span>')+'</span>'
         +'</div>'
-        +(_condensed?'':'<div id="'+cardId+'_detail" style="display:'+(_open?'block':'none')+';background:#fefbff;border-top:1px solid #ecd5f2;padding:8px 14px"><div class="task-wrap">'+taskTable(asTasks)+'</div>'+_photosHtml+'</div>')
+        +(_condensed?'':'<div id="'+cardId+'_detail" style="display:none;background:#fefbff;border-top:1px solid #ecd5f2;padding:8px 14px"><div class="task-wrap">'+taskTable(asTasks)+'</div>'+_photosHtml+'</div>')
         +'</div>';
     });
     html+='</div>';
@@ -3604,20 +3604,12 @@ function emailClient(){
   const vessel=document.getElementById("vfVessel").value||"Vessel";
   const slug=vessel.trim().toLowerCase().replace(/\s+/g,"-");
   const url="https://client.turnpointmarine.com/"+slug+"/client-doc.html";
-  // Menu closes on click, so confirm with the standard bottom toast (same pattern as the
-  // exportClientDoc "Push Through GitHub" toast). The old in-button "Copied!" feedback used an
-  // exact-match [onclick="emailClient()"] selector that stopped matching when closeDrop() was
-  // added to the onclick — it threw inside .then() and dumped every SUCCESSFUL copy into the
-  // .catch() prompt dialog. (fixed 8/20)
   navigator.clipboard.writeText(url).then(()=>{
-    try{
-      var _t=document.createElement('div');
-      _t.textContent='✓ Client doc link copied to clipboard — '+url;
-      _t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:13px;font-weight:700;padding:13px 22px;border-radius:10px;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,0.35);font-family:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;max-width:90vw;text-align:center';
-      document.body.appendChild(_t);
-      setTimeout(function(){_t.style.opacity='1';},30);
-      setTimeout(function(){_t.style.opacity='0';setTimeout(function(){_t.remove();},400);},4000);
-    }catch(e){}
+    const btn=document.querySelector("[onclick=\"emailClient()\"]");
+    const orig=btn.innerHTML;
+    btn.innerHTML="&#10003; Copied!";
+    btn.style.borderColor="#1D9E75";btn.style.color="#1D9E75";
+    setTimeout(()=>{btn.innerHTML=orig;btn.style.borderColor="#5dba99";btn.style.color="#5dba99";},2000);
   }).catch(()=>{
     prompt("Copy this URL and paste it into your email:",url);
   });
@@ -4984,7 +4976,11 @@ function buildCaptureTray(){
     ctrls.appendChild(selAll);
     // Bulk-assign: send all checked photos to one project in a single action. Operates on the
     // selected photo OBJECT refs (traySelected), so it stays correct even if photo ids collide.
-    const asgSel=buildProjectPicker({id:'traySelAssignSel',placeholder:'Add selected to\u2026',options:projectPickerOptions(),style:'width:190px;max-width:45vw'});
+    const asgSel=document.createElement('select');
+    asgSel.id='traySelAssignSel';
+    asgSel.style.cssText='font-size:12px;padding:2px 5px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600';
+    const a0=document.createElement('option');a0.value='';a0.textContent='Add selected to\u2026';asgSel.appendChild(a0);
+    projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;asgSel.appendChild(o);});
     ctrls.appendChild(asgSel);
     const asgBtn=document.createElement('button');
     asgBtn.type='button';asgBtn.id='traySelAssignBtn';
@@ -5044,123 +5040,6 @@ function buildCaptureTray(){
   }
   return wrap;
 }
-/* ─── Searchable project picker (KEEP IN EVERY BUILD, added 8/20) ────────────
- * Shared combobox replacing the three native project <select>s: the per-photo
- * "Assign to project…" on tray tiles, the tray toolbar's bulk "Add selected
- * to…", and the ⇄ Move line items "Choose destination project…". Clicking the
- * field opens a FIXED-position panel (fixed so it escapes the tile's
- * overflow:hidden and the modal's clipping) with an auto-focused filter box on
- * top of the scrollable project list. Filtering: the query is split on spaces
- * into tokens and EVERY token must appear (case-insensitive substring) somewhere
- * in the option label — "davit gear" matches "Davit Rotational Control Gearbox"
- * and would also match a project named "Davits Gears". The numeric prefix is
- * part of the label, so typing "32" works too. The wrapper div carries a .value
- * property (''=nothing chosen), so the existing getElementById(id).value reads
- * in assignSelectedTrayPhotos/confirmMoveItems keep working unchanged.
- * Keyboard: ↑/↓ move the highlight, Enter picks it, Esc closes. Panel z-index
- * 3000 sits above the clear-modal overlay (2000). */
-function buildProjectPicker(opts){
-  const wrap=document.createElement('div');
-  if(opts.id)wrap.id=opts.id;
-  wrap.style.cssText='position:relative;display:inline-block;vertical-align:middle;'+(opts.style||'');
-  wrap.value='';
-  const fieldBtn=document.createElement('button');fieldBtn.type='button';
-  fieldBtn.style.cssText='width:100%;text-align:left;font-size:12px;padding:4px 20px 4px 6px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600;cursor:pointer;position:relative;box-sizing:border-box';
-  const lab=document.createElement('span');
-  lab.style.cssText='display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em';
-  lab.textContent=opts.placeholder;
-  const car=document.createElement('span');car.textContent='▾';
-  car.style.cssText='position:absolute;right:6px;top:50%;transform:translateY(-50%);color:#888;pointer-events:none';
-  fieldBtn.appendChild(lab);fieldBtn.appendChild(car);
-  wrap.appendChild(fieldBtn);
-  let panel=null,rows=[],hi=0;
-  function close(){
-    if(!panel)return;
-    panel.remove();panel=null;rows=[];
-    document.removeEventListener('mousedown',outside,true);
-    window.removeEventListener('scroll',onScroll,true);
-    window.removeEventListener('resize',close);
-  }
-  function outside(e){if(panel&&!panel.contains(e.target)&&!wrap.contains(e.target))close();}
-  function onScroll(e){if(panel&&!panel.contains(e.target))close();}
-  function setHi(n){
-    if(!rows.length)return;
-    hi=Math.max(0,Math.min(n,rows.length-1));
-    rows.forEach((r,idx)=>{r.row.style.background=idx===hi?'#e8f0fb':'';});
-    if(rows[hi].row.scrollIntoView)rows[hi].row.scrollIntoView({block:'nearest'});
-  }
-  function pick(o){
-    wrap.value=o.value;
-    lab.textContent=o.value?o.label:opts.placeholder;
-    fieldBtn.style.color=o.value?'#222':'#555';
-    close();
-    if(opts.onPick)opts.onPick(o.value);
-  }
-  function open(){
-    if(panel){close();return;}
-    panel=document.createElement('div');
-    panel.style.cssText='position:fixed;z-index:3000;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:6px;box-sizing:border-box';
-    const inp=document.createElement('input');inp.type='text';
-    inp.placeholder='Type to filter…';
-    inp.style.cssText='width:100%;box-sizing:border-box;font-size:12px;padding:5px 7px;border:1px solid #ccc;border-radius:6px;font-family:inherit;margin-bottom:6px;outline:none';
-    const list=document.createElement('div');
-    list.style.cssText='max-height:250px;overflow:auto';
-    panel.appendChild(inp);panel.appendChild(list);
-    function rebuild(){
-      const toks=inp.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
-      list.innerHTML='';rows=[];
-      opts.options.forEach(o=>{
-        const l=o.label.toLowerCase();
-        if(toks.length&&!toks.every(t=>l.includes(t)))return;
-        const row=document.createElement('div');
-        row.textContent=o.label;
-        row.style.cssText='padding:5px 8px;font-size:12px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
-        const idx=rows.length;
-        row.onmouseenter=()=>setHi(idx);
-        row.onmousedown=e=>{e.preventDefault();pick(o);};
-        rows.push({row,o});list.appendChild(row);
-      });
-      if(!rows.length){
-        const em=document.createElement('div');
-        em.textContent='No matching projects';
-        em.style.cssText='padding:6px 8px;font-size:12px;color:#999;font-style:italic';
-        list.appendChild(em);
-      }
-      setHi(0);
-    }
-    inp.oninput=rebuild;
-    inp.onkeydown=e=>{
-      if(e.key==='ArrowDown'){e.preventDefault();setHi(hi+1);}
-      else if(e.key==='ArrowUp'){e.preventDefault();setHi(hi-1);}
-      else if(e.key==='Enter'){e.preventDefault();if(rows[hi])pick(rows[hi].o);}
-      else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}
-    };
-    rebuild();
-    document.body.appendChild(panel);
-    const r=fieldBtn.getBoundingClientRect();
-    const pw=Math.min(Math.max(r.width,260),Math.max(200,window.innerWidth-16));
-    panel.style.width=pw+'px';
-    panel.style.left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8))+'px';
-    const ph=panel.offsetHeight;
-    if(r.bottom+4+ph>window.innerHeight&&r.top-4-ph>0)panel.style.top=(r.top-4-ph)+'px';
-    else panel.style.top=Math.min(r.bottom+4,Math.max(8,window.innerHeight-ph-8))+'px';
-    document.addEventListener('mousedown',outside,true);
-    window.addEventListener('scroll',onScroll,true);
-    window.addEventListener('resize',close);
-    inp.focus();
-  }
-  fieldBtn.onclick=e=>{e.stopPropagation();open();};
-  return wrap;
-}
-/* Option list for a project picker: numbered, billed projects excluded — the exact
- * list the old native selects built. reverse:true (tray dropdowns) lists newest
- * first; the move-items modal passes reverse:false + excludeId (source project). */
-function projectPickerOptions(o){
-  o=o||{};
-  let xs=projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed'&&x.p.id!==o.excludeId);
-  if(o.reverse!==false)xs=xs.slice().reverse();
-  return xs.map(({p,i})=>({value:String(p.id),label:String(i+1).padStart(2,'0')+' — '+p.name}));
-}
 function buildTrayTile(photo){
   const tile=document.createElement('div');
   tile.style.cssText='width:160px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;background:#fff';
@@ -5181,7 +5060,10 @@ function buildTrayTile(photo){
   const body=document.createElement('div');body.style.cssText='padding:8px';
   const dtStr=fmtPhotoDate(photoSortMs(photo));
   if(dtStr){const dl=document.createElement('div');dl.textContent=dtStr;dl.title='Capture date';dl.style.cssText='font-size:10px;color:#999;margin:0 0 6px';body.appendChild(dl);}
-  const sel=buildProjectPicker({placeholder:'Assign to project\u2026',options:projectPickerOptions(),style:'display:block;width:100%'});
+  const sel=document.createElement('select');
+  sel.style.cssText='width:100%;font-size:12px;padding:4px;border:1px solid #ddd;border-radius:6px;font-family:inherit';
+  const opt0=document.createElement('option');opt0.value='';opt0.textContent='Assign to project\u2026';sel.appendChild(opt0);
+  projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
   body.appendChild(sel);
   const btn=document.createElement('button');btn.textContent='Assign';btn.className='btn-sm blue';btn.style.cssText='margin-top:8px;width:100%';
   btn.onclick=()=>{if(sel.value)assignCaptureToProject(photo.id,parseInt(sel.value));};
@@ -5302,11 +5184,12 @@ function openMoveItemsModal(projId){
     mkRow('te',te.id,(te.date?te.date+' · ':'')+(te.desc||''),fmt(teAmount(te)),tag);
   });
   if(!list.children.length){const em=document.createElement('div');em.style.cssText='padding:16px;font-size:12px;color:#999;font-style:italic';em.textContent='No movable line items (billed entries are locked to their invoice).';list.appendChild(em);}
-  // Searchable destination picker (8/20): rebuilt each open; replaceWith keeps the
-  // id, so confirmMoveItems' getElementById('moveItemsDest').value read is unchanged.
-  const oldDest=document.getElementById('moveItemsDest');
-  const dest=buildProjectPicker({id:'moveItemsDest',placeholder:'Choose destination project…',options:projectPickerOptions({excludeId:projId,reverse:false}),style:'flex:1'});
-  oldDest.replaceWith(dest);
+  const dest=document.getElementById('moveItemsDest');dest.innerHTML='';
+  const d0=document.createElement('option');d0.value='';d0.textContent='Choose destination project…';dest.appendChild(d0);
+  projects.forEach((p,i)=>{
+    if(p.id===projId||p.status==='billed')return;
+    const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' — '+p.name;dest.appendChild(o);
+  });
   document.getElementById('moveItemsOverlay').classList.add('open');
 }
 function closeMoveItemsModalDirect(){document.getElementById('moveItemsOverlay').classList.remove('open');_moveSrcProjId=null;}
