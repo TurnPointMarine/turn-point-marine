@@ -536,7 +536,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-20d';
+const ENGINE_BUILD='2026-08-20f';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -1484,6 +1484,11 @@ function renderEstimate(){
       // Default collapsed (frees screen space for Scope/Actual); per-project state persists via secOpenState.
       const estSecKey='estinfo_'+proj.id;
       const estSecOpen=secOpenState[estSecKey]===true; // default collapsed
+      // AUTO-TALLIED ESTIMATE (changed 2026-08-20e, per Abram): proj.estimateTotal is no longer
+      // hand-typed — it always mirrors the scope lines' Estimated Subtotal (projScopeTotal, CO
+      // lines included), so everything in the Estimate section tallies unto itself. The field is
+      // still stored/exported for back-compat. T&M projects carry null (their header shows 'T&M').
+      proj.estimateTotal=(!proj.isTM&&projScopeTotal(proj)>0)?projScopeTotal(proj):null;
       const estSecHdr=document.createElement('div');
       estSecHdr.style.cssText='padding:5px 16px;background:#faf8f0;border-bottom:1px solid #e8e2cf;font-size:10px;font-weight:700;color:#8a7a52;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
       {
@@ -1498,22 +1503,22 @@ function renderEstimate(){
       const estSecWrap=document.createElement('div');
       estSecWrap.style.display=estSecOpen?'block':'none';
 
-      // Estimate header row — original estimate $ + T&M toggle
+      // Estimate header row — auto-tallied estimate $ (display-only, mirrors scope subtotal) + T&M toggle
       const estHdr=document.createElement('div');
       estHdr.style.cssText='display:flex;align-items:center;gap:12px;padding:8px 16px;background:#f5f5f3;border-bottom:1px solid #e5e5e0;flex-wrap:wrap';
       const estLbl=document.createElement('span');estLbl.style.cssText='font-size:11px;color:#888;font-weight:600;text-transform:uppercase;letter-spacing:0.04em';estLbl.textContent='Original Estimate:';
-      const estInp=document.createElement('input');estInp.type='number';estInp.min=0;estInp.step=0.01;estInp.placeholder='Enter $ estimate...';
-      estInp.value=proj.estimateTotal||'';
-      estInp.style.cssText='font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;width:130px;font-family:inherit';
-      estInp.onclick=e=>e.stopPropagation();estInp.onmousedown=e=>e.stopPropagation();
-      estInp.onchange=()=>{proj.estimateTotal=parseFloat(estInp.value)||null;tmLbl.style.display=proj.estimateTotal?'none':'flex';saveData();renderSummary();};
+      const estVal=document.createElement('span');
+      estVal.style.cssText='font-size:12px;padding:4px 8px;border:1px solid #ddd;border-radius:6px;width:130px;box-sizing:border-box;display:inline-block;text-align:right;background:#fafaf8;color:#555;font-family:inherit';
+      estVal.textContent=proj.estimateTotal?fmt(proj.estimateTotal):(proj.isTM?'T&M':'—');
+      estVal.title='Auto-tallied from the scope lines below (Estimated Subtotal, CO lines included). Edit the line items to change it.';
+      estVal.onclick=e=>e.stopPropagation();estVal.onmousedown=e=>e.stopPropagation();
       const tmLbl=document.createElement('label');
       tmLbl.style.cssText='display:'+(proj.estimateTotal?'none':'flex')+';align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer';
       const tmChk=document.createElement('input');tmChk.type='checkbox';tmChk.checked=proj.isTM||false;
       tmChk.onchange=()=>{proj.isTM=tmChk.checked;saveData();renderEstimate();};
       tmChk.onclick=e=>e.stopPropagation();tmChk.onmousedown=e=>e.stopPropagation();
       tmLbl.appendChild(tmChk);tmLbl.appendChild(document.createTextNode('Time & Materials'));
-      estHdr.appendChild(estLbl);estHdr.appendChild(estInp);estHdr.appendChild(tmLbl);
+      estHdr.appendChild(estLbl);estHdr.appendChild(estVal);estHdr.appendChild(tmLbl);
       if(proj.isTM){
         const sdLbl=document.createElement('label');
         sdLbl.style.cssText='display:flex;align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer';
@@ -4979,11 +4984,7 @@ function buildCaptureTray(){
     ctrls.appendChild(selAll);
     // Bulk-assign: send all checked photos to one project in a single action. Operates on the
     // selected photo OBJECT refs (traySelected), so it stays correct even if photo ids collide.
-    const asgSel=document.createElement('select');
-    asgSel.id='traySelAssignSel';
-    asgSel.style.cssText='font-size:12px;padding:2px 5px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600';
-    const a0=document.createElement('option');a0.value='';a0.textContent='Add selected to\u2026';asgSel.appendChild(a0);
-    projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;asgSel.appendChild(o);});
+    const asgSel=buildProjectPicker({id:'traySelAssignSel',placeholder:'Add selected to\u2026',options:projectPickerOptions(),style:'width:190px;max-width:45vw'});
     ctrls.appendChild(asgSel);
     const asgBtn=document.createElement('button');
     asgBtn.type='button';asgBtn.id='traySelAssignBtn';
@@ -5043,6 +5044,123 @@ function buildCaptureTray(){
   }
   return wrap;
 }
+/* ─── Searchable project picker (KEEP IN EVERY BUILD, added 8/20) ────────────
+ * Shared combobox replacing the three native project <select>s: the per-photo
+ * "Assign to project…" on tray tiles, the tray toolbar's bulk "Add selected
+ * to…", and the ⇄ Move line items "Choose destination project…". Clicking the
+ * field opens a FIXED-position panel (fixed so it escapes the tile's
+ * overflow:hidden and the modal's clipping) with an auto-focused filter box on
+ * top of the scrollable project list. Filtering: the query is split on spaces
+ * into tokens and EVERY token must appear (case-insensitive substring) somewhere
+ * in the option label — "davit gear" matches "Davit Rotational Control Gearbox"
+ * and would also match a project named "Davits Gears". The numeric prefix is
+ * part of the label, so typing "32" works too. The wrapper div carries a .value
+ * property (''=nothing chosen), so the existing getElementById(id).value reads
+ * in assignSelectedTrayPhotos/confirmMoveItems keep working unchanged.
+ * Keyboard: ↑/↓ move the highlight, Enter picks it, Esc closes. Panel z-index
+ * 3000 sits above the clear-modal overlay (2000). */
+function buildProjectPicker(opts){
+  const wrap=document.createElement('div');
+  if(opts.id)wrap.id=opts.id;
+  wrap.style.cssText='position:relative;display:inline-block;vertical-align:middle;'+(opts.style||'');
+  wrap.value='';
+  const fieldBtn=document.createElement('button');fieldBtn.type='button';
+  fieldBtn.style.cssText='width:100%;text-align:left;font-size:12px;padding:4px 20px 4px 6px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600;cursor:pointer;position:relative;box-sizing:border-box';
+  const lab=document.createElement('span');
+  lab.style.cssText='display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em';
+  lab.textContent=opts.placeholder;
+  const car=document.createElement('span');car.textContent='▾';
+  car.style.cssText='position:absolute;right:6px;top:50%;transform:translateY(-50%);color:#888;pointer-events:none';
+  fieldBtn.appendChild(lab);fieldBtn.appendChild(car);
+  wrap.appendChild(fieldBtn);
+  let panel=null,rows=[],hi=0;
+  function close(){
+    if(!panel)return;
+    panel.remove();panel=null;rows=[];
+    document.removeEventListener('mousedown',outside,true);
+    window.removeEventListener('scroll',onScroll,true);
+    window.removeEventListener('resize',close);
+  }
+  function outside(e){if(panel&&!panel.contains(e.target)&&!wrap.contains(e.target))close();}
+  function onScroll(e){if(panel&&!panel.contains(e.target))close();}
+  function setHi(n){
+    if(!rows.length)return;
+    hi=Math.max(0,Math.min(n,rows.length-1));
+    rows.forEach((r,idx)=>{r.row.style.background=idx===hi?'#e8f0fb':'';});
+    if(rows[hi].row.scrollIntoView)rows[hi].row.scrollIntoView({block:'nearest'});
+  }
+  function pick(o){
+    wrap.value=o.value;
+    lab.textContent=o.value?o.label:opts.placeholder;
+    fieldBtn.style.color=o.value?'#222':'#555';
+    close();
+    if(opts.onPick)opts.onPick(o.value);
+  }
+  function open(){
+    if(panel){close();return;}
+    panel=document.createElement('div');
+    panel.style.cssText='position:fixed;z-index:3000;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:6px;box-sizing:border-box';
+    const inp=document.createElement('input');inp.type='text';
+    inp.placeholder='Type to filter…';
+    inp.style.cssText='width:100%;box-sizing:border-box;font-size:12px;padding:5px 7px;border:1px solid #ccc;border-radius:6px;font-family:inherit;margin-bottom:6px;outline:none';
+    const list=document.createElement('div');
+    list.style.cssText='max-height:250px;overflow:auto';
+    panel.appendChild(inp);panel.appendChild(list);
+    function rebuild(){
+      const toks=inp.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+      list.innerHTML='';rows=[];
+      opts.options.forEach(o=>{
+        const l=o.label.toLowerCase();
+        if(toks.length&&!toks.every(t=>l.includes(t)))return;
+        const row=document.createElement('div');
+        row.textContent=o.label;
+        row.style.cssText='padding:5px 8px;font-size:12px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+        const idx=rows.length;
+        row.onmouseenter=()=>setHi(idx);
+        row.onmousedown=e=>{e.preventDefault();pick(o);};
+        rows.push({row,o});list.appendChild(row);
+      });
+      if(!rows.length){
+        const em=document.createElement('div');
+        em.textContent='No matching projects';
+        em.style.cssText='padding:6px 8px;font-size:12px;color:#999;font-style:italic';
+        list.appendChild(em);
+      }
+      setHi(0);
+    }
+    inp.oninput=rebuild;
+    inp.onkeydown=e=>{
+      if(e.key==='ArrowDown'){e.preventDefault();setHi(hi+1);}
+      else if(e.key==='ArrowUp'){e.preventDefault();setHi(hi-1);}
+      else if(e.key==='Enter'){e.preventDefault();if(rows[hi])pick(rows[hi].o);}
+      else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}
+    };
+    rebuild();
+    document.body.appendChild(panel);
+    const r=fieldBtn.getBoundingClientRect();
+    const pw=Math.min(Math.max(r.width,260),Math.max(200,window.innerWidth-16));
+    panel.style.width=pw+'px';
+    panel.style.left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8))+'px';
+    const ph=panel.offsetHeight;
+    if(r.bottom+4+ph>window.innerHeight&&r.top-4-ph>0)panel.style.top=(r.top-4-ph)+'px';
+    else panel.style.top=Math.min(r.bottom+4,Math.max(8,window.innerHeight-ph-8))+'px';
+    document.addEventListener('mousedown',outside,true);
+    window.addEventListener('scroll',onScroll,true);
+    window.addEventListener('resize',close);
+    inp.focus();
+  }
+  fieldBtn.onclick=e=>{e.stopPropagation();open();};
+  return wrap;
+}
+/* Option list for a project picker: numbered, billed projects excluded — the exact
+ * list the old native selects built. reverse:true (tray dropdowns) lists newest
+ * first; the move-items modal passes reverse:false + excludeId (source project). */
+function projectPickerOptions(o){
+  o=o||{};
+  let xs=projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed'&&x.p.id!==o.excludeId);
+  if(o.reverse!==false)xs=xs.slice().reverse();
+  return xs.map(({p,i})=>({value:String(p.id),label:String(i+1).padStart(2,'0')+' — '+p.name}));
+}
 function buildTrayTile(photo){
   const tile=document.createElement('div');
   tile.style.cssText='width:160px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;background:#fff';
@@ -5063,10 +5181,7 @@ function buildTrayTile(photo){
   const body=document.createElement('div');body.style.cssText='padding:8px';
   const dtStr=fmtPhotoDate(photoSortMs(photo));
   if(dtStr){const dl=document.createElement('div');dl.textContent=dtStr;dl.title='Capture date';dl.style.cssText='font-size:10px;color:#999;margin:0 0 6px';body.appendChild(dl);}
-  const sel=document.createElement('select');
-  sel.style.cssText='width:100%;font-size:12px;padding:4px;border:1px solid #ddd;border-radius:6px;font-family:inherit';
-  const opt0=document.createElement('option');opt0.value='';opt0.textContent='Assign to project\u2026';sel.appendChild(opt0);
-  projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
+  const sel=buildProjectPicker({placeholder:'Assign to project\u2026',options:projectPickerOptions(),style:'display:block;width:100%'});
   body.appendChild(sel);
   const btn=document.createElement('button');btn.textContent='Assign';btn.className='btn-sm blue';btn.style.cssText='margin-top:8px;width:100%';
   btn.onclick=()=>{if(sel.value)assignCaptureToProject(photo.id,parseInt(sel.value));};
@@ -5187,12 +5302,11 @@ function openMoveItemsModal(projId){
     mkRow('te',te.id,(te.date?te.date+' · ':'')+(te.desc||''),fmt(teAmount(te)),tag);
   });
   if(!list.children.length){const em=document.createElement('div');em.style.cssText='padding:16px;font-size:12px;color:#999;font-style:italic';em.textContent='No movable line items (billed entries are locked to their invoice).';list.appendChild(em);}
-  const dest=document.getElementById('moveItemsDest');dest.innerHTML='';
-  const d0=document.createElement('option');d0.value='';d0.textContent='Choose destination project…';dest.appendChild(d0);
-  projects.forEach((p,i)=>{
-    if(p.id===projId||p.status==='billed')return;
-    const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' — '+p.name;dest.appendChild(o);
-  });
+  // Searchable destination picker (8/20): rebuilt each open; replaceWith keeps the
+  // id, so confirmMoveItems' getElementById('moveItemsDest').value read is unchanged.
+  const oldDest=document.getElementById('moveItemsDest');
+  const dest=buildProjectPicker({id:'moveItemsDest',placeholder:'Choose destination project…',options:projectPickerOptions({excludeId:projId,reverse:false}),style:'flex:1'});
+  oldDest.replaceWith(dest);
   document.getElementById('moveItemsOverlay').classList.add('open');
 }
 function closeMoveItemsModalDirect(){document.getElementById('moveItemsOverlay').classList.remove('open');_moveSrcProjId=null;}
