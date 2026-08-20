@@ -536,7 +536,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-20b';
+const ENGINE_BUILD='2026-08-20g';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -1033,24 +1033,31 @@ function renderSummary(){
     const actP=inc.filter(p=>p.status!=='billed'&&p.status!=='holding');
     // ESTIMATED — scope lines of fixed-price projects (T&M has no estimate to tally)
     const eL=actP.reduce((a,p)=>a+(p.isTM?0:projScopeLabor(p)),0);
-    const eM=actP.reduce((a,p)=>a+(p.isTM?0:projScopeMat(p)),0);
+    const eF=actP.reduce((a,p)=>a+(p.isTM?0:(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((b,t)=>b+taskMatAmt(t),0)),0);
+    const eM=actP.reduce((a,p)=>a+(p.isTM?0:projScopeMat(p)),0)-eF;
     const eS=actP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
-    // ACTUAL — UNBILLED — posted entries not yet locked into an invoice. Materials = M/P/F.
+    // ACTUAL — UNBILLED — posted entries not yet locked into an invoice.
+    // Flat Rate (F) is its OWN row and EXCLUDED from the shop-fee base — flat-rate services
+    // are all-inclusive. Matches the client doc's Billing Event Summary policy (fixed 8/20;
+    // previously F was lumped into Materials here and got shop-fee'd, so this card ran high).
     const aL=actP.reduce((a,p)=>a+projActualLabor(p),0);
-    const aM=actP.reduce((a,p)=>a+(projActualMat(p)-projActualSub(p)),0);
+    const aF=actP.reduce((a,p)=>a+projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((b,te)=>b+teAmount(te),0),0);
+    const aM=actP.reduce((a,p)=>a+(projActualMat(p)-projActualSub(p)),0)-aF;
     const aS=actP.reduce((a,p)=>a+projActualSub(p),0);
     // Deposits: planned (scope P lines) net the ESTIMATED column; posted deposit entries net ACTUAL
     const depE=actP.reduce((a,p)=>a+(p.isTM?0:(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+taskMatAmt(t),0)),0);
     const depA=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+teAmount(te),0);
-    function _sumCol(L,M,S,dep){
-      const sub=L+M+S;
+    function _sumCol(L,M,S,F,dep){
+      const sub=L+M+S+F;
+      // Shop fee base = Labor + Materials ONLY (Subs and Flat Rate excluded — matches
+      // the client doc Billing Event Summary policy)
       const shop=(L+M)*shopFeeRate();
       const cc=(sub+shop)*ccFeeRate();
       const tax=settings.taxExempt?0:(sub+shop+cc)*taxRateVal();
       const total=sub+shop+cc+tax;
-      return {L,M,S,sub,shop,cc,tax,total,dep,out:total-dep};
+      return {L,M,S,F,sub,shop,cc,tax,total,dep,out:total-dep};
     }
-    const E=_sumCol(eL,eM,eS,depE),A=_sumCol(aL,aM,aS,depA);
+    const E=_sumCol(eL,eM,eS,eF,depE),A=_sumCol(aL,aM,aS,aF,depA);
     const line=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:11px;color:'+(bold?'#1a1a1a':'#888')+';font-weight:'+(bold?'700':'400')+'">'+label+'</span><span style="font-size:11px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
     function colHtml(title,accent,C,outLabel,frame,outBg){
       // frame: optional wrapper styling — the ACTUAL column wears the BILLING EVENT pink
@@ -1058,7 +1065,7 @@ function renderSummary(){
       // unbilled actuals are billing-event money, not "estimate calculator" money.
       let h='<div style="flex:1;min-width:220px;'+(frame||'')+'">';
       h+='<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:'+accent+';padding:4px 0 6px;border-bottom:2px solid '+accent+'">'+title+'</div>';
-      h+=line('Labor',C.L)+line('Materials',C.M)+line('Subcontractors',C.S)+line('Subtotal',C.sub,true);
+      h+=line('Labor',C.L)+line('Materials',C.M)+line('Subcontractors',C.S)+(C.F>0?line('Flat Rate Services',C.F):'')+line('Subtotal',C.sub,true);
       if(shopFeePct()>0)h+=line(shopFeeName()+' ('+shopFeePct()+'%)',C.shop);
       if(ccFeePct()>0)h+=line(ccFeeName()+' ('+ccFeePct()+'%)',C.cc);
       if(!settings.taxExempt)h+=line('Tax ('+taxPctLabel()+'%)',C.tax);
