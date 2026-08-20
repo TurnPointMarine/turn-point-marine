@@ -536,7 +536,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-20g';
+const ENGINE_BUILD='2026-08-20i';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -1036,17 +1036,28 @@ function renderSummary(){
     const eF=actP.reduce((a,p)=>a+(p.isTM?0:(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((b,t)=>b+taskMatAmt(t),0)),0);
     const eM=actP.reduce((a,p)=>a+(p.isTM?0:projScopeMat(p)),0)-eF;
     const eS=actP.reduce((a,p)=>a+(p.isTM?0:projScopeSub(p)),0);
-    // ACTUAL — UNBILLED — posted entries not yet locked into an invoice.
-    // Flat Rate (F) is its OWN row and EXCLUDED from the shop-fee base — flat-rate services
-    // are all-inclusive. Matches the client doc's Billing Event Summary policy (fixed 8/20;
-    // previously F was lumped into Materials here and got shop-fee'd, so this card ran high).
-    const aL=actP.reduce((a,p)=>a+projActualLabor(p),0);
-    const aF=actP.reduce((a,p)=>a+projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((b,te)=>b+teAmount(te),0),0);
-    const aM=actP.reduce((a,p)=>a+(projActualMat(p)-projActualSub(p)),0)-aF;
-    const aS=actP.reduce((a,p)=>a+projActualSub(p),0);
-    // Deposits: planned (scope P lines) net the ESTIMATED column; posted deposit entries net ACTUAL
+    // UNBILLED ACTUALS split into TWO tallies (8/20 per Abram):
+    //   IN FLIGHT   = posted, unbilled, NOT graduated — work still cooking (In Progress gray)
+    //   BILLING EVENT SUMMARY = posted, unbilled, GRADUATED — matches the client doc's
+    //   Billing Event Summary / Ready to Invoice number exactly (pink family)
+    // Flat Rate (F) is its own row and EXCLUDED from the shop-fee base in both.
+    function _bucketize(tes){
+      let L=0,M=0,S=0,F=0,dep=0;
+      tes.forEach(te=>{
+        const a=teAmount(te);
+        if(te.cat==='S')S+=a;
+        else if(te.cat==='F')F+=a;
+        else if(isMatCat(te.cat)){M+=a;if(te.cat==='P')dep+=a;}
+        else L+=a;
+      });
+      return {L,M,S,F,dep};
+    }
+    const _unbilledTEs=[];
+    actP.forEach(p=>projUnbilledPostedTEs(p).forEach(te=>_unbilledTEs.push(te)));
+    const G=_bucketize(_unbilledTEs.filter(te=>isEntryGraduated(te)));   // billing event (ready)
+    const I=_bucketize(_unbilledTEs.filter(te=>!isEntryGraduated(te)));  // in flight
+    // Deposits: planned (scope P lines) net the ESTIMATED column; posted deposit entries net their own column
     const depE=actP.reduce((a,p)=>a+(p.isTM?0:(p.scopeTasks||[]).filter(t=>t.cat==='P').reduce((b,t)=>b+taskMatAmt(t),0)),0);
-    const depA=timeEntries.filter(te=>te.cat==='P'&&te.posted&&!isEntryBilled(te)&&actP.some(p=>p.name===te.proj)).reduce((a,te)=>a+teAmount(te),0);
     function _sumCol(L,M,S,F,dep){
       const sub=L+M+S+F;
       // Shop fee base = Labor + Materials ONLY (Subs and Flat Rate excluded — matches
@@ -1057,19 +1068,22 @@ function renderSummary(){
       const total=sub+shop+cc+tax;
       return {L,M,S,F,sub,shop,cc,tax,total,dep,out:total-dep};
     }
-    const E=_sumCol(eL,eM,eS,eF,depE),A=_sumCol(aL,aM,aS,aF,depA);
+    const E=_sumCol(eL,eM,eS,eF,depE);
+    const FL=_sumCol(I.L,I.M,I.S,I.F,I.dep);
+    const BE=_sumCol(G.L,G.M,G.S,G.F,G.dep);
     const line=(label,val,bold)=>'<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0ed"><span style="font-size:11px;color:'+(bold?'#1a1a1a':'#888')+';font-weight:'+(bold?'700':'400')+'">'+label+'</span><span style="font-size:11px;font-weight:'+(bold?'700':'500')+';color:'+(bold?'#1a1a1a':'#555')+'">'+fmt(val)+'</span></div>';
-    function colHtml(title,accent,C,outLabel,frame,outBg){
-      // frame: optional wrapper styling — the ACTUAL column wears the BILLING EVENT pink
-      // family (border #c354d6, bg #fdf4ff, magenta #b232c2 bars) per Abram 8/20, since
-      // unbilled actuals are billing-event money, not "estimate calculator" money.
-      let h='<div style="flex:1;min-width:220px;'+(frame||'')+'">';
+    function colHtml(title,accent,C,outLabel,frame,outBg,totalLabel){
+      // frame: optional wrapper styling. Column identities (8/20 per Abram):
+      //   ESTIMATED — navy, bare  ·  IN FLIGHT — In Progress gray (#6b7280 family)
+      //   BILLING EVENT SUMMARY — pink family (#b232c2 / #c354d6 / #fdf4ff), its Total
+      //   labeled "Ready to Invoice" and equal to the client doc's number.
+      let h='<div style="flex:1;min-width:210px;'+(frame||'')+'">';
       h+='<div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:'+accent+';padding:4px 0 6px;border-bottom:2px solid '+accent+'">'+title+'</div>';
       h+=line('Labor',C.L)+line('Materials',C.M)+line('Subcontractors',C.S)+(C.F>0?line('Flat Rate Services',C.F):'')+line('Subtotal',C.sub,true);
       if(shopFeePct()>0)h+=line(shopFeeName()+' ('+shopFeePct()+'%)',C.shop);
       if(ccFeePct()>0)h+=line(ccFeeName()+' ('+ccFeePct()+'%)',C.cc);
       if(!settings.taxExempt)h+=line('Tax ('+taxPctLabel()+'%)',C.tax);
-      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-top:8px;background:'+accent+';border-radius:8px"><span style="font-size:12px;font-weight:700;color:#fff">Total</span><span style="font-size:13px;font-weight:700;color:#fff">'+fmt(C.total)+'</span></div>';
+      h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin-top:8px;background:'+accent+';border-radius:8px"><span style="font-size:12px;font-weight:700;color:#fff">'+(totalLabel||'Total')+'</span><span style="font-size:13px;font-weight:700;color:#fff">'+fmt(C.total)+'</span></div>';
       if(C.dep>0){
         h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 2px"><span style="font-size:11px;color:#155a3e">Deposits Paid</span><span style="font-size:11px;font-weight:600;color:#155a3e">−'+fmt(C.dep)+'</span></div>';
         h+='<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:'+(outBg||'#155a3e')+';border-radius:8px"><span style="font-size:11px;font-weight:700;color:#fff">'+outLabel+'</span><span style="font-size:12px;font-weight:700;color:#fff">'+fmt(C.out)+'</span></div>';
@@ -1077,10 +1091,11 @@ function renderSummary(){
       h+='</div>';
       return h;
     }
-    gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Summary — Excludes Billed · estimate and actual tallied independently</div>'
+    gt.innerHTML='<div style="font-size:10px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px">Summary — Excludes Billed · estimate · in flight · ready to invoice — tallied independently</div>'
       +'<div style="display:flex;gap:22px;flex-wrap:wrap">'
       +colHtml('Estimated (scope)','#3b4a6b',E,'Estimated Outstanding','','#155a3e')
-      +colHtml('Actual — Unbilled','#b232c2',A,'Outstanding','border:2px solid #c354d6;border-radius:10px;padding:10px 14px;background:#fdf4ff','#7c1d87')
+      +colHtml('In Flight — not graduated','#6b7280',FL,'Outstanding','border:2px solid #d1d5db;border-radius:10px;padding:10px 14px;background:#f9fafb','#4b5563')
+      +colHtml('Billing Event Summary','#b232c2',BE,'Outstanding','border:2px solid #c354d6;border-radius:10px;padding:10px 14px;background:#fdf4ff','#7c1d87','Ready to Invoice')
       +'</div>';
   }
   saveData();
@@ -4183,8 +4198,14 @@ function renderBillingEventStrip(){
   const cur=billingEvents.find(b=>b.isCurrent&&!b.locked);
   if(!cur){strip.innerHTML='';return;}
   const cnt=flockEntryCount(cur);
-  const tot=flockTotal(cur);
   const blocked=ungraduatedOnFlock(cur);
+  /* Bar totals = GRADUATED entries only (fixed 8/20 per Abram): ungraduated (in-flight)
+   * entries are on the flock but NOT ready to bill, so they don't belong in the headline
+   * count/total — that's what will actually invoice at lock. Their $ shows in the ⚠ note
+   * so nothing is hidden. The lock hard-block below is unchanged.                       */
+  const blockedTot=blocked.reduce((a,b)=>a+teAmount(b.te),0);
+  const readyCnt=cnt-blocked.length;
+  const tot=flockTotal(cur)-blockedTot;
   const canLock=cnt>0&&blocked.length===0;
   const lockTitle=cnt===0
     ? 'No entries on this billing event yet'
@@ -4195,13 +4216,13 @@ function renderBillingEventStrip(){
     ? 'background:#0f766e;color:#fff;border:none'
     : 'background:#e5e7eb;color:#9ca3af;border:1px solid #d1d5db;cursor:not-allowed';
   const statusNote=blocked.length>0
-    ? '<span style="font-size:11px;color:#b45309;margin-left:10px">&#9888; '+blocked.length+' ungraduated</span>'
+    ? '<span style="font-size:11px;color:#b45309;margin-left:10px">&#9888; '+blocked.length+' ungraduated &middot; '+fmt(blockedTot)+' not included</span>'
     : (cnt>0?'<span style="font-size:11px;color:#15803d;margin-left:10px">&#10003; all graduated</span>':'');
   strip.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;background:#fafaf8;border:1px solid #e5e5e0;border-radius:10px;padding:10px 14px;margin-bottom:12px;flex-wrap:wrap;gap:10px">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
     +'<span style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em">Current Billing Event</span>'
     +'<span style="font-size:13px;font-weight:600;color:#1a1a1a">'+cur.name+'</span>'
-    +'<span style="font-size:12px;color:#666">'+cnt+' entr'+(cnt!==1?'ies':'y')+' &middot; <strong>'+fmt(tot)+'</strong></span>'
+    +'<span style="font-size:12px;color:#666">'+readyCnt+' entr'+(readyCnt!==1?'ies':'y')+' ready &middot; <strong>'+fmt(tot)+'</strong></span>'
     +statusNote
     +'</div>'
     +'<div style="display:flex;gap:6px">'
