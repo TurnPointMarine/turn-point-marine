@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-03-18T19:23:11.467Z",
+    "exportedAt": "2026-03-22T16:02:03.148Z",
     "version": "1.0"
   },
   "projects": [
@@ -17,12 +17,36 @@
           "id": 1,
           "cat": "T",
           "desc": "Inspect and replace GFI plug in lazarette where Davit charger is plugged in",
-          "hrs": 0,
-          "mat": 0,
+          "hrs": 1.5,
+          "mat": 50,
           "sub": 0
         }
       ],
-      "cos": []
+      "cos": [
+        {
+          "id": 100,
+          "title": "Change Order",
+          "authorized": false,
+          "tasks": [
+            {
+              "id": 122,
+              "cat": "T",
+              "desc": "wtgeetebg",
+              "hrs": 0,
+              "mat": 0,
+              "sub": 0
+            },
+            {
+              "id": 123,
+              "cat": "T",
+              "desc": "",
+              "hrs": 0,
+              "mat": 0,
+              "sub": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 2,
@@ -35,8 +59,8 @@
           "id": 2,
           "cat": "T",
           "desc": "Replace worn outlet cover on flybridge side wall — right of wheel",
-          "hrs": 0,
-          "mat": 0,
+          "hrs": 40,
+          "mat": 35,
           "sub": 0
         }
       ],
@@ -63,7 +87,7 @@
     {
       "id": 4,
       "name": "Stanadyne Fuel Treatment",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Add Stanadyne to fuel when tanks are filled.",
       "tasks": [
@@ -88,16 +112,16 @@
         {
           "id": 5,
           "cat": "T",
-          "desc": "Flush hydronic loop to get heat into the towel racks in the heads",
-          "hrs": 0,
+          "desc": "Service burner head, replace fuel filter, wire brush and vacuum burner chamber. ",
+          "hrs": 3,
           "mat": 0,
           "sub": 0
         },
         {
-          "id": 6,
+          "id": 125,
           "cat": "T",
-          "desc": "Diagnose and repair Kabola engine heat system — blowers operational but air is cool",
-          "hrs": 0,
+          "desc": "Flush hydronic loop to get heat into the towel racks in the heads",
+          "hrs": 2,
           "mat": 0,
           "sub": 0
         }
@@ -125,7 +149,7 @@
     {
       "id": 7,
       "name": "Tender Service",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "tasks": [
@@ -162,7 +186,7 @@
       "id": 9,
       "name": "Anchor Chain Paint",
       "status": "needs_auth",
-      "include": true,
+      "include": false,
       "notes": "",
       "tasks": [
         {
@@ -313,24 +337,57 @@
         }
       ],
       "cos": []
+    },
+    {
+      "id": 15,
+      "name": "Life Lines Between Bow Railings Replace",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "",
+      "tasks": [
+        {
+          "id": 124,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "cos": []
+    },
+    {
+      "id": 16,
+      "name": "Kabola ",
+      "status": "needs_auth",
+      "include": true,
+      "notes": "Diagnose and repair Kabola 'engine heat' loop functionality — blowers operational but air is cool",
+      "tasks": [
+        {
+          "id": 126,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "cos": []
     }
   ],
   "timeEntries": [],
-  "nextProjId": 15,
-  "nextTaskId": 122,
-  "nextCOId": 100,
+  "nextProjId": 17,
+  "nextTaskId": 127,
+  "nextCOId": 101,
   "nextTEId": 1000,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
     "email": "abram@turnpointmarine.com",
+    "clientEmail": "leslieb123@mac.com",
     "phone": "",
     "footer": "Estimate Only — Subject to Change. Work does not proceed without signed authorization.",
-    "showHrs": true,
-    "showMat": true,
-    "showTaskAmt": true,
-    "showComplete": true,
-    "showCompleteDetail": true,
-    "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature."
+    "authText": "Sign below to authorize all work in this project. Work does not proceed without your signature.",
+    "showCompleteDetail": true
   }
 }

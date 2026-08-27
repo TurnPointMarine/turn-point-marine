@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Moondance",
     "client": "Leslie Boswell",
-    "exportedAt": "2026-03-18T19:23:11.467Z",
+    "exportedAt": "2026-03-19T20:14:13.687Z",
     "version": "1.0"
   },
   "projects": [
@@ -17,12 +17,36 @@
           "id": 1,
           "cat": "T",
           "desc": "Inspect and replace GFI plug in lazarette where Davit charger is plugged in",
-          "hrs": 0,
-          "mat": 0,
+          "hrs": 1.5,
+          "mat": 50,
           "sub": 0
         }
       ],
-      "cos": []
+      "cos": [
+        {
+          "id": 100,
+          "title": "Change Order",
+          "authorized": false,
+          "tasks": [
+            {
+              "id": 122,
+              "cat": "T",
+              "desc": "wtgeetebg",
+              "hrs": 0,
+              "mat": 0,
+              "sub": 0
+            },
+            {
+              "id": 123,
+              "cat": "T",
+              "desc": "",
+              "hrs": 0,
+              "mat": 0,
+              "sub": 0
+            }
+          ]
+        }
+      ]
     },
     {
       "id": 2,
@@ -35,8 +59,8 @@
           "id": 2,
           "cat": "T",
           "desc": "Replace worn outlet cover on flybridge side wall — right of wheel",
-          "hrs": 0,
-          "mat": 0,
+          "hrs": 40,
+          "mat": 35,
           "sub": 0
         }
       ],
@@ -63,7 +87,7 @@
     {
       "id": 4,
       "name": "Stanadyne Fuel Treatment",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Add Stanadyne to fuel when tanks are filled.",
       "tasks": [
@@ -81,7 +105,7 @@
     {
       "id": 5,
       "name": "Kabola Furnace Service",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "Two issues: hydronic loop not getting heat to towel racks in heads, and engine heat portion of Kabola system not working — blowers blow but air is cool.",
       "tasks": [
@@ -125,7 +149,7 @@
     {
       "id": 7,
       "name": "Tender Service",
-      "status": "needs_auth",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "tasks": [
@@ -313,12 +337,29 @@
         }
       ],
       "cos": []
+    },
+    {
+      "id": 15,
+      "name": "Life Lines Between Bow Railings Replace",
+      "status": "needs_auth",
+      "notes": "",
+      "tasks": [
+        {
+          "id": 124,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "cos": []
     }
   ],
   "timeEntries": [],
-  "nextProjId": 15,
-  "nextTaskId": 122,
-  "nextCOId": 100,
+  "nextProjId": 16,
+  "nextTaskId": 125,
+  "nextCOId": 101,
   "nextTEId": 1000,
   "settings": {
     "company": "Turn Point Marine",

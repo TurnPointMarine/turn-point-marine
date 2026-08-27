@@ -369,6 +369,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
     </div>
   </div>
   <div id="teTableWrap"></div>
+  <div id="travelDaysWrap"></div>
   <div class="te-add-bar">
     <div class="vf-group"><div class="vf-label">Date</div><input type="date" id="teDate" style="width:130px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"></div>
     <div class="vf-group"><div class="vf-label">Project</div><select id="teProj" style="min-width:160px;font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;background:#fff;font-family:inherit"></select></div>
@@ -536,7 +537,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-20i';
+const ENGINE_BUILD='2026-08-25a';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -615,6 +616,7 @@ let photoBlockCollapsed=new Set(); // proj ids whose Photos section is collapsed
 let projects=[];
 let timeEntries=[];
 let billingEvents=[];
+let travelDays=[];let nextTravelDayId=9000; // TRAVEL DAYS (8/25) — see syncTravelDays
 // ─── UI STATE PERSISTENCE ───────────────────────────────────────────────
 // secOpenState and openProjs control which sections/projects are expanded.
 // Serialize them on save, restore on load, so layout state persists across reloads and JSON exports.
@@ -740,6 +742,27 @@ function projActualTotal(p){return projActualLabor(p)+projActualMat(p);}
 function projAllActualLabor(p){return projPostedTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
 function projAllActualMat(p){return projPostedTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
 function projAllActualTotal(p){return projAllActualLabor(p)+projAllActualMat(p);}
+/* ═══ CLIENT-DOC ACTUALS FILTER (KEEP IN EVERY BUILD, added 8/24) ═══════════════════════
+ * Per-entry te.includeInClientDoc (default true — checkbox in the ACTUAL row's action cell)
+ * AND per-project proj.actualsInClientDoc (default true — "In client doc" checkbox in the
+ * green ACTUAL section header). An unchecked entry — or the whole section unchecked — is
+ * treated as if DELETED from the client document: not itemized, AND the displayed
+ * informational actual totals recompute without it (per Abram 8/24). Scope: informational
+ * "Actual to Date" surfaces only — mergedTable/ttMerged itemizations, project-card header
+ * "actual"/T&M figures, section-bar breakdowns, and estimate-summary buckets in BOTH
+ * generators (exportClientDoc + exportClientPDF). NEVER applied to docReadyTEs, the
+ * Billing Event cards/Summary "Ready to Invoice", or Billed amounts — invoice math must
+ * keep matching the engine's billing tally exactly. Engine-side tables always show every
+ * entry; these helpers are for client-doc rendering only.                                */
+function teInClientDoc(te){return te.includeInClientDoc!==false;}
+function projClientDocTEs(p){if(p.actualsInClientDoc===false)return[];return projPostedTEs(p).filter(teInClientDoc);}
+function projClientDocUnbilledTEs(p){if(p.actualsInClientDoc===false)return[];return projUnbilledPostedTEs(p).filter(teInClientDoc);}
+function projClientDocActualLabor(p){return projClientDocTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projClientDocActualMat(p){return projClientDocTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projClientDocActualTotal(p){return projClientDocActualLabor(p)+projClientDocActualMat(p);}
+function projClientDocUBLabor(p){return projClientDocUnbilledTEs(p).filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projClientDocUBMat(p){return projClientDocUnbilledTEs(p).filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);}
+function projClientDocDisplayTotal(p){return p.isTM?projClientDocActualTotal(p):projScopeTotal(p);}
 function projBilledTotal(p){
   // Ship 1: billed total = sum of posted time entries in locked flocks tagged with this project
   return timeEntries
@@ -908,6 +931,269 @@ function ungraduateEntry(teId){
   // moves to Holding Pattern with graduated entries still on it.
   te.graduated=false;
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TRAVEL DAYS — derived travel entries (KEEP IN EVERY BUILD, added 8/25 per Abram)
+// One travel-day record per date {id,date,route,hrs,basis,manual,flag,laborSig}
+// drives the Travel (cat 'V') entries for every project worked that day.
+// Derived entries are REAL timeEntries carrying `travelDayId`, so billing,
+// flocks, graduation, client docs and export all treat them as ordinary
+// travel — the engine just owns their hours/description/date/posted state.
+//  • basis 'hours' : share = day hrs × (project labor hrs ÷ all labor hrs that day)
+//  • basis 'even'  : equal share to every project with labor that day
+//  • basis 'manual': td.manual[projName] = hrs, set by Abram (materials-only
+//                    stops may earn a share here; never under hours/even)
+//  • Billed derived rows LOCK at their billed hours and are subtracted from
+//    the pool before the unbilled shares are (re)computed.
+//  • Under 'manual', a labor change on that date sets td.flag instead of
+//    recomputing — the engine never guesses a hand-set split.
+//  • Posted state mirrors the labor: a derived row is posted iff the project
+//    has a posted labor entry on that date. Unpost/delete/move act on labor;
+//    the travel follows on the next sync.
+// syncTravelDays() runs inside saveData() (and after load/import), so every
+// mutation path in the engine re-derives without per-call-site wiring.
+// Markers: syncTravelDays / travelDayShares / renderTravelDays / te.travelDayId
+// ═══════════════════════════════════════════════════════════════════════════
+const TRAVEL_LABOR_CATS=['T','B','D'];
+function isTravelDerived(te){return !!(te&&te.travelDayId);}
+function tdLaborEntries(date){return timeEntries.filter(te=>te.date===date&&!isTravelDerived(te)&&TRAVEL_LABOR_CATS.includes(te.cat)&&(parseFloat(te.hrs)||0)>0);}
+function tdMatEntries(date){return timeEntries.filter(te=>te.date===date&&!isTravelDerived(te)&&isMatCat(te.cat));}
+// Labor hours per project name on a date (non-derived T/B/D entries)
+function tdLaborByProject(date){
+  const m={};
+  tdLaborEntries(date).forEach(te=>{m[te.proj]=(m[te.proj]||0)+(parseFloat(te.hrs)||0);});
+  return m;
+}
+function tdLaborSig(date){
+  const m=tdLaborByProject(date);
+  return Object.keys(m).sort().map(k=>k+'='+(Math.round(m[k]*100)/100)).join('|');
+}
+function tdDerivedEntries(td){return timeEntries.filter(te=>te.travelDayId===td.id);}
+function _tdRound(x){return Math.round(x*100)/100;}
+// Compute {projName: travelHrs} for a travel day. Billed derived rows are pinned.
+function travelDayShares(td){
+  const total=parseFloat(td.hrs)||0;
+  const labor=tdLaborByProject(td.date);
+  const out={};
+  const derived=tdDerivedEntries(td);
+  let locked=0;
+  const pinned=new Set();
+  derived.forEach(te=>{if(isEntryBilled(te)){out[te.proj]=parseFloat(te.hrs)||0;locked+=out[te.proj];pinned.add(te.proj);}});
+  const pool=Math.max(0,total-locked);
+  if(td.basis==='manual'){
+    const man=td.manual||{};
+    Object.keys(man).forEach(n=>{if(!pinned.has(n)){const h=_tdRound(parseFloat(man[n])||0);if(h>0)out[n]=h;}});
+    return out;
+  }
+  const names=Object.keys(labor).filter(n=>!pinned.has(n));
+  if(!names.length||pool<=0)return out;
+  const sumL=names.reduce((a,n)=>a+labor[n],0);
+  let acc=0;
+  names.forEach((n,i)=>{
+    let h=td.basis==='even'?pool/names.length:pool*labor[n]/(sumL||1);
+    h=_tdRound(h);
+    if(i===names.length-1)h=_tdRound(pool-acc); // absorb rounding so the day balances exactly
+    acc+=h;
+    if(h>0)out[n]=h;
+  });
+  return out;
+}
+function travelDayAllocated(td){const s=travelDayShares(td);return _tdRound(Object.keys(s).reduce((a,n)=>a+s[n],0));}
+function tdRouteLabel(td){return 'Travel — '+(td.route||'').trim();}
+function travelDayDesc(td,projName,hrs){
+  const labor=tdLaborByProject(td.date);
+  const d=td.date?td.date.slice(5).replace('-','/').replace(/^0/,''):'';
+  const names=Object.keys(labor);
+  const sumL=_tdRound(names.reduce((a,n)=>a+labor[n],0));
+  const total=parseFloat(td.hrs)||0;
+  let why;
+  if(td.basis==='even')why='The day\'s '+total+' hr round-trip travel on '+d+' is split evenly across the '+names.length+' project'+(names.length!==1?'s':'')+' worked that day: '+hrs+' hr travel.';
+  else if(td.basis==='manual')why=labor[projName]?'The day\'s '+total+' hr round-trip travel on '+d+' is allocated across the projects worked that day: this project\'s share is '+hrs+' hr travel.':'The day\'s '+total+' hr round-trip travel on '+d+' includes a stop for this project (no labor hours that day): '+hrs+' hr travel.';
+  else why='The day\'s '+total+' hr round-trip travel on '+d+' is prorated across the '+names.length+' project'+(names.length!==1?'s':'')+' worked that day by labor hours: this project\'s '+_tdRound(labor[projName]||0)+' of '+sumL+' labor hrs = '+hrs+' hr travel.';
+  return tdRouteLabel(td)+'. '+why;
+}
+// Re-derive every travel day's entries. Idempotent; never calls saveData/render.
+function syncTravelDays(){
+  let changed=0; // rows added/removed — callers re-render when >0 so index-based handlers never go stale
+  if(!Array.isArray(travelDays)||!travelDays.length){
+    // No travel days: nothing to derive, but orphaned derived rows (deleted day) that are
+    // unbilled must not linger.
+    for(let i=timeEntries.length-1;i>=0;i--){const te=timeEntries[i];if(isTravelDerived(te)&&!isEntryBilled(te)){timeEntries.splice(i,1);changed++;}}
+    return changed;
+  }
+  const liveIds=new Set(travelDays.map(td=>td.id));
+  // 1. drop unbilled derived rows whose travel day no longer exists
+  for(let i=timeEntries.length-1;i>=0;i--){const te=timeEntries[i];if(isTravelDerived(te)&&!liveIds.has(te.travelDayId)&&!isEntryBilled(te)){timeEntries.splice(i,1);changed++;}}
+  travelDays.forEach(td=>{
+    if(!td.basis)td.basis='hours';
+    // 2. manual flag: labor on this date changed since the split was set
+    const sig=tdLaborSig(td.date);
+    if(td.basis==='manual'){if(td.laborSig!==undefined&&td.laborSig!==sig)td.flag=true;}
+    else{td.laborSig=sig;td.flag=false;}
+    const shares=travelDayShares(td);
+    const postedLabor={};
+    tdLaborEntries(td.date).forEach(te=>{if(te.posted)postedLabor[te.proj]=true;});
+    tdMatEntries(td.date).forEach(te=>{if(te.posted)postedLabor[te.proj]=true;});
+    const existing=tdDerivedEntries(td);
+    const seen=new Set();
+    Object.keys(shares).forEach(name=>{
+      const hrs=shares[name];
+      let te=existing.find(t=>t.proj===name);
+      seen.add(name);
+      if(te&&isEntryBilled(te))return; // locked at billed value
+      const shouldPost=!!postedLabor[name];
+      if(!te){
+        te={id:nextTEId++,date:td.date,proj:name,cat:'V',hrs:hrs,desc:'',includeInClientDoc:true,graduated:false,travelDayId:td.id,posted:false};
+        timeEntries.push(te);changed++;
+      }
+      te.cat='V';te.date=td.date;te.hrs=hrs;te.desc=travelDayDesc(td,name,hrs);
+      if(shouldPost&&!te.posted){te.posted=true;if(!te.billingEventId){te.billingEventId=ensureCurrentFlock().id;}}
+      else if(!shouldPost&&te.posted){te.posted=false;te.billingEventId=null;te.graduated=false;}
+    });
+    // 3. remove unbilled derived rows that no longer earn a share
+    existing.forEach(te=>{if(!seen.has(te.proj)&&!isEntryBilled(te)){const i=timeEntries.indexOf(te);if(i>=0){timeEntries.splice(i,1);changed++;}}});
+  });
+  return changed;
+}
+function addTravelDay(){
+  const date=document.getElementById('tdDate').value;
+  const route=document.getElementById('tdRoute').value.trim();
+  const hrs=parseFloat(document.getElementById('tdHrs').value)||0;
+  if(!date||!hrs){alert('Enter a date and the day\'s total travel hours.');return;}
+  if(travelDays.some(td=>td.date===date)){alert('There is already a travel day for '+date+'. Edit that one instead.');return;}
+  travelDays.push({id:nextTravelDayId++,date,route:route||'Bellingham ↔ Blaine',hrs,basis:'hours',manual:{},flag:false,laborSig:undefined});
+  document.getElementById('tdHrs').value='';
+  secOpenState['_travelDays']=true;
+  saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
+}
+function deleteTravelDay(id){
+  const td=travelDays.find(t=>t.id===id);if(!td)return;
+  const billed=tdDerivedEntries(td).filter(te=>isEntryBilled(te)).length;
+  if(!confirm('Delete the travel day for '+td.date+'?\n\nIts unbilled travel entries will be removed.'+(billed?'\n'+billed+' billed travel entr'+(billed!==1?'ies':'y')+' stay locked on their invoice.':'')))return;
+  travelDays=travelDays.filter(t=>t.id!==id);
+  saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
+}
+function setTravelDayBasis(id,basis){
+  const td=travelDays.find(t=>t.id===id);if(!td)return;
+  if(basis==='manual'&&td.basis!=='manual'){
+    // prefill from the current automatic split so Abram adjusts rather than starts from zero
+    const s=travelDayShares(td);td.manual={};Object.keys(s).forEach(n=>td.manual[n]=s[n]);
+    td.laborSig=tdLaborSig(td.date);td.flag=false;
+  }
+  td.basis=basis;
+  saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
+}
+function setTravelDayManual(id,projName,v){
+  const td=travelDays.find(t=>t.id===id);if(!td)return;
+  if(!td.manual)td.manual={};
+  td.manual[projName]=_tdRound(parseFloat(v)||0);
+  saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
+}
+function ackTravelDayFlag(id){
+  const td=travelDays.find(t=>t.id===id);if(!td)return;
+  td.laborSig=tdLaborSig(td.date);td.flag=false;
+  saveData();renderTimeEntry();
+}
+function updateTravelDayField(id,field,v){
+  const td=travelDays.find(t=>t.id===id);if(!td)return;
+  if(field==='hrs'){td.hrs=parseFloat(v)||0;if(td.basis==='manual')td.flag=true;}
+  else if(field==='date'){if(v&&travelDays.some(t=>t.id!==id&&t.date===v)){alert('There is already a travel day for '+v+'.');renderTimeEntry();return;}td.date=v;td.laborSig=undefined;}
+  else td[field]=v;
+  saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
+}
+// ── Travel Days panel on the Time Entry tab ────────────────────────────────
+function renderTravelDays(){
+  const wrap=document.getElementById('travelDaysWrap');if(!wrap)return;
+  wrap.innerHTML='';
+  const open=secOpenState['_travelDays']!==false; // default OPEN — it's where travel days get added
+  const sec=document.createElement('div');sec.style.cssText='background:#fff;border:1px solid #ddd6f3;border-radius:10px;margin-top:12px;overflow:hidden';
+  const hdr=document.createElement('div');
+  hdr.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:flex;justify-content:space-between;align-items:center;background:#f6f3fd;color:#5b3fa6;cursor:pointer;user-select:none';
+  const flagged=travelDays.filter(td=>td.flag).length;
+  hdr.innerHTML='<span><span style="display:inline-block;width:10px;font-size:9px;margin-right:6px">'+(open?'▼':'▶')+'</span>🔗 Travel Days'+(flagged?' <span style="background:#fef3c7;color:#b45309;font-size:9px;padding:2px 6px;border-radius:8px;margin-left:6px;text-transform:none;letter-spacing:0">'+flagged+' need'+(flagged===1?'s':'')+' review</span>':'')+'</span>'
+    +'<span style="font-weight:400;font-size:10px;text-transform:none">'+travelDays.length+' day'+(travelDays.length!==1?'s':'')+' · travel entries are derived from these</span>';
+  hdr.onclick=()=>{secOpenState['_travelDays']=!open;saveData();renderTravelDays();};
+  sec.appendChild(hdr);
+  if(open){
+    const body=document.createElement('div');body.style.cssText='padding:12px 14px;display:flex;flex-direction:column;gap:12px';
+    // add bar
+    const add=document.createElement('div');add.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:#fafaf8;border:1px solid #e5e5e0;border-radius:8px;padding:10px';
+    const lastRoute=travelDays.length?travelDays[travelDays.length-1].route:'Bellingham ↔ Blaine';
+    const inp='style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"';
+    add.innerHTML='<div class="vf-group"><div class="vf-label">Date</div><input type="date" id="tdDate" '+inp.replace('style="','style="width:130px;')+' value="'+(document.getElementById('teDate')?document.getElementById('teDate').value:'')+'"></div>'
+      +'<div class="vf-group" style="flex:1"><div class="vf-label">Route</div><input type="text" id="tdRoute" '+inp.replace('style="','style="width:100%;min-width:180px;box-sizing:border-box;')+' value="'+lastRoute.replace(/"/g,'&quot;')+'"></div>'
+      +'<div class="vf-group"><div class="vf-label">Day\'s travel hrs</div><input type="number" id="tdHrs" min="0" step="0.25" placeholder="0.0" '+inp.replace('style="','style="width:90px;')+'></div>'
+      +'<div style="align-self:flex-end"><button class="btn btn-primary" onclick="addTravelDay()">+ Add travel day</button></div>';
+    body.appendChild(add);
+    if(!travelDays.length){
+      const em=document.createElement('div');em.style.cssText='font-size:12px;color:#999;font-style:italic;padding:2px 4px';em.textContent='No travel days yet. Add one per date you drove; the engine splits it across the projects worked that day.';
+      body.appendChild(em);
+    }
+    [...travelDays].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(td=>body.appendChild(buildTravelDayCard(td)));
+    sec.appendChild(body);
+  }
+  wrap.appendChild(sec);
+}
+function buildTravelDayCard(td){
+  const card=document.createElement('div');card.style.cssText='border:1px solid #e5e5e0;border-radius:8px;overflow:hidden';
+  const shares=travelDayShares(td);
+  const labor=tdLaborByProject(td.date);
+  const alloc=travelDayAllocated(td);
+  const total=parseFloat(td.hrs)||0;
+  const balanced=Math.abs(alloc-total)<0.011;
+  const derived=tdDerivedEntries(td);
+  const billedNames=new Set(derived.filter(te=>isEntryBilled(te)).map(te=>te.proj));
+  // header row: date / route / hrs / delete
+  const top=document.createElement('div');top.style.cssText='display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;padding:10px 12px;background:#fcfbff;border-bottom:1px solid #eee';
+  const inp='font-size:12px;padding:5px 8px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff';
+  top.innerHTML='<div class="vf-group"><div class="vf-label">Date</div><input type="date" value="'+(td.date||'')+'" style="'+inp+';width:130px" onchange="updateTravelDayField('+td.id+',\'date\',this.value)"></div>'
+    +'<div class="vf-group" style="flex:1"><div class="vf-label">Route</div><input type="text" value="'+(td.route||'').replace(/"/g,'&quot;')+'" style="'+inp+';width:100%;min-width:160px;box-sizing:border-box" onchange="updateTravelDayField('+td.id+',\'route\',this.value)"></div>'
+    +'<div class="vf-group"><div class="vf-label">Total hrs</div><input type="number" min="0" step="0.25" value="'+td.hrs+'" style="'+inp+';width:80px;text-align:right" onchange="updateTravelDayField('+td.id+',\'hrs\',this.value)"></div>'
+    +'<div class="vf-group"><div class="vf-label">Travel $'+(RATES['V']||0)+'/hr</div><div style="font-size:13px;font-weight:700;color:#1D9E75;padding:5px 0">'+fmt(alloc*(RATES['V']||0))+'</div></div>'
+    +'<button class="del-btn" title="Delete travel day" onclick="deleteTravelDay('+td.id+')" style="align-self:center">&#215;</button>';
+  card.appendChild(top);
+  // basis selector
+  const seg=document.createElement('div');seg.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 12px;flex-wrap:wrap';
+  const mk=(k,l)=>'<button class="btn-sm" onclick="setTravelDayBasis('+td.id+',\''+k+'\')" style="'+(td.basis===k?'background:#ede9fe;color:#5b3fa6;border-color:#c4b5fd;font-weight:700':'')+'">'+l+'</button>';
+  const hint={hours:'Each project gets the day\'s travel in proportion to its labor hours. Recomputes when labor changes.',even:'Every project with labor that day gets an equal share. Recomputes when labor changes.',manual:'Set each project\'s hours yourself. Labor changes flag the day instead of recomputing.'}[td.basis||'hours'];
+  seg.innerHTML='<span style="font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.05em">Split</span><span style="display:flex;gap:4px">'+mk('hours','By labor hours')+mk('even','Even split')+mk('manual','Manual')+'</span><span style="font-size:11px;color:#888">'+hint+'</span>';
+  card.appendChild(seg);
+  // project table
+  const names=new Set([...Object.keys(labor),...Object.keys(shares)]);
+  if(td.basis==='manual')tdMatEntries(td.date).forEach(te=>names.add(te.proj)); // materials-only stops can earn a manual share
+  const tbl=document.createElement('table');tbl.className='te-table';tbl.style.cssText='border-top:1px solid #eee';
+  tbl.innerHTML='<thead><tr><th>Project</th><th class="r" style="width:90px">Labor hrs</th><th class="r" style="width:110px">Travel hrs</th><th class="r" style="width:90px">Amount</th></tr></thead>';
+  const tb=document.createElement('tbody');
+  const rows=[...names].sort((a,b)=>(labor[b]||0)-(labor[a]||0));
+  if(!rows.length){const tr=document.createElement('tr');tr.innerHTML='<td colspan="4" style="padding:10px;font-size:11px;color:#999;font-style:italic">No labor entries on '+td.date+' yet — travel will derive as soon as labor is logged for that date.</td>';tb.appendChild(tr);}
+  rows.forEach(n=>{
+    const h=shares[n]||0;const isB=billedNames.has(n);const lh=labor[n];
+    const tr=document.createElement('tr');
+    const projMissing=!projects.some(p=>p.name===n);
+    let hrsCell;
+    if(isB)hrsCell='<span style="font-size:12px">'+h.toFixed(2)+'</span> <span style="font-size:9px;background:#e8f5ee;color:#155a3e;font-weight:700;padding:2px 5px;border-radius:3px">🔒 billed</span>';
+    else if(td.basis==='manual')hrsCell='<input class="te-inp r" type="number" min="0" step="0.01" value="'+h.toFixed(2)+'" style="width:80px;background:#fff;border:1px solid #d8d8d2;border-radius:5px;padding:4px 6px;margin:2px 0" onchange="setTravelDayManual('+td.id+',\''+n.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\',this.value)">';
+    else hrsCell='<span style="font-size:12px">'+h.toFixed(2)+'</span>';
+    tr.innerHTML='<td style="padding:6px 10px;font-size:12px'+(projMissing?';color:#b45309':'')+'">'+n.replace(/</g,'&lt;')+(projMissing?' <span style="font-size:9px">(no such project)</span>':'')+'</td>'
+      +'<td style="padding:6px 10px;text-align:right;font-size:12px">'+(lh?_tdRound(lh).toFixed(2):'<span style="font-size:9px;background:#f3f4f6;color:#6b7280;font-weight:700;padding:2px 5px;border-radius:3px">materials only</span>')+'</td>'
+      +'<td style="padding:2px 10px;text-align:right">'+hrsCell+'</td>'
+      +'<td style="padding:6px 10px;text-align:right;font-size:12px;font-weight:600;color:#1D9E75">'+fmt(h*(RATES['V']||0))+'</td>';
+    tb.appendChild(tr);
+  });
+  tbl.appendChild(tb);card.appendChild(tbl);
+  // running total
+  const tot=document.createElement('div');
+  tot.style.cssText='display:flex;justify-content:space-between;align-items:center;padding:8px 12px;font-size:12px;font-weight:600;'+(balanced?'background:#e8f5ee;color:#155a3e':'background:#fee2e2;color:#b91c1c');
+  const diff=_tdRound(alloc-total);
+  tot.innerHTML='<span>Allocated '+alloc.toFixed(2)+' of '+total.toFixed(2)+' hr</span><span style="font-weight:500;font-size:11px">'+(balanced?'Balanced':(diff>0?'Over by '+diff.toFixed(2)+' hr — more travel than you drove':'Under by '+(-diff).toFixed(2)+' hr unallocated'))+'</span>';
+  card.appendChild(tot);
+  if(td.basis==='manual'&&td.flag){
+    const fl=document.createElement('div');fl.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;background:#fef3c7;color:#b45309;font-size:11px;line-height:1.4';
+    fl.innerHTML='<span><b>Labor changed on '+td.date+'</b> since this manual split was set. Travel figures were left as-is — review them, or switch to By labor hours to recompute.</span><button class="btn-sm" style="flex-shrink:0" onclick="ackTravelDayFlag('+td.id+')">Reviewed ✓</button>';
+    card.appendChild(fl);
+  }
+  return card;
 }
 
 // Restore a project from 'billed' status back to 'in_progress'.
@@ -1148,7 +1434,10 @@ function renderReadyForBillingBody(body){
       +'</div>'
       +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
       +'<span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:2px 6px;white-space:nowrap">'+projTEs.length+' · '+fmt(projTotal)+'</span>'
-      +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
+      /* Billing Event chevrons pink #b232c2 (KEEP IN EVERY BUILD, added 8/20, re-applied 8/24
+       * after the 20g–i fork dropped it) — matches the section header arrow and count pills.
+       * Billed-section chevrons (renderBilledEventsBody) stay gray BY DESIGN. */
+      +'<span class="chev'+(isOpen?' open':'')+'" style="color:#b232c2">&#9654;</span>'
       +'</div>';
     phdr.onclick=()=>{
       if(!proj)return;
@@ -1499,6 +1788,14 @@ function renderEstimate(){
       ph.addEventListener('dragleave',()=>{ph.style.background='';});
       ph.addEventListener('drop',e=>{
         e.preventDefault();ph.style.background='';
+        // PHOTO MOVE BETWEEN PROJECTS (KEEP IN EVERY BUILD, added 8/24): photo tile dropped on
+        // this project's header → reassign it here. The photo object moves whole — caption,
+        // includeInClientDoc, uploaded thumb/full URLs, pendingUpload state all ride along.
+        const dragPhotoId=e.dataTransfer.getData('photoId');
+        if(dragPhotoId){
+          if(movePhotoToProject(dragPhotoId,proj.id)){openProjs.add(proj.id);saveData();renderEstimate();}
+          return;
+        }
         // Estimate/CO task line dropped on this project's header → move it into this project's scope (8/19)
         const dragTaskId=parseInt(e.dataTransfer.getData('taskId'));
         if(dragTaskId){
@@ -1509,7 +1806,7 @@ function renderEstimate(){
         const fromProjName=e.dataTransfer.getData('fromProjName');
         if(!teId||fromProjName===proj.name)return;
         const te=timeEntries.find(t=>t.id===teId);
-        if(!te)return;
+        if(!te||isTravelDerived(te))return; // derived travel follows its labor (8/25)
         te.proj=proj.name;
         saveData();renderEstimate();
       });
@@ -1717,6 +2014,19 @@ function renderEstimate(){
       const actualTotal=projAllActualTotal(proj);
       actualHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px;transform:rotate('+(actIsOpen?'90':'0')+'deg)">&#9654;</span>Actual — Posted Time Entries</span><span style="font-weight:700;color:#1D9E75">'+fmt(actualTotal)+'</span>';
       actualHdr.onclick=()=>{secOpenState[actKey]=!actIsOpen;saveData();renderEstimate();};
+      // CLIENT-DOC ACTUALS FILTER (KEEP IN EVERY BUILD, added 8/24): section-level master
+      // checkbox — unchecked drops this project's whole ACTUAL display from the client doc.
+      const cdSecLbl=document.createElement('label');
+      cdSecLbl.title='Checked: actual entries appear in the client document (per-row checkboxes can hide individual lines). Unchecked: the entire ACTUAL section is left out of the client doc, as if the lines were deleted there. Engine data and billing are unaffected.';
+      cdSecLbl.style.cssText='display:inline-flex;align-items:center;gap:4px;margin-left:14px;font-size:9px;font-weight:600;color:#155a3e;text-transform:none;letter-spacing:0;cursor:pointer;vertical-align:middle';
+      const cdSecChk=document.createElement('input');cdSecChk.type='checkbox';
+      cdSecChk.checked=proj.actualsInClientDoc!==false;
+      cdSecChk.style.cssText='width:12px;height:12px;accent-color:#1D9E75;cursor:pointer;margin:0';
+      cdSecChk.onclick=e=>e.stopPropagation();
+      cdSecLbl.onclick=e=>e.stopPropagation();
+      cdSecChk.onchange=()=>{proj.actualsInClientDoc=cdSecChk.checked;saveData();renderEstimate();};
+      cdSecLbl.appendChild(cdSecChk);cdSecLbl.appendChild(document.createTextNode('In client doc'));
+      actualHdr.firstChild.appendChild(cdSecLbl);
       pb.appendChild(actualHdr);
       const actWrap=document.createElement('div');actWrap.style.display=actIsOpen?'block':'none';
 
@@ -1771,9 +2081,12 @@ function renderEstimate(){
           // Drag handle cell — supports both reorder (within project) and reassign (to other project)
           const dhTd=document.createElement('td');dhTd.style.cssText='width:20px;padding:0 4px;color:#ccc;text-align:center;font-size:14px;cursor:grab';dhTd.textContent='⠿';
           dhTd.title='Drag to reorder or drop on another project header to reassign';
-          if(!isBilled){
+          const isDerivedTravel=isTravelDerived(te); // TRAVEL DAYS (8/25): derived rows follow their labor; not draggable
+          if(!isBilled&&!isDerivedTravel){
             dhTd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};
             dhTd.onmouseup=()=>{tr.draggable=false;};
+          }else if(isDerivedTravel&&!isBilled){
+            dhTd.textContent='🔗';dhTd.style.cursor='default';dhTd.style.fontSize='11px';dhTd.title='Derived from the '+(te.date||'')+' travel day — moves with its labor';
           }else{
             dhTd.style.cursor='not-allowed';
             dhTd.style.opacity='0.4';
@@ -1818,7 +2131,7 @@ function renderEstimate(){
           // Category — editable select
           const catTd=document.createElement('td');catTd.className=CAT_CLS[te.cat]||'';catTd.style.cssText='padding:4px 8px;font-size:11px;';
           const catSel=document.createElement('select');catSel.className='cat-sel';catSel.style.cssText='font-size:11px;color:#155a3e;font-weight:600;';
-          if(isBilled)catSel.disabled=true;
+          if(isBilled||isDerivedTravel)catSel.disabled=true;
           Object.entries(CAT_LABELS).forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===te.cat)o.selected=true;catSel.appendChild(o);});
           catSel.onchange=()=>{
             te.cat=catSel.value;
@@ -1830,7 +2143,8 @@ function renderEstimate(){
           catTd.appendChild(catSel);tr.appendChild(catTd);
           // Description — editable textarea
           const descTa=document.createElement('textarea');descTa.className='tinp';descTa.value=te.desc||'';descTa.rows=1;descTa.style.cssText='resize:none;overflow:hidden;line-height:1.4;min-height:24px;background:'+(isBilled?'transparent':'#fafffe')+';font-size:12px;'+(isBilled?'text-decoration:line-through;color:#94a3b8;':'');
-          if(isBilled)descTa.readOnly=true;
+          if(isBilled||isDerivedTravel)descTa.readOnly=true;
+          if(isDerivedTravel&&!isBilled){descTa.title='Written by the engine from the travel day';descTa.style.color='#4b3a8a';}
           descTa.oninput=()=>{te.desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
           descTa.onchange=()=>{te.desc=descTa.value;saveData();renderTimeEntry();};
           autosizeTA(descTa); // ResizeObserver auto-fit — never a one-shot rAF measure (8/18 fix)
@@ -1838,8 +2152,8 @@ function renderEstimate(){
           // Date — editable input
           const dateTd=document.createElement('td');dateTd.style.cssText='padding:0;text-align:right';
           const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:106px;text-align:right';
-          if(isBilled)dateInp.readOnly=true;
-          dateInp.onchange=()=>{te.date=dateInp.value;saveData();renderTimeEntry();};
+          if(isBilled||isDerivedTravel)dateInp.readOnly=true;
+          dateInp.onchange=()=>{if(isDerivedTravel)return;te.date=dateInp.value;saveData();renderTimeEntry();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
           // Hrs/Qty + Rate/Unit-cost — material rows use Qty × unit cost $
           const isMatCatLocal=isMatCat(te.cat);
@@ -1862,8 +2176,9 @@ function renderEstimate(){
             matTd.appendChild(costInp);tr.appendChild(matTd);
           } else {
             const hrsInp=document.createElement('input');hrsInp.type='number';hrsInp.min=0;hrsInp.step=0.25;hrsInp.value=te.hrs||'';hrsInp.className='tinp r';hrsInp.style.cssText='font-size:12px;width:60px;text-align:right';
-            if(isBilled)hrsInp.readOnly=true;
-            hrsInp.onchange=()=>{te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(teAmount(te));saveData();renderSummary();renderEstimate();renderTimeEntry();};
+            if(isBilled||isDerivedTravel)hrsInp.readOnly=true;
+            if(isDerivedTravel&&!isBilled){hrsInp.title='Hours are derived from the travel day split — change them there';hrsInp.style.color='#5b3fa6';}
+            hrsInp.onchange=()=>{if(isDerivedTravel){hrsInp.value=te.hrs||'';return;}te.hrs=parseFloat(hrsInp.value)||0;amtTd.textContent=fmt(teAmount(te));saveData();renderSummary();renderEstimate();renderTimeEntry();};
             hrsTd.appendChild(hrsInp);tr.appendChild(hrsTd);
             // Rate
             const rateTd=document.createElement('td');rateTd.className='cell-r';rateTd.style.fontSize='12px';rateTd.textContent='$'+rate;tr.appendChild(rateTd);
@@ -1874,6 +2189,18 @@ function renderEstimate(){
           const amtTd=document.createElement('td');amtTd.className='cell-bold';amtTd.style.color='#1D9E75';amtTd.textContent=fmt(amt);tr.appendChild(amtTd);
           // Unpost button + CoS toggle + Graduate arrow (or billed indicator)
           const actTd=document.createElement('td');actTd.style.cssText='padding:4px 8px;text-align:right;white-space:nowrap';
+          // CLIENT-DOC ACTUALS FILTER: per-row checkbox (checked = entry appears in client doc).
+          // Lives in the action cell so the protected Qty × unit-cost column layout is untouched.
+          {
+            const _secExcl=proj.actualsInClientDoc===false;
+            const cdRow=document.createElement('input');cdRow.type='checkbox';
+            cdRow.checked=te.includeInClientDoc!==false;
+            cdRow.title=_secExcl?'Entire ACTUAL section is excluded from the client doc (see header checkbox)':'Include this entry in the client document';
+            cdRow.style.cssText='width:13px;height:13px;accent-color:#1D9E75;cursor:pointer;vertical-align:middle;margin-right:6px'+(_secExcl?';opacity:0.35':'');
+            cdRow.onclick=e=>e.stopPropagation();
+            cdRow.onchange=()=>{te.includeInClientDoc=cdRow.checked;saveData();};
+            actTd.appendChild(cdRow);
+          }
           if(isBilled){
             const billedLbl=document.createElement('span');billedLbl.style.cssText='font-size:10px;color:#155a3e;font-weight:600';billedLbl.textContent='🔒 billed';
             actTd.appendChild(billedLbl);
@@ -1900,9 +2227,14 @@ function renderEstimate(){
               }
               actTd.appendChild(gradBtn);
             }
+            if(isDerivedTravel){
+              const tdLbl=document.createElement('span');tdLbl.style.cssText='font-size:10px;color:#5b3fa6;font-weight:600';tdLbl.textContent='🔗 travel day';tdLbl.title='Posted state follows this project\'s labor on '+(te.date||'')+' — unpost the labor and the travel follows';
+              actTd.appendChild(tdLbl);
+            }else{
             const unpostBtn=document.createElement('button');unpostBtn.className='btn-sm danger';unpostBtn.style.fontSize='10px';unpostBtn.textContent='Unpost';
             unpostBtn.onclick=()=>unpostTimeEntry(te.id);
             actTd.appendChild(unpostBtn);
+            }
           }
           tr.appendChild(actTd);
           actBody.appendChild(tr);
@@ -2098,7 +2430,7 @@ function renderEstimate(){
 function ttMerged(proj){
   const fd=n=>n===0?'\u2014':'$'+Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const scopeTasks=proj.scopeTasks||[];
-  const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
+  const postedTEs=projClientDocTEs(proj); // CLIENT-DOC ACTUALS FILTER: unchecked entries render as if deleted
   const postedTasks=postedTEs.map(te=>teAsTask(te));
   const estT=scopeTasks.reduce((a,t)=>a+taskTotal(t),0);
   const actT=postedTasks.reduce((a,t)=>a+taskTotal(t),0);
@@ -2173,10 +2505,12 @@ function exportClientDoc(){
   const compP=_authSel?[]:projects.filter(p=>p.include!==false&&_readyProjNames.has(p.name)).sort(_byAge);
   const billP=projects.filter(p=>p.include!==false&&_billedProjNames.has(p.name)).sort(_byAge);
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed'&&p.status!=='holding');
-  const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
+  // CLIENT-DOC ACTUALS FILTER: informational totals below use the projClientDoc* helpers
+  // so entries unchecked for the client doc drop out of the displayed math (billed math untouched).
+  const actTotal=actP.reduce((a,p)=>a+projClientDocDisplayTotal(p),0);
   // Credit card fee is computed per-summary from ccFeeRate() on that summary's (subtotal + shop fee).
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
-  const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
+  const allL=actP.reduce((a,p)=>a+(p.isTM?projClientDocUBLabor(p):projScopeLabor(p)),0);
   // Bucket by CATEGORY under the qty × unit-cost model (extended amounts via taskMatAmt/taskSubAmt):
   //   Materials = M/P rows (qty × unit) plus flat mat add-ons on labor tasks
   //   Subs      = S rows (qty × unit) plus flat sub add-ons on labor tasks
@@ -2185,9 +2519,9 @@ function exportClientDoc(){
   const _scopeMat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat!=='F').reduce((a,t)=>a+taskMatAmt(t),0);
   const _scopeSub=(p)=>(p.scopeTasks||[]).reduce((a,t)=>a+taskSubAmt(t),0);
   const _scopeFlat=(p)=>(p.scopeTasks||[]).filter(t=>t.cat==='F').reduce((a,t)=>a+taskMatAmt(t),0);
-  const _actualMat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+teAmount(te),0);
-  const _actualSub=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+teAmount(te),0);
-  const _actualFlat=(p)=>projUnbilledPostedTEs(p).filter(te=>te.cat==='F').reduce((a,te)=>a+teAmount(te),0);
+  const _actualMat=(p)=>projClientDocUnbilledTEs(p).filter(te=>te.cat==='M'||te.cat==='P').reduce((a,te)=>a+teAmount(te),0);
+  const _actualSub=(p)=>projClientDocUnbilledTEs(p).filter(te=>te.cat==='S').reduce((a,te)=>a+teAmount(te),0);
+  const _actualFlat=(p)=>projClientDocUnbilledTEs(p).filter(te=>te.cat==='F').reduce((a,te)=>a+teAmount(te),0);
   const allMat=actP.reduce((a,p)=>a+(p.isTM?_actualMat(p):_scopeMat(p)),0);
   const allSub=actP.reduce((a,p)=>a+(p.isTM?_actualSub(p):_scopeSub(p)),0);
   const allFlat=actP.reduce((a,p)=>a+(p.isTM?_actualFlat(p):_scopeFlat(p)),0);
@@ -2253,7 +2587,7 @@ function exportClientDoc(){
 
   function mergedTable(proj){
     const scopeTasks=proj.scopeTasks||[];
-    const postedTEs=timeEntries.filter(te=>te.proj===proj.name&&te.posted);
+    const postedTEs=projClientDocTEs(proj); // CLIENT-DOC ACTUALS FILTER: unchecked entries render as if deleted
     const postedTasks=postedTEs.map(te=>teAsTask(te));
     const estT=scopeTasks.reduce((a,t)=>a+taskTotal(t),0);
     const actT=postedTasks.reduce((a,t)=>a+taskTotal(t),0);
@@ -2318,9 +2652,9 @@ function exportClientDoc(){
     const _tint=tintColor||(_sec?_sec.bg:lightTint(accentColor));
     const total=projDisplayTotal(proj);
     const cos=(proj.cos||[]);
-    // Build est / actual breakdown for the row
+    // Build est / actual breakdown for the row (client-doc actuals filter applies)
     const scopeT=projScopeTotal(proj);
-    const actT=projAllActualTotal(proj);
+    const actT=projClientDocActualTotal(proj);
     let totalsHtml='';
     if(proj.isTM){
       // T&M: just show actual labeled as T&M
@@ -2586,11 +2920,11 @@ function exportClientDoc(){
 
   // ── IN PROGRESS ─────────────────────────────────────────────────────────
   if(inPP.length>0){
-    const pt=inPP.reduce((a,p)=>a+projDisplayTotal(p),0);
+    const pt=inPP.reduce((a,p)=>a+projClientDocDisplayTotal(p),0);
     const inPP_brk={
       est:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
-      tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
-      actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+      tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0),
+      actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0)
     };
     html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog','#6b7280',secHasPhotos(inPP));
     // Section frame encompasses individual project cards with gaps (mirrors Complete + Billing Event).
@@ -2607,18 +2941,18 @@ function exportClientDoc(){
   // rollup/summary below — same model as the engine.
   const completeP=_authSel?[]:projects.filter(p=>p.include!==false&&p.status==='complete');
   if(completeP.length>0){
-    const cpt=completeP.reduce((a,p)=>a+projDisplayTotal(p),0);
+    const cpt=completeP.reduce((a,p)=>a+projClientDocDisplayTotal(p),0);
     const completeP_brk={
       est:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
-      tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
-      actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+      tm:completeP.filter(p=>p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0),
+      actual:completeP.filter(p=>!p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0)
     };
     html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80',secHasPhotos(completeP));
     // Section frame encompasses individual project cards with gaps (mirrors the engine Complete + Billing Event layout).
     html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     completeP.forEach((proj,bi)=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projAllActualTotal(proj)||projDisplayTotal(proj);
+      const projTotal=projClientDocActualTotal(proj)||projClientDocDisplayTotal(proj);
       const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
       const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
       // Each project = its own rounded bordered card (navy, all Complete), with a gap.
@@ -2690,9 +3024,9 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">'+statusLabel+'</span>'
         +'</div>'
         +'<span style="display:flex;align-items:center;gap:8px;flex-shrink:0"><span style="font-size:10px;font-weight:700;color:#b232c2;background:#fdf4ff;border:1px solid #c354d6;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+projTEs.length+' &middot; '+fd(projTotal)+'</span>'
-          +(_condensed?'':'<span class="chev" style="font-size:11px;color:'+nameColor+';display:inline-block;transition:transform 0.2s;flex-shrink:0">&#9654;</span>')+'</span>'
+          +(_condensed?'':'<span class="chev" style="font-size:11px;color:#b232c2;display:inline-block;transition:transform 0.2s;'+(_open?'transform:rotate(90deg);':'')+'flex-shrink:0">&#9654;</span>')+'</span>'
         +'</div>'
-        +(_condensed?'':'<div id="'+cardId+'_detail" style="display:none;background:#fefbff;border-top:1px solid #ecd5f2;padding:8px 14px"><div class="task-wrap">'+taskTable(asTasks)+'</div>'+_photosHtml+'</div>')
+        +(_condensed?'':'<div id="'+cardId+'_detail" style="display:'+(_open?'block':'none')+';background:#fefbff;border-top:1px solid #ecd5f2;padding:8px 14px"><div class="task-wrap">'+taskTable(asTasks)+'</div>'+_photosHtml+'</div>')
         +'</div>';
     });
     html+='</div>';
@@ -3231,10 +3565,11 @@ function exportClientPDF(){
   const compP=projects.filter(p=>p.include!==false&&_readyNames.has(p.name)).sort(_byAge);
   const billP=projects.filter(p=>p.include!==false&&_billedNames.has(p.name)).sort(_byAge);
   const actP=projects.filter(p=>p.include!==false&&p.status!=='billed');
-  const actTotal=actP.reduce((a,p)=>a+projDisplayTotal(p),0);
+  // CLIENT-DOC ACTUALS FILTER: informational totals use projClientDoc* helpers (billed math untouched)
+  const actTotal=actP.reduce((a,p)=>a+projClientDocDisplayTotal(p),0);
   const billTotal=billP.reduce((a,p)=>a+projDisplayTotal(p),0);
-  const allL=actP.reduce((a,p)=>a+(p.isTM?projActualLabor(p):projScopeLabor(p)),0);
-  const allM=actP.reduce((a,p)=>a+(p.isTM?projActualMat(p):projScopeMat(p)+projScopeSub(p)),0);
+  const allL=actP.reduce((a,p)=>a+(p.isTM?projClientDocUBLabor(p):projScopeLabor(p)),0);
+  const allM=actP.reduce((a,p)=>a+(p.isTM?projClientDocUBMat(p):projScopeMat(p)+projScopeSub(p)),0);
 
   function tt(tasks){
     let rows='';
@@ -3313,11 +3648,11 @@ function exportClientPDF(){
     </div>`;
   });
 
-  // Build in-progress rows
+  // Build in-progress rows (client-doc actuals filter applies)
   let inProgRows='';
   inPP.forEach((proj,pi)=>{
     const scopeT=projScopeTotal(proj);
-    const actT=projAllActualTotal(proj);
+    const actT=projClientDocActualTotal(proj);
     let totalsHtml='';
     if(proj.isTM){
       totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#6b7280;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
@@ -3339,11 +3674,12 @@ function exportClientPDF(){
     </div>`;
   });
 
-  // Build complete rows
+  // Build complete rows (client-doc actuals filter applies to this informational figure;
+  // the invoice-side Billing Event math elsewhere stays unfiltered)
   let compRows='';
   compP.forEach((proj,pi)=>{
     const scopeT=projScopeTotal(proj);
-    const actT=projAllActualTotal(proj);
+    const actT=projClientDocActualTotal(proj);
     let totalsHtml='';
     if(proj.isTM){
       totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#4a5e5a;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
@@ -3391,13 +3727,13 @@ function exportClientPDF(){
   // Section-level est/T&M/actual breakdowns
   const inPP_brk={
     est:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
-    tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
-    actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+    tm:inPP.filter(p=>p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0),
+    actual:inPP.filter(p=>!p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0)
   };
   const compP_brk={
     est:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
-    tm:compP.filter(p=>p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0),
-    actual:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projAllActualTotal(p),0)
+    tm:compP.filter(p=>p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0),
+    actual:compP.filter(p=>!p.isTM).reduce((a,p)=>a+projClientDocActualTotal(p),0)
   };
   const billP_brk={
     est:billP.filter(p=>!p.isTM).reduce((a,p)=>a+projScopeTotal(p),0),
@@ -3491,12 +3827,12 @@ ${authRows}
 `:''}
 
 ${inPP.length>0?`
-${secHdr('#6b7280','IN PROGRESS',inPP.length,fd(inPP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#f9fafb','#374151','Authorized work currently underway.',inPP_brk)}
+${secHdr('#6b7280','IN PROGRESS',inPP.length,fd(inPP.reduce((a,p)=>a+projClientDocDisplayTotal(p),0)),'#f9fafb','#374151','Authorized work currently underway.',inPP_brk)}
 ${inProgRows}
 `:''}
 
 ${compP.length>0?`
-${secHdr('#4a5e5a','BILLING EVENT',compP.length,fd(compP.reduce((a,p)=>a+projDisplayTotal(p),0)),'#eef3f2','#2d4a46','Work completed and ready to invoice.',compP_brk)}
+${secHdr('#4a5e5a','BILLING EVENT',compP.length,fd(compP.reduce((a,p)=>a+projClientDocDisplayTotal(p),0)),'#eef3f2','#2d4a46','Work completed and ready to invoice.',compP_brk)}
 ${compRows}
 `:''}
 
@@ -3661,7 +3997,7 @@ function _tpmExportJSON(){
       engineVersion:ENGINE_VERSION,
       engineBuild:ENGINE_BUILD
     },
-    projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,
+    projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,
     dismissedPhotoKeys:[...dismissedPhotoKeys],
     uiState:serializeUiState()
   };
@@ -3824,6 +4160,7 @@ function importData(event){
       projects=d.projects;
       timeEntries=d.timeEntries||[];
       billingEvents=d.billingEvents||[];
+      travelDays=Array.isArray(d.travelDays)?d.travelDays:[];if(d.nextTravelDayId)nextTravelDayId=d.nextTravelDayId;
       if(d.nextProjId)nextProjId=d.nextProjId;
       if(d.nextTaskId)nextTaskId=d.nextTaskId;
       if(d.nextCOId)nextCOId=d.nextCOId;
@@ -3991,6 +4328,15 @@ function renderTimeEntry(){
       descTa.oninput=()=>{timeEntries[ri].desc=descTa.value;descTa.style.height='auto';descTa.style.height=descTa.scrollHeight+'px';};
       descTa.onchange=()=>{saveData();if(unlocked)renderEstimate();};
       descCell.appendChild(descTa);
+      // TRAVEL DAYS (8/25): derived travel rows are engine-owned — date/project/category/hours/description
+      // are read-only here (edit the labor or the travel day instead); flock assignment stays editable.
+      if(isTravelDerived(te)&&!isLocked){
+        const tds=tr.querySelectorAll('td');
+        const ro='Derived from the '+(te.date||'')+' travel day — edit the labor entries or the travel day itself';
+        [0,1,2,4].forEach(i=>{const el=tds[i]&&tds[i].querySelector('input,select');if(!el)return;if(el.tagName==='SELECT')el.disabled=true;else el.readOnly=true;el.title=ro;el.style.color='#6b5bb0';});
+        descTa.readOnly=true;descTa.title=ro;descTa.style.color='#6b5bb0';
+        tds[7].innerHTML='<span title="'+ro+'" style="font-size:10px;color:#5b3fa6;font-weight:600;white-space:nowrap">🔗 travel day</span>';
+      }
       tbody.appendChild(tr);
     });
     tbl.appendChild(tbody);
@@ -3999,6 +4345,7 @@ function renderTimeEntry(){
 
   if(allFiltered.length===0){
     wrap.innerHTML='<div style="background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:24px;text-align:center;color:#bbb;font-size:13px">No time entries yet. Add your first entry below.</div>';
+    renderTravelDays();
     return;
   }
 
@@ -4088,6 +4435,7 @@ function renderTimeEntry(){
 
   // Description textareas stay at 1-row height (collapsed) until focused, so the table is scannable
   // — they expand on focus to show full content for editing
+  renderTravelDays();
 }
 
 // ===== FLOCK PROMPT UI =====
@@ -4240,7 +4588,7 @@ function addTimeEntry(){
   // Material entries: the $ entered is the UNIT cost; qty starts at 1 (adjustable in the table)
   timeEntries.push({id:nextTEId++,date:document.getElementById('teDate').value,proj:p,cat:cat,hrs:isMat?1:h,mat:isMat?h:undefined,desc:document.getElementById('teDesc').value.trim(),includeInClientDoc:true,graduated:false});
   document.getElementById('teHrs').value='';document.getElementById('teDesc').value='';
-  renderTimeEntry();renderProgress();saveData();
+  saveData();renderTimeEntry();renderProgress(); // save first so derived travel (8/25) is in place before render
 }
 function renderProgress(){
   const tEst=projects.reduce((a,p)=>a+projEstHrs(p),0);
@@ -4397,7 +4745,8 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
-  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
+  try{if(syncTravelDays()>0&&!window._tdRerender){window._tdRerender=true;setTimeout(()=>{window._tdRerender=false;try{renderTimeEntry();renderProgress();if(unlocked)renderEstimate();}catch(e){}},0);}}catch(e){console.error('syncTravelDays',e);}
+  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
 }
 function loadData(){
   try{
@@ -4405,6 +4754,7 @@ function loadData(){
     const d=JSON.parse(raw);
     if(d.projects)projects=d.projects;if(d.timeEntries)timeEntries=d.timeEntries;
     if(d.billingEvents)billingEvents=d.billingEvents;
+    travelDays=Array.isArray(d.travelDays)?d.travelDays:[];if(d.nextTravelDayId)nextTravelDayId=d.nextTravelDayId;
     if(d.nextProjId)nextProjId=d.nextProjId;if(d.nextTaskId)nextTaskId=d.nextTaskId;
     if(d.nextCOId)nextCOId=d.nextCOId;if(d.nextTEId)nextTEId=d.nextTEId;
     if(d.nextBillingId)nextBillingId=d.nextBillingId;
@@ -4423,6 +4773,7 @@ function loadData(){
     timeEntries.forEach(te=>{
       if(te.posted&&!te.billingEventId){te.billingEventId=cur.id;}
     });
+    try{syncTravelDays();}catch(e){console.error('syncTravelDays',e);}
     return true;
   }catch(e){return false;}
 }
@@ -4866,6 +5217,9 @@ function buildPhotoTile(proj,photo){
     photoDragSrcId=photo.id;
     e.dataTransfer.effectAllowed='move';
     try{e.dataTransfer.setData('text/plain',String(photo.id));}catch(_){}
+    // PHOTO MOVE BETWEEN PROJECTS (KEEP IN EVERY BUILD, added 8/24): tag the drag so a
+    // project HEADER bar can accept it and reassign the photo (mirrors entry drag-reassign).
+    try{e.dataTransfer.setData('photoId',String(photo.id));e.dataTransfer.setData('fromPhotoProjId',String(proj.id));}catch(_){}
     setTimeout(()=>{tile.style.opacity='0.4';},0);
   };
   tile.ondragend=()=>{
@@ -4904,7 +5258,7 @@ function buildPhotoTile(proj,photo){
   // Grab handle — arms the drag only while held, so clicks elsewhere behave normally
   const handle=document.createElement('div');
   handle.textContent='\u283f';
-  handle.title='Drag to reorder';
+  handle.title='Drag to reorder or drop on another project header to move it there';
   handle.style.cssText='position:absolute;top:6px;left:6px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.55);color:#fff;border-radius:6px;cursor:grab;font-size:13px;line-height:1;user-select:none';
   handle.onmousedown=e=>{e.stopPropagation();tile.draggable=true;handle.style.cursor='grabbing';};
   handle.onmouseup=()=>{tile.draggable=false;handle.style.cursor='grab';};
@@ -5008,11 +5362,7 @@ function buildCaptureTray(){
     ctrls.appendChild(selAll);
     // Bulk-assign: send all checked photos to one project in a single action. Operates on the
     // selected photo OBJECT refs (traySelected), so it stays correct even if photo ids collide.
-    const asgSel=document.createElement('select');
-    asgSel.id='traySelAssignSel';
-    asgSel.style.cssText='font-size:12px;padding:2px 5px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600';
-    const a0=document.createElement('option');a0.value='';a0.textContent='Add selected to\u2026';asgSel.appendChild(a0);
-    projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;asgSel.appendChild(o);});
+    const asgSel=buildProjectPicker({id:'traySelAssignSel',placeholder:'Add selected to\u2026',options:projectPickerOptions(),style:'width:190px;max-width:45vw'});
     ctrls.appendChild(asgSel);
     const asgBtn=document.createElement('button');
     asgBtn.type='button';asgBtn.id='traySelAssignBtn';
@@ -5072,6 +5422,162 @@ function buildCaptureTray(){
   }
   return wrap;
 }
+/* ─── Searchable project picker (KEEP IN EVERY BUILD, added 8/20) ────────────
+ * Shared combobox replacing the three native project <select>s: the per-photo
+ * "Assign to project…" on tray tiles, the tray toolbar's bulk "Add selected
+ * to…", and the ⇄ Move line items "Choose destination project…". Clicking the
+ * field opens a FIXED-position panel (fixed so it escapes the tile's
+ * overflow:hidden and the modal's clipping) with an auto-focused filter box on
+ * top of the scrollable project list. FORGIVING RANKED FILTER (upgraded 8/20,
+ * per Abram: "more options than less"): the query is split on spaces into
+ * tokens; labels and tokens are normalized (lowercased, punctuation → spaces)
+ * so exact wording/spacing never matters. Each token scores per label: 2 for a
+ * substring hit, 1 for a close-enough word (edit distance ≤1, ≤2 for 8+ char
+ * tokens — "windless" still finds "Windlass"). Projects matching ALL tokens
+ * rank first; projects matching only SOME tokens still show, dimmed, below —
+ * never zero options while anything is plausible. "davit gear" matches both
+ * "Davit Rotational Control Gearbox" and "Davits Gears"; the numeric prefix is
+ * part of the label, so typing "32" works too. The wrapper div carries a .value
+ * property (''=nothing chosen), so the existing getElementById(id).value reads
+ * in assignSelectedTrayPhotos/confirmMoveItems keep working unchanged.
+ * Keyboard: ↑/↓ move the highlight, Enter picks it, Esc closes. Panel z-index
+ * 3000 sits above the clear-modal overlay (2000). */
+function _pkNorm(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();}
+function _pkDist(a,b,max){ // bounded Levenshtein — bails early once distance exceeds max
+  if(Math.abs(a.length-b.length)>max)return max+1;
+  let prev=Array.from({length:b.length+1},(x,i)=>i);
+  for(let i=1;i<=a.length;i++){
+    const cur=[i];let best=i;
+    for(let j=1;j<=b.length;j++){
+      cur[j]=Math.min(prev[j]+1,cur[j-1]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+      if(cur[j]<best)best=cur[j];
+    }
+    if(best>max)return max+1;
+    prev=cur;
+  }
+  return prev[b.length];
+}
+function _pkTokenScore(tok,norm,words){
+  if(norm.indexOf(tok)>=0)return 2;                    // substring anywhere = strong hit
+  const max=tok.length>=8?2:(tok.length>=4?1:0);       // typo budget scales with token length
+  if(max)for(let k=0;k<words.length;k++){
+    const w=words[k];
+    if(_pkDist(tok,w,max)<=max)return 1;               // whole-word near-match
+    if(tok.length>=4&&w.length>tok.length&&_pkDist(tok,w.slice(0,tok.length),1)<=1)return 1; // fuzzy prefix
+  }
+  return 0;
+}
+function buildProjectPicker(opts){
+  const wrap=document.createElement('div');
+  if(opts.id)wrap.id=opts.id;
+  wrap.style.cssText='position:relative;display:inline-block;vertical-align:middle;'+(opts.style||'');
+  wrap.value='';
+  const fieldBtn=document.createElement('button');fieldBtn.type='button';
+  fieldBtn.style.cssText='width:100%;text-align:left;font-size:12px;padding:4px 20px 4px 6px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#555;font-weight:600;cursor:pointer;position:relative;box-sizing:border-box';
+  const lab=document.createElement('span');
+  lab.style.cssText='display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:1.2em';
+  lab.textContent=opts.placeholder;
+  const car=document.createElement('span');car.textContent='▾';
+  car.style.cssText='position:absolute;right:6px;top:50%;transform:translateY(-50%);color:#888;pointer-events:none';
+  fieldBtn.appendChild(lab);fieldBtn.appendChild(car);
+  wrap.appendChild(fieldBtn);
+  let panel=null,rows=[],hi=0;
+  function close(){
+    if(!panel)return;
+    panel.remove();panel=null;rows=[];
+    document.removeEventListener('mousedown',outside,true);
+    window.removeEventListener('scroll',onScroll,true);
+    window.removeEventListener('resize',close);
+  }
+  function outside(e){if(panel&&!panel.contains(e.target)&&!wrap.contains(e.target))close();}
+  function onScroll(e){if(panel&&!panel.contains(e.target))close();}
+  function setHi(n){
+    if(!rows.length)return;
+    hi=Math.max(0,Math.min(n,rows.length-1));
+    rows.forEach((r,idx)=>{r.row.style.background=idx===hi?'#e8f0fb':'';});
+    if(rows[hi].row.scrollIntoView)rows[hi].row.scrollIntoView({block:'nearest'});
+  }
+  function pick(o){
+    wrap.value=o.value;
+    lab.textContent=o.value?o.label:opts.placeholder;
+    fieldBtn.style.color=o.value?'#222':'#555';
+    close();
+    if(opts.onPick)opts.onPick(o.value);
+  }
+  function open(){
+    if(panel){close();return;}
+    panel=document.createElement('div');
+    panel.style.cssText='position:fixed;z-index:3000;background:#fff;border:1px solid #ccc;border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.2);padding:6px;box-sizing:border-box';
+    const inp=document.createElement('input');inp.type='text';
+    inp.placeholder='Type to filter…';
+    inp.style.cssText='width:100%;box-sizing:border-box;font-size:12px;padding:5px 7px;border:1px solid #ccc;border-radius:6px;font-family:inherit;margin-bottom:6px;outline:none';
+    const list=document.createElement('div');
+    list.style.cssText='max-height:250px;overflow:auto';
+    panel.appendChild(inp);panel.appendChild(list);
+    function rebuild(){
+      const toks=_pkNorm(inp.value).split(' ').filter(Boolean);
+      list.innerHTML='';rows=[];
+      // Score every option; full matches (all tokens hit) rank above partials,
+      // partials still show (dimmed) so the list errs toward MORE options.
+      const scored=[];
+      opts.options.forEach((o,ord)=>{
+        const norm=_pkNorm(o.label),words=norm.split(' ');
+        const ts=toks.map(t=>_pkTokenScore(t,norm,words));
+        const hit=ts.filter(s=>s>0).length;
+        if(toks.length&&hit===0)return;
+        scored.push({o,ord,hit,sum:ts.reduce((a,b)=>a+b,0),full:hit===toks.length});
+      });
+      scored.sort((a,b)=>(b.full-a.full)||(b.hit-a.hit)||(b.sum-a.sum)||(a.ord-b.ord));
+      scored.forEach(s=>{
+        const row=document.createElement('div');
+        row.textContent=s.o.label;
+        row.style.cssText='padding:5px 8px;font-size:12px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis'+((toks.length&&!s.full)?';color:#999':'');
+        const idx=rows.length;
+        row.onmouseenter=()=>setHi(idx);
+        row.onmousedown=e=>{e.preventDefault();pick(s.o);};
+        rows.push({row,o:s.o});list.appendChild(row);
+      });
+      if(!rows.length){
+        const em=document.createElement('div');
+        em.textContent='No matching projects';
+        em.style.cssText='padding:6px 8px;font-size:12px;color:#999;font-style:italic';
+        list.appendChild(em);
+      }
+      setHi(0);
+    }
+    inp.oninput=rebuild;
+    inp.onkeydown=e=>{
+      if(e.key==='ArrowDown'){e.preventDefault();setHi(hi+1);}
+      else if(e.key==='ArrowUp'){e.preventDefault();setHi(hi-1);}
+      else if(e.key==='Enter'){e.preventDefault();if(rows[hi])pick(rows[hi].o);}
+      else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();close();}
+    };
+    rebuild();
+    document.body.appendChild(panel);
+    const r=fieldBtn.getBoundingClientRect();
+    const pw=Math.min(Math.max(r.width,260),Math.max(200,window.innerWidth-16));
+    panel.style.width=pw+'px';
+    panel.style.left=Math.max(8,Math.min(r.left,window.innerWidth-pw-8))+'px';
+    const ph=panel.offsetHeight;
+    if(r.bottom+4+ph>window.innerHeight&&r.top-4-ph>0)panel.style.top=(r.top-4-ph)+'px';
+    else panel.style.top=Math.min(r.bottom+4,Math.max(8,window.innerHeight-ph-8))+'px';
+    document.addEventListener('mousedown',outside,true);
+    window.addEventListener('scroll',onScroll,true);
+    window.addEventListener('resize',close);
+    inp.focus();
+  }
+  fieldBtn.onclick=e=>{e.stopPropagation();open();};
+  return wrap;
+}
+/* Option list for a project picker: numbered, billed projects excluded — the exact
+ * list the old native selects built. reverse:true (tray dropdowns) lists newest
+ * first; the move-items modal passes reverse:false + excludeId (source project). */
+function projectPickerOptions(o){
+  o=o||{};
+  let xs=projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed'&&x.p.id!==o.excludeId);
+  if(o.reverse!==false)xs=xs.slice().reverse();
+  return xs.map(({p,i})=>({value:String(p.id),label:String(i+1).padStart(2,'0')+' — '+p.name}));
+}
 function buildTrayTile(photo){
   const tile=document.createElement('div');
   tile.style.cssText='width:160px;border:1px solid #e5e5e0;border-radius:8px;overflow:hidden;background:#fff';
@@ -5092,10 +5598,7 @@ function buildTrayTile(photo){
   const body=document.createElement('div');body.style.cssText='padding:8px';
   const dtStr=fmtPhotoDate(photoSortMs(photo));
   if(dtStr){const dl=document.createElement('div');dl.textContent=dtStr;dl.title='Capture date';dl.style.cssText='font-size:10px;color:#999;margin:0 0 6px';body.appendChild(dl);}
-  const sel=document.createElement('select');
-  sel.style.cssText='width:100%;font-size:12px;padding:4px;border:1px solid #ddd;border-radius:6px;font-family:inherit';
-  const opt0=document.createElement('option');opt0.value='';opt0.textContent='Assign to project\u2026';sel.appendChild(opt0);
-  projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed').reverse().forEach(({p,i})=>{const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' \u2014 '+p.name;sel.appendChild(o);});
+  const sel=buildProjectPicker({placeholder:'Assign to project\u2026',options:projectPickerOptions(),style:'display:block;width:100%'});
   body.appendChild(sel);
   const btn=document.createElement('button');btn.textContent='Assign';btn.className='btn-sm blue';btn.style.cssText='margin-top:8px;width:100%';
   btn.onclick=()=>{if(sel.value)assignCaptureToProject(photo.id,parseInt(sel.value));};
@@ -5179,6 +5682,28 @@ function findTaskById(taskId){
   }
   return null;
 }
+/* PHOTO MOVE BETWEEN PROJECTS (KEEP IN EVERY BUILD, added 8/24): reassign a photo to another
+ * project by moving the photo OBJECT between proj.photos arrays — caption, includeInClientDoc,
+ * thumb/full URLs, ts, and pendingUpload all ride along untouched; photo.projId is re-tethered.
+ * The IDB thumbnail cache is untouched by design: photoCacheKey() keys on the blob GUID / photo
+ * id, never the project, so the cached thumb stays valid across the move. Ids compared as
+ * strings (local photos use numeric-ish ids, field photos use "<vessel>-…" strings). */
+function movePhotoToProject(photoId,destProjId){
+  const dest=projects.find(p=>p.id===destProjId);
+  if(!dest)return false;
+  for(const src of projects){
+    const arr=src.photos||[];
+    const idx=arr.findIndex(ph=>String(ph.id)===String(photoId));
+    if(idx<0)continue;
+    if(src.id===dest.id)return false; // same project — the in-strip reorder handles that
+    const [moved]=arr.splice(idx,1);
+    moved.projId=dest.id;
+    if(!dest.photos)dest.photos=[];
+    dest.photos.push(moved);
+    return true;
+  }
+  return false;
+}
 function moveTaskToProject(taskId,destProjId){
   const hit=findTaskById(taskId);if(!hit)return false;
   const dest=projects.find(p=>p.id===destProjId);if(!dest)return false;
@@ -5210,18 +5735,17 @@ function openMoveItemsModal(projId){
     const coTag=document.createElement('span');coTag.textContent='CO';coTag.title=co.title||'';coTag.style.cssText='font-size:9px;font-weight:700;color:#d97706;flex-shrink:0';
     mkRow('task',t.id,(co.title?co.title+' — ':'')+(t.desc||''),fmt(taskTotal(t)),coTag);
   }));
-  timeEntries.filter(te=>te.proj===proj.name&&!isEntryBilled(te)).forEach(te=>{
+  timeEntries.filter(te=>te.proj===proj.name&&!isEntryBilled(te)&&!isTravelDerived(te)).forEach(te=>{ // derived travel follows its labor (8/25)
     let tag=null;
     if(!te.posted){tag=document.createElement('span');tag.textContent='draft';tag.style.cssText='font-size:9px;font-weight:700;color:#b45309;flex-shrink:0';}
     mkRow('te',te.id,(te.date?te.date+' · ':'')+(te.desc||''),fmt(teAmount(te)),tag);
   });
   if(!list.children.length){const em=document.createElement('div');em.style.cssText='padding:16px;font-size:12px;color:#999;font-style:italic';em.textContent='No movable line items (billed entries are locked to their invoice).';list.appendChild(em);}
-  const dest=document.getElementById('moveItemsDest');dest.innerHTML='';
-  const d0=document.createElement('option');d0.value='';d0.textContent='Choose destination project…';dest.appendChild(d0);
-  projects.forEach((p,i)=>{
-    if(p.id===projId||p.status==='billed')return;
-    const o=document.createElement('option');o.value=String(p.id);o.textContent=String(i+1).padStart(2,'0')+' — '+p.name;dest.appendChild(o);
-  });
+  // Searchable destination picker (8/20): rebuilt each open; replaceWith keeps the
+  // id, so confirmMoveItems' getElementById('moveItemsDest').value read is unchanged.
+  const oldDest=document.getElementById('moveItemsDest');
+  const dest=buildProjectPicker({id:'moveItemsDest',placeholder:'Choose destination project…',options:projectPickerOptions({excludeId:projId,reverse:false}),style:'flex:1'});
+  oldDest.replaceWith(dest);
   document.getElementById('moveItemsOverlay').classList.add('open');
 }
 function closeMoveItemsModalDirect(){document.getElementById('moveItemsOverlay').classList.remove('open');_moveSrcProjId=null;}
