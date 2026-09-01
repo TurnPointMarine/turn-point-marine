@@ -2,15 +2,15 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-09-01T21:27:20.905Z",
+    "exportedAt": "2026-09-01T19:01:29.146Z",
     "engineVersion": 8,
-    "engineBuild": "2026-09-01g"
+    "engineBuild": "2026-08-27h"
   },
   "projects": [
     {
       "id": 1,
       "name": "Bimini Canvas Replacement",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Bimini Canvas Replace\n(Authorization in text 11/18/2025)",
       "estimateTotal": 5500,
@@ -27,8 +27,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 3,
@@ -72,7 +71,7 @@
     {
       "id": 4,
       "name": "Tender Throttle Sticky at Low RPM — Repair",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "My guess is shift and throttle cables need to be replaced. SeaStar TFXtreme cable ~$70.",
       "estimateTotal": null,
@@ -80,8 +79,7 @@
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 6,
@@ -99,7 +97,7 @@
     {
       "id": 7,
       "name": "Fire Suppression System Certifications",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": 527.5,
@@ -124,8 +122,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 8,
@@ -175,7 +172,7 @@
     {
       "id": 10,
       "name": "Transmission Shift Cables - Replace",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Replace cooked shift cables (melted housing jacket and conduit, above starboard exhaust elbow). Pull starboard main engine shift cable off transmission. Slide heat protective sleeve over both cables routed near exhaust elbow, secure to shift cable. Install both shift cables on respective engines. Use higher quality SeaStar shift cable CCX63323 (MORSE 301947-003 23FT 06092 S translates to this) ~$120.",
       "estimateTotal": null,
@@ -183,13 +180,12 @@
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 11,
       "name": "Varnish — Repairs and 2 Maintenance Coats",
-      "status": "in_progress",
+      "status": "holding",
       "include": true,
       "notes": "Estimate $4,620 per 4/23 text. Subcontracted.",
       "estimateTotal": 4620,
@@ -272,7 +268,7 @@
     {
       "id": 15,
       "name": "Winter Watch — Feb + March 2026",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Monthly winter watch service, flat rate per month.",
       "estimateTotal": null,
@@ -299,13 +295,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 16,
       "name": "Winter Wash — Jan/Feb/Mar/Apr",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Winter washes scheduled monthly (Jan, Feb, Mar, Apr). Previously flat rate per boat; now billed at actual time. Hours logged as time entries as work is performed.",
       "estimateTotal": null,
@@ -313,8 +308,7 @@
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 17,
@@ -342,7 +336,7 @@
     {
       "id": 18,
       "name": "Preseason Exterior Deep Clean",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": 780,
@@ -359,8 +353,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 19,
@@ -396,13 +389,12 @@
           "pendingUpload": false
         }
       ],
-      "showInDoc": true,
-      "actualsInClientDoc": true
+      "showInDoc": true
     },
     {
       "id": 20,
       "name": "Freshwater Tank Level Sending Units Fore and Aft - Repair Functionality",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Need to import time entries here. ",
       "estimateTotal": null,
@@ -419,8 +411,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 21,
@@ -713,7 +704,7 @@
     {
       "id": 22,
       "name": "Wax",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": 780,
@@ -730,13 +721,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 23,
       "name": "Davit Rotational Control Gearbox",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Progress made on dealing with the davit rotational control gearbox. \n",
       "estimateTotal": null,
@@ -801,13 +791,12 @@
           "ts": "2026-08-19T21:28:05.1731365Z",
           "pendingUpload": false
         }
-      ],
-      "autoBilledBy": 505
+      ]
     },
     {
       "id": 24,
       "name": "Cable Run Heat Exposure (just outboard of the SME exhaust elbow)",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Confirm the integrity of the duplex sheathing for heat damage.\n*There is a bundle of duplex near the spot of the starboard shift cable that is browned/blackened. Would you like us to pursue it? I suggest we trim zip ties of the cable run back (hang it down) so we can get access to this section of the bundle and confirm the integrity of the sheathing. Presently it is up outboard of the exhaust elbow and inaccessible to inspection. At a minimum we should make sure the sheathing of the individual duplex cables is not going to crumble to ash when the bundle is bent.\n \n\nChecking the cabling integrity is prudent with what we found.",
       "estimateTotal": null,
@@ -824,13 +813,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 27,
       "name": "Pre-Season Dive Inspection & Clean",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -838,13 +826,12 @@
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 28,
       "name": "Thruster Helm Station Control Pad Replace",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -861,13 +848,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 29,
       "name": "Tender Fuel/Water Separator Replace",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -884,13 +870,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 31,
       "name": "Salon Slider End Cap",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1129,8 +1114,7 @@
           "ts": "2026-07-23T14:23:29.0361627Z",
           "pendingUpload": false
         }
-      ],
-      "autoBilledBy": 505
+      ]
     },
     {
       "id": 32,
@@ -1297,9 +1281,7 @@
           "ts": "2026-06-29T18:34:56.4085929Z",
           "pendingUpload": false
         }
-      ],
-      "showInDoc": true,
-      "actualsInClientDoc": false
+      ]
     },
     {
       "id": 33,
@@ -1416,7 +1398,7 @@
     {
       "id": 34,
       "name": "Bow Cap Rail Stainless Fasteners Drill/EpoxyFill/Drill Replace",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1567,13 +1549,12 @@
           "ts": "2026-08-17T18:42:26.8885269Z",
           "pendingUpload": false
         }
-      ],
-      "autoBilledBy": 505
+      ]
     },
     {
       "id": 36,
       "name": "Wash / Rinse",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1581,8 +1562,7 @@
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 37,
@@ -1600,7 +1580,7 @@
     {
       "id": 38,
       "name": "Windlass Foot Pedal Replace",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1643,13 +1623,12 @@
           "ts": "2026-07-21T14:07:38.7111163Z",
           "pendingUpload": false
         }
-      ],
-      "autoBilledBy": 505
+      ]
     },
     {
       "id": 40,
       "name": "Wash — 7/16/2026",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -1657,13 +1636,12 @@
       "scopeTasks": [],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
+      "billingEvents": []
     },
     {
       "id": 41,
       "name": "Thermostat in Guest Cabin Replace (On/Off Switch Broken)",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "Thermostat needs to be replaced as part of the plastic slide/capture function of the slide switch On/Off was broken. ",
       "estimateTotal": 231.25,
@@ -1712,41 +1690,17 @@
           "ts": "2026-08-19T15:39:29.2367159Z",
           "pendingUpload": false
         }
-      ],
-      "autoBilledBy": 505
+      ]
     },
     {
       "id": 42,
       "name": "Hydronic System Hot Water Functionality",
-      "status": "billed",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": [],
-      "autoBilledBy": 505
-    },
-    {
-      "id": 43,
-      "name": "Windlass Intermittent Functionality Troubleshoot",
-      "status": "in_progress",
-      "include": true,
-      "notes": "",
-      "estimateTotal": null,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 136,
-          "cat": "T",
-          "desc": "",
-          "hrs": 0,
-          "mat": 0,
-          "sub": 0
-        }
-      ],
       "tasks": [],
       "cos": [],
       "billingEvents": []
@@ -1774,7 +1728,7 @@
       "hrs": 1,
       "desc": "Pattern, fabricate and install a replacement bimini top on existing stainless frame for 42' Grand Banks, Salish See.\nCanvas Labor — custom labor for canvas, upholstery.\nSunbrella Marine 60\" (Slyd. NAVY).\n3/4\" Sunbrella binding ($/yd).\nRex Tex 18 oz. 61\" industrial grade coated vinyl.\nSolarFix lifetime Teflon thread.\n#10 separating zipper 60\".\n#10 separating zipper 48\".\nEye end 1\" stainless steel.\nEye end 1.25\" stainless steel.\n1.25\" jaw slide thick wall stainless steel.\n1.25\" jaw slide hinged stainless steel.",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true,
       "mat": 4500
@@ -1787,7 +1741,7 @@
       "hrs": 2.5,
       "desc": "Winter Wash",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true,
       "co": false
@@ -1800,7 +1754,7 @@
       "hrs": 2.75,
       "desc": "Winter Wash\nPumped the standing water from the engine room sump, wiped it dry, and disposed the bilge water.",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1812,7 +1766,7 @@
       "hrs": 5.5,
       "desc": "Removed tank sending units. Removed residual gasket material from the tanks and installed the new sending units. Installed new sending units. Confirmed accurate tracking with the TankWatch monitor from full to empty with dip tube contraption.  Topped off both freshwater tanks.",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1824,7 +1778,7 @@
       "hrs": 0,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -1836,7 +1790,7 @@
       "hrs": 1,
       "desc": "Tank Level Sending units",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true,
       "mat": 375
@@ -1849,7 +1803,7 @@
       "hrs": 2.75,
       "desc": "Winter Wash",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1861,7 +1815,7 @@
       "hrs": 4.25,
       "desc": "High UV Exposure Areas\nWiped the condensation from the gelcoat and applied a coat of marine wax to the flybridge brow, port upper deck eyebrow, and the top and forward surfaces of the foredeck hood, focusing on high-UV areas. \n",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1873,7 +1827,7 @@
       "hrs": 1.5,
       "desc": "High UV Exposure Areas\nApplied a coat of marine wax to the stanchions and the port side of the foredeck hood. Washed dirt and salt off the flybridge brow and top of the hood to prepare for waxing.",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1885,7 +1839,7 @@
       "hrs": 1,
       "desc": "February 2026 Winter Watch (flat rate)",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true,
       "rate": 325,
@@ -1899,7 +1853,7 @@
       "hrs": 1,
       "desc": "March 2026 Winter Watch (flat rate)",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true,
       "rate": 325,
@@ -1913,7 +1867,7 @@
       "hrs": 3.25,
       "desc": "Accessed Drain and emptied the oil and water from the gear box under the Davit while keeping track of the amount expelled. \nGently, exercised the davit to drain additional oil from the gearbox that was likely captured in the worm drive, removed a set pin to rotate the gearbox and obtain specifications, documented the gearbox and hydraulic motor orientation with photos for reference, then located and recorded gearbox specifications on the starboard face of the gearbox. Reinstalled the drained plug to prep for new oil. ",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1925,7 +1879,7 @@
       "hrs": 3.25,
       "desc": "Topped off the davit gearbox with new oil, exercised the davit, drained the gearbox again to remove any internal corrosion while recording oil condition, refilled the gearbox, exercised the davit once more, and allowed it to sit overnight.  \nProperly disposed the old oil.  ",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -1937,7 +1891,7 @@
       "hrs": 2,
       "desc": "1 Gallon of manufacturer recommended gear oil for flushing the gear box. ",
       "posted": true,
-      "billingEventId": 505,
+      "billingEventId": 504,
       "includeInClientDoc": true,
       "graduated": true,
       "mat": 74
@@ -2015,7 +1969,7 @@
       "hrs": 0.75,
       "desc": "Removed old throttle cable from outboard, compared with new throttle cable to confirm fitment. Reinstalled old cable for the time being.\nAbe wanted to know if the cable would fit prior to installation.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -2027,7 +1981,7 @@
       "hrs": 1.75,
       "desc": "Removed tender throttle cable from engine, tested resistance at binnacle, confirmed cable corroded. Lubricated metal contact points, reassembled, retested — still substantial resistance.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -2063,7 +2017,7 @@
       "hrs": 0.25,
       "desc": "Picked up new gasoline to replace tender outboard primary fuel filter.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -2087,7 +2041,7 @@
       "hrs": 2.75,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -2123,7 +2077,7 @@
       "hrs": 0.5,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2147,7 +2101,7 @@
       "hrs": 0.25,
       "desc": "Picked up more coolant at LFS to flush the hydronic system.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2171,7 +2125,7 @@
       "hrs": 2.75,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2195,7 +2149,7 @@
       "hrs": 0.25,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2219,7 +2173,7 @@
       "hrs": 6.75,
       "desc": "\n",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2231,7 +2185,7 @@
       "hrs": 0.25,
       "desc": "Picked up a new shift cable clamp (and a heat wrap — combined errand, kept whole here) at LFS.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2291,7 +2245,7 @@
       "hrs": 1,
       "desc": "Pressure washed starboard half of foredeck to match port half (port half needed washing due to the accidental wax spill).",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2339,7 +2293,7 @@
       "hrs": 0.25,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2351,7 +2305,7 @@
       "hrs": 0.5,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2375,7 +2329,7 @@
       "hrs": 0.25,
       "desc": "Inspected and photographed the broken rollers on the salon sliding hatch; planned repair.",
       "posted": true,
-      "billingEventId": 506,
+      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2387,7 +2341,7 @@
       "hrs": 0.25,
       "desc": "Photos and inspection of the stainless plate around the foredeck teak cap rail separating due to stripped fasteners.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2411,7 +2365,7 @@
       "hrs": 0.5,
       "desc": "Cleaned gelcoat cracks on swim step (from tender hull incident) with acetone, filled with 3M-4000UV sealant, cleaned again.",
       "posted": true,
-      "billingEventId": 506,
+      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2483,7 +2437,7 @@
       "hrs": 0.5,
       "desc": "Returned the broken tender fuel filter housing, labeled the installation date on the new filter, and installed heat shrink around the new tender binnacle plug.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": true
     },
@@ -2519,7 +2473,7 @@
       "hrs": 1,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2531,7 +2485,7 @@
       "hrs": 0.25,
       "desc": "",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2579,7 +2533,7 @@
       "hrs": 0.25,
       "desc": "Picked up sealant and fasteners for the foredeck rub rail at LFS.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false
     },
@@ -2662,7 +2616,7 @@
       "cat": "M",
       "hrs": 1,
       "desc": "2x water tank level sending units.",
-      "posted": false,
+      "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
@@ -2676,7 +2630,7 @@
       "hrs": 1,
       "desc": "Lucas Oil 10045 Heavy Duty SAE 85W-140 Gear Oil - 1 Gallon\n",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 63.34
@@ -2689,7 +2643,7 @@
       "hrs": 1,
       "desc": "Lucas Oil 10045 Heavy Duty SAE 85W-140 Gear Oil.",
       "posted": false,
-      "billingEventId": 505,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 41.16
@@ -2836,12 +2790,6 @@
           "from": "Billing Event 2026-05-14",
           "to": "Invoice #23520",
           "at": "2026-06-10T18:39:10.050Z"
-        },
-        {
-          "field": "mergedOut",
-          "from": "",
-          "to": "13 graduated entries · $8,656.75 → Invoice #23520",
-          "at": "2026-09-01T20:02:40.835Z"
         }
       ],
       "invoiceNum": "Billing Event 2026-05-14",
@@ -2851,8 +2799,8 @@
     {
       "id": 505,
       "name": "Invoice #23520",
-      "isCurrent": false,
-      "locked": true,
+      "isCurrent": true,
+      "locked": false,
       "createdAt": "2026-05-15T14:04:40.459Z",
       "history": [
         {
@@ -2860,58 +2808,17 @@
           "from": "Billing Event 2026-05-15",
           "to": "Invoice #23520",
           "at": "2026-08-20T18:09:58.442Z"
-        },
-        {
-          "field": "mergedIn",
-          "from": "",
-          "to": "13 graduated entries · $8,656.75 ← Invoice #23520",
-          "at": "2026-09-01T20:02:40.835Z"
-        },
-        {
-          "field": "invoiceNum",
-          "from": "",
-          "to": "Invoice #23520",
-          "at": "2026-09-01T20:05:15.535Z"
-        },
-        {
-          "field": "rolledForward",
-          "from": "",
-          "to": "2 ungraduated entries moved to Billing Event 2026-09-01",
-          "at": "2026-09-01T20:05:15.535Z"
-        },
-        {
-          "field": "autoBilled",
-          "from": "",
-          "to": "11 projects moved Complete → Billed on open (already fully invoiced): Bimini Canvas Replacement, Winter Watch — Feb + March 2026, Winter Wash — Jan/Feb/Mar/Apr, Wax, Cable Run Heat Exposure (just outboard of the SME exhaust elbow), Pre-Season Dive Inspection & Clean, Thruster Helm Station Control Pad Replace, Wash / Rinse, Windlass Foot Pedal Replace, Wash — 7/16/2026, Thermostat in Guest Cabin Replace (On/Off Switch Broken)",
-          "at": "2026-09-01T20:56:37.642Z"
-        },
-        {
-          "field": "autoBilled",
-          "from": "",
-          "to": "10 projects moved Complete → Billed on open (already fully invoiced): Tender Throttle Sticky at Low RPM — Repair, Fire Suppression System Certifications, Transmission Shift Cables - Replace, Preseason Exterior Deep Clean, Freshwater Tank Level Sending Units Fore and Aft - Repair Functionality, Davit Rotational Control Gearbox, Tender Fuel/Water Separator Replace, Salon Slider End Cap, Bow Cap Rail Stainless Fasteners Drill/EpoxyFill/Drill Replace, Hydronic System Hot Water Functionality",
-          "at": "2026-09-01T21:24:22.825Z"
         }
-      ],
-      "invoiceNum": "Invoice #23520",
-      "invoiceDate": "2026-06-10",
-      "lockedAt": "2026-09-01T20:05:15.535Z"
-    },
-    {
-      "id": 506,
-      "name": "Billing Event 2026-09-01",
-      "isCurrent": true,
-      "locked": false,
-      "createdAt": "2026-09-01T20:05:15.535Z",
-      "history": []
+      ]
     }
   ],
   "travelDays": [],
   "nextTravelDayId": 9000,
-  "nextProjId": 44,
-  "nextTaskId": 137,
+  "nextProjId": 43,
+  "nextTaskId": 136,
   "nextCOId": 100,
   "nextTEId": 1086,
-  "nextBillingId": 507,
+  "nextBillingId": 506,
   "settings": {
     "company": "Turn Point Marine",
     "manager": "Abram Anderson",
@@ -3130,7 +3037,7 @@
       "estinfo_6": false,
       "est_7": false,
       "act_7": true,
-      "_tray": false,
+      "_tray": true,
       "estinfo_23": true,
       "estinfo_31": true,
       "est_35": false,
@@ -3150,8 +3057,7 @@
       "estinfo_10": false,
       "estinfo_14": true,
       "estinfo_17": false,
-      "estinfo_19": false,
-      "act_32": true
+      "estinfo_19": false
     },
     "openProjs": [
       61,
@@ -3161,6 +3067,8 @@
       39,
       5,
       35,
+      32,
+      1,
       20
     ],
     "closedReadyProjs": [
@@ -3187,8 +3095,7 @@
       1
     ],
     "closedBilledProjs": [
-      "504:15",
-      "505:1"
+      "504:15"
     ]
   }
 }

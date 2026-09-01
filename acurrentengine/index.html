@@ -172,6 +172,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
         <button class="nav-drop-item" onclick="exportData(false);closeDrop('dropData')">&#11015; Save Data</button>
         <button class="nav-drop-item" onclick="exportData(true);closeDrop('dropData')">&#128190; Save Data As&hellip;</button>
         <label class="nav-drop-item label-file">&#11014; Import Data<input type="file" id="importFileInput" accept=".json" style="display:none" onchange="importData(event);closeDrop('dropData')"></label>
+        <button class="nav-drop-item" onclick="openWorklistImport();closeDrop('dropData')">&#128229; Import Worklist Request&hellip;</button>
         <button class="nav-drop-item" onclick="exportCSV();closeDrop('dropData')">Export CSV</button>
         <button class="nav-drop-item" onclick="window.print();closeDrop('dropData')">Print</button>
       </div>
@@ -289,8 +290,8 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   <div class="pin-box" style="width:420px;max-width:90vw">
     <h2 style="font-size:16px;margin-bottom:4px">Lock Billing Event</h2>
     <p id="lockBeSubtitle" style="margin-bottom:14px;font-size:12px;color:#888"></p>
-    <div id="lockBeBlocked" style="display:none;background:#fff5f5;border:1px solid #fecaca;border-radius:8px;padding:12px;margin-bottom:14px;text-align:left;font-size:12px;color:#991b1b">
-      <strong>Cannot lock yet.</strong><br>
+    <div id="lockBeBlocked" style="display:none;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:12px;margin-bottom:14px;text-align:left;font-size:12px;color:#92400e">
+      <strong>Rolling forward.</strong><br>
       <span id="lockBeBlockedDetail"></span>
     </div>
     <div id="lockBeFields" style="text-align:left">
@@ -537,7 +538,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-08-25a';
+const ENGINE_BUILD='2026-09-01g';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -770,6 +771,40 @@ function projBilledTotal(p){
     .reduce((a,te)=>a+teAmount(te),0);
 }
 function projDisplayTotal(p){return p.isTM?projAllActualTotal(p):projScopeTotal(p);}
+/* ── HEADER = ACTUAL · SUB-HEADER = ESTIMATE (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01b per Abram) ──
+ * "The project line header should not have any est numbers in it." A project's HEADER line carries
+ * only real cost — a solid green ACTUAL chip + posted labor/materials/subs — or a muted "no actuals
+ * yet". The ESTIMATE bar directly beneath (engine: estSecHdr; client doc: the data-estactual="sub"
+ * row) owns the quoted figure with an outlined navy EST chip, says "T&M — no fixed estimate" on T&M
+ * jobs, and turns AMBER with "over estimate by $x" when actuals exceed the approved scope total.
+ * Estimate detail inside the drop-down (scope tables, Estimated Subtotal) is untouched. Used by the
+ * engine header, projBlock (full client doc) and the auth/PDF generator cards. Marker: estActualSplit */
+const EST_CHIP_CSS='display:inline-block;border:1.5px solid #3b4a6b;color:#3b4a6b;font-size:8px;font-weight:800;letter-spacing:0.08em;border-radius:4px;padding:1px 5px;line-height:1.4;vertical-align:middle;font-family:Arial,sans-serif';
+const ACT_CHIP_CSS='display:inline-block;background:#155a3e;color:#fff;font-size:8px;font-weight:800;letter-spacing:0.08em;border-radius:4px;padding:1.5px 5px;line-height:1.4;vertical-align:middle;font-family:Arial,sans-serif';
+function estActualSplit(proj,actT){
+  const scopeT=proj.isTM?0:projScopeTotal(proj);
+  const over=!proj.isTM&&scopeT>0&&actT>scopeT+0.005;
+  return {scopeT,actT,over,overBy:over?actT-scopeT:0,isTM:!!proj.isTM};
+}
+function actualHeaderHtml(actT,fmtFn,size,noneLabel){
+  if(actT>0)return '<span data-estactual="hdr" style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap"><span style="'+ACT_CHIP_CSS+'">ACTUAL</span><span style="font-weight:700;color:#155a3e;font-size:'+size+'">'+fmtFn(actT)+'</span></span>';
+  return '<span data-estactual="hdr" style="font-size:'+size+';color:#9ca3af;font-style:italic;font-weight:500;white-space:nowrap">'+(noneLabel||'no actuals yet')+'</span>';
+}
+function estimateSubRightHtml(proj,actT,fmtFn){
+  const sp=estActualSplit(proj,actT);
+  if(sp.isTM)return {over:false,html:'<span style="font-weight:600;color:#9ca3af;font-style:italic;text-transform:none;letter-spacing:0">T&amp;M &mdash; no fixed estimate</span>'};
+  if(sp.scopeT<=0)return {over:false,html:'<span style="font-weight:600;color:#9ca3af;font-style:italic;text-transform:none;letter-spacing:0">no estimate yet</span>'};
+  const overTxt=sp.over?'<span style="font-weight:700;color:#a35b00;text-transform:none;letter-spacing:0;margin-right:10px">over estimate by '+fmtFn(sp.overBy)+'</span>':'';
+  const chip='<span style="'+EST_CHIP_CSS+(sp.over?';border-color:#a35b00;color:#a35b00':'')+'">EST</span>';
+  return {over:sp.over,html:overTxt+'<span style="display:inline-flex;align-items:center;gap:5px;white-space:nowrap">'+chip+'<span style="font-weight:700;color:'+(sp.over?'#a35b00':'#3b4a6b')+'">'+fmtFn(sp.scopeT)+'</span></span>'};
+}
+function estimateSubRowHtml(proj,actT,fmtFn,label){
+  // 2026-09-01d per Abram: no client-doc sub-row for T&M projects or projects with no estimated content
+  if(proj.isTM||!(projScopeTotal(proj)>0))return '';
+  const r=estimateSubRightHtml(proj,actT,fmtFn);
+  const bg=r.over?'#fff4e0':'#faf8f0',bd=r.over?'#f0c070':'#e8e2cf',fg=r.over?'#a35b00':'#8a7a52';
+  return '<div data-estactual="sub" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:5px 14px;background:'+bg+';border-top:1px solid '+bd+';font-size:8pt;font-weight:700;color:'+fg+';text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif"><span>'+(label||'Estimate')+'</span><span style="font-size:9pt">'+r.html+'</span></div>';
+}
 
 // Combined total (scope + actual posted TEs) — used everywhere. T&M projects have no estimate, so scope contribution is zero.
 function projEstLabor(p){return(p.isTM?0:projScopeLabor(p))+projActualLabor(p);}
@@ -831,8 +866,65 @@ function logFlockChange(be,field,from,to){
   if(!be.history)be.history=[];
   be.history.push({field,from:from||'',to:to||'',at:new Date().toISOString()});
 }
+/* ── INVOICE GRAND TOTALS + LOCK AUTO-BILLS (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01d per Abram) ──
+ * (1) A billed event's headline $ must match the QB grand total Abram actually invoiced: work
+ *     subtotal + shop fee (labor+materials × rate) + card fee + tax — the same math as the
+ *     Billing Event Summary "Ready to Invoice". flockInvoiceTotals(be) computes it; lockFlock
+ *     FREEZES it on the event as be.lockedTotals so later rate changes never rewrite history
+ *     (older locked events without lockedTotals compute live). Shown on the engine Billed
+ *     section, the Time Entries locked-flock header and the client-doc Billed event header,
+ *     with the raw work subtotal beside it. Per-project pills stay raw (projects carry no tax).
+ * (2) Locking auto-migrates projects out of Complete: a project flips to Billed when it is
+ *     status 'complete', has NO unposted (draft) entries and NO posted entry left unbilled —
+ *     the same "Phase II FINAL auto-flip rule" the older Lock Billing modal (confirmLockBilling)
+ *     already applies. In-progress / partially-billed projects stay put (multi-invoice case —
+ *     the reason v7 dropped the blanket auto-flip). Flipped projects carry proj.autoBilledBy =
+ *     event id so unlockFlock reverts exactly those to 'complete'. History: 'autoBilled'.
+ * (3) normalizeInvoiceNum strips a typed "Invoice #"/"Inv"/"#" prefix so labels never read
+ *     "Inv #Invoice #23520".  Marker: flockInvoiceTotals                                      */
+/* UNBILLED ENTRIES RIDE WITH THE INVOICE (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01g per Abram): "I unposted
+ * those time entries as I didn't want to bill for non-billable labor hours. Keeping unposted line entries when a
+ * billing event is locked should not cause the projects to persist in the Complete section." So an UNPOSTED entry
+ * ("unbilled" in Abram's words) never holds a Complete project open. When a Complete project's posted work is all
+ * invoiced — at lock (lockFlock) or on render (healBilledComplete) — the project moves to Billed and its unposted
+ * entries are ATTACHED to that locked event (billingEventId = event id, posted stays false) so they show under the
+ * project inside the event's Billed card as "unbilled — not invoiced" lines. They are excluded from every total
+ * (flockTotal / flockInvoiceTotals / billed tallies all require posted) and never reach the client doc. postTimeEntry
+ * re-homes such an entry to the current flock if it is ever posted later. Marker: attachUnbilledToEvent          */
+function attachUnbilledToEvent(proj,be){
+  let n=0;timeEntries.forEach(te=>{if(te.proj===proj.name&&!te.posted&&te.billingEventId!==be.id){te.billingEventId=be.id;n++;}});
+  return n;
+}
+function normalizeInvoiceNum(v){return String(v||'').replace(/^\s*(invoice|inv\.?)?\s*#*\s*/i,'').trim();}
+function flockInvoiceTotals(be){
+  if(!be)return {L:0,M:0,S:0,F:0,sub:0,shop:0,cc:0,tax:0,total:0};
+  if(be.locked&&be.lockedTotals&&typeof be.lockedTotals.total==='number')return be.lockedTotals;
+  let L=0,M=0,S=0,F=0;
+  timeEntries.forEach(te=>{
+    if(te.billingEventId!==be.id||!te.posted)return;
+    if(!be.locked&&!isEntryGraduated(te))return; // unlocked: only what would invoice
+    const a=teAmount(te);
+    if(te.cat==='S')S+=a;else if(te.cat==='F')F+=a;else if(isMatCat(te.cat))M+=a;else L+=a;
+  });
+  const sub=L+M+S+F;
+  const shop=(L+M)*shopFeeRate();
+  const cc=(sub+shop)*ccFeeRate();
+  const tax=settings.taxExempt?0:(sub+shop+cc)*taxRateVal();
+  return {L,M,S,F,sub,shop,cc,tax,total:sub+shop+cc+tax};
+}
+function invoiceTotalTitle(T){
+  const parts=['work '+fmt(T.sub)];
+  if(T.shop>0)parts.push('shop fee '+fmt(T.shop));
+  if(T.cc>0)parts.push('card fee '+fmt(T.cc));
+  if(T.tax>0)parts.push('tax '+fmt(T.tax));
+  return parts.join(' + ')+' = '+fmt(T.total);
+}
 function lockFlock(beId,invoiceNum,invoiceDate){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  // COMPLETE-PROJECT HARD STOP (completeUngraduatedOnFlock): never lock over a finished project's unbilled work
+  const _hs=completeUngraduatedOnFlock(be);
+  if(_hs.length>0){alert('Cannot lock: '+_hs.length+' ungraduated entr'+(_hs.length!==1?'ies':'y')+' on Complete project'+(_hs.length!==1?'s':'')+' — graduate or move them first.');return null;}
+  invoiceNum=normalizeInvoiceNum(invoiceNum);
   // Log invoice number change if it's different from what's stored (covers re-lock with different number)
   logFlockChange(be,'invoiceNum',be.invoiceNum,invoiceNum||'');
   be.locked=true;
@@ -840,12 +932,42 @@ function lockFlock(beId,invoiceNum,invoiceDate){
   be.invoiceNum=invoiceNum||'';
   be.invoiceDate=invoiceDate||new Date().toISOString().split('T')[0];
   be.lockedAt=new Date().toISOString();
-  ensureCurrentFlock(); // spawn new replacement flock
+  const next=ensureCurrentFlock(); // spawn new replacement flock
+  // Roll forward: posted entries that were never graduated are not billed on this
+  // invoice — hand them to the new current flock instead of freezing them here.
+  // NOTE: be.locked is already true, so isEntryGraduated(te) would report true via
+  // isEntryBilled — test te.graduated directly.
+  let rolled=0;
+  timeEntries.forEach(te=>{
+    if(te.billingEventId===be.id&&te.posted&&te.graduated!==true){
+      te.billingEventId=next.id;rolled++;
+    }
+  });
+  if(rolled>0)logFlockChange(be,'rolledForward','',rolled+' ungraduated entr'+(rolled!==1?'ies':'y')+' moved to '+next.name);
+  // Freeze the invoice grand total as of this lock (flockInvoiceTotals)
+  delete be.lockedTotals;be.lockedTotals=flockInvoiceTotals(be);
+  // Auto-bill: Complete projects whose every posted entry is now billed and that hold no drafts
+  let flipped=0;const flippedNames=[];
+  const onEvent=new Set(timeEntries.filter(te=>te.billingEventId===be.id&&te.posted).map(te=>te.proj));
+  let attached=0;
+  projects.forEach(p=>{
+    if(p.status!=='complete'||!onEvent.has(p.name))return;
+    // attachUnbilledToEvent (01g): unposted entries no longer block the flip — they ride along as records
+    const hasUnbilledPosted=projUnbilledPostedTEs(p).length>0;
+    if(!hasUnbilledPosted){p.status='billed';p.autoBilledBy=be.id;flipped++;flippedNames.push(p.name);attached+=attachUnbilledToEvent(p,be);}
+  });
+  if(flipped>0)logFlockChange(be,'autoBilled','',flipped+' project'+(flipped!==1?'s':'')+' moved Complete → Billed: '+flippedNames.join(', ')+(attached?' ('+attached+' unbilled entr'+(attached!==1?'ies':'y')+' attached, not invoiced)':''));
   saveData();renderTimeEntry();
+  return {rolled,flipped};
 }
 function unlockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be||!be.locked)return;
   be.locked=false;
+  delete be.lockedTotals;
+  // Revert the projects THIS lock auto-billed (flockInvoiceTotals block) — nothing else
+  let reverted=0;
+  projects.forEach(p=>{if(p.autoBilledBy===be.id){p.status='complete';delete p.autoBilledBy;reverted++;}});
+  if(reverted>0)logFlockChange(be,'unlocked','',reverted+' auto-billed project'+(reverted!==1?'s':'')+' returned to Complete');
   saveData();renderTimeEntry();
 }
 function renameFlock(beId,newName){
@@ -858,6 +980,7 @@ function setFlockInvoiceNum(beId,newNum){
   // Soft-lock edit path for changing invoice number on a locked billing event.
   // The confirmation modal that gates this lives in the UI layer (Step 2+).
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
+  newNum=normalizeInvoiceNum(newNum);
   logFlockChange(be,'invoiceNum',be.invoiceNum,newNum);
   be.invoiceNum=newNum||'';
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
@@ -867,8 +990,10 @@ function setFlockInvoiceNum(beId,newNum){
 function postTimeEntry(teId){
   const te=timeEntries.find(t=>t.id===teId);if(!te)return;
   te.posted=true;
-  // Ship 1: auto-assign to current flock if not already assigned
-  if(!te.billingEventId){
+  // Ship 1: auto-assign to current flock if not already assigned.
+  // 01g (attachUnbilledToEvent): an unbilled entry parked on a LOCKED event must never post into it — re-home it.
+  const _be=te.billingEventId?billingEvents.find(b=>b.id===te.billingEventId):null;
+  if(!te.billingEventId||(_be&&_be.locked)){
     const cur=ensureCurrentFlock();
     te.billingEventId=cur.id;
   }
@@ -891,6 +1016,44 @@ function unpostTimeEntry(teId){
 function assignEntryToFlock(teId,beId){
   const te=timeEntries.find(t=>t.id===teId);if(!te)return;
   te.billingEventId=beId?parseInt(beId):null;
+  saveData();renderTimeEntry();if(unlocked)renderEstimate();
+}
+/* ── BILLING EVENT SPAN GUARD (KEEP IN EVERY BUILD, added 8/27 build 27h per Abram) ──
+ * The pink BILLING EVENT section (and the client doc's Billing Event Summary) is a TALLY of
+ * every graduated-unbilled entry, regardless of which unlocked billing event each sits on.
+ * Locking freezes ONE event. When the tally spans two or more unlocked events (Salish See
+ * 8/27: 13 entries on an unlocked-again event 504 + 44 on Next Invoice 505, one QB invoice),
+ * locking Next Invoice leaves the rest behind and the engine no longer matches QB.
+ * readyFlockSplit() reports the spread; mergeReadyIntoCurrentFlock() moves every graduated
+ * unbilled entry onto the current flock (history: mergedOut on each source, mergedIn on the
+ * target) so the section locks as one unit. Rendered by renderReadyForBillingBody as the
+ * #beSpanWarn strip and echoed in the lock modal. Marker: readyFlockSplit.                */
+function readyFlockSplit(){
+  const ready=timeEntries.filter(te=>te.posted&&isEntryGraduated(te)&&!isEntryBilled(te));
+  const cur=billingEvents.find(b=>b.isCurrent&&!b.locked)||null;
+  const groups={};
+  ready.forEach(te=>{
+    const k=te.billingEventId||0;
+    if(!groups[k])groups[k]={id:k,be:billingEvents.find(b=>b.id===te.billingEventId)||null,tes:[]};
+    groups[k].tes.push(te);
+  });
+  const parts=Object.values(groups).map(g=>({id:g.id,be:g.be,tes:g.tes,cnt:g.tes.length,tot:g.tes.reduce((a,te)=>a+teAmount(te),0)}));
+  const strays=parts.filter(pt=>!cur||pt.id!==cur.id);
+  return {cur,parts,strays,strayCnt:strays.reduce((a,pt)=>a+pt.cnt,0),strayTot:strays.reduce((a,pt)=>a+pt.tot,0)};
+}
+function flockLabel(be){return be?(be.name||('Billing Event '+be.id)):'(unassigned)';}
+function mergeReadyIntoCurrentFlock(){
+  if(!unlocked){alert('Enter PIN on the Estimate Engine tab to merge billing events.');return;}
+  const cur=ensureCurrentFlock();
+  const s=readyFlockSplit();
+  if(s.strayCnt===0)return;
+  const names=s.strays.map(pt=>'"'+flockLabel(pt.be)+'" ('+pt.cnt+' · '+fmt(pt.tot)+')').join(', ');
+  if(!confirm('Move '+s.strayCnt+' graduated entr'+(s.strayCnt!==1?'ies':'y')+' ('+fmt(s.strayTot)+') from '+names+' onto "'+cur.name+'"?\n\nThe whole Billing Event will then lock as one invoice. Ungraduated entries are not touched.'))return;
+  s.strays.forEach(pt=>{
+    pt.tes.forEach(te=>{te.billingEventId=cur.id;});
+    if(pt.be)logFlockChange(pt.be,'mergedOut','',pt.cnt+' graduated entr'+(pt.cnt!==1?'ies':'y')+' · '+fmt(pt.tot)+' → '+cur.name);
+    logFlockChange(cur,'mergedIn','',pt.cnt+' graduated entr'+(pt.cnt!==1?'ies':'y')+' · '+fmt(pt.tot)+' ← '+flockLabel(pt.be));
+  });
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 
@@ -1056,14 +1219,18 @@ function syncTravelDays(){
   });
   return changed;
 }
-function addTravelDay(){
-  const date=document.getElementById('tdDate').value;
-  const route=document.getElementById('tdRoute').value.trim();
-  const hrs=parseFloat(document.getElementById('tdHrs').value)||0;
+function addTravelDay(dateArg){
+  // Called from a day row in a flight's DAYS strip (8/27): dateArg given, route/hrs default to the
+  // last travel day used, and the new card opens expanded for editing.
+  const date=dateArg||(document.getElementById('tdDate')?document.getElementById('tdDate').value:'');
+  const last=travelDays.length?travelDays[travelDays.length-1]:null;
+  const route=dateArg?(last?last.route:'Bellingham ↔ Blaine'):(document.getElementById('tdRoute')?document.getElementById('tdRoute').value.trim():'');
+  const hrs=dateArg?(last&&last.hrs?last.hrs:1):(parseFloat(document.getElementById('tdHrs')?document.getElementById('tdHrs').value:'')||0);
   if(!date||!hrs){alert('Enter a date and the day\'s total travel hours.');return;}
   if(travelDays.some(td=>td.date===date)){alert('There is already a travel day for '+date+'. Edit that one instead.');return;}
-  travelDays.push({id:nextTravelDayId++,date,route:route||'Bellingham ↔ Blaine',hrs,basis:'hours',manual:{},flag:false,laborSig:undefined});
-  document.getElementById('tdHrs').value='';
+  const td={id:nextTravelDayId++,date,route:route||'Bellingham ↔ Blaine',hrs,basis:'hours',manual:{},flag:false,laborSig:undefined};
+  travelDays.push(td);
+  secOpenState['_td_'+td.id]=true;
   secOpenState['_travelDays']=true;
   saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
 }
@@ -1102,35 +1269,85 @@ function updateTravelDayField(id,field,v){
   else td[field]=v;
   saveData();renderTimeEntry();renderProgress();if(unlocked)renderEstimate();
 }
+
+// ── FLIGHT DAYS STRIP (KEEP IN EVERY BUILD, added 8/27 per Abram) ───────────
+// At the top of every billing-event ("flight") section — and the Unposted section — on the
+// Time Entry tab: one row per date in that section's entries showing the date, labor hours
+// (T/B/D, non-derived), the projects worked with their hours, and that date's travel day
+// (route · total hrs · basis · this flight's derived travel hrs). A ▸ toggle expands the full
+// travel-day card (buildTravelDayCard) inline; "+ Travel day" creates one for that date.
+// Open state per card: secOpenState['_td_'+td.id]. Markers: buildFlightDaysStrip / toggleTravelDayCard
+function toggleTravelDayCard(id){secOpenState['_td_'+id]=!(secOpenState['_td_'+id]===true);saveData();renderTimeEntry();}
+function buildFlightDaysStrip(entries,borderColor){
+  const byDate={};
+  entries.forEach(te=>{const d=te.date||'';if(!byDate[d])byDate[d]={labor:0,projs:{},travel:0,matOnly:{}};const b=byDate[d];
+    if(isTravelDerived(te)){b.travel+=parseFloat(te.hrs)||0;return;}
+    if(TRAVEL_LABOR_CATS.includes(te.cat)){const h=parseFloat(te.hrs)||0;b.labor+=h;b.projs[te.proj]=(b.projs[te.proj]||0)+h;}
+    else if(isMatCat(te.cat)){if(!(te.proj in b.projs))b.matOnly[te.proj]=true;}
+  });
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  const wrap=document.createElement('div');
+  wrap.style.cssText='background:#fbfaff;border:1px solid '+borderColor+';border-top:none;border-bottom:1px solid #e9e4f7';
+  if(!dates.length)return wrap;
+  const tbl=document.createElement('table');tbl.className='te-table';
+  tbl.innerHTML='<thead><tr><th style="width:90px">Day</th><th class="r" style="width:70px" title="Technician / Buff & Wax / Detail hours this flight, this date">Labor</th><th>Projects worked</th><th style="width:300px">Travel day</th><th style="width:90px"></th></tr></thead>';
+  const tb=document.createElement('tbody');
+  dates.forEach(d=>{
+    const b=byDate[d];
+    const td=travelDays.find(t=>t.date===d);
+    const open=td&&secOpenState['_td_'+td.id]===true;
+    const tr=document.createElement('tr');tr.style.background='#fbfaff';
+    const projHtml=Object.keys(b.projs).sort((x,y)=>b.projs[y]-b.projs[x]).map(n=>'<span style="display:inline-block;background:#eef1ff;color:#3b4a6b;font-size:10px;font-weight:600;padding:2px 7px;border-radius:9px;margin:2px 4px 2px 0;white-space:nowrap">'+n.replace(/</g,'&lt;')+' <span style="font-weight:400;color:#6b7280">'+_tdRound(b.projs[n]).toFixed(2)+'h</span></span>').join('')
+      +Object.keys(b.matOnly).map(n=>'<span style="display:inline-block;background:#f3f4f6;color:#6b7280;font-size:10px;font-weight:600;padding:2px 7px;border-radius:9px;margin:2px 4px 2px 0;white-space:nowrap" title="materials only — no labor this date">'+n.replace(/</g,'&lt;')+' <span style="font-weight:400">mat</span></span>').join('');
+    let travelHtml,actHtml;
+    if(td){
+      const basis={hours:'by labor hrs',even:'even split',manual:'manual'}[td.basis||'hours'];
+      const alloc=travelDayAllocated(td);const bal=Math.abs(alloc-(parseFloat(td.hrs)||0))<0.011;
+      travelHtml='<span style="color:#5b3fa6;font-weight:600">🔗 '+(td.route||'').replace(/</g,'&lt;')+'</span> <span style="color:#666">· '+(parseFloat(td.hrs)||0)+' hr · '+basis+'</span>'
+        +(b.travel?'<span style="color:#1D9E75;font-weight:600"> · '+_tdRound(b.travel).toFixed(2)+' hr here</span>':'')
+        +(td.flag?' <span style="background:#fef3c7;color:#b45309;font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px">review</span>':'')
+        +(bal?'':' <span style="background:#fee2e2;color:#b91c1c;font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px" title="allocated '+alloc.toFixed(2)+' of '+td.hrs+' hr">unbalanced</span>');
+      actHtml='<button class="btn-sm" style="font-size:10px;'+(open?'background:#ede9fe;color:#5b3fa6;border-color:#c4b5fd':'')+'" onclick="toggleTravelDayCard('+td.id+')">'+(open?'▾ Close':'▸ Open')+'</button>';
+    }else{
+      travelHtml='<span style="color:#aaa;font-style:italic">no travel day</span>';
+      actHtml=b.labor>0||Object.keys(b.matOnly).length?'<button class="btn-sm" style="font-size:10px;color:#5b3fa6;border-color:#c4b5fd" onclick="addTravelDay(\''+d+'\')" title="Add a travel day for '+d+'">+ Travel day</button>':'';
+    }
+    tr.innerHTML='<td style="padding:6px 10px;font-size:12px;font-weight:600;color:#1a1a1a;white-space:nowrap">'+d+'</td>'
+      +'<td style="padding:6px 10px;text-align:right;font-size:12px">'+(b.labor?_tdRound(b.labor).toFixed(2)+'h':'—')+'</td>'
+      +'<td style="padding:4px 10px;font-size:11px">'+(projHtml||'<span style="color:#aaa">—</span>')+'</td>'
+      +'<td style="padding:6px 10px;font-size:11px;line-height:1.4">'+travelHtml+'</td>'
+      +'<td style="padding:4px 8px;text-align:right;white-space:nowrap">'+actHtml+'</td>';
+    tb.appendChild(tr);
+    if(td&&open){
+      const ctr=document.createElement('tr');const cell=document.createElement('td');cell.colSpan=5;cell.style.cssText='padding:6px 10px 10px;background:#f6f3fd';
+      cell.appendChild(buildTravelDayCard(td));ctr.appendChild(cell);tb.appendChild(ctr);
+    }
+  });
+  tbl.appendChild(tb);wrap.appendChild(tbl);
+  return wrap;
+}
 // ── Travel Days panel on the Time Entry tab ────────────────────────────────
+// FLIGHT DAYS STRIP (8/27 per Abram): travel-day cards now live at the TOP of each billing-event
+// ("flight") section inside a day-by-day strip (buildFlightDaysStrip). This global panel only
+// shows ORPHAN travel days — dates with no time entries anywhere — so they stay reachable/deletable.
 function renderTravelDays(){
   const wrap=document.getElementById('travelDaysWrap');if(!wrap)return;
   wrap.innerHTML='';
-  const open=secOpenState['_travelDays']!==false; // default OPEN — it's where travel days get added
+  const entryDates=new Set(timeEntries.filter(te=>!isTravelDerived(te)).map(te=>te.date));
+  const orphans=travelDays.filter(td=>!entryDates.has(td.date));
+  if(!orphans.length)return;
+  const open=secOpenState['_travelDays']!==false;
   const sec=document.createElement('div');sec.style.cssText='background:#fff;border:1px solid #ddd6f3;border-radius:10px;margin-top:12px;overflow:hidden';
   const hdr=document.createElement('div');
   hdr.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;display:flex;justify-content:space-between;align-items:center;background:#f6f3fd;color:#5b3fa6;cursor:pointer;user-select:none';
   const flagged=travelDays.filter(td=>td.flag).length;
-  hdr.innerHTML='<span><span style="display:inline-block;width:10px;font-size:9px;margin-right:6px">'+(open?'▼':'▶')+'</span>🔗 Travel Days'+(flagged?' <span style="background:#fef3c7;color:#b45309;font-size:9px;padding:2px 6px;border-radius:8px;margin-left:6px;text-transform:none;letter-spacing:0">'+flagged+' need'+(flagged===1?'s':'')+' review</span>':'')+'</span>'
-    +'<span style="font-weight:400;font-size:10px;text-transform:none">'+travelDays.length+' day'+(travelDays.length!==1?'s':'')+' · travel entries are derived from these</span>';
+  hdr.innerHTML='<span><span style="display:inline-block;width:10px;font-size:9px;margin-right:6px">'+(open?'▼':'▶')+'</span>🔗 Travel Days without entries</span>'
+    +'<span style="font-weight:400;font-size:10px;text-transform:none">'+orphans.length+' day'+(orphans.length!==1?'s':'')+' · no labor logged on these dates yet — log labor and the day moves into its flight</span>';
   hdr.onclick=()=>{secOpenState['_travelDays']=!open;saveData();renderTravelDays();};
   sec.appendChild(hdr);
   if(open){
     const body=document.createElement('div');body.style.cssText='padding:12px 14px;display:flex;flex-direction:column;gap:12px';
-    // add bar
-    const add=document.createElement('div');add.style.cssText='display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;background:#fafaf8;border:1px solid #e5e5e0;border-radius:8px;padding:10px';
-    const lastRoute=travelDays.length?travelDays[travelDays.length-1].route:'Bellingham ↔ Blaine';
-    const inp='style="font-size:12px;padding:6px 9px;border:1px solid #ddd;border-radius:7px;font-family:inherit"';
-    add.innerHTML='<div class="vf-group"><div class="vf-label">Date</div><input type="date" id="tdDate" '+inp.replace('style="','style="width:130px;')+' value="'+(document.getElementById('teDate')?document.getElementById('teDate').value:'')+'"></div>'
-      +'<div class="vf-group" style="flex:1"><div class="vf-label">Route</div><input type="text" id="tdRoute" '+inp.replace('style="','style="width:100%;min-width:180px;box-sizing:border-box;')+' value="'+lastRoute.replace(/"/g,'&quot;')+'"></div>'
-      +'<div class="vf-group"><div class="vf-label">Day\'s travel hrs</div><input type="number" id="tdHrs" min="0" step="0.25" placeholder="0.0" '+inp.replace('style="','style="width:90px;')+'></div>'
-      +'<div style="align-self:flex-end"><button class="btn btn-primary" onclick="addTravelDay()">+ Add travel day</button></div>';
-    body.appendChild(add);
-    if(!travelDays.length){
-      const em=document.createElement('div');em.style.cssText='font-size:12px;color:#999;font-style:italic;padding:2px 4px';em.textContent='No travel days yet. Add one per date you drove; the engine splits it across the projects worked that day.';
-      body.appendChild(em);
-    }
-    [...travelDays].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(td=>body.appendChild(buildTravelDayCard(td)));
+    [...orphans].sort((a,b)=>(b.date||'').localeCompare(a.date||'')).forEach(td=>body.appendChild(buildTravelDayCard(td)));
     sec.appendChild(body);
   }
   wrap.appendChild(sec);
@@ -1406,6 +1623,18 @@ function renderReadyForBillingBody(body){
   });
   const projNames=Object.keys(byProj).sort((a,b)=>(projOrder[a]===undefined?9999:projOrder[a])-(projOrder[b]===undefined?9999:projOrder[b]));
 
+  // BILLING EVENT SPAN GUARD (27h, see readyFlockSplit): warn when this tally sits on more
+  // than one unlocked billing event, with a one-click merge onto the current flock.
+  const _split=readyFlockSplit();
+  if(_split.strays.length>0){
+    const warn=document.createElement('div');warn.id='beSpanWarn';
+    warn.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:8px 12px 2px;padding:8px 12px;background:#fdf4ff;border:1px solid #c354d6;border-radius:8px;font-size:11px;color:#86198f';
+    const partsTxt=_split.parts.map(pt=>'<strong>'+nl2br(flockLabel(pt.be))+'</strong> '+pt.cnt+' · '+fmt(pt.tot)).join(' <span style="opacity:0.5">|</span> ');
+    warn.innerHTML='<span>&#9888; Spans '+_split.parts.length+' billing events &mdash; locking one leaves the rest here: '+partsTxt+'</span>'
+      +'<button class="btn-sm" style="font-size:10px;background:#b232c2;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;white-space:nowrap" onclick="event.stopPropagation();mergeReadyIntoCurrentFlock()">Merge into '+nl2br(_split.cur?_split.cur.name:'Next Invoice')+'</button>';
+    body.appendChild(warn);
+  }
+
   // (Collapse all bar removed — each project card expands individually via its chevron.)
 
   projNames.forEach(name=>{
@@ -1488,29 +1717,49 @@ function renderBilledEventsBody(body){
   events.forEach(be=>{
     const beTEs=billedTEs.filter(te=>te.billingEventId===be.id);
     const beTotal=beTEs.reduce((a,te)=>a+teAmount(te),0);
+    const beInv=flockInvoiceTotals(be); // grand total incl. shop fee + tax (matches QB)
     const hasHistory=be.history&&be.history.length>0;
-    const beHdr=document.createElement('div');
-    beHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#e8f5ee;border-bottom:1px solid #a7d8c5;font-size:11px;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.04em';
-    beHdr.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
-      +'<span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+nl2br(be.name||'(unnamed)')+'</span>'
-      +(be.invoiceNum?'<span style="opacity:0.7;font-weight:500">— INV '+nl2br(be.invoiceNum)+'</span>':'')
-      +(be.invoiceDate?'<span style="opacity:0.6;font-weight:500;text-transform:none">'+be.invoiceDate+'</span>':'')
-      +(hasHistory?'<span title="Has edit history" style="cursor:help">🕐</span>':'')
-      +'</div>'
-      +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0"><span style="font-size:10px;opacity:0.7">'+beTEs.length+' entr'+(beTEs.length!==1?'ies':'y')+'</span><span style="font-size:13px">'+fmt(beTotal)+'</span></div>';
-    body.appendChild(beHdr);
     const byProj={};
     beTEs.forEach(te=>{
       if(!byProj[te.proj])byProj[te.proj]=[];
       byProj[te.proj].push(te);
     });
     const projNames=Object.keys(byProj).sort((a,b)=>(projOrder[a]===undefined?9999:projOrder[a])-(projOrder[b]===undefined?9999:projOrder[b]));
+    /* BILLED EVENT CARDS (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01e per Abram): each locked billing
+     * event is its OWN rounded, bordered, collapsible card — the same shape the client doc's Billed section
+     * uses — so events read as units set apart from the section bar. Collapsed by default; open state
+     * persists in secOpenState['bev_<id>']. Header: name · ✓ Inv #<num> pill · date · 🕐 | N projects ·
+     * N entries · $work work · [$grand invoice total] · chevron (gray BY DESIGN — see the pink-chevron KEEP
+     * bullet). Project rows + Restore buttons inside are unchanged. Marker: bev_ */
+    const bevKey='bev_'+be.id;
+    const bevOpen=secOpenState[bevKey]===true;
+    const card=document.createElement('div');
+    card.style.cssText='border:1px solid #9ca3af;border-radius:8px;margin:6px 12px;overflow:hidden;background:#fff';
+    const beHdr=document.createElement('div');
+    beHdr.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:#f3f4f6;'+(bevOpen?'border-bottom:1px solid #e5e7eb;':'')+'font-size:12px;color:#374151;cursor:pointer;user-select:none';
+    beHdr.title=bevOpen?'Click to collapse this billing event':'Click to expand this billing event';
+    beHdr.innerHTML='<div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">'
+      +'<span style="font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+nl2br(be.name||'(unnamed)')+'</span>'
+      +(be.invoiceNum?'<span style="font-size:10px;font-weight:700;color:#374151;background:#fff;border:1px solid #9ca3af;border-radius:4px;padding:1px 7px;white-space:nowrap;flex-shrink:0">&#10003; Inv #'+nl2br(be.invoiceNum)+'</span>':'')
+      +(be.invoiceDate?'<span style="font-size:11px;color:#6b7280;flex-shrink:0">'+be.invoiceDate+'</span>':'')
+      +(hasHistory?'<span title="Has edit history" style="cursor:help;flex-shrink:0">🕐</span>':'')
+      +'</div>'
+      +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
+      +'<span style="font-size:10px;color:#6b7280;white-space:nowrap">'+projNames.length+' project'+(projNames.length!==1?'s':'')+' · '+beTEs.length+' entr'+(beTEs.length!==1?'ies':'y')+' · '+fmt(beTotal)+' work</span>'
+      +'<span title="'+invoiceTotalTitle(beInv)+'" style="font-size:11px;font-weight:700;color:#374151;background:#fff;border:1px solid #6b7280;border-radius:4px;padding:3px 8px;white-space:nowrap">'+fmt(beInv.total)+' <span style="font-weight:500;opacity:0.7">invoice total</span></span>'
+      +'<span class="chev'+(bevOpen?' open':'')+'" style="color:#9ca3af">&#9654;</span>'
+      +'</div>';
+    beHdr.onclick=()=>{secOpenState[bevKey]=!bevOpen;saveData();renderEstimate();};
+    card.appendChild(beHdr);
+    body.appendChild(card);
+    if(!bevOpen)return;
     projNames.forEach(name=>{
       const proj=projects.find(p=>p.name===name);
       const projTEs=byProj[name];
       const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
       const projNum=proj?String(projects.indexOf(proj)+1).padStart(2,'0'):'??';
       const isClosed=proj&&proj.status==='billed';
+      const unbilledTEs=timeEntries.filter(te=>!te.posted&&te.proj===name&&te.billingEventId===be.id); // attachUnbilledToEvent (01g)
       // Composite key — same project can appear under multiple billing events
       const collapseKey=be.id+':'+(proj?proj.id:0);
       const isOpen=!closedBilledProjs.has(collapseKey);
@@ -1523,6 +1772,7 @@ function renderBilledEventsBody(body){
         +(isClosed?'<span style="font-size:9px;color:#9ca3af;background:#fff;border:1px solid #e5e7eb;border-radius:3px;padding:1px 5px;flex-shrink:0">closed</span>':'')
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'
+        +(unbilledTEs.length?'<span title="Unposted entries kept with this invoice for the record — not invoiced, not in any total" style="font-size:9px;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;flex-shrink:0">'+unbilledTEs.length+' unbilled</span>':'')
         +'<span style="color:#888">'+fmt(projTotal)+'</span>'
         +(isClosed?'<button data-proj-id="'+proj.id+'" title="Restore to In Progress — locked entries stay locked" style="background:none;border:1px solid #bfdbfe;color:#1e40af;cursor:pointer;font-size:10px;padding:2px 7px;border-radius:4px;font-family:inherit">↻ Restore</button>':'')
         +'<span class="chev'+(isOpen?' open':'')+'">&#9654;</span>'
@@ -1536,7 +1786,7 @@ function renderBilledEventsBody(body){
         else closedBilledProjs.add(collapseKey);
         saveData();renderEstimate();
       };
-      body.appendChild(phdr);
+      card.appendChild(phdr);
       if(!isOpen)return;
       projTEs.forEach(te=>{
         const row=document.createElement('div');
@@ -1552,7 +1802,23 @@ function renderBilledEventsBody(body){
           +(hrsLabel?'<span style="font-size:10px;flex-shrink:0;min-width:50px;text-align:right">'+hrsLabel+'</span>':'')
           +'</div>'
           +'<span style="font-weight:600;min-width:80px;text-align:right;text-decoration:line-through;flex-shrink:0">'+amount+'</span>';
-        body.appendChild(row);
+        card.appendChild(row);
+      });
+      // attachUnbilledToEvent (01g): unposted entries kept with this invoice — shown, never totaled
+      unbilledTEs.forEach(te=>{
+        const row=document.createElement('div');
+        row.style.cssText='display:flex;align-items:center;justify-content:space-between;padding:6px 16px 6px 32px;background:#fffdf7;border-bottom:1px solid #f3f4f6;font-size:11px;color:#a16207;font-style:italic';
+        const catLbl=CAT_LABELS[te.cat]||te.cat;
+        const hrsLabel=isMatCat(te.cat)?'':(te.hrs?Number(te.hrs).toFixed(2)+'h':'');
+        row.innerHTML='<div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">'
+          +'<span style="font-size:9px;font-weight:700;color:#b45309;background:#fffbeb;border:1px solid #fde68a;border-radius:3px;padding:1px 5px;flex-shrink:0;font-style:normal">UNBILLED</span>'
+          +'<span style="color:#c4a35a;flex-shrink:0">'+catLbl+'</span>'
+          +'<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+nl2br(te.desc||'(no description)')+'</span>'
+          +'<span style="font-size:10px;flex-shrink:0">'+(te.date||'—')+'</span>'
+          +(hrsLabel?'<span style="font-size:10px;flex-shrink:0;min-width:50px;text-align:right">'+hrsLabel+'</span>':'')
+          +'</div>'
+          +'<span style="min-width:80px;text-align:right;flex-shrink:0;color:#c4a35a">not invoiced</span>';
+        card.appendChild(row);
       });
     });
   });
@@ -1569,6 +1835,29 @@ function renderEstimate(){
       healed=true;
     }
   });
+  /* FULLY-BILLED COMPLETE PROJECTS MIGRATE TO BILLED (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01f per
+   * Abram): the lock-time auto-bill (01d, flockInvoiceTotals block) only fires when a lock happens, so events
+   * locked on earlier builds (Salish See #23520, locked on 01c) left their 21 projects sitting in Complete —
+   * and the client doc showed them under COMPLETE instead of BILLED. This heal applies the SAME rule on every
+   * render: status 'complete', at least one posted entry, every posted entry billed (locked event or project
+   * already billed), no unposted drafts → 'billed', with autoBilledBy = the event holding its newest billed
+   * entry so unlockFlock still reverts it. In-progress projects are never touched. Unposted entries do NOT hold
+   * the project (01g per Abram) — they are attached to the event as unbilled records. Marker: healBilledComplete */
+  const _healed=[];
+  projects.forEach(p=>{
+    if(p.status!=='complete')return;
+    const posted=timeEntries.filter(te=>te.proj===p.name&&te.posted);
+    if(posted.length===0)return;
+    if(posted.some(te=>!isEntryBilled(te)))return;
+    const evId=posted.map(te=>te.billingEventId).filter(Boolean).sort((a,b)=>b-a)[0];
+    p.status='billed';if(evId)p.autoBilledBy=evId;
+    const _ev=billingEvents.find(b=>b.id===evId);if(_ev)attachUnbilledToEvent(p,_ev); // attachUnbilledToEvent (01g)
+    _healed.push({name:p.name,evId});healed=true;
+  });
+  if(_healed.length){ // healBilledComplete: one history record per event, so the move is traceable
+    const byEv={};_healed.forEach(h=>{(byEv[h.evId]=byEv[h.evId]||[]).push(h.name);});
+    Object.keys(byEv).forEach(k=>{const be=billingEvents.find(b=>b.id===+k);if(be)logFlockChange(be,'autoBilled','',byEv[k].length+' project'+(byEv[k].length!==1?'s':'')+' moved Complete → Billed on open (already fully invoiced): '+byEv[k].join(', '));});
+  }
   if(healed)saveData();
   document.getElementById('updateDate').textContent=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   renderSummary();
@@ -1591,7 +1880,9 @@ function renderEstimate(){
       const billedTEs=timeEntries.filter(te=>te.posted&&isEntryBilled(te));
       secEntryCount=billedTEs.length;
       secProjCount=new Set(billedTEs.map(te=>te.proj)).size;
-      secActTotal=billedTEs.reduce((a,te)=>a+teAmount(te),0);
+      // flockInvoiceTotals (9/1): bar = sum of invoice GRAND totals (work + shop fee + tax), matching QB
+      const _bIds=new Set(billedTEs.map(te=>te.billingEventId));
+      secActTotal=billingEvents.filter(b=>b.locked&&_bIds.has(b.id)).reduce((a,b)=>a+flockInvoiceTotals(b).total,0);
     }else{
       secProjs=projects.filter(p=>p.status===sec.key);
       secProjCount=secProjs.length;
@@ -1614,7 +1905,18 @@ function renderEstimate(){
     if(sec.derived){
       statsHtml='<span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+'</span>';
     }else{
-      statsHtml='<span style="font-size:12px;opacity:0.9">'+(secEstTotal>0?fmt(secEstTotal):'—')+' est</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secTMTotal>0?fmt(secTMTotal):'—')+' T&M</span><span style="font-size:11px;opacity:0.5">|</span><span style="font-size:12px;opacity:0.9">'+(secActTotal>0?fmt(secActTotal):'—')+' actual</span>';
+      /* ── SECTION BAR: T&M FOLDS INTO ACTUAL (KEEP IN EVERY BUILD, added 8/27 per Abram) ──
+       * T&M dollars ARE actuals, so the bar shows one figure $Y (unlabeled —
+       * per Abram 8/27 it excludes tax/shop fee so "actual" overstated it) = T&M projects'
+       * actuals + fixed-price projects' actuals. Zero → "—".
+       * EST FIGURE RETIRED FROM SECTION BARS 9/1 per Abram ("that needs to go — it is
+       * just confusing"): the "$X est" half no longer renders on section bars in the
+       * engine OR the client doc (same fold, marker tmFoldActual in both generators).
+       * Estimated cost details remain inside each project's drop-down (scope tables,
+       * Estimate bar) — do NOT remove those, and do NOT reintroduce est on the bars. */
+      const _tmFold=secTMTotal+secActTotal;const _bp=[];
+      if(_tmFold>0)_bp.push('<span data-tmfoldactual="1" style="font-size:12px;opacity:0.9">'+fmt(_tmFold)+'</span>');
+      statsHtml=_bp.length?_bp.join('<span style="font-size:11px;opacity:0.5">|</span>'):'<span style="font-size:12px;opacity:0.9">—</span>';
     }
     hdr.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;font-weight:700;letter-spacing:0.03em">'+sec.label.toUpperCase()+'</span><span style="font-size:11px;opacity:0.8">'+countLabel+'</span></div><div style="display:flex;align-items:center;gap:10px">'+statsHtml+'<span class="chev'+(isOpen?' open':'')+'" style="opacity:0.7;color:inherit">&#9654;</span></div>';
     hdr.onclick=()=>{secOpenState[sec.key]=!secOpenState[sec.key];saveData();renderEstimate();};
@@ -1693,7 +1995,6 @@ function renderEstimate(){
       }
       const pi=projects.indexOf(proj);
       const isProjOpen=openProjs.has(proj.id);
-      const pTotal=projDisplayTotal(proj);
       // Project status drives card chrome: wrapper border = section color, header bg = section bg tint.
       // Uses proj.status (not the section being rendered) so the colors travel with the project when
       // it appears in other sections via spanning (Step 3). Falls back to the rendering section if status
@@ -1734,7 +2035,9 @@ function renderEstimate(){
       const invN=document.createElement('input');invN.placeholder='Inv #';invN.value=proj.invoiceNum||'';invN.style.cssText='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;width:70px;font-family:inherit';invN.onclick=e=>e.stopPropagation();invN.onmousedown=e=>e.stopPropagation();invN.onchange=()=>{proj.invoiceNum=invN.value;saveData();};
       const invD=document.createElement('input');invD.type='date';invD.value=proj.invoiceDate||'';invD.style.cssText='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;width:120px;font-family:inherit';invD.onclick=e=>e.stopPropagation();invD.onmousedown=e=>e.stopPropagation();invD.onchange=()=>{proj.invoiceDate=invD.value;saveData();};
       invWrap.appendChild(invLbl);invWrap.appendChild(invN);invWrap.appendChild(invD);
-      const badge=document.createElement('span');badge.className='proj-badge';badge.textContent=fmt(pTotal);
+      const badge=document.createElement('span');badge.className='proj-badge';
+      // estActualSplit (9/1 per Abram): header = ACTUAL only — never an estimate figure
+      badge.innerHTML=actualHeaderHtml(projAllActualTotal(proj),fmt,'12px');
       // Graduated indicator: small badge showing count + dollar total of graduated-and-not-locked entries.
       // Only renders when there's at least one such entry on this project.
       const gradEntries=timeEntries.filter(t=>t.proj===proj.name&&t.posted&&t.graduated===true&&!isEntryBilled(t));
@@ -1820,11 +2123,13 @@ function renderEstimate(){
       const estSecHdr=document.createElement('div');
       estSecHdr.style.cssText='padding:5px 16px;background:#faf8f0;border-bottom:1px solid #e8e2cf;font-size:10px;font-weight:700;color:#8a7a52;text-transform:uppercase;letter-spacing:0.06em;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none';
       {
-        const _estAmt=proj.isTM?'T&M':(projScopeTotal(proj)>0?fmt(projScopeTotal(proj)):'—'); // estimate = scope lines (Original Estimate box removed 8/20)
+        // estActualSplit (9/1 per Abram): this bar owns the estimate figure (EST chip); amber when actuals overrun it
+        const _estR=estimateSubRightHtml(proj,projAllActualTotal(proj),fmt);
+        if(_estR.over){estSecHdr.style.background='#fff4e0';estSecHdr.style.borderBottomColor='#f0c070';estSecHdr.style.color='#a35b00';}
         const _phCount=(proj.photos||[]).length;
         const _noteHint=(proj.notes&&!estSecOpen)?'<span style="font-weight:600;color:#b0a67f;font-size:9px;text-transform:none;letter-spacing:0;margin-left:8px">notes</span>':'';
         const _phHint=_phCount>0?'<span style="font-weight:600;color:#b0a67f;font-size:9px;text-transform:none;letter-spacing:0;margin-right:10px">'+_phCount+' photo'+(_phCount!==1?'s':'')+'</span>':'';
-        estSecHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px">'+(estSecOpen?'▼':'▶')+'</span>Estimate'+_noteHint+'</span><span>'+_phHint+'<span style="font-weight:700;color:#8a7a52">'+_estAmt+'</span></span>';
+        estSecHdr.innerHTML='<span><span style="font-size:9px;margin-right:6px;display:inline-block;width:8px">'+(estSecOpen?'▼':'▶')+'</span>Estimate'+_noteHint+'</span><span data-estactual="sub" style="display:inline-flex;align-items:center;font-size:11px">'+_phHint+_estR.html+'</span>';
       }
       estSecHdr.onclick=()=>{secOpenState[estSecKey]=!estSecOpen;saveData();renderEstimate();};
       pb.appendChild(estSecHdr);
@@ -2650,23 +2955,12 @@ function exportClientDoc(){
     const _accent=_sec?_sec.color:accentColor;
     const _border=_sec?_sec.border:accentColor;
     const _tint=tintColor||(_sec?_sec.bg:lightTint(accentColor));
-    const total=projDisplayTotal(proj);
     const cos=(proj.cos||[]);
-    // Build est / actual breakdown for the row (client-doc actuals filter applies)
-    const scopeT=projScopeTotal(proj);
+    // estActualSplit (9/1 per Abram): header = ACTUAL only (client-doc actuals filter applies);
+    // the estimate lives on the sub-row beneath the header — never on the header line.
     const actT=projClientDocActualTotal(proj);
-    let totalsHtml='';
-    if(proj.isTM){
-      // T&M: just show actual labeled as T&M
-      totalsHtml='<span style="font-size:9pt;font-weight:600;color:'+_accent+';white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
-    } else if(scopeT>0&&actT>0){
-      // Both est and actual to show
-      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
-        +'<span style="font-size:11pt;font-weight:700;color:'+_accent+';white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">actual</span></span>';
-    } else {
-      // Only one — fall back to single number
-      totalsHtml='<span style="font-size:11pt;font-weight:700;color:'+_accent+';white-space:nowrap">'+fd(total)+'</span>';
-    }
+    const totalsHtml=actualHeaderHtml(actT,fd,'11pt','no actuals yet');
+    const estSubHtml=estimateSubRowHtml(proj,actT,fd,proj.status==='needs_auth'?'Estimate &mdash; awaiting authorization':'Estimate');
     let inner='';
 
     // Client-facing photo gallery: only photos opted in AND already uploaded (real URL).
@@ -2722,6 +3016,7 @@ function exportClientDoc(){
         </div>
         ${proj.notes?`<div style="font-size:8.5pt;color:#888;font-style:italic;margin-top:5px;padding-left:${showCheck?'28px':'0'};white-space:pre-wrap;line-height:1.5">${nl2br(proj.notes)}</div>`:''}
       </div>
+      ${estSubHtml}
       ${barHtml}
       ${inner}
     </div>`;
@@ -2732,9 +3027,10 @@ function exportClientDoc(){
     let totalHtml;
     if(breakdown){
       const parts=[];
-      if(breakdown.est>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.est)+' est</span>');
-      if(breakdown.tm>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.tm)+' T&amp;M</span>');
-      if(breakdown.actual>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.actual)+' actual</span>');
+      // EST FIGURE RETIRED FROM SECTION BARS 9/1 per Abram — breakdown.est no longer renders here
+      // tmFoldActual (8/27 per Abram): T&M dollars fold into "actual" — one figure, no T&M label
+      const _tmFold=(breakdown.tm||0)+(breakdown.actual||0);
+      if(_tmFold>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(_tmFold)+'</span>');
       totalHtml='<div style="display:flex;align-items:center;gap:10px;font-family:Arial,sans-serif">'+parts.join('<span style="opacity:0.5">|</span>')+'</div>';
     } else {
       totalHtml='<div style="font-size:13pt;font-weight:700">'+total+'</div>';
@@ -2777,6 +3073,7 @@ function exportClientDoc(){
     .tpe-lb-prev{left:6px}.tpe-lb-next{right:6px}
     @media print{
       body{background:#fff}.wrap{padding:20px}.tpe-lb{display:none!important}
+      .tpe-noprint{display:none!important} /* CLIENT WORKLIST SUBMISSION: never print the request form */
       /* Full-record printing: force every collapsible project/section open so the client's PDF
          captures all line items and photos, not just names and totals. */
       [id$="_detail"],[id$="_d"],[id^="future"],[id^="billed"],[id^="co"],#estsum_detail{display:block!important}
@@ -2808,10 +3105,48 @@ function exportClientDoc(){
     <div style="font-size:9pt;color:#666;margin-top:4px;font-family:Arial,sans-serif"><strong>Vessel:</strong> ${vessel} &nbsp;·&nbsp; Updated ${dateStr}</div>
   </div>`;
 
+  // ── REQUEST WORK (client worklist submission) ───────────────────────────
+  /* KEEP IN EVERY BUILD (CLIENT WORKLIST SUBMISSION, added 8/27 per Abram, build 2026-08-27f):
+   * a REQUEST WORK box at the TOP of the client doc (above Holding Pattern) where the client
+   * types items they want added to the work list and hits Submit. Delivery is a plain mailto:
+   * to settings.email (no Power Automate flow) whose body carries the readable list PLUS a
+   * paste-ready {"type":"worklist"} JSON block that the engine's Data → Import Worklist
+   * Request box (openWorklistImport / confirmWorklistImport) turns into Holding Pattern
+   * projects. "Copy request" is the fallback for webmail users with no mail app. Suppressed in
+   * authorization-only docs (_authSel) and in print (.tpe-noprint). Markers: submitWorklist /
+   * copyWorklist / wl_text. Spec: claude/docs/client-worklist-submission-spec.md.            */
+  if(!_authSel){
+    html+=`<div class="tpe-noprint" style="margin-top:4px;margin-bottom:22px;font-family:Arial,sans-serif">
+      <div style="background:#0f766e;color:#fff;padding:12px 18px;border-radius:4px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none"
+        onclick="var d=document.getElementById('wl_body');var o=d.style.display==='none';d.style.display=o?'block':'none';this.querySelector('.sechev').style.transform=o?'rotate(90deg)':''">
+        <div><div style="font-size:11pt;font-weight:700;letter-spacing:0.04em">REQUEST WORK</div>
+          <div style="font-size:8.5pt;opacity:.85;margin-top:2px">Tell us what you'd like added to the work list for ${vessel}</div></div>
+        <span class="sechev" style="font-size:12px;transition:transform 0.2s;transform:rotate(90deg)">&#9654;</span>
+      </div>
+      <div id="wl_body" style="border:2px solid #0f766e;border-top:none;border-radius:0 0 8px 8px;padding:14px 16px;background:#f0fdfa">
+        <label style="font-size:8pt;color:#666;text-transform:uppercase;display:block;margin-bottom:4px">Items to add <span style="color:#c0392b">*</span></label>
+        <textarea id="wl_text" rows="5" placeholder="One item per line, for example:&#10;Replace port nav light&#10;Check bilge pump float switch" style="width:100%;padding:9px 10px;border:1px solid #cfd8d6;border-radius:6px;font-size:10.5pt;font-family:Arial,sans-serif;resize:vertical;box-sizing:border-box;background:#fff"></textarea>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px">
+          <div><label style="font-size:8pt;color:#666;text-transform:uppercase;display:block;margin-bottom:3px">Your name</label>
+            <input id="wl_name" type="text" value="${client}" style="width:100%;padding:8px 10px;border:1px solid #cfd8d6;border-radius:6px;font-size:10.5pt;font-family:Arial,sans-serif;box-sizing:border-box"></div>
+          <div><label style="font-size:8pt;color:#666;text-transform:uppercase;display:block;margin-bottom:3px">Your email</label>
+            <input id="wl_email" type="email" placeholder="your@email.com" style="width:100%;padding:8px 10px;border:1px solid #cfd8d6;border-radius:6px;font-size:10.5pt;font-family:Arial,sans-serif;box-sizing:border-box"></div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap">
+          <button onclick="submitWorklist()" style="background:#0f766e;color:#fff;border:none;border-radius:6px;padding:10px 18px;font-size:10.5pt;font-weight:700;cursor:pointer;font-family:Arial,sans-serif">Submit Work Request</button>
+          <button onclick="copyWorklist()" style="background:#fff;color:#0f766e;border:1px solid #0f766e;border-radius:6px;padding:9px 14px;font-size:10pt;cursor:pointer;font-family:Arial,sans-serif">Copy request</button>
+          <span id="wl_status" style="font-size:9pt;color:#c0392b"></span>
+        </div>
+        <div id="wl_done" style="display:none;margin-top:10px;padding:10px 12px;background:#e6f7f3;border-radius:6px;font-size:9pt;color:#155a3e;line-height:1.5"></div>
+      </div>
+    </div>`;
+  }
+
   // ── HOLDING PATTERN (selected projects) ─────────────────────────────────
   const futureP=_authSel?[]:projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true).sort((a,b)=>(a.id||0)-(b.id||0));
   if(futureP.length>0){
-    const futureTotal=futureP.reduce((a,p)=>a+projDisplayTotal(p),0);
+    // estActualSplit (2026-09-01c per Abram): holding bar shows posted (client-doc-visible) actuals only — never the scope sum
+    const futureTotal=futureP.reduce((a,p)=>a+projClientDocActualTotal(p),0);
     html+=`<div style="background:#7c6f9f;color:#fff;padding:12px 18px;border-radius:4px;margin-top:28px;display:flex;align-items:center;justify-content:space-between;font-family:Arial,sans-serif;cursor:pointer;user-select:none"
       onclick="var l=document.getElementById('futureList');var a=document.getElementById('futureArr');if(l.style.display==='none'){l.style.display='block';a.style.transform='rotate(90deg)';}else{l.style.display='none';a.style.transform='rotate(0deg)';}">
       <div>
@@ -2828,7 +3163,7 @@ function exportClientDoc(){
     <div style="background:#f3f0fa;border-left:4px solid #7c6f9f;padding:10px 14px;margin-top:8px;font-size:9pt;color:#4a3f6b;font-style:italic;font-family:Arial,sans-serif">These projects are planned for a future service visit. No authorization is required at this time.</div>`;
     futureP.forEach((proj,fi)=>{
       const fid='future'+fi;
-      const fTotal=projDisplayTotal(proj);
+      const _fActT=projClientDocActualTotal(proj); // estActualSplit (2026-09-01c): header = ACTUAL only
       // Client-facing photo gallery — same markup other statuses get via projBlock.
       const _cphotos=(proj.photos||[]).filter(p=>p.includeInClientDoc&&p.full);
       const _photosHtml=photoGalleryHtml(proj.photos);
@@ -2838,10 +3173,11 @@ function exportClientDoc(){
           <span style="display:flex;align-items:center;gap:8px;min-width:0"><span style="font-size:8pt;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0;font-family:Arial,sans-serif">${String(projects.indexOf(proj)+1).padStart(2,'0')}</span><span style="font-size:10pt;font-weight:700;color:#4a3f6b">${proj.name}</span></span>
           <div style="display:flex;align-items:center;gap:12px">
             ${_cphotos.length?`<span title="${_cphotos.length} photo${_cphotos.length!==1?'s':''}" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;margin-right:2px"><svg width="28" height="20" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="#7c6f9f"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>`:''}
-            <span style="font-size:10pt;font-weight:700;color:#7c6f9f">${fd(fTotal)}</span>
+            ${actualHeaderHtml(_fActT,fd,'10pt','no actuals yet')}
             <span id="${fid}arr" style="font-size:10px;color:#7c6f9f;display:inline-block;transition:transform 0.2s">&#9654;</span>
           </div>
         </div>
+        ${estimateSubRowHtml(proj,_fActT,fd,'Estimate &mdash; planned')}
         <div id="${fid}" style="display:none;padding:10px 14px;border-top:1px solid #c9bfea;background:#faf8ff">
           ${proj.notes?`<div style="font-size:8.5pt;color:#888;font-style:italic;margin-bottom:8px;line-height:1.5">${nl2br(proj.notes)}</div>`:''}
           ${mergedTable(proj)}
@@ -2952,9 +3288,10 @@ function exportClientDoc(){
     html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     completeP.forEach((proj,bi)=>{
       const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
-      const projTotal=projClientDocActualTotal(proj)||projClientDocDisplayTotal(proj);
+      // estActualSplit (9/1 per Abram): header = ACTUAL only; estimate on the sub-row beneath
+      const _cActT=projClientDocActualTotal(proj);
       const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
-      const pillLabel=teCount>0?(teCount+' &middot; '+fd(projTotal)):fd(projTotal);
+      const pillLabel=(teCount>0?'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:2px 6px;font-family:Arial,sans-serif">'+teCount+'</span>':'')+actualHeaderHtml(_cActT,fd,'10pt','no actuals yet');
       // Each project = its own rounded bordered card (navy, all Complete), with a gap.
       const cardId='ccard'+bi;
       // Client-facing photo gallery — same markup other statuses get via projBlock.
@@ -2969,10 +3306,11 @@ function exportClientDoc(){
           +'<span style="font-size:8pt;color:#666;background:#fff;border:1px solid #e5e5e0;border-radius:4px;padding:1px 7px;flex-shrink:0;font-family:Arial,sans-serif">Complete</span>'
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:8px;flex-shrink:0">'+_camIcon
-          +'<span style="font-size:10px;font-weight:700;color:#1a3a5c;background:#eef4ff;border:1px solid #3d5a80;border-radius:4px;padding:3px 8px;white-space:nowrap;flex-shrink:0;font-family:Arial,sans-serif">'+pillLabel+'</span>'
+          +'<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;flex-shrink:0">'+pillLabel+'</span>'
           +(_condensed?'':'<span class="chev" style="font-size:11px;color:#1a3a5c;display:inline-block;transition:transform 0.2s;flex-shrink:0">&#9654;</span>')
         +'</div>'
         +'</div>'
+        +estimateSubRowHtml(proj,_cActT,fd)
         +(_condensed?'':'<div id="'+cardId+'_detail" style="display:none;background:#f7faff;border-top:1px solid #c5d4e8;padding:8px 14px"><div class="task-wrap">'+mergedTable(proj)+'</div>'+_photosHtml+'</div>')
         +'</div>';
     });
@@ -3105,14 +3443,15 @@ function exportClientDoc(){
   // invoice number, mirroring the engine's Billed rollup (renderBilledEventsBody).
   // Newest event first. Suppressed entirely in authorization-only mode.
   if(!_authSel&&docBilledTEs.length>0){
-    const bt=docBilledTEs.reduce((a,te)=>a+teAmount(te),0);
     const _beIds=new Set(docBilledTEs.map(te=>te.billingEventId));
     const _bevents=billingEvents.filter(e=>_beIds.has(e.id)&&e.locked).slice().sort((a,b)=>(b.lockedAt||'').localeCompare(a.lockedAt||''));
+    const bt=_bevents.reduce((a,b)=>a+flockInvoiceTotals(b).total,0); // flockInvoiceTotals (9/1): invoice grand totals, matches QB
     html+=sectionHdr('#374151','BILLED',billP.length,fd(bt),_bevents.length+' billing event'+(_bevents.length!==1?'s':'')+' — invoiced work, shown for your records',null,null,'secbody_billed','#374151');
     html+='<div id="secbody_billed" style="border:2px solid #374151;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
     _bevents.forEach((be,ei)=>{
       const beTEs=docBilledTEs.filter(te=>te.billingEventId===be.id);
       const beTotal=beTEs.reduce((a,te)=>a+teAmount(te),0);
+      const beInv=flockInvoiceTotals(be); // grand total incl. shop fee + tax (matches QB)
       const beDate=be.invoiceDate||(be.lockedAt?new Date(be.lockedAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'');
       const byProj={};
       beTEs.forEach(te=>{(byProj[te.proj]=byProj[te.proj]||[]).push(te);});
@@ -3127,8 +3466,8 @@ function exportClientDoc(){
           +(beDate?'<span style="font-size:8pt;color:#6b7280;flex-shrink:0;font-family:Arial,sans-serif">'+beDate+'</span>':'')
         +'</div>'
         +'<div style="display:flex;align-items:center;gap:10px;flex-shrink:0">'
-          +'<span style="font-size:8pt;color:#6b7280;font-family:Arial,sans-serif">'+projNames.length+' project'+(projNames.length!==1?'s':'')+' &middot; '+beTEs.length+' entr'+(beTEs.length!==1?'ies':'y')+'</span>'
-          +'<span style="font-size:10px;font-weight:700;color:#374151;background:#fff;border:1px solid #6b7280;border-radius:4px;padding:3px 8px;white-space:nowrap;font-family:Arial,sans-serif">'+fd(beTotal)+'</span>'
+          +'<span style="font-size:8pt;color:#6b7280;font-family:Arial,sans-serif">'+projNames.length+' project'+(projNames.length!==1?'s':'')+' &middot; '+beTEs.length+' entr'+(beTEs.length!==1?'ies':'y')+' &middot; '+fd(beTotal)+' work</span>'
+          +'<span title="'+invoiceTotalTitle(beInv).replace(/"/g,'&quot;')+'" style="font-size:10px;font-weight:700;color:#374151;background:#fff;border:1px solid #6b7280;border-radius:4px;padding:3px 8px;white-space:nowrap;font-family:Arial,sans-serif">'+fd(beInv.total)+' <span style="font-weight:500;opacity:0.7">invoice total</span></span>'
           +'<span class="bechev" style="font-size:10px;color:#9ca3af;display:inline-block;transition:transform 0.2s">&#9654;</span>'
         +'</div>'
         +'</div>'
@@ -3187,6 +3526,47 @@ function exportClientDoc(){
     canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=pos(e);lx=p.x;ly=p.y;},{passive:false});
     canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(lx,ly);ctx.lineTo(p.x,p.y);ctx.stroke();lx=p.x;ly=p.y;hasSig=true;},{passive:false});
     canvas.addEventListener('touchend',()=>drawing=false);
+  }
+  // CLIENT WORKLIST SUBMISSION (KEEP IN EVERY BUILD, added 8/27) — mailto + copy fallback
+  const WL_TO=${JSON.stringify(s.email||'')};
+  const WL_VESSEL=${JSON.stringify(vessel)};
+  const WL_CLIENT=${JSON.stringify(client)};
+  function _wlItems(){
+    const ta=document.getElementById('wl_text');if(!ta)return[];
+    return ta.value.split(/\\r?\\n/).map(function(l){return l.replace(/^\\s*(?:[-*\\u2022\\u00b7]|\\d+[.)])\\s*/,'').trim();}).filter(Boolean);
+  }
+  function _wlBuild(){
+    const items=_wlItems();
+    const st=document.getElementById('wl_status');
+    if(items.length===0){st.textContent='Please enter at least one item.';return null;}
+    const name=(document.getElementById('wl_name').value||'').trim()||WL_CLIENT;
+    const email=(document.getElementById('wl_email').value||'').trim();
+    st.textContent='';
+    const now=new Date();
+    const payload={type:'worklist',vessel:WL_VESSEL,client:WL_CLIENT,name:name,email:email,submittedAt:now.toISOString(),items:items};
+    const subject='Work request \\u2014 '+WL_VESSEL+' \\u2014 '+now.toLocaleDateString('en-US');
+    const body='Work request from '+name+(email?' ('+email+')':'')+' for '+WL_VESSEL+'\\n\\n'+
+      items.map(function(t,i){return (i+1)+'. '+t;}).join('\\n')+
+      '\\n\\n---- FOR TURN POINT ENGINE (Data \\u2192 Import Worklist Request \\u2014 paste everything below) ----\\n'+
+      JSON.stringify(payload);
+    return {subject:subject,body:body,items:items};
+  }
+  function submitWorklist(){
+    const r=_wlBuild();if(!r)return;
+    const href='mailto:'+encodeURIComponent(WL_TO)+'?subject='+encodeURIComponent(r.subject)+'&body='+encodeURIComponent(r.body);
+    const a=document.createElement('a');a.href=href;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(function(){a.remove();},1000);
+    const d=document.getElementById('wl_done');
+    d.innerHTML='Your mail app should open with '+r.items.length+' item'+(r.items.length===1?'':'s')+' addressed to '+WL_TO+' \\u2014 just hit Send.'+
+      (r.body.length>1800?' <b>Long request:</b> some mail apps cut off long messages \\u2014 if the email looks incomplete, use <b>Copy request</b> and paste it instead.':' If nothing opened, use <b>Copy request</b> and paste it into an email.');
+    d.style.display='block';
+  }
+  function copyWorklist(){
+    const r=_wlBuild();if(!r);else{
+      const text='To: '+WL_TO+'\\nSubject: '+r.subject+'\\n\\n'+r.body;
+      const done=function(ok){const d=document.getElementById('wl_done');d.innerHTML=ok?'Copied \\u2014 paste it into an email to <b>'+WL_TO+'</b>.':'Could not copy automatically \\u2014 select the text below and copy it.<br><textarea readonly style="width:100%;height:120px;margin-top:6px;font-size:9pt">'+text.replace(/</g,'&lt;')+'</textarea>';d.style.display='block';};
+      if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(function(){done(true);},function(){done(false);});
+      else done(false);
+    }
   }
   function clearSig(){if(canvas){const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false;}}
 
@@ -3615,9 +3995,10 @@ function exportClientPDF(){
     let totalHtml;
     if(breakdown){
       const parts=[];
-      if(breakdown.est>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.est)+' est</span>');
-      if(breakdown.tm>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.tm)+' T&amp;M</span>');
-      if(breakdown.actual>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(breakdown.actual)+' actual</span>');
+      // EST FIGURE RETIRED FROM SECTION BARS 9/1 per Abram — breakdown.est no longer renders here
+      // tmFoldActual (8/27 per Abram): T&M dollars fold into "actual" — one figure, no T&M label
+      const _tmFold=(breakdown.tm||0)+(breakdown.actual||0);
+      if(_tmFold>0)parts.push('<span style="font-size:10pt;font-weight:600">'+fd(_tmFold)+'</span>');
       totalHtml='<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end">'+parts.join('<span style="opacity:0.5">|</span>')+'</div>';
     } else {
       totalHtml='<div style="font-size:13pt;font-weight:700">'+total+'</div>';
@@ -3641,9 +4022,10 @@ function exportClientPDF(){
             <span id="chev${pi}" style="font-size:18px;color:#5dba99;padding:4px 8px;flex-shrink:0">&#9654;</span>
           </div>
           ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
-          ${projDisplayTotal(proj)>0?`<div style="font-size:11pt;font-weight:700;color:#1D9E75;margin-top:4px">${fd(projDisplayTotal(proj))}</div>`:''}
+          <div style="margin-top:4px">${actualHeaderHtml(projClientDocActualTotal(proj),fd,'10pt','no actuals yet')}</div>
         </div>
       </div>
+      ${estimateSubRowHtml(proj,projClientDocActualTotal(proj),fd,'Estimate &mdash; awaiting authorization')}
       <div id="detail${pi}" style="background:#fafffe;border-top:1px solid #e0f0ea;padding:8px 14px"><div class="task-wrap">${ttMerged(proj)}</div></div>
     </div>`;
   });
@@ -3651,17 +4033,8 @@ function exportClientPDF(){
   // Build in-progress rows (client-doc actuals filter applies)
   let inProgRows='';
   inPP.forEach((proj,pi)=>{
-    const scopeT=projScopeTotal(proj);
     const actT=projClientDocActualTotal(proj);
-    let totalsHtml='';
-    if(proj.isTM){
-      totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#6b7280;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
-    } else if(scopeT>0&&actT>0){
-      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
-        +'<span style="font-size:10.5pt;font-weight:700;color:#6b7280;white-space:nowrap;padding-left:10px">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">actual</span></span>';
-    } else if(scopeT>0||actT>0){
-      totalsHtml='<span style="font-size:10.5pt;font-weight:700;color:#6b7280;white-space:nowrap">'+fd(scopeT||actT)+'</span>';
-    }
+    const totalsHtml=actualHeaderHtml(actT,fd,'10.5pt','no actuals yet'); // estActualSplit (9/1)
     inProgRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:200px">
@@ -3670,6 +4043,7 @@ function exportClientPDF(){
         </div>
         ${totalsHtml}
       </div>
+      ${estimateSubRowHtml(proj,actT,fd)}
       <div style="background:#fafafa;border-top:1px solid #e5e7eb;padding:8px 14px">${ttMerged(proj)}</div>
     </div>`;
   });
@@ -3678,17 +4052,8 @@ function exportClientPDF(){
   // the invoice-side Billing Event math elsewhere stays unfiltered)
   let compRows='';
   compP.forEach((proj,pi)=>{
-    const scopeT=projScopeTotal(proj);
     const actT=projClientDocActualTotal(proj);
-    let totalsHtml='';
-    if(proj.isTM){
-      totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#4a5e5a;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
-    } else if(scopeT>0&&actT>0){
-      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
-        +'<span style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap;padding-left:10px">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">actual</span></span>';
-    } else {
-      totalsHtml='<span style="font-size:11pt;font-weight:700;color:#4a5e5a;white-space:nowrap">'+fd(scopeT||actT)+'</span>';
-    }
+    const totalsHtml=actualHeaderHtml(actT,fd,'11pt','no actuals yet'); // estActualSplit (9/1)
     compRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #4a5e5a;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div class="proj-toggle comp-toggle" data-pi="comp${pi}" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:10px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px">
@@ -3697,6 +4062,7 @@ function exportClientPDF(){
         </div>
         <div style="display:flex;align-items:center;gap:0;white-space:nowrap;padding-left:12px">${totalsHtml}</div>
       </div>
+      ${estimateSubRowHtml(proj,actT,fd)}
       <div id="compdetail${pi}" style="display:none;background:#eef3f2;border-top:1px solid #c5d4d1;padding:8px 14px"><div class="task-wrap">${ttMerged(proj)}</div></div>
     </div>`;
   });
@@ -3705,22 +4071,14 @@ function exportClientPDF(){
   let billRows='';
   billP.forEach((proj,pi)=>{
     const inv=proj.invoiceNum||proj.invoiceDate?' <span style="font-size:9pt;color:#888;font-weight:400">'+(proj.invoiceNum?'Inv #'+proj.invoiceNum:'')+(proj.invoiceDate?' \u2014 '+new Date(proj.invoiceDate).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'')+'</span>':'';
-    const scopeT=projScopeTotal(proj);
     const actT=projAllActualTotal(proj);
-    let totalsHtml='';
-    if(proj.isTM){
-      totalsHtml='<span style="font-size:9.5pt;font-weight:600;color:#9ca3af;white-space:nowrap">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">T&amp;M</span></span>';
-    } else if(scopeT>0&&actT>0&&Math.abs(scopeT-actT)>0.01){
-      totalsHtml='<span style="font-size:8.5pt;color:#888;white-space:nowrap">'+fd(scopeT)+' <span style="font-size:7.5pt;opacity:0.7">est</span></span>'
-        +'<span style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap;padding-left:10px">'+fd(actT)+' <span style="font-size:7.5pt;font-weight:500;opacity:0.7">billed</span></span>';
-    } else {
-      totalsHtml='<span style="font-size:11pt;font-weight:700;color:#9ca3af;white-space:nowrap">'+fd(actT||scopeT)+'</span>';
-    }
+    const totalsHtml=actualHeaderHtml(actT,fd,'11pt','no actuals yet'); // estActualSplit (9/1)
     billRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="font-size:11pt;font-weight:700;color:#555;flex:1;min-width:200px">${String(authP.length+inPP.length+compP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
         <div style="display:flex;align-items:center;white-space:nowrap;padding-left:12px">${totalsHtml}</div>
       </div>
+      ${estimateSubRowHtml(proj,actT,fd)}
     </div>`;
   });
 
@@ -4030,11 +4388,21 @@ async function exportData(saveAs){
     }
   }
   // Fallback for browsers without the API (Safari/Firefox): classic download.
+  /* SAFARI DOWNLOAD TIMING (KEEP IN EVERY BUILD, fixed 8/27 — build 2026-08-27e, per Abram).
+   * The old code revoked the blob URL in the same tick as a.click(). Safari resolves the download
+   * asynchronously (and later still while its per-site "allow downloads" prompt is up), so the URL
+   * was often already dead: the download arrived nameless ("Unknown"), or as "Zero KB — stopped",
+   * or not at all — and the vessel router never saw a *.json. Same pattern the Authorization export
+   * already used correctly: attach the anchor to the DOM, click, detach, revoke on a long timer.   */
   const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
+  a.href=url;
   a.download=_tpmExportName();
-  a.click();URL.revokeObjectURL(a.href);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),30000);
 }
 
 function migrateData(d){
@@ -4355,7 +4723,9 @@ function renderTimeEntry(){
     const sh=document.createElement('div');
     sh.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;background:#fff8ee;color:#b45309;border:1px solid #fcd34d;border-bottom:none';
     sh.innerHTML='<span>⚠ Unposted — Not on Estimate</span><span style="font-weight:400;font-size:10px">'+unposted.length+' entr'+(unposted.length!==1?'ies':'y')+'</span>';
-    sec.appendChild(sh);sec.appendChild(buildTETable(unposted,false,null));
+    sec.appendChild(sh);
+    sec.appendChild(buildFlightDaysStrip(unposted,'#fcd34d')); // FLIGHT DAYS STRIP (8/27)
+    sec.appendChild(buildTETable(unposted,false,null));
     wrap.appendChild(sec);
   }
 
@@ -4391,8 +4761,25 @@ function renderTimeEntry(){
       }
       sh.style.cssText='padding:8px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;border-radius:8px 8px 0 0;display:flex;justify-content:space-between;align-items:center;background:'+bg+';color:'+fg+';border:1px solid '+border+';border-bottom:none';
 
-      const total=flockTotal(be);
       const cnt=flockEntries.length;
+      /* FLOCK HEADER TOTAL = GRADUATED (27h, per Abram): an unlocked flock's headline $ is
+       * what will actually invoice at lock (ungraduated entries roll forward since 27g), with
+       * the pending remainder broken out so nothing is hidden. Locked flocks show their full
+       * total (everything on them is billed). Count and $ come from the same entry list.  */
+      let total=flockTotal(be),pendHTML='';
+      if(be.locked){
+        // flockInvoiceTotals (9/1): locked header shows the invoice GRAND total; work subtotal beside it
+        const _inv=flockInvoiceTotals(be);
+        pendHTML=' <span style="opacity:0.7" title="'+invoiceTotalTitle(_inv)+'">('+fmt(total)+' work + fees/tax)</span>';
+        total=_inv.total;
+      }
+      if(!be.locked){
+        const gradTot=flockEntries.filter(te=>isEntryGraduated(te)).reduce((a,te)=>a+teAmount(te),0);
+        const allTot=flockEntries.reduce((a,te)=>a+teAmount(te),0);
+        const pend=flockEntries.filter(te=>!isEntryGraduated(te)).length;
+        total=gradTot;
+        if(pend>0)pendHTML=' · <span style="color:#b45309">'+pend+' pending ('+fmt(allTot-gradTot)+')</span>';
+      }
 
       // Left side: name, pill, lock indicator
       let leftHTML='';
@@ -4406,7 +4793,7 @@ function renderTimeEntry(){
       }
 
       // Right side: count, total, action button
-      let rightHTML='<span style="font-weight:400;font-size:10px;text-transform:none">'+cnt+' entr'+(cnt!==1?'ies':'y')+' · <strong>'+fmt(total)+'</strong></span>';
+      let rightHTML='<span style="font-weight:400;font-size:10px;text-transform:none">'+cnt+' entr'+(cnt!==1?'ies':'y')+' · <strong>'+fmt(total)+'</strong>'+pendHTML+'</span>';
       if(!be.locked&&cnt>0){
         rightHTML+=' <button class="btn-sm" style="font-size:10px;margin-left:8px;background:#0f766e;color:#fff;border:none;padding:3px 10px;border-radius:6px;cursor:pointer" onclick="promptLockFlock('+be.id+')">Lock 🔒</button>';
       }else if(be.locked){
@@ -4419,6 +4806,7 @@ function renderTimeEntry(){
 
       sh.innerHTML='<span>'+leftHTML+'</span><span>'+rightHTML+'</span>';
       sec.appendChild(sh);
+      if(flockEntries.length>0)sec.appendChild(buildFlightDaysStrip(flockEntries,border)); // FLIGHT DAYS STRIP (8/27)
 
       if(flockEntries.length>0){
         sec.appendChild(buildTETable(flockEntries,true,be));
@@ -4451,41 +4839,67 @@ function ungraduatedOnFlock(be){
   });
 }
 
+/* COMPLETE-PROJECT HARD STOP (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01d per Abram): "If a project is
+ * complete with ungraduated entries then that needs to be resolved before the lock." A Complete project's
+ * ungraduated posted entry is a contradiction (work is done but not billed), so it must be graduated or moved
+ * BEFORE the lock — it is never rolled forward. Ungraduated entries on in-progress/holding projects still roll
+ * forward (27g). completeUngraduatedOnFlock() drives the red block here, the disabled Lock in
+ * renderBillingEventStrip, and a refusal inside lockFlock. Marker: completeUngraduatedOnFlock                */
+function completeUngraduatedOnFlock(be){return ungraduatedOnFlock(be).filter(({proj})=>proj&&proj.status==='complete');}
 function promptLockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
   if(!unlocked){alert('Enter PIN on the Estimate Engine tab to lock invoices.');return;}
   _lockTargetBeId=beId;
-  const cnt=flockEntryCount(be);
-  const tot=flockTotal(be);
-  const blocked=ungraduatedOnFlock(be);
-  document.getElementById('lockBeSubtitle').textContent=be.name+' · '+cnt+' entr'+(cnt!==1?'ies':'y')+' · '+fmt(tot);
+  const allBlocked=ungraduatedOnFlock(be);
+  const hardStop=allBlocked.filter(({proj})=>proj&&proj.status==='complete');
+  const blocked=allBlocked.filter(({proj})=>!(proj&&proj.status==='complete'));
+  // Subtitle reflects only what will actually be frozen (graduated entries)
+  const lockable=timeEntries.filter(te=>te.billingEventId===be.id&&te.posted&&isEntryGraduated(te));
+  const lockTot=lockable.reduce((a,te)=>a+teAmount(te),0);
+  document.getElementById('lockBeSubtitle').textContent=be.name+' · '+lockable.length+' entr'+(lockable.length!==1?'ies':'y')+' · '+fmt(lockTot);
   const blockedDiv=document.getElementById('lockBeBlocked');
   const fields=document.getElementById('lockBeFields');
   const confirmBtn=document.getElementById('lockBeConfirm');
-  if(blocked.length>0){
-    // Hard-block: list ungraduated entries by project name + description, disable confirm
-    const lines=blocked.map(({te,proj})=>{
+  const _fmtLines=arr=>arr.map(({te,proj})=>{
       const pn=proj?proj.name:te.proj;
       const desc=(te.desc||'(no description)').slice(0,60);
-      const amt=fmt(teAmount(te));
-      return '• '+pn+' &mdash; '+desc+' &mdash; '+amt;
+      return '• '+pn+' &mdash; '+desc+' &mdash; '+fmt(teAmount(te));
     }).join('<br>');
-    document.getElementById('lockBeBlockedDetail').innerHTML=blocked.length+' entr'+(blocked.length!==1?'ies':'y')+' on this billing event '+(blocked.length!==1?'have':'has')+' not been graduated. Graduate them first, or move them to a different billing event.<br><br>'+lines;
+  // reset the box to its amber "Rolling forward" look; the hard stop restyles it red below
+  blockedDiv.style.background='#fffbeb';blockedDiv.style.borderColor='#fde68a';blockedDiv.style.color='#92400e';
+  const _lead=blockedDiv.querySelector('strong');if(_lead)_lead.textContent='Rolling forward.';
+  let detailHtml='';
+  if(hardStop.length>0){
+    // COMPLETE-PROJECT HARD STOP: these must be graduated or moved before locking
+    detailHtml+='<span style="color:#991b1b"><strong>'+hardStop.length+' ungraduated entr'+(hardStop.length!==1?'ies':'y')+' on COMPLETE project'+(new Set(hardStop.map(h=>h.te.proj)).size!==1?'s':'')+'</strong> — a finished project cannot leave work unbilled. Graduate '+(hardStop.length!==1?'them':'it')+' (↑ in the project\'s ACTUAL table) or move '+(hardStop.length!==1?'them':'it')+' to another project/billing event, then lock:<br><br>'+_fmtLines(hardStop)+'</span>';
+  }
+  if(blocked.length>0){
+    // Soft notice: ungraduated entries on in-progress/holding projects roll forward to Next Invoice on lock
+    detailHtml+=(detailHtml?'<br><br>':'')+blocked.length+' ungraduated entr'+(blocked.length!==1?'ies':'y')+' on in-progress/holding projects will NOT be billed on this invoice and will roll forward to Next Invoice:<br><br>'+_fmtLines(blocked);
+  }
+  if(detailHtml){
+    document.getElementById('lockBeBlockedDetail').innerHTML=detailHtml;
     blockedDiv.style.display='block';
-    fields.style.display='none';
-    confirmBtn.disabled=true;
-    confirmBtn.style.opacity='0.4';
-    confirmBtn.style.cursor='not-allowed';
+    if(hardStop.length>0){blockedDiv.style.background='#fef2f2';blockedDiv.style.borderColor='#fecaca';blockedDiv.style.color='#991b1b';if(_lead)_lead.textContent='Cannot lock yet.';}
   }else{
     blockedDiv.style.display='none';
-    fields.style.display='block';
-    confirmBtn.disabled=false;
-    confirmBtn.style.opacity='1';
-    confirmBtn.style.cursor='pointer';
-    // Default invoice number to the billing event name; default date to today
-    document.getElementById('lockBeInv').value=be.invoiceNum||be.name||'';
-    document.getElementById('lockBeDate').value=be.invoiceDate||new Date().toISOString().split('T')[0];
   }
+  // BILLING EVENT SPAN GUARD (27h): graduated entries on OTHER unlocked events won't be on this invoice
+  const _others=readyFlockSplit().parts.filter(pt=>pt.id!==be.id);
+  if(_others.length>0){
+    const oCnt=_others.reduce((a,pt)=>a+pt.cnt,0),oTot=_others.reduce((a,pt)=>a+pt.tot,0);
+    const oTxt='&#9888; '+oCnt+' other graduated entr'+(oCnt!==1?'ies':'y')+' ('+fmt(oTot)+') sit on '+_others.map(pt=>'"'+nl2br(flockLabel(pt.be))+'"').join(', ')+' and will NOT be on this invoice &mdash; use "Merge into Next Invoice" in the Billing Event section first if they belong together.';
+    const det=document.getElementById('lockBeBlockedDetail');
+    det.innerHTML=(blocked.length>0?det.innerHTML+'<br><br>':'')+oTxt;
+    blockedDiv.style.display='block';
+  }
+  fields.style.display='block';
+  confirmBtn.disabled=hardStop.length>0;
+  confirmBtn.style.opacity=hardStop.length>0?'0.45':'1';
+  confirmBtn.style.cursor=hardStop.length>0?'not-allowed':'pointer';
+  // Default invoice number to the billing event name; default date to today
+  document.getElementById('lockBeInv').value=be.invoiceNum||be.name||'';
+  document.getElementById('lockBeDate').value=be.invoiceDate||new Date().toISOString().split('T')[0];
   document.getElementById('lockBeOverlay').style.display='flex';
   setTimeout(()=>{const inp=document.getElementById('lockBeInv');if(inp&&!confirmBtn.disabled)inp.focus();},50);
 }
@@ -4497,9 +4911,14 @@ function confirmLockBe(){
   const inv=document.getElementById('lockBeInv').value.trim();
   const dt=document.getElementById('lockBeDate').value.trim();
   if(!inv){alert('Invoice # is required.');return;}
-  lockFlock(_lockTargetBeId,inv,dt);
+  const res=lockFlock(_lockTargetBeId,inv,dt);
+  if(!res)return; // hard stop refused the lock — modal stays open
   closeLockBe();
   if(unlocked)renderEstimate();
+  const msgs=[];
+  if(res.rolled>0)msgs.push(res.rolled+' ungraduated entr'+(res.rolled!==1?'ies':'y')+' rolled forward to Next Invoice.');
+  if(res.flipped>0)msgs.push(res.flipped+' fully-billed project'+(res.flipped!==1?'s':'')+' moved from Complete to Billed.');
+  if(msgs.length)alert(msgs.join('\n'));
 }
 function promptUnlockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
@@ -4550,21 +4969,30 @@ function renderBillingEventStrip(){
   /* Bar totals = GRADUATED entries only (fixed 8/20 per Abram): ungraduated (in-flight)
    * entries are on the flock but NOT ready to bill, so they don't belong in the headline
    * count/total — that's what will actually invoice at lock. Their $ shows in the ⚠ note
-   * so nothing is hidden. The lock hard-block below is unchanged.                       */
+   * so nothing is hidden. (Hard-block retired in 27g/27h — ungraduated roll forward.)     */
   const blockedTot=blocked.reduce((a,b)=>a+teAmount(b.te),0);
   const readyCnt=cnt-blocked.length;
   const tot=flockTotal(cur)-blockedTot;
-  const canLock=cnt>0&&blocked.length===0;
+  // 27h: since 27g ungraduated entries ROLL FORWARD at lock, Lock is enabled whenever any
+  // graduated entry is on the flock (the old hard-block disabled it while any were pending).
+  const hardStop=completeUngraduatedOnFlock(cur);
+  const canLock=readyCnt>0&&hardStop.length===0;
   const lockTitle=cnt===0
     ? 'No entries on this billing event yet'
-    : blocked.length>0
-      ? blocked.length+' entr'+(blocked.length!==1?'ies':'y')+' not yet graduated &mdash; graduate before locking'
-      : 'Lock this billing event with an invoice #';
+    : hardStop.length>0
+      ? hardStop.length+' ungraduated entr'+(hardStop.length!==1?'ies':'y')+' on Complete project'+(hardStop.length!==1?'s':'')+' &mdash; graduate or move before locking'
+    : readyCnt===0
+      ? 'Nothing graduated yet &mdash; graduate entries before locking'
+      : blocked.length>0
+        ? 'Lock with an invoice # &mdash; '+blocked.length+' ungraduated entr'+(blocked.length!==1?'ies':'y')+' will roll forward to the next billing event'
+        : 'Lock this billing event with an invoice #';
   const lockStyle=canLock
     ? 'background:#0f766e;color:#fff;border:none'
     : 'background:#e5e7eb;color:#9ca3af;border:1px solid #d1d5db;cursor:not-allowed';
-  const statusNote=blocked.length>0
-    ? '<span style="font-size:11px;color:#b45309;margin-left:10px">&#9888; '+blocked.length+' ungraduated &middot; '+fmt(blockedTot)+' not included</span>'
+  const statusNote=hardStop.length>0
+    ? '<span style="font-size:11px;color:#b91c1c;margin-left:10px">&#9888; '+hardStop.length+' ungraduated on Complete project'+(hardStop.length!==1?'s':'')+' &mdash; resolve before locking</span>'
+    : blocked.length>0
+    ? '<span style="font-size:11px;color:#b45309;margin-left:10px">&#9888; '+blocked.length+' ungraduated &middot; '+fmt(blockedTot)+' rolls forward at lock</span>'
     : (cnt>0?'<span style="font-size:11px;color:#15803d;margin-left:10px">&#10003; all graduated</span>':'');
   strip.innerHTML='<div style="display:flex;align-items:center;justify-content:space-between;background:#fafaf8;border:1px solid #e5e5e0;border-radius:10px;padding:10px 14px;margin-bottom:12px;flex-wrap:wrap;gap:10px">'
     +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
@@ -4787,6 +5215,88 @@ function openMaterialsImport(){
 }
 function closeMaterialsImport(){
   document.getElementById('matImportOverlay').style.display='none';
+}
+
+/* CLIENT WORKLIST SUBMISSION — engine side (KEEP IN EVERY BUILD, added 8/27 per Abram, build 2026-08-27f)
+ * Data → Import Worklist Request: paste the email the client doc's REQUEST WORK box produced
+ * (or any plain list). The {"type":"worklist"} JSON block is parsed when present, otherwise each
+ * non-blank line is an item. Vessel-guarded. Each checked item becomes ONE new project in Holding
+ * Pattern (showInDoc unset → hidden from the client doc until Abram promotes it). Markers:
+ * openWorklistImport / parseWorklistText / confirmWorklistImport.                            */
+let _wlParsed=null;
+function _wlEsc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function openWorklistImport(){
+  if(!unlocked){document.getElementById('pinOverlay').style.display='flex';return;}
+  _wlParsed=null;
+  document.getElementById('wlImportText').value='';
+  document.getElementById('wlParseStatus').textContent='';
+  document.getElementById('wlLineItems').innerHTML='';
+  document.getElementById('wlConfirmBar').style.display='none';
+  document.getElementById('wlImportOverlay').style.display='block';
+  setTimeout(()=>document.getElementById('wlImportText').focus(),50);
+}
+function closeWorklistImport(){document.getElementById('wlImportOverlay').style.display='none';}
+function _wlExtractJson(text){
+  const i=text.indexOf('{"type":"worklist"');if(i<0)return null;
+  let depth=0,inStr=false,esc=false;
+  for(let j=i;j<text.length;j++){
+    const c=text[j];
+    if(inStr){if(esc)esc=false;else if(c==='\\')esc=true;else if(c==='"')inStr=false;continue;}
+    if(c==='"')inStr=true;else if(c==='{')depth++;else if(c==='}'){depth--;if(depth===0){try{return JSON.parse(text.slice(i,j+1));}catch(e){return null;}}}
+  }
+  return null;
+}
+function parseWorklistText(){
+  const raw=document.getElementById('wlImportText').value||'';
+  const st=document.getElementById('wlParseStatus');
+  let payload=_wlExtractJson(raw),items=[],source='';
+  if(payload&&Array.isArray(payload.items)){
+    items=payload.items.map(x=>String(x).trim()).filter(Boolean);
+    source='Parsed the engine JSON block'+(payload.name?' from '+payload.name:'')+(payload.submittedAt?' ('+new Date(payload.submittedAt).toLocaleDateString('en-US')+')':'')+'.';
+  }else{
+    payload=null;
+    items=raw.split(/\r?\n/).map(l=>l.replace(/^\s*(?:[-*•·]|\d+[.)])\s*/,'').trim()).filter(l=>l&&!/^-{3,}/.test(l));
+    source='No engine JSON block found — treating each line as an item.';
+  }
+  if(items.length===0){st.textContent='Nothing to import — paste the request email or a list, one item per line.';_wlParsed=null;document.getElementById('wlLineItems').innerHTML='';document.getElementById('wlConfirmBar').style.display='none';return;}
+  const myVessel=slugifyVessel(document.getElementById('vfVessel').value||'');
+  const theirVessel=payload&&payload.vessel?slugifyVessel(payload.vessel):'';
+  let warn='';
+  if(theirVessel&&myVessel&&theirVessel!==myVessel)warn='<div style="margin-bottom:10px;padding:8px 10px;background:#fff4e5;border:1px solid #f0c27b;border-radius:6px;font-size:12px;color:#8a5a00"><b>Vessel mismatch:</b> this request is for <b>'+_wlEsc(payload.vessel)+'</b> but the open vessel is <b>'+_wlEsc(document.getElementById('vfVessel').value)+'</b>. Import anyway only if that is intended.</div>';
+  _wlParsed={payload,items};
+  st.textContent=source;
+  let h=warn+'<table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="background:#f3f0fa;color:#4c3f7a;text-align:left"><th style="padding:6px 8px;width:28px"></th><th style="padding:6px 8px">New Holding Pattern project</th></tr></thead><tbody>';
+  items.forEach((t,i)=>{h+='<tr style="border-bottom:1px solid #eee"><td style="padding:6px 8px"><input type="checkbox" class="wl-ck" data-i="'+i+'" checked onchange="_wlCount()"></td><td style="padding:4px 8px"><input type="text" class="wl-name" data-i="'+i+'" value="'+_wlEsc(t)+'" style="width:100%;padding:6px 8px;border:1px solid #ddd;border-radius:5px;font-size:13px;box-sizing:border-box"></td></tr>';});
+  h+='</tbody></table>';
+  document.getElementById('wlLineItems').innerHTML=h;
+  document.getElementById('wlConfirmBar').style.display='flex';
+  _wlCount();
+}
+function _wlCount(){const n=document.querySelectorAll('#wlLineItems .wl-ck:checked').length;document.getElementById('wlConfirmCount').textContent=n+' project'+(n===1?'':'s')+' will be added to Holding Pattern';}
+function confirmWorklistImport(){
+  if(!unlocked){document.getElementById('pinOverlay').style.display='flex';return;}
+  if(!_wlParsed)return;
+  const p=_wlParsed.payload||{};
+  const when=p.submittedAt?new Date(p.submittedAt).toLocaleDateString('en-US'):new Date().toLocaleDateString('en-US');
+  const who=p.name||p.client||'client';
+  let n=0;
+  document.querySelectorAll('#wlLineItems .wl-ck:checked').forEach(ck=>{
+    const i=ck.dataset.i;
+    const inp=document.querySelector('#wlLineItems .wl-name[data-i="'+i+'"]');
+    const full=(inp?inp.value:_wlParsed.items[i]||'').trim();if(!full)return;
+    const name=full.length>60?full.slice(0,57).trim()+'…':full;
+    const id=nextProjId++;
+    projects.push({id,name,status:'holding',include:true,notes:'Client request '+when+' from '+who+': '+full,estimateTotal:null,isTM:false,scopeTasks:[{id:nextTaskId++,cat:'T',desc:'',hrs:0,mat:0,sub:0}],tasks:[],cos:[],billingEvents:[]});
+    n++;
+  });
+  closeWorklistImport();
+  if(n===0)return;
+  renderEstimate();populateTEDropdowns();saveData();
+  try{
+    const t=document.createElement('div');t.textContent='✅ '+n+' project'+(n===1?'':'s')+' added to Holding Pattern';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:13px;font-weight:700;padding:13px 22px;border-radius:10px;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,.35);opacity:0;transition:opacity .3s';
+    document.body.appendChild(t);setTimeout(()=>{t.style.opacity='1';},30);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),400);},5000);
+  }catch(e){}
 }
 function parseMaterialsText(){
   const raw=document.getElementById('matImportText').value;
@@ -5966,6 +6476,28 @@ async function fetchPendingPhotos(opts){
     <div id="matConfirmBar" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid #e5e5e0;display:none;gap:10px;align-items:center">
       <button onclick="confirmMaterialsImport()" class="btn btn-green" style="font-size:13px;font-weight:700">✓ Add All to Engine</button>
       <span style="font-size:12px;color:#888" id="matConfirmCount"></span>
+    </div>
+  </div>
+</div>
+<!-- IMPORT WORKLIST REQUEST MODAL (CLIENT WORKLIST SUBMISSION) -->
+<div id="wlImportOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;overflow-y:auto">
+  <div style="background:#fff;border-radius:14px;max-width:820px;margin:40px auto;padding:28px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <div>
+        <div style="font-size:16px;font-weight:700">Import Worklist Request</div>
+        <div style="font-size:12px;color:#888;margin-top:2px">Paste the client's work-request email (or any list, one item per line). Each item becomes a Holding Pattern project.</div>
+      </div>
+      <button onclick="closeWorklistImport()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#aaa;line-height:1">&times;</button>
+    </div>
+    <textarea id="wlImportText" placeholder="Paste the whole email here — the engine finds the JSON block itself.&#10;&#10;Or just a list:&#10;Replace port nav light&#10;Check bilge pump float switch" style="width:100%;height:160px;font-size:12px;padding:10px;border:1px solid #ddd;border-radius:8px;font-family:Menlo,monospace;resize:vertical;box-sizing:border-box"></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button onclick="parseWorklistText()" class="btn btn-primary" style="font-size:12px">Parse Request</button>
+      <span style="font-size:12px;color:#888;align-self:center" id="wlParseStatus"></span>
+    </div>
+    <div id="wlLineItems" style="margin-top:16px"></div>
+    <div id="wlConfirmBar" style="display:none;margin-top:16px;padding-top:14px;border-top:1px solid #e5e5e0;gap:10px;align-items:center">
+      <button onclick="confirmWorklistImport()" class="btn btn-green" style="font-size:13px;font-weight:700">✓ Add to Holding Pattern</button>
+      <span style="font-size:12px;color:#888" id="wlConfirmCount"></span>
     </div>
   </div>
 </div>
