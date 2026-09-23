@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Salish See",
     "client": "John Agnew",
-    "exportedAt": "2026-09-01T22:00:00.507Z",
+    "exportedAt": "2026-09-08T19:34:48.269Z",
     "engineVersion": 8,
     "engineBuild": "2026-09-01g"
   },
@@ -126,37 +126,6 @@
       "cos": [],
       "billingEvents": [],
       "autoBilledBy": 505
-    },
-    {
-      "id": 8,
-      "name": "Porthole Windows — Stainless Polish",
-      "status": "holding",
-      "include": true,
-      "notes": "",
-      "estimateTotal": 585,
-      "isTM": false,
-      "scopeTasks": [
-        {
-          "id": 107,
-          "cat": "D",
-          "desc": "Polish stainless porthole windows",
-          "hrs": 6,
-          "mat": 0,
-          "sub": 0
-        },
-        {
-          "id": 108,
-          "cat": "M",
-          "desc": "Polish materials",
-          "hrs": 1,
-          "mat": 15,
-          "sub": 0
-        }
-      ],
-      "tasks": [],
-      "cos": [],
-      "billingEvents": [],
-      "showInDoc": true
     },
     {
       "id": 9,
@@ -3207,7 +3176,9 @@
       35,
       20,
       44,
-      45
+      45,
+      21,
+      8
     ],
     "closedReadyProjs": [
       42,

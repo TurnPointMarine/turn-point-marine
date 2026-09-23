@@ -194,8 +194,15 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
 <!-- Clear confirmation modal -->
 <div class="clear-modal-overlay" id="clearModalOverlay" onclick="closeClearModal(event)">
   <div class="clear-modal">
-    <h3>Clear for new vessel?</h3>
-    <p>This will erase all projects and time entries. Type the vessel name to confirm.</p>
+    <h3 id="clearModalTitle">Clear for new vessel?</h3>
+    <p id="clearModalText">This will erase all projects, time entries, billing events and travel days. Type the current vessel name to confirm.</p>
+    <div id="clearNewVesselFields" style="display:none">
+      <div class="vf-label" style="margin-bottom:3px">New vessel</div>
+      <input type="text" id="clearNewVessel" placeholder="Vessel name...">
+      <div class="vf-label" style="margin-bottom:3px">Client</div>
+      <input type="text" id="clearNewClient" placeholder="Client name...">
+      <div class="vf-label" style="margin-bottom:3px">Confirm — type the CURRENT vessel name</div>
+    </div>
     <input type="text" id="clearConfirmInput" placeholder="Type vessel name..." oninput="clearModalErr('')" onkeydown="if(event.key==='Enter')confirmClear()">
     <div class="clear-modal-err" id="clearModalErr"></div>
     <div class="clear-modal-btns">
@@ -402,6 +409,16 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
   <div style="max-width:680px">
     <h2 style="font-size:16px;font-weight:700;margin-bottom:4px">Settings</h2>
     <p style="font-size:12px;color:#888;margin-bottom:20px">Company info and client document settings.</p>
+    <!-- NEW VESSEL (KEEP IN EVERY BUILD, added 9/1 build 2026-09-01h per Abram): Settings home for starting a vessel.
+         Same confirm-and-clear flow as the nav Clear button, with the new vessel/client typed on the modal; the JSON
+         router creates <slug>/current.json on the first Save Data. Marker: openNewVesselModal -->
+    <div id="stNewVesselCard" style="background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:20px;margin-bottom:14px">
+      <div style="font-size:13px;font-weight:600;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid #f0f0ed">Vessel</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+        <div style="font-size:12px;color:#666;line-height:1.5"><strong>Save Data first.</strong> New vessel… clears this browser's projects, time entries, billing events and travel days and starts a clean set under the new name. Company settings, rates and tax stay. The first Save Data creates <code>&lt;vessel&gt;/current.json</code> automatically.</div>
+        <button class="btn" style="background:#1D9E75;color:#fff;border-color:#1D9E75;white-space:nowrap" onclick="openNewVesselModal()">+ New vessel…</button>
+      </div>
+    </div>
     <div style="background:#fff;border:1px solid #e5e5e0;border-radius:12px;padding:20px;margin-bottom:14px">
       <div style="font-size:13px;font-weight:600;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0ed">Company &amp; Branding</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
@@ -538,7 +555,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-09-01g';
+const ENGINE_BUILD='2026-09-23c';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -617,7 +634,8 @@ let photoBlockCollapsed=new Set(); // proj ids whose Photos section is collapsed
 let projects=[];
 let timeEntries=[];
 let billingEvents=[];
-let travelDays=[];let nextTravelDayId=9000; // TRAVEL DAYS (8/25) — see syncTravelDays
+let travelDays=[];let nextTravelDayId=9000;
+let estView='project'; // DAY VIEW TOGGLE (9/17): 'project' | 'day' — Estimate-tab presentation only // TRAVEL DAYS (8/25) — see syncTravelDays
 // ─── UI STATE PERSISTENCE ───────────────────────────────────────────────
 // secOpenState and openProjs control which sections/projects are expanded.
 // Serialize them on save, restore on load, so layout state persists across reloads and JSON exports.
@@ -626,11 +644,13 @@ function serializeUiState(){
     secOpenState:{...secOpenState},
     openProjs:Array.from(openProjs),
     closedReadyProjs:Array.from(closedReadyProjs),
-    closedBilledProjs:Array.from(closedBilledProjs)
+    closedBilledProjs:Array.from(closedBilledProjs),
+    estView:estView
   };
 }
 function restoreUiState(ui){
   if(!ui)return;
+  if(ui.estView==='day'||ui.estView==='project')estView=ui.estView;
   if(ui.secOpenState&&typeof ui.secOpenState==='object'){
     secOpenState={...secOpenState,...ui.secOpenState};
   }
@@ -681,6 +701,7 @@ function migrateQtyModel(){
     (p.cos||[]).forEach(co=>migTasks(co.tasks));
   });
   timeEntries.forEach(te=>{
+    if(isSealed(te))return; // BILLED IS SEALED — migrations never rewrite a sealed entry
     if(isMatCat(te.cat)&&(te.mat===undefined||te.mat===null)){te.mat=te.hrs||0;te.hrs=1;}
   });
 }
@@ -690,12 +711,328 @@ function projPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.pos
 function projCoTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted&&te.co);}
 // TE qty × unit cost: for material-category entries `hrs` = qty (default 1), `mat` = unit cost $
 function teQty(te){const q=parseFloat(te.hrs);return q>0?q:1;}
-function teAmount(te){return isMatCat(te.cat)?teQty(te)*(te.mat||0):(te.hrs||0)*(RATES[te.cat]||0);}
+function teAmount(te){
+  // BILLED IS SEALED: a sealed entry reports the amount it was INVOICED at, never a recompute.
+  if(te&&te.sealed&&typeof te.sealed.amount==='number')return te.sealed.amount;
+  return isMatCat(te.cat)?teQty(te)*(te.mat||0):(te.hrs||0)*(RATES[te.cat]||0);
+}
+
+/* ═══ BILLED IS SEALED (KEEP IN EVERY BUILD, added 2026-09-17 per Abram) ═══════════════════
+ * STANDING RULE, project-wide: once a billing event locks, its contents are SEALED — hours,
+ * rate, amount, description, project attribution. No later feature, recompute, migration or
+ * rate change may alter a billed line. "At every Billing event rolling into a Billed event the
+ * safe door needs to close on it." Billed content is immune to the engine's evolution.
+ *
+ * HOW: sealEntry() stamps te.sealed = {hrs,qty,rate,mat,amount,desc,proj,cat,at,build} onto a
+ * billed entry. teAmount() returns te.sealed.amount for sealed entries, so the live RATES table
+ * can change without re-pricing history. sealBilledEntries() is idempotent and runs in two
+ * places: at the END of lockFlock (after the 27g roll-forward, so entries handed to the next
+ * flock are never sealed) using the LIVE rates — that is what is being invoiced today — and on
+ * every loadData/importData as a LAZY BACKFILL for vessels whose JSON predates this build, so
+ * each vessel seals itself the first time it is opened (per Abram: no time to load every vessel
+ * at once). The backfill uses SEALED_RATES, the PINNED historical table, never RATES — so if
+ * rates are raised in a future build, an old vessel opened after that still seals at the rates
+ * actually in effect when its invoices went out.
+ *
+ * REOPENING: only deliberately. promptUnlockFlock requires the PIN and typing the invoice number
+ * back, the unlock is written to the event's history, and unlockFlock drops the snapshots on that
+ * event's entries so they price live again (they re-seal on the next lock). Moving a project out
+ * of Billed by hand does the same for its entries that no locked invoice holds.
+ *
+ * GUARDS: migrateQtyModel and every future data migration must skip sealed entries. Anything that
+ * recomputes an entry (syncTravelDays already does this for travel children) must leave them be.
+ * Markers: SEALED_RATES / sealEntry / sealBilledEntries / unsealEntry / isSealed / te.sealed
+ * ═════════════════════════════════════════════════════════════════════════════════════════ */
+const SEALED_RATES={T:135,B:105,D:95,V:95,M:0,S:0,P:0,F:0};
+function isSealed(te){return !!(te&&te.sealed);}
+function _sealAmount(te,R){return isMatCat(te.cat)?teQty(te)*(te.mat||0):(te.hrs||0)*(R[te.cat]||0);}
+/* ===================== ENTRY PHOTOS =====================
+ * KEEP IN EVERY BUILD (added 2026-09-22 per Abram: "Can we structure it so that I can pull photos
+ * into labor line entries? Like a photo would land just below the labor entry and would be
+ * associated with that days labor visually in the client doc too.")
+ *
+ * A photo ref may now live on a TIME ENTRY (te.photos[]) as well as on a project (proj.photos[]).
+ * Same ref shape either way: {id,thumb,full,caption,includeInClientDoc,ts,pendingUpload}. Entry
+ * photos render as an inset strip directly beneath their entry in the engine's ACTUAL table, in
+ * the day view, and in BOTH client-doc presentations. A project's gallery shows only the photos
+ * that belong to no entry, so a photo is never drawn twice.
+ *
+ * Rules: derived travel rows (te.travelDayId) never take photos — they are engine-owned, like
+ * their graduation. Billed entries are FROZEN, photos included: the seal carries te.sealed.photos
+ * and enforceSeals puts them back if anything moves them (rule-4 change to BILLED IS SEALED,
+ * OK'd by Abram in advance 9/22).
+ * Markers: ENTRY PHOTOS / te.photos / entryPhotoStrip / attachPhotoToEntry / photoOwnerEntry.
+ */
+function entryPhotos(te){return (te&&Array.isArray(te.photos))?te.photos:[];}
+// Every photo id currently held by ANY time entry — the project gallery subtracts these.
+function entryHeldPhotoIds(){
+  const ids=new Set();
+  timeEntries.forEach(te=>entryPhotos(te).forEach(ph=>{if(ph&&ph.id!=null)ids.add(String(ph.id));}));
+  return ids;
+}
+// The entry holding a given photo id, or null. Ids are compared as STRINGS — field photos carry
+// "<vessel>-..." string ids and must never be parseInt'd (same rule as movePhotoToProject).
+function photoOwnerEntry(photoId){
+  const k=String(photoId);
+  return timeEntries.find(te=>entryPhotos(te).some(ph=>String(ph.id)===k))||null;
+}
+function canEntryTakePhotos(te){return !!te && !isEntryBilled(te) && !isTravelDerived(te);}
+// Move a photo ref onto an entry, lifting it off whatever project or entry held it before.
+function attachPhotoToEntry(te,photo){
+  if(!canEntryTakePhotos(te)||!photo)return false;
+  const k=String(photo.id);
+  if(entryPhotos(te).some(ph=>String(ph.id)===k))return false;
+  const prevE=photoOwnerEntry(k);
+  if(prevE&&prevE!==te){
+    if(isEntryBilled(prevE))return false;            // never lift a photo off a sealed invoice
+    prevE.photos=entryPhotos(prevE).filter(ph=>String(ph.id)!==k);
+  }
+  projects.forEach(p=>{if(Array.isArray(p.photos))p.photos=p.photos.filter(ph=>String(ph.id)!==k);});
+  if(typeof unassignedPhotos!=='undefined'&&Array.isArray(unassignedPhotos)){
+    for(let i=unassignedPhotos.length-1;i>=0;i--){if(String(unassignedPhotos[i].id)===k)unassignedPhotos.splice(i,1);}
+  }
+  te.photos=entryPhotos(te).concat([photo]);
+  return true;
+}
+// Detach and hand the ref back to the entry's project gallery (never a silent delete).
+function detachPhotoFromEntry(te,photoId){
+  if(!te||isEntryBilled(te))return false;
+  const k=String(photoId);
+  const ph=entryPhotos(te).find(x=>String(x.id)===k);
+  if(!ph)return false;
+  te.photos=entryPhotos(te).filter(x=>String(x.id)!==k);
+  const proj=projects.find(p=>p.name===te.proj);
+  if(proj){proj.photos=proj.photos||[];if(!proj.photos.some(x=>String(x.id)===k))proj.photos.push(ph);}
+  return true;
+}
+/* entryPhotoStripRow: the inset strip, drawn as a table row spanning the whole table so it sits
+ * directly beneath its entry. Shared by the project card's ACTUAL table and by the day view.
+ * Thumbs are 42x28 — half the project gallery's 84x56, per Abram 9/22 ("photo should be half this
+ * size relative to the size of the line entries") — and captions live in the tooltip rather than
+ * under the thumb, so the strip stays about one line of text tall. Images go through setTileImg,
+ * so entry photos reuse the LAZY TILE LOADING queue, the 480px local downscale and the IDB cache
+ * exactly like gallery tiles; they never fetch on their own.                                     */
+function entryPhotoStripRow(te,colspan,opts){
+  opts=opts||{};
+  const phs=entryPhotos(te);
+  if(!phs.length)return null;
+  const frozen=isEntryBilled(te);
+  const tr=document.createElement('tr');
+  tr.className='te-photo-row';
+  if(opts.bg)tr.style.background=opts.bg;
+  const td=document.createElement('td');
+  td.colSpan=colspan;
+  td.style.cssText='padding:0 8px 7px '+(opts.indent||34)+'px';
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:3px 0 1px 10px;border-left:2px solid '+(frozen?'#d9d9d3':'#e2c07f');
+  const lead=document.createElement('span');
+  lead.style.cssText='font-size:11px;color:#b9b9b2;margin-right:1px';
+  lead.textContent='↳';
+  wrap.appendChild(lead);
+  phs.forEach(ph=>{
+    const holder=document.createElement('span');
+    holder.style.cssText='position:relative;display:inline-block;line-height:0';
+    const im=document.createElement('img');
+    im.style.cssText='width:42px;height:28px;object-fit:cover;border-radius:4px;border:1px solid #e0e0da;display:block;cursor:zoom-in'+(frozen?';filter:saturate(0.72)':'');
+    im.alt=ph.caption||'';
+    im.title=(ph.caption||'Photo')+(frozen?' — sealed with this invoice':'');
+    try{setTileImg(im,ph);}catch(e){if(ph.thumb||ph.full)im.src=ph.thumb||ph.full;}
+    im.onclick=e=>{e.stopPropagation();if(ph.full)window.open(ph.full,'_blank','noopener');};
+    holder.appendChild(im);
+    if(!frozen){
+      const x=document.createElement('button');
+      x.textContent='×';
+      x.title='Detach — the photo goes back to the project gallery, it is not deleted';
+      x.style.cssText='position:absolute;top:-6px;right:-6px;width:15px;height:15px;border-radius:50%;border:1px solid #ddd;background:#fff;color:#888;font-size:10px;line-height:1;cursor:pointer;padding:0;display:grid;place-items:center';
+      x.onclick=e=>{e.stopPropagation();if(detachPhotoFromEntry(te,ph.id)){saveData();renderEstimate();}};
+      holder.appendChild(x);
+    }
+    wrap.appendChild(holder);
+  });
+  td.appendChild(wrap);tr.appendChild(td);
+  return tr;
+}
+/* Photos this entry could take: whatever is waiting in the field-capture tray, plus the photos
+ * already on this entry's project that no entry has claimed. */
+function entryPhotoCandidates(te){
+  const held=entryHeldPhotoIds();
+  const out=[];
+  (Array.isArray(unassignedPhotos)?unassignedPhotos:[]).forEach(ph=>{if(ph&&!held.has(String(ph.id)))out.push(ph);});
+  const proj=projects.find(p=>p.name===te.proj);
+  if(proj&&Array.isArray(proj.photos))proj.photos.forEach(ph=>{if(ph&&!held.has(String(ph.id)))out.push(ph);});
+  return out;
+}
+let _entryPickerEl=null;
+function closeEntryPhotoPicker(){
+  if(_entryPickerEl){try{_entryPickerEl.remove();}catch(e){}_entryPickerEl=null;}
+  document.removeEventListener('mousedown',_entryPickerAway,true);
+}
+function _entryPickerAway(e){if(_entryPickerEl&&!_entryPickerEl.contains(e.target))closeEntryPhotoPicker();}
+/* openEntryPhotoPicker: a small fixed panel of candidate thumbs anchored to the row's camera
+ * button. position:fixed with z-index 3000 for the same reason the searchable project picker uses
+ * it — it has to escape the tile/card overflow and sit above the clear-modal overlay's 2000.     */
+function openEntryPhotoPicker(te,anchorEl){
+  closeEntryPhotoPicker();
+  if(!canEntryTakePhotos(te))return;
+  const cands=entryPhotoCandidates(te);
+  const panel=document.createElement('div');
+  panel.style.cssText='position:fixed;z-index:3000;background:#fff;border:1px solid #e2c07f;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.18);padding:10px;max-width:330px;max-height:280px;overflow:auto';
+  const hdr=document.createElement('div');
+  hdr.style.cssText='font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#b5822d;margin-bottom:8px';
+  hdr.textContent=cands.length?'Attach a photo to this entry':'No unattached photos';
+  panel.appendChild(hdr);
+  if(!cands.length){
+    const em=document.createElement('div');
+    em.style.cssText='font-size:11.5px;color:#999;line-height:1.5;max-width:240px';
+    em.textContent='Every photo on this project is already on an entry. Refresh the field-capture tray, or drop a new one on the project first.';
+    panel.appendChild(em);
+  }else{
+    const grid=document.createElement('div');
+    grid.style.cssText='display:flex;flex-wrap:wrap;gap:8px';
+    cands.forEach(ph=>{
+      const b=document.createElement('button');
+      b.style.cssText='border:1px solid #e0e0da;background:none;padding:0;border-radius:5px;cursor:pointer;line-height:0;overflow:hidden';
+      b.title=ph.caption||'Attach this photo';
+      const im=document.createElement('img');
+      im.style.cssText='width:64px;height:42px;object-fit:cover;display:block';
+      im.alt=ph.caption||'';
+      try{setTileImg(im,ph);}catch(e){if(ph.thumb||ph.full)im.src=ph.thumb||ph.full;}
+      b.appendChild(im);
+      b.onclick=e=>{
+        e.stopPropagation();
+        if(attachPhotoToEntry(te,ph)){saveData();closeEntryPhotoPicker();renderEstimate();}
+      };
+      grid.appendChild(b);
+    });
+    panel.appendChild(grid);
+  }
+  document.body.appendChild(panel);
+  const r=anchorEl.getBoundingClientRect();
+  const w=panel.offsetWidth,h=panel.offsetHeight;
+  let left=Math.min(Math.max(8,r.left),window.innerWidth-w-8);
+  let top=r.bottom+6;
+  if(top+h>window.innerHeight-8)top=Math.max(8,r.top-h-6);
+  panel.style.left=left+'px';panel.style.top=top+'px';
+  _entryPickerEl=panel;
+  setTimeout(()=>document.addEventListener('mousedown',_entryPickerAway,true),0);
+}
+/* The row's camera control. Shows the count when the entry has photos; disabled and padlocked on
+ * a billed entry (BILLED IS SEALED covers photos as of 9/22). */
+function findPhotoRefById(photoId){
+  const k=String(photoId);let found=null;
+  (Array.isArray(unassignedPhotos)?unassignedPhotos:[]).forEach(ph=>{if(!found&&ph&&String(ph.id)===k)found=ph;});
+  if(!found)projects.forEach(p=>(p.photos||[]).forEach(ph=>{if(!found&&ph&&String(ph.id)===k)found=ph;}));
+  if(!found)timeEntries.forEach(te=>entryPhotos(te).forEach(ph=>{if(!found&&ph&&String(ph.id)===k)found=ph;}));
+  return found;
+}
+/* wireEntryPhotoDrop: lets a photo tile be dragged straight onto an entry row — the same gesture
+ * that already moves a photo onto a project header (PHOTO MOVE BETWEEN PROJECTS, 8/24). Reads the
+ * same 'photoId' dataTransfer key, and falls back to photoDragSrcId for tiles that only set that.
+ * stopPropagation fires ONLY once a photo drag is confirmed, so the project-header drop handler
+ * and the time-entry reassign drop are both untouched by ordinary drags.                        */
+function wireEntryPhotoDrop(el,te){
+  if(!canEntryTakePhotos(te))return;
+  const hasPhoto=e=>{
+    try{const t=e.dataTransfer&&e.dataTransfer.types;
+        if(t&&[].indexOf.call(t,'photoId')>=0)return true;}catch(_){}
+    return photoDragSrcId!=null;
+  };
+  el.addEventListener('dragover',e=>{
+    if(!hasPhoto(e))return;
+    e.preventDefault();e.stopPropagation();
+    el.style.outline='2px solid #e2c07f';el.style.outlineOffset='-2px';
+  });
+  el.addEventListener('dragleave',()=>{el.style.outline='';});
+  el.addEventListener('drop',e=>{
+    el.style.outline='';
+    if(!hasPhoto(e))return;
+    let id='';try{id=e.dataTransfer.getData('photoId');}catch(_){}
+    if(!id&&photoDragSrcId!=null)id=String(photoDragSrcId);
+    if(!id)return;
+    e.preventDefault();e.stopPropagation();
+    const ph=findPhotoRefById(id);
+    if(ph&&attachPhotoToEntry(te,ph)){saveData();renderEstimate();}
+  });
+}
+function entryPhotoBtn(te,style){
+  const n=entryPhotos(te).length;
+  const b=document.createElement('button');
+  b.type='button';
+  b.className='btn-sm';
+  b.style.cssText=(style||'')+';font-size:10px;padding:2px 6px;border-color:#e2c07f;color:#b5822d';
+  if(isEntryBilled(te)){
+    b.textContent=(n?'📷 '+n:'📷');
+    b.disabled=true;b.style.opacity='0.45';b.style.cursor='not-allowed';
+    b.title='Sealed with this invoice — photos are frozen';
+  }else if(isTravelDerived(te)){
+    return null; // engine-owned row: no photos, same reason it has no graduation arrow
+  }else{
+    b.textContent=(n?'📷 '+n:'📷');
+    b.title=n?(n+' photo'+(n!==1?'s':'')+' on this entry — click to attach another'):'Attach a photo to this entry';
+    b.onclick=e=>{e.stopPropagation();openEntryPhotoPicker(te,b);};
+  }
+  return b;
+}
+function sealEntry(te,rates){
+  if(!te||te.sealed)return false;
+  const R=rates||SEALED_RATES;
+  te.sealed={hrs:te.hrs||0,qty:teQty(te),rate:isMatCat(te.cat)?null:(R[te.cat]||0),mat:te.mat||0,
+             amount:_sealAmount(te,R),desc:te.desc||'',proj:te.proj||'',cat:te.cat,
+             /* ENTRY PHOTOS: the invoice's photos are part of what was invoiced, so they freeze
+              * with it (per Abram 9/22 — "billed rows are frozen, photos included"). Deep-ish
+              * copy so a later edit to the live ref can't reach back into the snapshot. */
+             photos:entryPhotos(te).map(ph=>Object.assign({},ph)),
+             at:new Date().toISOString(),build:ENGINE_BUILD};
+  return true;
+}
+function unsealEntry(te){if(te&&te.sealed){delete te.sealed;return true;}return false;}
+/* enforceSeals: the safe door, latched. teAmount already refuses to re-price a sealed entry, but
+ * a future code path could still mutate one's hours/description/category. This runs at the top of
+ * every saveData() and puts any drifted field back to what was invoiced, so billed content is
+ * immune by construction rather than by everyone remembering the rule. te.proj is deliberately NOT
+ * restored: renaming a project rewrites te.proj on every entry to keep billed lines attached to
+ * their project card, and te.sealed.proj is the record of the name as invoiced. */
+function enforceSeals(){
+  let n=0;
+  timeEntries.forEach(te=>{
+    const s=te&&te.sealed;if(!s)return;
+    if(te.hrs!==s.hrs||te.desc!==s.desc||te.cat!==s.cat||(te.mat||0)!==(s.mat||0)){
+      te.hrs=s.hrs;te.desc=s.desc;te.cat=s.cat;te.mat=s.mat;n++;
+    }
+    /* ENTRY PHOTOS: photos are sealed too. Older seals predate te.sealed.photos — leave those
+     * alone rather than wiping a photo attached before this build shipped. */
+    if(Array.isArray(s.photos)){
+      const now=entryPhotos(te).map(ph=>String(ph.id)).join('|');
+      const was=s.photos.map(ph=>String(ph.id)).join('|');
+      if(now!==was){te.photos=s.photos.map(ph=>Object.assign({},ph));n++;}
+    }
+  });
+  if(n>0)console.warn('[TPM] BILLED IS SEALED: reverted '+n+' drifted sealed entr'+(n!==1?'ies':'y')+' — something tried to edit billed content');
+  return n;
+}
+// Seal every currently-billed entry that has no snapshot yet. Idempotent; returns the count sealed.
+function sealBilledEntries(rates){
+  let n=0;timeEntries.forEach(te=>{if(isEntryBilled(te)&&sealEntry(te,rates))n++;});
+  return n;
+}
+// Small bottom toast (same shape as the client-doc "Push Through GitHub" reminder, which is untouched)
+function tpmNotice(msg,ms){
+  try{
+    if(!document.body)return;
+    var _t=document.createElement('div');_t.textContent=msg;
+    _t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:13px;font-weight:700;padding:13px 22px;border-radius:10px;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,0.35);font-family:inherit;opacity:0;transition:opacity 0.3s;pointer-events:none;max-width:90vw;text-align:center';
+    document.body.appendChild(_t);
+    setTimeout(function(){_t.style.opacity='1';},30);
+    setTimeout(function(){_t.style.opacity='0';setTimeout(function(){_t.remove();},400);},ms||8000);
+  }catch(e){}
+}
 // Convert a time entry to a task-shaped object (client-doc tables).
 // Material entries carry qty in hrs + unit cost in mat (S: unit cost goes to sub so it buckets as subcontract).
 function teAsTask(te){
-  if(!isMatCat(te.cat))return{id:te.id,cat:te.cat,desc:te.desc,date:te.date,hrs:te.hrs||0,mat:0,sub:0};
-  return{id:te.id,cat:te.cat,desc:te.desc,date:te.date,hrs:teQty(te),mat:te.cat==='S'?0:(te.mat||0),sub:te.cat==='S'?(te.mat||0):0};
+  // ENTRY PHOTOS: photos ride along so taskTable can draw the inset strip under this row.
+  const _ph=entryPhotos(te);
+  if(!isMatCat(te.cat))return{id:te.id,cat:te.cat,desc:te.desc,date:te.date,hrs:te.hrs||0,mat:0,sub:0,photos:_ph};
+  return{id:te.id,cat:te.cat,desc:te.desc,date:te.date,hrs:teQty(te),mat:te.cat==='S'?0:(te.mat||0),sub:te.cat==='S'?(te.mat||0):0,photos:_ph};
 }
 // Posted, unbilled time entries — used for "outstanding to bill" math
 function projUnbilledPostedTEs(p){return timeEntries.filter(te=>te.proj===p.name&&te.posted&&!isEntryBilled(te));}
@@ -957,8 +1294,14 @@ function lockFlock(beId,invoiceNum,invoiceDate){
     if(!hasUnbilledPosted){p.status='billed';p.autoBilledBy=be.id;flipped++;flippedNames.push(p.name);attached+=attachUnbilledToEvent(p,be);}
   });
   if(flipped>0)logFlockChange(be,'autoBilled','',flipped+' project'+(flipped!==1?'s':'')+' moved Complete → Billed: '+flippedNames.join(', ')+(attached?' ('+attached+' unbilled entr'+(attached!==1?'ies':'y')+' attached, not invoiced)':''));
+  /* BILLED IS SEALED: the safe door closes here. Runs LAST so it catches both the graduated
+   * entries on this event and anything on a project just flipped Complete → Billed, and runs
+   * AFTER the roll-forward so ungraduated entries handed to the next flock stay live. Live
+   * RATES — these lines are being invoiced at today's rates. */
+  const _sealed=sealBilledEntries(RATES);
+  if(_sealed>0)logFlockChange(be,'sealed','',_sealed+' entr'+(_sealed!==1?'ies':'y')+' sealed at lock (build '+ENGINE_BUILD+')');
   saveData();renderTimeEntry();
-  return {rolled,flipped};
+  return {rolled,flipped,sealed:_sealed};
 }
 function unlockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be||!be.locked)return;
@@ -968,6 +1311,11 @@ function unlockFlock(beId){
   let reverted=0;
   projects.forEach(p=>{if(p.autoBilledBy===be.id){p.status='complete';delete p.autoBilledBy;reverted++;}});
   if(reverted>0)logFlockChange(be,'unlocked','',reverted+' auto-billed project'+(reverted!==1?'s':'')+' returned to Complete');
+  /* BILLED IS SEALED: an unlock is a deliberate reopening — drop the snapshots on this event's
+   * entries so they price live again while editable. They re-seal on the next lock. */
+  let _unsealed=0;
+  timeEntries.forEach(te=>{if(te.billingEventId===be.id&&!isEntryBilled(te)&&unsealEntry(te))_unsealed++;});
+  logFlockChange(be,'unsealed','',_unsealed+' entr'+(_unsealed!==1?'ies':'y')+' unsealed by unlock at '+new Date().toISOString());
   saveData();renderTimeEntry();
 }
 function renameFlock(beId,newName){
@@ -1083,12 +1431,14 @@ function canGraduate(te){
 }
 function graduateEntry(teId){
   const te=timeEntries.find(t=>t.id===teId);if(!te)return;
+  if(isTravelDerived(te))return; // TRAVEL FOLLOWS ITS LABOR — graduation is inherited, never set here
   if(!canGraduate(te))return;
   te.graduated=true;
   saveData();renderTimeEntry();if(unlocked)renderEstimate();
 }
 function ungraduateEntry(teId){
   const te=timeEntries.find(t=>t.id===teId);if(!te)return;
+  if(isTravelDerived(te))return; // TRAVEL FOLLOWS ITS LABOR — graduation is inherited, never set here
   if(isEntryBilled(te))return; // locked entries can't be ungraduated
   // Allow ungraduation regardless of project status — gives a way out if a project
   // moves to Holding Pattern with graduated entries still on it.
@@ -1120,7 +1470,16 @@ function ungraduateEntry(teId){
 // ═══════════════════════════════════════════════════════════════════════════
 const TRAVEL_LABOR_CATS=['T','B','D'];
 function isTravelDerived(te){return !!(te&&te.travelDayId);}
-function tdLaborEntries(date){return timeEntries.filter(te=>te.date===date&&!isTravelDerived(te)&&TRAVEL_LABOR_CATS.includes(te.cat)&&(parseFloat(te.hrs)||0)>0);}
+/* TRAVEL FOLDED IN PROJECT VIEW (KEEP IN EVERY BUILD, added 2026-09-23b per Abram): a travel line is
+ * any cat 'V' entry — derived 🔗 rows AND legacy hand-typed ones. Used ONLY to decide what a project
+ * card draws; it never changes what an entry is worth, bills, graduates or seals. */
+function isTravelTE(te){return !!te&&(isTravelDerived(te)||te.cat==='V');}
+/* POSTED-ONLY TRAVEL SPLIT (KEEP IN EVERY BUILD, added 2026-09-22 per Abram, found by the day view):
+ * the split denominator counts POSTED labor only. Before this, an UNPOSTED entry — hours Abram chose
+ * not to bill (01g "unbilled") — still enlarged its project's share of the drive and so pulled travel
+ * dollars off the other projects worked that day. Unbilled hours earn no travel. Billed rows are
+ * sealed and unaffected; unlocked travel figures re-derive on the next save. */
+function tdLaborEntries(date){return timeEntries.filter(te=>te.date===date&&te.posted&&!isTravelDerived(te)&&TRAVEL_LABOR_CATS.includes(te.cat)&&(parseFloat(te.hrs)||0)>0);}
 function tdMatEntries(date){return timeEntries.filter(te=>te.date===date&&!isTravelDerived(te)&&isMatCat(te.cat));}
 // Labor hours per project name on a date (non-derived T/B/D entries)
 function tdLaborByProject(date){
@@ -1195,9 +1554,29 @@ function syncTravelDays(){
     if(td.basis==='manual'){if(td.laborSig!==undefined&&td.laborSig!==sig)td.flag=true;}
     else{td.laborSig=sig;td.flag=false;}
     const shares=travelDayShares(td);
+    /* TRAVEL FOLLOWS ITS LABOR (KEEP IN EVERY BUILD, added 2026-09-17 per Abram: "a travel row
+     * inherits whatever its parent labor entry is doing… you never touch a travel line again").
+     * For each project worked on this date we gather its KIN — that project's posted, non-derived
+     * entries on this date, the work the travel share was computed from — and the derived row
+     * mirrors them:
+     *   posted      = any kin posted (as before)
+     *   graduated   = ANY kin graduated-or-billed (REVISED 9/17 per Abram: "if there are two project
+     *                 entries and one entry is graduated have the child travel entry go with it").
+     *                 The day's travel for a project is a single fixed amount, so riding out with the
+     *                 first graduated entry only changes WHICH invoice carries it — the total across
+     *                 invoices is identical, and the earlier every-kin rule just made it harder to move
+     *                 work. Exact per-entry proportioning arrives with the per-labor-entry children.
+     *   billingEvent= the event the GRADUATED kin sit on (they are the ones heading to an invoice),
+     *                 else the event all kin agree on, so travel can never land on a different invoice
+     *                 than its work (the 27h span problem in miniature). If they disagree, or that
+     *                 event is already locked, it falls back to the current flock and bills next time.
+     * Billed derived rows are skipped earlier and never touched (BILLED IS SEALED). */
+    const kinOf={};
+    const _addKin=te=>{if(!te.posted)return;(kinOf[te.proj]=kinOf[te.proj]||[]).push(te);};
+    tdLaborEntries(td.date).forEach(_addKin);
+    tdMatEntries(td.date).forEach(_addKin);
     const postedLabor={};
-    tdLaborEntries(td.date).forEach(te=>{if(te.posted)postedLabor[te.proj]=true;});
-    tdMatEntries(td.date).forEach(te=>{if(te.posted)postedLabor[te.proj]=true;});
+    Object.keys(kinOf).forEach(n=>{postedLabor[n]=true;});
     const existing=tdDerivedEntries(td);
     const seen=new Set();
     Object.keys(shares).forEach(name=>{
@@ -1211,8 +1590,24 @@ function syncTravelDays(){
         timeEntries.push(te);changed++;
       }
       te.cat='V';te.date=td.date;te.hrs=hrs;te.desc=travelDayDesc(td,name,hrs);
-      if(shouldPost&&!te.posted){te.posted=true;if(!te.billingEventId){te.billingEventId=ensureCurrentFlock().id;}}
+      if(shouldPost&&!te.posted){te.posted=true;}
       else if(!shouldPost&&te.posted){te.posted=false;te.billingEventId=null;te.graduated=false;}
+      // TRAVEL FOLLOWS ITS LABOR: inherit graduation + event from the kin, every sync
+      if(te.posted){
+        const kin=kinOf[name]||[];
+        const gradKin=kin.filter(k=>k.graduated===true||isEntryBilled(k));
+        const grad=gradKin.length>0;
+        if(te.graduated!==grad){te.graduated=grad;changed++;}
+        const _pool=gradKin.length?gradKin:kin;
+        const evs=[...new Set(_pool.map(k=>k.billingEventId).filter(Boolean))];
+        let want=evs.length===1?evs[0]:null;
+        if(want!==null){
+          const wantBe=billingEvents.find(b=>b.id===want);
+          if(wantBe&&wantBe.locked)want=null; // its labor is already invoiced — this travel bills next
+        }
+        if(want===null)want=te.billingEventId||ensureCurrentFlock().id;
+        if(te.billingEventId!==want){te.billingEventId=want;changed++;}
+      }
     });
     // 3. remove unbilled derived rows that no longer earn a share
     existing.forEach(te=>{if(!seen.has(te.proj)&&!isEntryBilled(te)){const i=timeEntries.indexOf(te);if(i>=0){timeEntries.splice(i,1);changed++;}}});
@@ -1824,6 +2219,280 @@ function renderBilledEventsBody(body){
   });
 }
 
+/* ═══ DAY VIEW TOGGLE (KEEP IN EVERY BUILD, added 2026-09-17 per Abram) ═════════════════════
+ * Abram: "Can I set up the engine … so that the presentation can toggle between days worked
+ * structured presentation and the projects view shows the flow by project? I can work in the
+ * engine on projects then toggle to day view and see if the flow works, especially with travel
+ * involved and children travel entries."
+ *
+ * A "View: By project | By day" switch at the top of the Estimate tab. By project is the normal
+ * engine (project cards — the narrative of each repair, which is why the DAY-SHAPED ENTRY form was
+ * rejected 9/17). By day REGROUPS the very same entries chronologically: one block per date with
+ * the day's labour and travel totals, the projects touched that day, each project's entries in
+ * order, and its derived 🔗 travel row inset beneath them, plus that date's travel-day line
+ * (route · driven hrs · basis · allocated vs driven) or a muted "no travel day".
+ *
+ * TWO RULES: (1) READ-ONLY — every edit stays on the project cards, so there is one place where
+ * things change and two surfaces can never disagree. (2) REGROUPING ONLY — every figure shown is
+ * the same number the project view shows; no total is recomputed, and the Billing Event / Billed
+ * tallies are not touched (three-tally invariant: the engine tally must keep matching QuickBooks).
+ * State lives in `estView`, persisted through uiState so the tab reopens where Abram left it.
+ * Markers: estView / buildViewToggle / renderDayView
+ * ═════════════════════════════════════════════════════════════════════════════════════════ */
+function buildViewToggle(){
+  const w=document.createElement('div');
+  w.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap';
+  const lbl=document.createElement('span');
+  lbl.style.cssText='font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:0.06em';
+  lbl.textContent='View';w.appendChild(lbl);
+  const mk=(k,label,title)=>{
+    const b=document.createElement('button');b.className='btn-sm';b.textContent=label;b.title=title;
+    b.style.cssText='font-size:12px;padding:5px 13px;font-weight:600;'+(estView===k?'background:#1a1a1a;color:#fff;border-color:#1a1a1a':'');
+    b.onclick=()=>{if(estView===k)return;estView=k;saveData();renderEstimate();};
+    return b;
+  };
+  w.appendChild(mk('project','By project','Project cards — scope, posted entries, the flow of each repair. This is where you edit.'));
+  w.appendChild(mk('day','By day','Every date worked: the projects touched that day and the travel it earned. Editable — built for invoice prep.'));
+  if(estView==='day'){
+    const n=document.createElement('span');
+    n.style.cssText='font-size:11px;color:#888;font-style:italic';
+    n.textContent='editable — hours, descriptions and billing state; category and project stay on the project card';
+    w.appendChild(n);
+  }
+  return w;
+}
+// State chip for an entry, in Abram's language (an UNPOSTED entry is an "unbilled" record, 01g).
+function _dayStateChip(te){
+  const base='font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px;letter-spacing:0.03em;white-space:nowrap';
+  if(isEntryBilled(te))return '<span style="'+base+';background:#e8f5ee;color:#155a3e">🔒 BILLED</span>';
+  if(!te.posted)return '<span style="'+base+';background:#fff8ee;color:#b45309">UNBILLED</span>';
+  if(isEntryGraduated(te))return '<span style="'+base+';background:#eff6ff;color:#1e40af">READY</span>';
+  return '<span style="'+base+';background:#f3f4f6;color:#6b7280">IN FLIGHT</span>';
+}
+function renderDayView(list){
+  const byDate={};
+  timeEntries.forEach(te=>{const d=te.date||'(no date)';(byDate[d]=byDate[d]||[]).push(te);});
+  const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+  if(!dates.length){
+    const em=document.createElement('div');
+    em.style.cssText='background:#fff;border:1px solid #e5e5e0;border-radius:10px;padding:24px;text-align:center;color:#bbb;font-size:13px';
+    em.textContent='No time entries yet.';list.appendChild(em);return;
+  }
+  const projOrder=n=>{const i=projects.findIndex(p=>p.name===n);return i<0?9999:i;};
+  /* DAY VIEW BILLED SECTION (KEEP IN EVERY BUILD, added 2026-09-22 per Abram: "The dailies should
+   * have a different section of 'Billed' Just like the in progress days.")
+   * A DAY joins BILLED only when every entry on it is billed — the healBilledComplete rule applied
+   * to a date instead of a project. A MIXED day (some rows invoiced, some not) stays in the working
+   * list with its locked rows marked inline, because splitting one day across two sections would
+   * break the day totals this view exists to price. Billed days collapse by default, like the 01e
+   * billed event cards, so old work folds away instead of being scrolled past.
+   * Marker: DAY VIEW BILLED SECTION / _dayBilled.                                                */
+  const _dayAllBilled=d=>{const es=byDate[d]||[];return es.length>0&&es.every(te=>isEntryBilled(te));};
+  const _workDates=[],_billedDates=[];
+  dates.forEach(d=>{(_dayAllBilled(d)?_billedDates:_workDates).push(d);});
+  const buildDayCard=(d)=>{
+    const entries=byDate[d];
+    const labor=entries.filter(te=>!isTravelDerived(te)&&!isMatCat(te.cat));
+    const mats=entries.filter(te=>isMatCat(te.cat));
+    const trav=entries.filter(te=>isTravelDerived(te));
+    const handTrav=entries.filter(te=>!isTravelDerived(te)&&te.cat==='V');
+    const laborHrs=labor.reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+    const laborAmt=labor.reduce((a,te)=>a+teAmount(te),0);
+    const travHrs=trav.concat(handTrav).reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+    const travAmt=trav.concat(handTrav).reduce((a,te)=>a+teAmount(te),0);
+    const matAmt=mats.reduce((a,te)=>a+teAmount(te),0);
+    const dayTotal=entries.reduce((a,te)=>a+teAmount(te),0);
+    const td=travelDays.find(t=>t.date===d);
+    const card=document.createElement('div');
+    card.style.cssText='background:#fff;border:1px solid #e5e5e0;border-radius:10px;margin-bottom:10px;overflow:hidden';
+    // ── day header
+    let dLabel=d;
+    try{if(/^\d{4}-\d{2}-\d{2}$/.test(d)){const dt=new Date(d+'T12:00:00');dLabel=dt.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric',year:'numeric'});}}catch(e){}
+    const hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 14px;background:#f7f7f4;border-bottom:1px solid #e5e5e0';
+    /* BILLABLE vs UNBILLED (9/22 per Abram): the headline figure is what will invoice. Unposted
+     * entries are hours he chose not to bill, so they are counted separately in amber, never folded
+     * into the day total — this view is used to price invoices. */
+    const _billable=entries.filter(te=>te.posted);
+    const _unbilled=entries.filter(te=>!te.posted);
+    const bLaborHrs=_billable.filter(te=>!isTravelDerived(te)&&!isMatCat(te.cat)&&te.cat!=='V').reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+    const bLaborAmt=_billable.filter(te=>!isTravelDerived(te)&&!isMatCat(te.cat)&&te.cat!=='V').reduce((a,te)=>a+teAmount(te),0);
+    const bTravHrs=_billable.filter(te=>te.cat==='V').reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+    const bTravAmt=_billable.filter(te=>te.cat==='V').reduce((a,te)=>a+teAmount(te),0);
+    const bMatAmt=_billable.filter(te=>isMatCat(te.cat)).reduce((a,te)=>a+teAmount(te),0);
+    const bTotal=_billable.reduce((a,te)=>a+teAmount(te),0);
+    const uTotal=_unbilled.reduce((a,te)=>a+teAmount(te),0);
+    const uHrs=_unbilled.filter(te=>!isMatCat(te.cat)).reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+    hdr.innerHTML='<span style="font-size:13px;font-weight:700;color:#1a1a1a">'+dLabel+'</span>'
+      +'<span style="font-size:11px;color:#666">'
+      +(bLaborHrs?'<strong>'+_tdRound(bLaborHrs).toFixed(2)+'h</strong> labor · '+fmt(bLaborAmt):'no billable labor')
+      +(bMatAmt?' &nbsp;·&nbsp; '+fmt(bMatAmt)+' materials':'')
+      +(bTravHrs?' &nbsp;·&nbsp; <span style="color:#5b3fa6"><strong>'+_tdRound(bTravHrs).toFixed(2)+'h</strong> travel · '+fmt(bTravAmt)+'</span>':'')
+      +' &nbsp;·&nbsp; <strong style="color:#1D9E75;font-size:12px">'+fmt(bTotal)+'</strong> <span style="font-size:10px;color:#888">billable</span>'
+      +(uTotal||uHrs?' &nbsp;·&nbsp; <span style="color:#b45309">'+(uHrs?_tdRound(uHrs).toFixed(2)+'h · ':'')+fmt(uTotal)+' unbilled</span>':'')
+      +'</span>';
+    card.appendChild(hdr);
+    // ── travel-day line
+    const tl=document.createElement('div');
+    if(td){
+      const basis={hours:'by labor hours',even:'even split',manual:'manual'}[td.basis||'hours'];
+      const alloc=travelDayAllocated(td);const drove=parseFloat(td.hrs)||0;
+      const bal=Math.abs(alloc-drove)<0.011;
+      // EDITABLE (9/22 per Abram): set the day's drive right here — updateTravelDayField saves and
+      // re-derives, so the project view already shows the new shares when he toggles back.
+      const _ti='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;font-family:inherit;background:#fff;color:#5b3fa6';
+      tl.style.cssText='padding:6px 14px;font-size:11px;background:#fbfaff;border-bottom:1px solid #eee;color:#5b3fa6;display:flex;align-items:center;gap:7px;flex-wrap:wrap';
+      tl.innerHTML='<span>🔗</span>'
+        +'<input type="text" value="'+(td.route||'').replace(/"/g,'&quot;')+'" title="Route" style="'+_ti+';min-width:170px;font-weight:600" onchange="updateTravelDayField('+td.id+',\'route\',this.value)">'
+        +'<input type="number" min="0" step="0.25" value="'+drove+'" title="Hours driven this day" style="'+_ti+';width:66px;text-align:right" onchange="updateTravelDayField('+td.id+',\'hrs\',this.value)">'
+        +'<span>hr driven · '+basis+'</span>'
+        +'<span style="color:'+(bal?'#155a3e':'#b91c1c')+'">allocated '+alloc.toFixed(2)+' of '+drove.toFixed(2)+(bal?' ✓':' ⚠')+'</span>'
+        +(td.flag?'<span style="background:#fef3c7;color:#b45309;font-size:9px;font-weight:700;padding:1px 5px;border-radius:6px">review</span>':'')
+        +'<button class="del-btn" title="Delete this travel day" onclick="deleteTravelDay('+td.id+')" style="margin-left:auto">&#215;</button>';
+    }else if(laborHrs>0||mats.length){
+      tl.style.cssText='padding:6px 14px;font-size:11px;background:#fafafa;border-bottom:1px solid #eee;color:#aaa;font-style:italic;display:flex;align-items:center;gap:9px';
+      tl.innerHTML='<span>no travel day for this date'+(handTrav.length?' ('+handTrav.length+' hand-typed travel entr'+(handTrav.length!==1?'ies':'y')+' here)':'')+'</span>'
+        +'<button class="btn-sm" style="font-size:10px;color:#5b3fa6;border-color:#c4b5fd;font-style:normal" onclick="addTravelDay(\''+d+'\')" title="Add a travel day for '+d+'">+ Travel day</button>';
+    }
+    if(tl.innerHTML)card.appendChild(tl);
+    // ── per-project blocks
+    const names=[...new Set(entries.map(te=>te.proj))].sort((a,b)=>projOrder(a)-projOrder(b));
+    names.forEach(n=>{
+      const mine=entries.filter(te=>te.proj===n);
+      const own=mine.filter(te=>!isTravelDerived(te));
+      const kids=mine.filter(te=>isTravelDerived(te));
+      const proj=projects.find(p=>p.name===n);
+      const ph=document.createElement('div');
+      ph.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 14px;background:#fcfcfa;border-bottom:1px solid #f2f2ee;font-size:12px';
+      const pIdx=projects.findIndex(p=>p.name===n);
+      ph.innerHTML='<span style="font-weight:600;color:#1a1a1a">'
+        +(pIdx>=0?'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:1px 5px;margin-right:7px">'+String(pIdx+1).padStart(2,'0')+'</span>':'')
+        +n.replace(/</g,'&lt;')+(proj?'':' <span style="font-size:9px;color:#b45309">(no such project)</span>')+'</span>'
+        +'<span style="font-size:11px;color:#666">'+(proj?statusLabelOf(proj):'')+' &nbsp; <strong style="color:#1D9E75">'+fmt(mine.reduce((a,te)=>a+teAmount(te),0))+'</strong></span>';
+      card.appendChild(ph);
+      const tbl=document.createElement('table');tbl.className='te-table';
+      const tb=document.createElement('tbody');
+      /* EDITABLE DAY ROWS (9/22 per Abram — "I will use the daily view for invoice editing purposes",
+       * and he asked for hours + descriptions too, not just billing state). Hours and description are
+       * editable here and on the project card; both write the SAME entry through saveData(), so the
+       * views can never disagree. BILLED rows stay read-only (BILLED IS SEALED) and DERIVED 🔗 travel
+       * rows stay engine-owned (TRAVEL FOLLOWS ITS LABOR) — change the labor or the day's drive above
+       * and they re-derive. Category / project assignment stay on the project card. */
+      const row=(te,child)=>{
+        const tr=document.createElement('tr');
+        const isMat=isMatCat(te.cat);
+        const billed=isEntryBilled(te);
+        const derived=isTravelDerived(te);
+        const ro=billed||derived;
+        tr.style.background=child?'#fbfaff':(billed?'#f7faf8':'#fff');
+        const cell=(css)=>{const c=document.createElement('td');c.style.cssText=css;tr.appendChild(c);return c;};
+        cell('width:26px;padding:6px 0 6px 14px;color:#c4b5fd;font-size:12px').textContent=child?'↳':'';
+        cell('width:95px;padding:6px 8px;font-size:11px;font-weight:600;color:'+(child?'#5b3fa6':'#155a3e')).textContent=(child?'🔗 ':'')+(CAT_LABELS[te.cat]||te.cat);
+        // description
+        const c2=cell('padding:4px 8px;vertical-align:top');
+        if(ro){
+          const sp=document.createElement('div');
+          sp.style.cssText='font-size:12px;line-height:1.4;color:'+(billed?'#94a3b8':'#4b3a8a')+';'+(billed?'text-decoration:line-through;':'');
+          sp.innerHTML=nl2br((te.desc||'(no description)').replace(/</g,'&lt;'));
+          sp.title=billed?'Invoiced — sealed':'Written by the engine from the travel day';
+          c2.appendChild(sp);
+        }else{
+          const ta=document.createElement('textarea');ta.className='tinp';ta.rows=1;ta.value=te.desc||'';
+          ta.style.cssText='resize:none;overflow:hidden;line-height:1.4;min-height:22px;background:#fafffe;font-size:12px';
+          ta.oninput=()=>{te.desc=ta.value;};
+          ta.onchange=()=>{te.desc=ta.value;saveData();};
+          autosizeTA(ta);c2.appendChild(ta);
+        }
+        // hours / qty
+        const c3=cell('width:70px;padding:4px 6px;text-align:right');
+        if(ro){c3.style.fontSize='12px';c3.textContent=isMat?(teQty(te)!==1?teQty(te)+'×':'—'):(_tdRound(parseFloat(te.hrs)||0).toFixed(2)+'h');}
+        else{
+          const inp=document.createElement('input');inp.type='number';inp.min=0;inp.step=isMat?1:0.25;
+          inp.value=isMat?teQty(te):(te.hrs||'');inp.className='tinp r';inp.title=isMat?'Quantity':'Hours';
+          inp.style.cssText='font-size:12px;width:58px;text-align:right';
+          inp.onchange=()=>{let v=parseFloat(inp.value)||0;if(isMat&&v<=0)v=1;te.hrs=v;saveData();renderEstimate();};
+          c3.appendChild(inp);
+        }
+        cell('width:92px;padding:6px 8px;font-size:12px;font-weight:600;color:#1D9E75;text-align:right').textContent=fmt(teAmount(te));
+        // action cell — same controls as the ACTUAL table's action cell
+        const act=cell('width:210px;padding:4px 10px 4px 4px;text-align:right;white-space:nowrap');
+        const chip=document.createElement('span');chip.innerHTML=_dayStateChip(te);chip.style.marginRight='6px';act.appendChild(chip);
+        // ENTRY PHOTOS: camera on every row incl. billed ones, where it shows the count disabled
+        {const _pb=entryPhotoBtn(te,'margin-right:5px');if(_pb)act.appendChild(_pb);}
+        if(!billed){
+          const proj2=projects.find(p=>p.name===te.proj);
+          const cd=document.createElement('input');cd.type='checkbox';cd.checked=te.includeInClientDoc!==false;
+          cd.title='Include this entry in the client document';
+          cd.style.cssText='width:13px;height:13px;accent-color:#1D9E75;cursor:pointer;vertical-align:middle;margin-right:5px';
+          cd.onchange=()=>{te.includeInClientDoc=cd.checked;saveData();};
+          act.appendChild(cd);
+          if(!derived){
+            const co=document.createElement('button');co.title='Flag as Change of Scope';
+            co.style.cssText='background:none;border:none;cursor:pointer;font-size:12px;padding:2px 3px;opacity:'+(te.co?'1':'0.25');
+            co.textContent='🔶';co.onclick=()=>{te.co=!te.co;saveData();renderEstimate();};
+            act.appendChild(co);
+          }
+          if(te.posted&&!derived&&canAcceptPosts(proj2)){
+            const g=document.createElement('button');
+            g.style.cssText='background:none;border:none;cursor:pointer;font-size:13px;padding:2px 3px;color:#1e40af';
+            if(isEntryGraduated(te)){g.textContent='↑';g.title='Move back to In Flight';g.onclick=()=>ungraduateEntry(te.id);}
+            else{g.textContent='↓';g.title='Graduate — mark ready for billing';g.onclick=()=>graduateEntry(te.id);}
+            act.appendChild(g);
+          }
+          if(derived){
+            const l=document.createElement('span');l.style.cssText='font-size:10px;color:#5b3fa6;font-weight:600';l.textContent='🔗 travel day';
+            l.title='Follows this project\'s labor on '+(te.date||'')+' — hours, posted state, graduation and invoice all inherited';
+            act.appendChild(l);
+          }else{
+            const b=document.createElement('button');b.className='btn-sm'+(te.posted?' danger':' blue');
+            b.style.cssText='font-size:10px;margin-left:4px'+(te.posted?'':';font-weight:700');
+            b.textContent=te.posted?'Unpost':'Post →';
+            b.title=te.posted?'Make this entry unbilled — kept as a record, not invoiced':'Post this entry so it can be billed';
+            b.onclick=()=>{te.posted?unpostTimeEntry(te.id):postTimeEntry(te.id);};
+            act.appendChild(b);
+          }
+        }
+        wireEntryPhotoDrop(tr,te); // ENTRY PHOTOS: drop a photo tile straight onto the row
+        tb.appendChild(tr);
+        // ENTRY PHOTOS: inset strip beneath the entry, matching the row's own ground
+        {const _ps=entryPhotoStripRow(te,6,{indent:30,bg:child?'#fbfaff':(billed?'#f7faf8':'#fff')});if(_ps)tb.appendChild(_ps);}
+      };
+      own.forEach(te=>{row(te,false);if(!isMatCat(te.cat)&&te.cat!=='V'){/* its travel child follows the project block below */}});
+      kids.forEach(te=>row(te,true));
+      tbl.appendChild(tb);card.appendChild(tbl);
+    });
+    return card;
+  };
+  _workDates.forEach(d=>{const c=buildDayCard(d);if(c)list.appendChild(c);});
+  if(_billedDates.length){
+    const _bOpen=secOpenState['_dayBilled']===true;
+    const _bTotal=_billedDates.reduce((a,d)=>a+(byDate[d]||[]).reduce((x,te)=>x+teAmount(te),0),0);
+    const wrap=document.createElement('div');
+    wrap.style.cssText='background:#fff;border:1px solid #e5e5e0;border-radius:10px;margin-bottom:10px;overflow:hidden';
+    const hdr=document.createElement('div');
+    hdr.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 14px;background:#374151;color:#fff;cursor:pointer;user-select:none;font-size:11.5px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase';
+    hdr.innerHTML='<span style="font-size:9px;display:inline-block;width:8px;transform:rotate('+(_bOpen?'90':'0')+'deg)">&#9654;</span>'
+      +'<span>Billed days</span>'
+      +'<span style="margin-left:auto;font-weight:600;letter-spacing:0;text-transform:none;font-size:12px">'
+      +_billedDates.length+' day'+(_billedDates.length!==1?'s':'')+' &nbsp;·&nbsp; '+fmt(_bTotal)+'</span>';
+    hdr.dataset.tpmBilledDays='1';
+    hdr.title='Days where every entry is on a locked invoice. Click to '+(_bOpen?'collapse':'expand')+'.';
+    hdr.onclick=()=>{secOpenState['_dayBilled']=!_bOpen;renderEstimate();};
+    wrap.appendChild(hdr);
+    const body=document.createElement('div');
+    body.style.cssText='background:#fafafa;padding:'+(_bOpen?'10px 10px 1px':'0')+';display:'+(_bOpen?'block':'none');
+    // Only build the cards when the section is open — a fleet-worth of closed invoices is a lot of DOM.
+    if(_bOpen)_billedDates.forEach(d=>{const c=buildDayCard(d);if(c)body.appendChild(c);});
+    wrap.appendChild(body);
+    list.appendChild(wrap);
+  }
+}
+// Short status label for a project, reused by the day view
+function statusLabelOf(proj){
+  const s=SECTIONS.find(x=>x.key===proj.status);
+  return s?'<span style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:'+(s.color||'#888')+'">'+s.label.replace(' — Ready for Billing','')+'</span>':'';
+}
+
 function renderEstimate(){
   // Safety net: heal any orphan project statuses left over from earlier versions.
   // 'change_of_scope' was retired in Ship 1. Complete is a real status again as of
@@ -1864,6 +2533,16 @@ function renderEstimate(){
   renderBillingEventStrip();
   const list=document.getElementById('projectList');
   list.innerHTML='';
+  list.appendChild(buildViewToggle()); // DAY VIEW TOGGLE (9/17)
+  if(estView==='day'){
+    // Read-only regrouping of the same entries. The heals, summary card and billing strip above have
+    // already run; the project-card loop, grand total and Billed list below are skipped and cleared so
+    // nothing stale from the project view is left on screen.
+    renderDayView(list);
+    const _g=document.getElementById('grandTotal');if(_g)_g.innerHTML='';
+    const _b=document.getElementById('billedList');if(_b)_b.innerHTML='';
+    return;
+  }
   const _tray=buildCaptureTray();if(_tray)list.appendChild(_tray);
   const billedList=document.getElementById('billedList');
   billedList.innerHTML='';
@@ -2029,7 +2708,16 @@ function renderEstimate(){
       };nameInp.onclick=e=>e.stopPropagation();nameInp.onmousedown=e=>e.stopPropagation();nameInp.onfocus=e=>e.stopPropagation();
       const ssel=document.createElement('select');ssel.className='status-sel';
       [{v:'holding',l:'Holding Pattern'},{v:'needs_auth',l:'Needs Auth'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
-      ssel.onchange=()=>{proj.status=ssel.value;invWrap.style.display=ssel.value==='billed'?'flex':'none';renderSummary();renderEstimate();};ssel.onclick=e=>e.stopPropagation();
+      ssel.onchange=()=>{
+        const _was=proj.status;
+        proj.status=ssel.value;
+        /* BILLED IS SEALED: moving a project OUT of Billed by hand is a deliberate reopening —
+         * drop snapshots on its entries that no LOCKED invoice holds, so they price live again. */
+        if(_was==='billed'&&ssel.value!=='billed'){
+          let _u=0;timeEntries.forEach(te=>{if(te.proj===proj.name&&!isEntryBilled(te)&&unsealEntry(te))_u++;});
+          if(_u>0)console.log('[TPM] BILLED IS SEALED: unsealed '+_u+' entr'+(_u!==1?'ies':'y')+' — "'+proj.name+'" left Billed');
+        }
+        invWrap.style.display=ssel.value==='billed'?'flex':'none';renderSummary();renderEstimate();};ssel.onclick=e=>e.stopPropagation();
       const invWrap=document.createElement('div');invWrap.style.cssText='display:'+(proj.status==='billed'?'flex':'none')+';align-items:center;gap:5px;flex-shrink:0';
       const invLbl=document.createElement('span');invLbl.textContent='Inv:';invLbl.style.cssText='font-size:11px;color:#888';
       const invN=document.createElement('input');invN.placeholder='Inv #';invN.value=proj.invoiceNum||'';invN.style.cssText='font-size:11px;padding:3px 7px;border:1px solid #ddd;border-radius:6px;width:70px;font-family:inherit';invN.onclick=e=>e.stopPropagation();invN.onmousedown=e=>e.stopPropagation();invN.onchange=()=>{proj.invoiceNum=invN.value;saveData();};
@@ -2344,11 +3032,23 @@ function renderEstimate(){
         // insert a "Graduated — Ready for Billing" sub-header row before the first graduated one.
         let inflightHeaderInserted=false;
         let graduatedHeaderInserted=false;
-        const hasAnyGraduated=postedTEs.some(t=>isEntryGraduated(t));
-        const hasAnyInflight=postedTEs.some(t=>!isEntryGraduated(t));
+        /* TRAVEL FOLDED IN PROJECT VIEW (KEEP IN EVERY BUILD, added 2026-09-23b per Abram — "have the
+         * daily view show the travel time and not show travel line items per labor entry in project
+         * view"): travel lines leave the ACTUAL table's row list and ONE folded "🔗 Travel" line at the
+         * bottom carries their hours and dollars, so the card still adds up to its own subtotal.
+         * Collapsed by default (secOpenState['_trv_'+proj.id] must be exactly true to open); clicking
+         * the line puts the travel rows back IN PLACE with every control they had. DISPLAY ONLY — no
+         * figure is recomputed, Outstanding Subtotal / Billing Event / Billed tallies and seals are
+         * untouched, and the day view remains the home of travel detail. */
+        const _trvKey='_trv_'+proj.id;
+        const _trvOpen=secOpenState[_trvKey]===true;
+        const _trvTEs=postedTEs.filter(t=>isTravelTE(t));
+        const _rowTEs=_trvOpen?postedTEs:postedTEs.filter(t=>!isTravelTE(t));
+        const hasAnyGraduated=_rowTEs.some(t=>isEntryGraduated(t));
+        const hasAnyInflight=_rowTEs.some(t=>!isEntryGraduated(t));
         // Only show sub-headers when there's a split worth signaling
         const showSubHeaders=hasAnyGraduated&&hasAnyInflight;
-        postedTEs.forEach(te=>{
+        _rowTEs.forEach(te=>{
           // Insert sub-header rows at section boundaries
           if(showSubHeaders){
             if(!isEntryGraduated(te)&&!inflightHeaderInserted){
@@ -2506,6 +3206,9 @@ function renderEstimate(){
             cdRow.onchange=()=>{te.includeInClientDoc=cdRow.checked;saveData();};
             actTd.appendChild(cdRow);
           }
+          // ENTRY PHOTOS: camera control rides with the row's other actions. Returns null on a
+          // derived travel row, which takes no photos.
+          {const _pb=entryPhotoBtn(te,'margin-right:5px');if(_pb)actTd.appendChild(_pb);}
           if(isBilled){
             const billedLbl=document.createElement('span');billedLbl.style.cssText='font-size:10px;color:#155a3e;font-weight:600';billedLbl.textContent='🔒 billed';
             actTd.appendChild(billedLbl);
@@ -2518,7 +3221,7 @@ function renderEstimate(){
             actTd.appendChild(coBtn);
             // Graduation arrow: ↓ to mark ready for billing; ↑ to send back to in-flight.
             // Hidden on projects that can't accept posts (Holding Pattern, Needs Auth, Billed).
-            if(canAcceptPosts(proj)){
+            if(canAcceptPosts(proj)&&!isDerivedTravel){ // TRAVEL FOLLOWS ITS LABOR: no arrow on 🔗 rows
               const gradBtn=document.createElement('button');
               gradBtn.style.cssText='background:none;border:none;cursor:pointer;font-size:14px;padding:4px 4px;color:#1e40af';
               if(isEntryGraduated(te)){
@@ -2533,7 +3236,8 @@ function renderEstimate(){
               actTd.appendChild(gradBtn);
             }
             if(isDerivedTravel){
-              const tdLbl=document.createElement('span');tdLbl.style.cssText='font-size:10px;color:#5b3fa6;font-weight:600';tdLbl.textContent='🔗 travel day';tdLbl.title='Posted state follows this project\'s labor on '+(te.date||'')+' — unpost the labor and the travel follows';
+              const _g=isEntryGraduated(te);
+              const tdLbl=document.createElement('span');tdLbl.style.cssText='font-size:10px;color:#5b3fa6;font-weight:600';tdLbl.textContent=(_g?'↓ ':'')+'🔗 travel day';tdLbl.title='Follows this project\'s labor on '+(te.date||'')+' — posted state, graduation and invoice all inherited. '+(_g?'Graduated because every labor entry that day is graduated.':'Graduate the labor and this follows automatically.');
               actTd.appendChild(tdLbl);
             }else{
             const unpostBtn=document.createElement('button');unpostBtn.className='btn-sm danger';unpostBtn.style.fontSize='10px';unpostBtn.textContent='Unpost';
@@ -2542,8 +3246,30 @@ function renderEstimate(){
             }
           }
           tr.appendChild(actTd);
+          wireEntryPhotoDrop(tr,te); // ENTRY PHOTOS: drop a photo tile straight onto the row
           actBody.appendChild(tr);
+          // ENTRY PHOTOS: inset strip immediately beneath its entry (this table is 9 columns wide)
+          {const _ps=entryPhotoStripRow(te,9,{indent:34});if(_ps)actBody.appendChild(_ps);}
         });
+        // TRAVEL FOLDED IN PROJECT VIEW — the one line that stands in for every travel row above.
+        if(_trvTEs.length){
+          const _tH=_trvTEs.reduce((a,t)=>a+(parseFloat(t.hrs)||0),0);
+          const _tA=_trvTEs.reduce((a,t)=>a+teAmount(t),0);
+          const _tBilled=_trvTEs.filter(t=>isEntryBilled(t)).reduce((a,t)=>a+teAmount(t),0);
+          const _n=_trvTEs.length;
+          const fr=document.createElement('tr');fr.className='trv-fold';
+          fr.style.cssText='background:transparent;cursor:pointer;border-top:1px solid #f1eff7'; // 23c: FADED per Abram — a quiet footnote to the labor, not a line competing with it
+          fr.title=_trvOpen?'Fold the travel lines back into one line':'Show the individual travel lines. Travel is allocated from the days worked — the By day view shows each day\'s drive.';
+          fr.innerHTML='<td style="width:20px;padding:0 4px;text-align:center;color:#c4bfd6;font-size:9px">'+(_trvOpen?'&#9660;':'&#9654;')+'</td>'
+            +'<td style="font-weight:500;color:#a39fba;font-size:11px;white-space:nowrap">&#128279; Travel</td>'
+            +'<td style="color:#b3afc6;font-size:10.5px;font-style:italic">'+_n+' travel line'+(_n!==1?'s':'')+' · allocated from the days worked — detail in the By day view'
+              +(_tBilled>0?' <span style="font-style:normal;color:#94a3b8">(incl. '+fmt(_tBilled)+' billed)</span>':'')+'</td>'
+            +'<td></td><td class="r" style="color:#a39fba;font-size:11px">'+(+_tH.toFixed(2))+'</td><td></td><td></td>'
+            +'<td class="r" style="font-weight:500;color:#a39fba;font-size:11px">'+fmt(_tA)+'</td>'
+            +'<td style="text-align:right;padding-right:8px;font-size:10px;font-weight:500;color:#b3afc6;white-space:nowrap">'+(_trvOpen?'Fold':'Show')+'</td>';
+          fr.onclick=()=>{secOpenState[_trvKey]=!_trvOpen;saveData();renderEstimate();};
+          actBody.appendChild(fr);
+        }
         // Actual subtotal — split labor / materials. Includes billed entries (lifetime actual).
         const actL=projAllActualLabor(proj);const actM=projAllActualMat(proj);
         if(actL>0&&actM>0){
@@ -2852,8 +3578,19 @@ function exportClientDoc(){
   });
 
   // ── HELPERS ──────────────────────────────────────────────────────────────
-  function taskTable(tasks,showDate){
+  /* TRAVEL FOLDED IN PROJECT VIEW (client doc, KEEP IN EVERY BUILD, added 2026-09-23b per Abram):
+   * taskTable(tasks,showDate,{foldTravel:true}) — used ONLY by mergedTable's "Actual to Date", the
+   * informational project-shaped sections. Travel rows (cat 'V') render hidden under class
+   * tpe-trv<N> and one "🔗 Travel" line carries their hours and dollars, with a note that travel is
+   * allocated from the days worked and itemized in the By day view. Clicking it (tpeToggleTrv)
+   * shows the rows. Project Total is unchanged. PRINT shows every row and hides the fold line, so a
+   * PDF itemizes exactly as before. NEVER passed for Billing Event / Billed / change-order tables —
+   * those are the invoice and stay fully itemized (three-tally invariant). */
+  let _trvUid=0;
+  function taskTable(tasks,showDate,opts){
     if(!tasks||tasks.length===0)return'';
+    const _fold=!!(opts&&opts.foldTravel)&&tasks.some(x=>x&&x.cat==='V');
+    const _fid=_fold?(++_trvUid):0;
     const fdate=function(s){if(!s)return'';var p=(''+s).split('-');return p.length===3?(parseInt(p[1],10)+'/'+parseInt(p[2],10)+'/'+p[0].slice(2)):s;};
     const bb='border-bottom:1px solid #f0f0f0';
     let rows='';
@@ -2861,19 +3598,43 @@ function exportClientDoc(){
       const labor=taskLabor(t);
       const ms=taskMS(t);
       const isMS=isMatCat(t.cat);
-      const desc=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt">${nl2br(t.desc)||'\u2014'}</td>`;
-      const hrs=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${isMS?(taskQty(t)!==1?taskQty(t)+'\u00d7':'\u2014'):(t.hrs||0)+'h'}</td>`;
-      const tot=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;font-weight:600;vertical-align:top">${fd(isMS?ms:labor+ms)}</td>`;
+      const _trA=(_fold&&t.cat==='V')?' class="tpe-trvrow tpe-trv'+_fid+'" style="display:none"':'';
+      /* ENTRY PHOTOS: a task built from a time entry (teAsTask) can carry photos. When it does the
+       * entry row drops its own bottom rule and the photo row below carries it, so the strip reads
+       * as part of the line above it rather than as a separate banded row. */
+      const _phs=(t.photos||[]).filter(p=>p&&p.includeInClientDoc&&(p.full||p.thumb));
+      const rb=_phs.length?'':bb;
+      const desc=`<td style="padding:6px 8px;${rb};vertical-align:top;font-size:9pt">${nl2br(t.desc)||'—'}</td>`;
+      const hrs=`<td style="padding:6px 8px;${rb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${isMS?(taskQty(t)!==1?taskQty(t)+'×':'—'):(t.hrs||0)+'h'}</td>`;
+      const tot=`<td style="padding:6px 8px;${rb};text-align:right;font-size:9pt;white-space:nowrap;font-weight:600;vertical-align:top">${fd(isMS?ms:labor+ms)}</td>`;
       if(showDate){
-        // QuickBooks-style order: Date \u00b7 Category \u00b7 Description \u00b7 Hrs \u00b7 Total (all leading columns left-aligned).
-        const date=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt;white-space:nowrap;color:#666">${fdate(t.date)||'\u2014'}</td>`;
-        const cat=`<td style="padding:6px 8px;${bb};vertical-align:top;font-size:9pt;white-space:nowrap;color:#555">${CAT_LABELS[t.cat]}</td>`;
-        rows+=`<tr>${date}${cat}${desc}${hrs}${tot}</tr>`;
+        // QuickBooks-style order: Date · Category · Description · Hrs · Total (all leading columns left-aligned).
+        const date=`<td style="padding:6px 8px;${rb};vertical-align:top;font-size:9pt;white-space:nowrap;color:#666">${fdate(t.date)||'—'}</td>`;
+        const cat=`<td style="padding:6px 8px;${rb};vertical-align:top;font-size:9pt;white-space:nowrap;color:#555">${CAT_LABELS[t.cat]}</td>`;
+        rows+=`<tr${_trA}>${date}${cat}${desc}${hrs}${tot}</tr>`;
       } else {
-        const cat=`<td style="padding:6px 8px;${bb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${CAT_LABELS[t.cat]}</td>`;
-        rows+=`<tr>${desc}${cat}${hrs}${tot}</tr>`;
+        const cat=`<td style="padding:6px 8px;${rb};text-align:right;font-size:9pt;white-space:nowrap;vertical-align:top">${CAT_LABELS[t.cat]}</td>`;
+        rows+=`<tr${_trA}>${desc}${cat}${hrs}${tot}</tr>`;
+      }
+      if(_phs.length){
+        rows+=`<tr${_trA}><td colspan="${showDate?5:4}" style="padding:0 8px 5px 22px;${bb}">${entryPhotoStripHtml(_phs)}</td></tr>`;
       }
     });
+    let _foldRow='';
+    if(_fold){
+      const _tv=tasks.filter(x=>x&&x.cat==='V');
+      const _tH=_tv.reduce((a,x)=>a+(parseFloat(x.hrs)||0),0);
+      const _tT=_tv.reduce((a,x)=>a+taskLabor(x)+taskMS(x),0);
+      const _n=_tv.length;
+      const _c='padding:5px 8px;border-bottom:1px solid #f0f0f0;font-size:8.5pt;vertical-align:top'; // 23c: FADED per Abram
+      const _note=_n+' travel line'+(_n!==1?'s':'')+', allocated across the days worked'+(_authSel?'':' — each day\'s drive is itemized in the <strong style="font-style:normal">By day</strong> view')+'. <span class="tpe-trvlbl" style="font-style:normal;color:#9d98b5">Show lines</span>';
+      const _cat='<td style="'+_c+';white-space:nowrap;color:#9d98b5"><span class="tpe-trvchev" style="display:inline-block;width:10px;font-size:7pt">&#9654;</span>&#128279; Travel</td>';
+      const _desc='<td style="'+_c+';color:#aaa6bd;font-style:italic">'+_note+'</td>';
+      const _hrs='<td style="'+_c+';text-align:right;white-space:nowrap;color:#9d98b5">'+(+_tH.toFixed(2))+'h</td>';
+      const _tot='<td style="'+_c+';text-align:right;white-space:nowrap;color:#9d98b5">'+fd(_tT)+'</td>';
+      _foldRow='<tr class="tpe-trvfold" onclick="tpeToggleTrv('+_fid+',this)" title="Show or hide the individual travel lines" style="cursor:pointer">'
+        +(showDate?('<td style="'+_c+'"></td>'+_cat+_desc):(_desc+_cat))+_hrs+_tot+'</tr>';
+    }
     const pL=tasks.reduce((a,t)=>a+taskLabor(t),0);
     const pM=tasks.reduce((a,t)=>a+taskMS(t),0);
     const th=(txt,align)=>`<th style="padding:5px 8px;text-align:${align};border-bottom:2px solid #ddd;font-size:8pt;color:#555">${txt}</th>`;
@@ -2882,7 +3643,7 @@ function exportClientDoc(){
       : th('Scope / Task','left')+th('Category','right')+th('Hrs','right')+th('Total','right');
     return `<table style="width:100%;border-collapse:collapse;font-family:Arial,sans-serif">
       <thead><tr style="background:#f8f8f8">${head}</tr></thead>
-      <tbody>${rows}
+      <tbody>${rows}${_foldRow}
         <tr style="background:#f5f5f5">
           <td colspan="${showDate?4:3}" style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt">Project Total</td>
           <td style="padding:7px 8px;font-weight:700;text-align:right;border-top:2px solid #ddd;font-size:9pt;color:#1D9E75">${fd(pL+pM)}</td>
@@ -2910,7 +3671,7 @@ function exportClientDoc(){
         h+='<div style="font-size:8pt;font-weight:700;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:6px;font-family:Arial,sans-serif">Estimated Scope</div>'+taskTable(scopeTasks);
       }
     }
-    if(postedTasks.length>0){h+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:10px;font-family:Arial,sans-serif">Actual to Date</div>'+taskTable(postedTasks,true);}
+    if(postedTasks.length>0){h+='<div style="font-size:8pt;font-weight:700;color:#155a3e;text-transform:uppercase;letter-spacing:0.05em;padding:4px 0 2px;margin-top:10px;font-family:Arial,sans-serif">Actual to Date</div>'+taskTable(postedTasks,true,{foldTravel:true});}
     h+='<div style="display:flex;gap:8px;margin-top:10px">';
     if(!proj.isTM){
       h+='<div style="flex:1;padding:8px 12px;background:#eef1ff;border-radius:4px"><div style="font-size:7pt;color:#3b4a6b;text-transform:uppercase;letter-spacing:0.05em;font-family:Arial,sans-serif">Estimated</div><div style="font-size:11pt;font-weight:700;color:#3b4a6b;font-family:Arial,sans-serif">'+fd(estT)+'</div></div>';
@@ -2927,8 +3688,26 @@ function exportClientDoc(){
   // Collapsible photo gallery — used by EVERY section of the client doc. Renders a
   // minimized "▶ Project photos (N)" line; click expands the thumbnail grid. Lightbox intact.
   let _pgUid=0;
+  /* ENTRY PHOTOS (client doc): the inset strip under ONE entry. 42x28 thumbs — at this size a
+   * caption under the thumb is taller than the photo itself, so captions live in the title
+   * tooltip and the lightbox instead. Same data-lb / tpeOpenLb hooks as photoGalleryHtml, so the
+   * doc's existing lightbox picks these up with no extra script, and the per-photo
+   * includeInClientDoc flag governs exactly as it does in the gallery. */
+  function entryPhotoStripHtml(photos){
+    const ps=(photos||[]).filter(p=>p&&p.includeInClientDoc&&(p.full||p.thumb));
+    if(!ps.length)return '';
+    let t='';
+    ps.forEach(ph=>{
+      const cap=ph.caption?String(ph.caption).replace(/</g,'&lt;').replace(/"/g,'&quot;'):'';
+      t+='<a href="'+(ph.full||ph.thumb)+'" data-lb data-cap="'+cap+'" title="'+(cap||'Photo')+'" onclick="return tpeOpenLb(this)" target="_blank" rel="noopener" style="display:inline-block;line-height:0">'
+        +'<img src="'+(ph.thumb||ph.full)+'" onerror="this.onerror=null;this.src=\''+(ph.full||'')+'\'" loading="lazy" alt="'+cap+'" style="width:42px;height:28px;object-fit:cover;border-radius:4px;border:1px solid #e5e7eb;display:block"></a>';
+    });
+    return '<div data-lb-gallery style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:3px 0 2px 10px;border-left:2px solid #e5e7eb">'+t+'</div>';
+  }
   function photoGalleryHtml(photos){
-    const ps=(photos||[]).filter(p=>p.includeInClientDoc&&p.full);
+    // ENTRY PHOTOS: a photo held by an entry is drawn under that entry, never again here.
+    const _held=entryHeldPhotoIds();
+    const ps=(photos||[]).filter(p=>p.includeInClientDoc&&p.full&&!_held.has(String(p.id)));
     if(!ps.length)return'';
     const gid='pgal'+(_pgUid++);
     let thumbs='';
@@ -3051,6 +3830,115 @@ function exportClientDoc(){
   // True when any project in the list has a photo that's opted-in AND uploaded (visible in the client doc).
   const secHasPhotos=arr=>(arr||[]).some(p=>(p.photos||[]).some(ph=>ph.includeInClientDoc&&ph.full));
 
+  /* ═══ CLIENT-DOC DAY VIEW (KEEP IN EVERY BUILD, added 2026-09-17 per Abram) ═══════
+   * The client-doc half of the engine's DAY VIEW TOGGLE (build 17c). Abram: "Can I set up the
+   * engine and then consequentially the client facing doc so that the presentation can toggle
+   * between days worked structured presentation and the projects view shows the flow by
+   * project?" The doc still OPENS on By project — the record of each repair, unchanged — and a
+   * "View: By project | By day" switch above the first section swaps in a chronological
+   * regrouping of the very same entries: one card per date, that day's labor / materials /
+   * travel totals, the travel line for the date, then each project touched with its entries in
+   * order and its derived 🔗 travel row inset beneath them.
+   *
+   * SAME TWO RULES AS THE ENGINE: (1) READ-ONLY. (2) REGROUPING ONLY — every figure shown is a
+   * figure the project view already shows; nothing is recomputed and the Billing Event / Billed
+   * tallies are not touched (three-tally invariant — the doc must keep matching the engine and
+   * QuickBooks). TWO DOC-SPECIFIC RULES on top: an UNPOSTED entry is Abram's "unbilled" record
+   * and never reaches the client (01g), and the CLIENT-DOC ACTUALS FILTER applies exactly as it
+   * does everywhere else — to informational actuals only, never to graduated-ready or billed
+   * lines — so a day card can never disagree with an invoice.
+   *
+   * Both views live in the exported file; the switch flips display only, so the reader prints
+   * whichever one they are looking at (By project is what a fresh open, and every PDF made from
+   * it, gives). Suppressed entirely in authorization-only docs.
+   * Markers: tpe_dayview / tpeSetView / clientDayViewHtml
+   * ═══════════════════════════════════════════════════════════════════════════ */
+  function clientDayViewHtml(){
+    const _pByName={};
+    projects.forEach(p=>{
+      if(p.include===false)return;
+      if(p.status==='holding'&&p.showInDoc!==true)return; // hidden holding work stays hidden
+      _pByName[p.name]=p;
+    });
+    const mineTEs=timeEntries.filter(te=>{
+      if(!te.posted)return false;                                 // "unbilled" records stay in the engine (01g)
+      const p=_pByName[te.proj];if(!p)return false;
+      if(isEntryBilled(te)||isEntryGraduated(te))return true;      // invoice content — never filtered
+      return p.actualsInClientDoc!==false&&teInClientDoc(te);      // CLIENT-DOC ACTUALS FILTER
+    });
+    if(!mineTEs.length)return '';
+    const byDate={};
+    mineTEs.forEach(te=>{const d=te.date||'(no date)';(byDate[d]=byDate[d]||[]).push(te);});
+    const dates=Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
+    const projOrder=n=>{const i=projects.findIndex(p=>p.name===n);return i<0?9999:i;};
+    let h='';
+    dates.forEach(d=>{
+      const entries=byDate[d];
+      const trav=entries.filter(te=>isTravelDerived(te)||te.cat==='V');
+      const mats=entries.filter(te=>isMatCat(te.cat));
+      const labor=entries.filter(te=>!isTravelDerived(te)&&!isMatCat(te.cat)&&te.cat!=='V');
+      const laborHrs=labor.reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+      const laborAmt=labor.reduce((a,te)=>a+teAmount(te),0);
+      const travHrs=trav.reduce((a,te)=>a+(parseFloat(te.hrs)||0),0);
+      const travAmt=trav.reduce((a,te)=>a+teAmount(te),0);
+      const matAmt=mats.reduce((a,te)=>a+teAmount(te),0);
+      const dayTotal=entries.reduce((a,te)=>a+teAmount(te),0);
+      let dLabel=d;
+      try{if(/^\d{4}-\d{2}-\d{2}$/.test(d))dLabel=new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});}catch(e){}
+      const td=travelDays.find(t=>t.date===d);
+      h+='<div style="border:1px solid #e3e3df;border-radius:8px;margin-top:12px;overflow:hidden;font-family:Arial,sans-serif;background:#fff">'
+        +'<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 16px;background:#f6f6f3;border-bottom:1px solid #e3e3df">'
+        +'<span style="font-size:10.5pt;font-weight:700;color:#1a1a1a">'+dLabel+'</span>'
+        +'<span style="font-size:8.5pt;color:#666">'
+        +(laborHrs?'<strong>'+_tdRound(laborHrs).toFixed(2)+' h</strong> labor &nbsp;·&nbsp; '+fd(laborAmt):'no labor')
+        +(matAmt?' &nbsp;·&nbsp; '+fd(matAmt)+' materials':'')
+        +(travHrs?' &nbsp;·&nbsp; <span style="color:#5b3fa6"><strong>'+_tdRound(travHrs).toFixed(2)+' h</strong> travel &nbsp;·&nbsp; '+fd(travAmt)+'</span>':'')
+        +' &nbsp;·&nbsp; <strong style="color:#155a3e;font-size:9.5pt">'+fd(dayTotal)+'</strong></span></div>';
+      if(td&&travHrs>0){
+        h+='<div style="padding:6px 16px;font-size:8.5pt;background:#fbfaff;border-bottom:1px solid #efefef;color:#5b3fa6">&#128279; <strong>'+nl2br(td.route||'Travel')+'</strong> &nbsp;·&nbsp; '+(parseFloat(td.hrs)||0)+' hr driven &nbsp;·&nbsp; '+_tdRound(travHrs).toFixed(2)+' hr to this vessel</div>';
+      }
+      const names=[...new Set(entries.map(te=>te.proj))].sort((a,b)=>projOrder(a)-projOrder(b));
+      names.forEach(n=>{
+        const rows=entries.filter(te=>te.proj===n);
+        const own=rows.filter(te=>!isTravelDerived(te));
+        const kids=rows.filter(te=>isTravelDerived(te));
+        h+='<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 16px;background:#fcfcfa;border-bottom:1px solid #f2f2ee;font-size:9pt">'
+          +'<span style="font-weight:700;color:#1a1a1a">'+nl2br(n)+'</span>'
+          +'<strong style="color:#155a3e">'+fd(rows.reduce((a,te)=>a+teAmount(te),0))+'</strong></div>'
+          +'<table style="width:100%;border-collapse:collapse">';
+        const row=(te,child)=>{
+          const isMat=isMatCat(te.cat);
+          const q=isMat?(teQty(te)!==1?teQty(te)+' ×':'&mdash;'):(_tdRound(parseFloat(te.hrs)||0).toFixed(2)+' h');
+          const chip=isEntryBilled(te)
+            ?'<span style="font-size:7pt;font-weight:700;letter-spacing:0.04em;background:#e8f5ee;color:#155a3e;padding:2px 6px;border-radius:3px;white-space:nowrap">INVOICED</span>'
+            :'<span style="font-size:7pt;font-weight:700;letter-spacing:0.04em;background:#f3f4f6;color:#6b7280;padding:2px 6px;border-radius:3px;white-space:nowrap">PENDING</span>';
+          /* ENTRY PHOTOS: the strip sits under its own entry here exactly as it does in the
+           * project-shaped table. The row gives up its bottom rule so the photos read as part of
+           * the line above. Reading by day, the client sees the work and its evidence together. */
+          const _phs=entryPhotos(te).filter(ph=>ph&&ph.includeInClientDoc&&(ph.full||ph.thumb));
+          const _bg=child?'#fbfaff':'#fff';
+          const _rb=_phs.length?'':';border-bottom:1px solid #f5f5f2';
+          let _out='<tr style="background:'+_bg+_rb+'">'
+            +'<td style="width:22px;padding:6px 0 6px 16px;color:#c4b5fd;font-size:9pt;vertical-align:top">'+(child?'&#8627;':'')+'</td>'
+            +'<td style="width:86px;padding:6px 8px;font-size:8pt;font-weight:700;color:'+(child?'#5b3fa6':'#155a3e')+';vertical-align:top">'+(child?'&#128279; ':'')+(CAT_LABELS[te.cat]||te.cat)+'</td>'
+            +'<td style="padding:6px 8px;font-size:9pt;color:#333;vertical-align:top">'+nl2br(te.desc||'')+'</td>'
+            +'<td style="width:62px;padding:6px 8px;font-size:9pt;text-align:right;vertical-align:top;white-space:nowrap">'+q+'</td>'
+            +'<td style="width:88px;padding:6px 8px;font-size:9pt;font-weight:700;color:#155a3e;text-align:right;vertical-align:top;white-space:nowrap">'+fd(teAmount(te))+'</td>'
+            +'<td style="width:78px;padding:6px 16px 6px 4px;text-align:right;vertical-align:top">'+chip+'</td></tr>';
+          if(_phs.length){
+            _out+='<tr style="background:'+_bg+'"><td colspan="6" style="padding:0 16px 6px 46px;border-bottom:1px solid #f5f5f2">'+entryPhotoStripHtml(_phs)+'</td></tr>';
+          }
+          return _out;
+        };
+        own.forEach(te=>{h+=row(te,false);});
+        kids.forEach(te=>{h+=row(te,true);});
+        h+='</table>';
+      });
+      h+='</div>';
+    });
+    return h;
+  }
+
   // ── BUILD HTML ────────────────────────────────────────────────────────────
   let html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Client Account &mdash; ${vessel}</title>
@@ -3074,6 +3962,7 @@ function exportClientDoc(){
     @media print{
       body{background:#fff}.wrap{padding:20px}.tpe-lb{display:none!important}
       .tpe-noprint{display:none!important} /* CLIENT WORKLIST SUBMISSION: never print the request form */
+      .tpe-trvrow{display:table-row!important}.tpe-trvfold{display:none!important} /* TRAVEL FOLDED: a PDF itemizes every travel line */
       /* Full-record printing: force every collapsible project/section open so the client's PDF
          captures all line items and photos, not just names and totals. */
       [id$="_detail"],[id$="_d"],[id^="future"],[id^="billed"],[id^="co"],#estsum_detail{display:block!important}
@@ -3141,6 +4030,47 @@ function exportClientDoc(){
       </div>
     </div>`;
   }
+
+  // DAY VIEW toggle (2026-09-17d): built here so the switch sits above the first section.
+  // The whole project-shaped body below goes inside #tpe_projview; #tpe_dayview follows it.
+  const _dayHtml=_authSel?'':clientDayViewHtml();
+  if(_dayHtml){
+    html+=`<div class="tpe-noprint" id="tpe_viewbar" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:22px 0 -6px 0;font-family:Arial,sans-serif">
+      <span style="font-size:7.5pt;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.08em">View</span>
+      <button id="tpe_vb_project" onclick="tpeSetView('project')" title="Each job: what was quoted, what has been done, and what it came to." style="border-radius:6px;padding:5px 13px;font-size:9pt;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;background:#1a1a1a;color:#fff;border:1px solid #1a1a1a;">By project</button>
+      <button id="tpe_vb_day" onclick="tpeSetView('day')" title="Every day worked on the vessel, newest first, with the travel it earned." style="border-radius:6px;padding:5px 13px;font-size:9pt;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;background:#fff;color:#444;border:1px solid #d5d5d0;">By day</button>
+      <span id="tpe_viewnote" style="display:none;font-size:8.5pt;color:#888;font-style:italic">the same work, grouped by the day it was done</span>
+    </div>`;
+    /* NEW-VIEW CALLOUT (KEEP IN EVERY BUILD, added 2026-09-23 per Abram: "a little dialogue window
+     * that stands out as it is a new feature on the client doc export ... eye catching yet
+     * unobtrusive"). Sits directly under the switch and points up at it, so the client meets the
+     * control rather than a floating announcement. Design rules it must keep:
+     *   - tpe-noprint, like REQUEST WORK: it is an onboarding hint, never part of a PDF or invoice.
+     *   - Colors come from the EST/navy family already in the doc (#eef1ff / #3b4a6b) — the same
+     *     family as the switch it points at. No new palette entry (style contract).
+     *   - DISMISSIBLE and it stays dismissed: localStorage, keyed per vessel, every access in
+     *     try/catch so a private window or blocked storage just shows the hint again. Never a
+     *     cookie, never a server call — the doc is a static file on the client site.
+     *   - No animation: these docs get printed and read on phones, and a pulsing box in a bill
+     *     reads as an advert.
+     *   - Suppressed with the whole view bar in authorization-only docs (this block is inside the
+     *     same `if(_dayHtml)`, and _dayHtml is '' when _authSel is set).
+     * Marker: tpe_newview / NEW-VIEW CALLOUT.                                                    */
+    html+=`<div class="tpe-noprint" id="tpe_newview" style="display:none;margin:12px 0 -2px 0;font-family:Arial,sans-serif">
+      <div style="display:flex;align-items:flex-start;gap:10px;background:#eef1ff;border:1px solid #c7d0ee;border-left:4px solid #3b4a6b;border-radius:8px;padding:11px 13px;max-width:640px">
+        <span style="flex:none;background:#3b4a6b;color:#fff;font-size:7pt;font-weight:700;letter-spacing:0.07em;border-radius:3px;padding:3px 6px;margin-top:1px">NEW</span>
+        <span style="flex:1;font-size:9pt;color:#33405e;line-height:1.55">
+          <strong style="color:#28324d">Two ways to read this account.</strong>
+          Stay on <strong>By project</strong> for each job on its own, or switch to <strong>By day</strong>
+          to see every day worked on the vessel in order, with its travel and photos.
+          Nothing changes but the arrangement &mdash; the figures are the same either way.
+        </span>
+        <button onclick="tpeHideNewView()" title="Got it — don't show this again" aria-label="Dismiss"
+          style="flex:none;background:none;border:none;color:#7b86a6;font-size:15px;line-height:1;cursor:pointer;padding:0 2px;margin-top:-1px">&times;</button>
+      </div>
+    </div>`;
+  }
+  html+='<div id="tpe_projview">';
 
   // ── HOLDING PATTERN (selected projects) ─────────────────────────────────
   const futureP=_authSel?[]:projects.filter(p=>p.include!==false&&p.status==='holding'&&p.showInDoc===true).sort((a,b)=>(a.id||0)-(b.id||0));
@@ -3500,6 +4430,15 @@ function exportClientDoc(){
   }
 
 
+  html+='</div>'; // end #tpe_projview (DAY VIEW toggle, 2026-09-17d)
+  if(_dayHtml){
+    html+='<div id="tpe_dayview" style="display:none">'
+      +'<div style="background:#1a1a1a;color:#fff;padding:12px 18px;border-radius:4px;margin-top:22px;font-family:Arial,sans-serif">'
+      +'<div style="font-weight:700;font-size:11pt;letter-spacing:0.03em">DAYS WORKED</div>'
+      +'<div style="font-size:8.5pt;opacity:.85;margin-top:2px">Every day worked on '+nl2br(vessel)+', newest first — the same entries you see under By project, grouped by date</div></div>'
+      +_dayHtml+'</div>';
+  }
+
   // Footer — suppress estimate disclaimer if all active projects are T&M
   const allTM=actP.length>0&&actP.every(p=>p.isTM);
   html+=`<div style="margin-top:24px;padding-top:12px;border-top:1px solid #eee;display:flex;justify-content:space-between;font-size:8pt;color:#aaa;font-family:Arial,sans-serif">
@@ -3509,6 +4448,42 @@ function exportClientDoc(){
 
   // Embedded JS
   html+=`<\x73cript>
+  // DAY VIEW toggle (2026-09-17d) — display only; both views are already in this file.
+  function tpeSetView(k){
+    var d=document.getElementById('tpe_dayview');if(!d)return;
+    var day=(k==='day'),pv=document.getElementById('tpe_projview');
+    if(pv)pv.style.display=day?'none':'block';
+    d.style.display=day?'block':'none';
+    var n=document.getElementById('tpe_viewnote');if(n)n.style.display=day?'inline':'none';
+    var bp=document.getElementById('tpe_vb_project'),bd=document.getElementById('tpe_vb_day');
+    var base='border-radius:6px;padding:5px 13px;font-size:9pt;font-weight:700;cursor:pointer;font-family:Arial,sans-serif;',on='background:#1a1a1a;color:#fff;border:1px solid #1a1a1a;',off='background:#fff;color:#444;border:1px solid #d5d5d0;';
+    if(bp)bp.style.cssText=base+(day?off:on);
+    if(bd)bd.style.cssText=base+(day?on:off);
+    // NEW-VIEW CALLOUT: once the reader has actually used the switch, the hint has done its job.
+    if(day)tpeHideNewView();
+    window.scrollTo(0,0);
+  }
+  // TRAVEL FOLDED IN PROJECT VIEW (2026-09-23b) — display only; the rows are already in the page.
+  function tpeToggleTrv(n,row){
+    var rs=document.querySelectorAll('.tpe-trv'+n),open=false;
+    for(var i=0;i<rs.length;i++){var show=rs[i].style.display==='none';rs[i].style.display=show?'table-row':'none';open=show;}
+    var c=row.querySelector('.tpe-trvchev');if(c)c.innerHTML=open?'&#9660;':'&#9654;';
+    var l=row.querySelector('.tpe-trvlbl');if(l)l.textContent=open?'Hide lines':'Show lines';
+  }
+  /* NEW-VIEW CALLOUT (2026-09-23) — shows once per reader, then stays gone. Storage is keyed per
+   * vessel so a client with two boats is greeted on each. Every localStorage touch is wrapped:
+   * a private window, blocked site data or a file:// open must not break the document, and the
+   * worst case is simply that the hint shows again. */
+  var _tpeNvKey='tpm_newview_'+${JSON.stringify(vessel)};
+  function tpeHideNewView(){
+    var b=document.getElementById('tpe_newview');if(b)b.style.display='none';
+    try{localStorage.setItem(_tpeNvKey,'1');}catch(e){}
+  }
+  (function(){
+    var b=document.getElementById('tpe_newview');if(!b)return;
+    var seen=false;try{seen=localStorage.getItem(_tpeNvKey)==='1';}catch(e){}
+    if(!seen)b.style.display='block';
+  })();
   // Signature pad
   const canvas=document.getElementById('sigCanvas');
   let hasSig=false;
@@ -4547,6 +5522,8 @@ function importData(event){
       timeEntries.forEach(te=>{
         if(te.posted&&!te.billingEventId){te.billingEventId=cur.id;}
       });
+      // BILLED IS SEALED — lazy backfill at the PINNED historical rates (saveData follows below)
+      try{const _n=sealBilledEntries(SEALED_RATES);if(_n>0)setTimeout(function(){tpmNotice('\uD83D\uDD12 Sealed '+_n+' billed entr'+(_n!==1?'ies':'y')+' from this import',10000);},600);}catch(e){console.error('sealBilledEntries',e);}
       if(d._meta){
         const vv=document.getElementById('vfVessel');
         const vc=document.getElementById('vfClient');
@@ -4923,7 +5900,12 @@ function confirmLockBe(){
 function promptUnlockFlock(beId){
   const be=billingEvents.find(b=>b.id===beId);if(!be)return;
   if(!unlocked){alert('Enter PIN on the Estimate Engine tab to unlock invoices.');return;}
-  if(!confirm('Unlock "'+(be.invoiceNum?'Invoice '+be.invoiceNum:be.name)+'"?\n\nEntries will become editable again.'))return;
+  /* BILLED IS SEALED: reopening a sealed invoice takes the PIN above AND typing its number back.
+   * The unlock is logged to the event's history either way. */
+  const _tag=String(be.invoiceNum||be.name||'').trim();
+  const _typed=prompt('Unlock "'+(be.invoiceNum?'Invoice '+be.invoiceNum:be.name)+'"?\n\nThis reopens a SEALED invoice: its entries become editable and re-price at current rates.\n\nType '+(be.invoiceNum?'the invoice number':'the billing event name')+' to confirm:');
+  if(_typed===null)return;
+  if(String(_typed).trim().toLowerCase()!==_tag.toLowerCase()){alert('That did not match "'+_tag+'". Nothing was unlocked.');return;}
   unlockFlock(beId);
   if(unlocked)renderEstimate();
 }
@@ -5047,11 +6029,30 @@ function markAllTM(){
   projects.forEach(p=>{p.isTM=true;p.estimateTotal=null;p.scopeTasks=[];});
   saveData();renderEstimate();
 }
+let _clearIsNewVessel=false;
 function openClearModal(){
+  _clearIsNewVessel=false;
+  document.getElementById('clearModalTitle').textContent='Clear for new vessel?';
+  document.getElementById('clearNewVesselFields').style.display='none';
   document.getElementById('clearConfirmInput').value='';
   document.getElementById('clearModalErr').textContent='';
   document.getElementById('clearModalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('clearConfirmInput').focus(),50);
+}
+// NEW VESSEL (2026-09-01h, marker openNewVesselModal): Settings entry — same modal, with the new name/client typed up front
+function openNewVesselModal(){
+  if(!unlocked){alert('Enter PIN on the Estimate Engine tab first.');return;}
+  _clearIsNewVessel=true;
+  document.getElementById('clearModalTitle').textContent='Start a new vessel';
+  document.getElementById('clearNewVesselFields').style.display='block';
+  document.getElementById('clearNewVessel').value='';
+  document.getElementById('clearNewClient').value='';
+  document.getElementById('clearConfirmInput').value='';
+  document.getElementById('clearModalErr').textContent='';
+  const cur=(document.getElementById('vfVessel').value||'').trim();
+  document.getElementById('clearConfirmInput').placeholder=cur?'Type "'+cur+'" to confirm':'(no current vessel — just click)';
+  document.getElementById('clearModalOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('clearNewVessel').focus(),50);
 }
 
 // ─── LOCK BILLING EVENT MODAL ──────────────────────────────────────
@@ -5153,14 +6154,31 @@ function confirmClear(){
   const vessel=(document.getElementById('vfVessel').value||'').trim();
   const entered=(document.getElementById('clearConfirmInput').value||'').trim();
   if(entered!==vessel){clearModalErr('Vessel name did not match. Try again.');return;}
-  projects=[];timeEntries=[];nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;
+  let newV='',newC='';
+  if(_clearIsNewVessel){
+    newV=(document.getElementById('clearNewVessel').value||'').trim();
+    newC=(document.getElementById('clearNewClient').value||'').trim();
+    if(!newV){clearModalErr('Give the new vessel a name.');return;}
+  }
+  /* FULL RESET (2026-09-01h): Clear used to leave billingEvents / travelDays / photos / their counters behind, so a new
+   * vessel silently inherited the previous vessel's LOCKED invoices and travel days. Everything vessel-specific goes;
+   * settings (company, rates, tax, email) stay. dismissedPhotoKeys stay (they key on blob GUIDs, never a vessel). */
+  projects=[];timeEntries=[];billingEvents=[];travelDays=[];unassignedPhotos=[];
+  nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;nextBillingId=500;nextTravelDayId=9000;
   openProjs.clear();
-  document.getElementById('vfVessel').value='';
-  document.getElementById('vfClient').value='';
-  document.getElementById('navVessel').textContent='';
+  if(typeof closedReadyProjs!=='undefined')closedReadyProjs.clear();
+  if(typeof closedBilledProjs!=='undefined')closedBilledProjs.clear();
+  Object.keys(secOpenState).forEach(k=>{if(/^(bev_|estinfo_)/.test(k))delete secOpenState[k];});
+  document.getElementById('vfVessel').value=newV;
+  document.getElementById('vfClient').value=newC;
+  document.getElementById('navVessel').textContent=newV;
   localStorage.removeItem(STORAGE_KEY);
   closeClearModalDirect();
+  if(typeof updateNavVessel==='function')updateNavVessel();
+  ensureCurrentFlock();
+  saveData();
   renderEstimate();populateTEDropdowns();renderProgress();
+  if(_clearIsNewVessel)setTimeout(()=>alert('"'+newV+'" started. Add projects, then Data → Save Data — the vessel router will create '+newV.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')+'/current.json for it.'),100);
 }
 function toggleDrop(id){
   const menu=document.getElementById(id+'Menu');
@@ -5173,6 +6191,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
+  try{enforceSeals();}catch(e){console.error('enforceSeals',e);} // BILLED IS SEALED — latch before anything else writes
   try{if(syncTravelDays()>0&&!window._tdRerender){window._tdRerender=true;setTimeout(()=>{window._tdRerender=false;try{renderTimeEntry();renderProgress();if(unlocked)renderEstimate();}catch(e){}},0);}}catch(e){console.error('syncTravelDays',e);}
   try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
 }
@@ -5201,6 +6220,10 @@ function loadData(){
     timeEntries.forEach(te=>{
       if(te.posted&&!te.billingEventId){te.billingEventId=cur.id;}
     });
+    /* BILLED IS SEALED — lazy backfill at the PINNED historical rates: vessels saved before
+     * 2026-09-17 carry no snapshots, so each one seals itself the first time it is opened. The
+     * notice asks for a Save Data, which is what writes the seal into the vessel's current.json. */
+    try{const _n=sealBilledEntries(SEALED_RATES);if(_n>0)setTimeout(function(){tpmNotice('\uD83D\uDD12 Sealed '+_n+' billed entr'+(_n!==1?'ies':'y')+' on this vessel — Save Data to keep it',10000);},600);}catch(e){console.error('sealBilledEntries',e);}
     try{syncTravelDays();}catch(e){console.error('syncTravelDays',e);}
     return true;
   }catch(e){return false;}
@@ -5648,7 +6671,11 @@ function buildPhotoBlock(proj){
 function rerenderPhotoBlock(proj){const el=document.querySelector('[data-photo-proj="'+proj.id+'"]');if(el&&el._render)el._render();}
 function fillPhotoBlock(wrap,proj){
   while(wrap.firstChild)wrap.removeChild(wrap.firstChild);
-  const photos=proj.photos||[];
+  /* ENTRY PHOTOS: the gallery shows only photos no entry has claimed, so a photo is drawn in
+   * exactly one place. attachPhotoToEntry already lifts the ref out of proj.photos; this filter is
+   * belt-and-braces for data written before this build. */
+  const _heldIds=entryHeldPhotoIds();
+  const photos=(proj.photos||[]).filter(ph=>ph&&!_heldIds.has(String(ph.id)));
   // Accept dropped image files anywhere in the Photos section — and keep the drop from
   // bubbling up to the project-card wrapper, which would otherwise swallow it.
   wrap.ondragover=e=>{
