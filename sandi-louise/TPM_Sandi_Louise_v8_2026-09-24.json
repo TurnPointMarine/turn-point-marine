@@ -2,9 +2,9 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-09-24T22:40:26.256Z",
+    "exportedAt": "2026-09-24T21:45:42.269Z",
     "engineVersion": 8,
-    "engineBuild": "2026-09-24s"
+    "engineBuild": "2026-09-24l"
   },
   "projects": [
     {
@@ -200,7 +200,7 @@
     {
       "id": 2,
       "name": "Blackwater Discharge System",
-      "status": "complete",
+      "status": "in_progress",
       "include": true,
       "notes": "T/S pump inoperational with breaker panel switch. \nReplace both holding tank vent filters\nEvacuate the holding tank",
       "estimateTotal": null,
@@ -240,7 +240,41 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "photos": []
+      "photos": [
+        {
+          "id": "sandi-louise-2026-08-03-fe600027-271b-4835-ae51-956648e7bbc0",
+          "projId": 3,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-fe600027-271b-4835-ae51-956648e7bbc0-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-fe600027-271b-4835-ae51-956648e7bbc0.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:50.1613676Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-044ba5c5-720d-4530-9ba0-78de11935d3f",
+          "projId": 3,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-044ba5c5-720d-4530-9ba0-78de11935d3f-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-044ba5c5-720d-4530-9ba0-78de11935d3f.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:39.4752401Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7",
+          "projId": 3,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:43.9629259Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 4,
@@ -419,7 +453,261 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "photos": [],
+      "photos": [
+        {
+          "id": "sandi-louise-",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": 639180058708457000,
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": false,
+          "ts": 639180098635326100,
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:43.9629259Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-49fc1d36-cfb8-40fb-b296-1f6287a20186",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-49fc1d36-cfb8-40fb-b296-1f6287a20186-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-49fc1d36-cfb8-40fb-b296-1f6287a20186.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:24.1478934Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:34.0003077Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-69aa765e-67e5-4f34-9024-247c85bdc9c9",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-69aa765e-67e5-4f34-9024-247c85bdc9c9-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-69aa765e-67e5-4f34-9024-247c85bdc9c9.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:15:02.6130314Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-6be1b2d9-d70f-4b35-9681-d574ab05b700",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6be1b2d9-d70f-4b35-9681-d574ab05b700-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6be1b2d9-d70f-4b35-9681-d574ab05b700.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:13:45.2293512Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-6fe9b728-194c-48e3-bd67-6f0b43d484ad",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6fe9b728-194c-48e3-bd67-6f0b43d484ad-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6fe9b728-194c-48e3-bd67-6f0b43d484ad.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:02.7091416Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-710a3645-1aa2-4b45-8eae-062000ffa4da",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-710a3645-1aa2-4b45-8eae-062000ffa4da-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-710a3645-1aa2-4b45-8eae-062000ffa4da.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:19.9840826Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-727dcc35-8a1f-46ec-b6dc-fbd8a2d83516",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-727dcc35-8a1f-46ec-b6dc-fbd8a2d83516-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-727dcc35-8a1f-46ec-b6dc-fbd8a2d83516.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:15:14.5991176Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:25.4241849Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-7ae7ece8-0eca-4677-ac12-7e40dc7988e2",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7ae7ece8-0eca-4677-ac12-7e40dc7988e2-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7ae7ece8-0eca-4677-ac12-7e40dc7988e2.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:10.3485648Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-7c7750fb-76fc-4f46-a4e7-deeac9404446",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7c7750fb-76fc-4f46-a4e7-deeac9404446-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7c7750fb-76fc-4f46-a4e7-deeac9404446.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:42.0283588Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-7f703cdf-cf11-4cdd-94bd-6a004a6a091c",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7f703cdf-cf11-4cdd-94bd-6a004a6a091c-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7f703cdf-cf11-4cdd-94bd-6a004a6a091c.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:52.8756096Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-80ac3979-844b-45c5-bca1-5098f009bd3a",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-80ac3979-844b-45c5-bca1-5098f009bd3a-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-80ac3979-844b-45c5-bca1-5098f009bd3a.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:13:29.0958961Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-8b3ba2bc-7342-47b6-847c-e1a653a44734",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-8b3ba2bc-7342-47b6-847c-e1a653a44734-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-8b3ba2bc-7342-47b6-847c-e1a653a44734.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:56.6526796Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-91d0384a-22bd-4204-ae06-8ddc3b1be860",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-91d0384a-22bd-4204-ae06-8ddc3b1be860-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-91d0384a-22bd-4204-ae06-8ddc3b1be860.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:15:19.1352922Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-9ae6e71b-fd86-4d36-8ec8-0eae77a717b4",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9ae6e71b-fd86-4d36-8ec8-0eae77a717b4-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9ae6e71b-fd86-4d36-8ec8-0eae77a717b4.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:15:06.7325207Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-9bf3bcb3-8c2e-4d15-a960-2d2d9c4503cc",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9bf3bcb3-8c2e-4d15-a960-2d2d9c4503cc-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9bf3bcb3-8c2e-4d15-a960-2d2d9c4503cc.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:15:11.4217526Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:13:52.4782541Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-e92e4f22-21a6-430f-a196-6d44e057b8a6",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-e92e4f22-21a6-430f-a196-6d44e057b8a6-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-e92e4f22-21a6-430f-a196-6d44e057b8a6.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:13:37.4106272Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:24:12.2236325Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:17.8162591Z",
+          "pendingUpload": false
+        }
+      ],
       "actualsInClientDoc": true
     },
     {
@@ -966,17 +1254,6 @@
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-07-16T19:31:28.7349076Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514",
-          "projId": 14,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:57:42.1377696Z",
           "pendingUpload": false
         }
       ]
@@ -1618,6 +1895,28 @@
           "pendingUpload": false
         },
         {
+          "id": "sandi-louise-2026-08-05-5c53ee25-0b87-48df-8ce1-228910dc7315",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-5c53ee25-0b87-48df-8ce1-228910dc7315-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-5c53ee25-0b87-48df-8ce1-228910dc7315.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-05T18:07:04.5322554Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-05-68c28e92-9a8b-4e2e-b528-ebf36c42c18c",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-68c28e92-9a8b-4e2e-b528-ebf36c42c18c-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-68c28e92-9a8b-4e2e-b528-ebf36c42c18c.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-05T18:06:56.7271224Z",
+          "pendingUpload": false
+        },
+        {
           "id": "sandi-louise-2026-08-05-698b0f2c-a282-47e4-a8b1-8bb1c151d92c",
           "projId": 25,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-698b0f2c-a282-47e4-a8b1-8bb1c151d92c-thumb.jpg",
@@ -1626,6 +1925,28 @@
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-08-05T18:06:45.7851546Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-05-781535f3-ea7b-4fa8-8d0e-0910fb4c187f",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-781535f3-ea7b-4fa8-8d0e-0910fb4c187f-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-781535f3-ea7b-4fa8-8d0e-0910fb4c187f.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-05T18:06:59.4959256Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-05-ad872e81-20ca-4a6d-a750-f63f9ba1fa47",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-ad872e81-20ca-4a6d-a750-f63f9ba1fa47-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-ad872e81-20ca-4a6d-a750-f63f9ba1fa47.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-05T18:07:01.7252825Z",
           "pendingUpload": false
         },
         {
@@ -1661,207 +1982,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "photos": [
-        {
-          "id": "sandi-louise-2026-09-24-0de1dc74-ce99-4785-a7a3-1be4a3cca4de",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-0de1dc74-ce99-4785-a7a3-1be4a3cca4de-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-0de1dc74-ce99-4785-a7a3-1be4a3cca4de.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:41:00.6301828Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-16974ed0-aecd-42ce-a5f5-9950942be142",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-16974ed0-aecd-42ce-a5f5-9950942be142-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-16974ed0-aecd-42ce-a5f5-9950942be142.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:37.9995262Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-22ea77cf-8b24-43a3-9a36-98276b7426ee",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-22ea77cf-8b24-43a3-9a36-98276b7426ee-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-22ea77cf-8b24-43a3-9a36-98276b7426ee.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:46.6897093Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-270543e5-43d6-4798-86e5-4a66644bd512",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-270543e5-43d6-4798-86e5-4a66644bd512-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-270543e5-43d6-4798-86e5-4a66644bd512.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:38:30.6446855Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-313a03fd-1aa8-49dc-be11-02cd88d22395",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-313a03fd-1aa8-49dc-be11-02cd88d22395-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-313a03fd-1aa8-49dc-be11-02cd88d22395.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:43.8928682Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-5669cbe5-74de-4686-956f-bf9ef9d97734",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5669cbe5-74de-4686-956f-bf9ef9d97734-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5669cbe5-74de-4686-956f-bf9ef9d97734.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:25.6607545Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-5b7dfac6-2ef3-411d-acfb-cf306c805dd8",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5b7dfac6-2ef3-411d-acfb-cf306c805dd8-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5b7dfac6-2ef3-411d-acfb-cf306c805dd8.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:41:02.9097121Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-6e41a806-4d9d-4ce9-a3bc-313c778140e5",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6e41a806-4d9d-4ce9-a3bc-313c778140e5-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6e41a806-4d9d-4ce9-a3bc-313c778140e5.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:50.6954385Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-7c5a1183-bec7-4d32-ae3b-5fb2512da2a8",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-7c5a1183-bec7-4d32-ae3b-5fb2512da2a8-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-7c5a1183-bec7-4d32-ae3b-5fb2512da2a8.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:41.3306496Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-96361825-58f0-422a-ab87-60eb7633e4e5",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-96361825-58f0-422a-ab87-60eb7633e4e5-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-96361825-58f0-422a-ab87-60eb7633e4e5.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:22.4998644Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-b2264e99-a4e7-421f-ac76-75762af320d2",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b2264e99-a4e7-421f-ac76-75762af320d2-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b2264e99-a4e7-421f-ac76-75762af320d2.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:41:05.4331998Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-b8f1bd57-3e53-4841-a1b6-d01ac7233d3f",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b8f1bd57-3e53-4841-a1b6-d01ac7233d3f-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b8f1bd57-3e53-4841-a1b6-d01ac7233d3f.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:53.2340396Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-bce30cc1-13fd-401b-8f40-d37e4c6bb67c",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-bce30cc1-13fd-401b-8f40-d37e4c6bb67c-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-bce30cc1-13fd-401b-8f40-d37e4c6bb67c.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:58.4124152Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-e1faed6f-d780-4e8a-a95b-a24a94d78262",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-e1faed6f-d780-4e8a-a95b-a24a94d78262-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-e1faed6f-d780-4e8a-a95b-a24a94d78262.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:55.9367612Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-f5981c47-0403-4cf9-901e-fadb1fe9f20b",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f5981c47-0403-4cf9-901e-fadb1fe9f20b-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f5981c47-0403-4cf9-901e-fadb1fe9f20b.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:35.5402582Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-f799dd1e-6ddf-4173-aec5-0fac349e32e9",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f799dd1e-6ddf-4173-aec5-0fac349e32e9-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f799dd1e-6ddf-4173-aec5-0fac349e32e9.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:28.7396818Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-fe3ef391-f103-419a-8335-8e6ad217dd86",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-fe3ef391-f103-419a-8335-8e6ad217dd86-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-fe3ef391-f103-419a-8335-8e6ad217dd86.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:32.4220881Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-ff540de4-8555-440e-8852-0b5a55f20cdf",
-          "projId": 26,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-ff540de4-8555-440e-8852-0b5a55f20cdf-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-ff540de4-8555-440e-8852-0b5a55f20cdf.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:40:48.0414739Z",
-          "pendingUpload": false
-        }
-      ]
+      "billingEvents": []
     },
     {
       "id": 27,
@@ -1883,41 +2004,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "photos": [
-        {
-          "id": "sandi-louise-2026-09-24-29cd2f21-90d6-49fd-a104-75958bb1cd39",
-          "projId": 27,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-29cd2f21-90d6-49fd-a104-75958bb1cd39-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-29cd2f21-90d6-49fd-a104-75958bb1cd39.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T20:19:28.9882220Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "ph_mug2v4tk_zlx03",
-          "projId": 27,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/ph_mug2v4tk_zlx03-3b83698f-a398-4b23-95e7-225c5eeb0340-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/ph_mug2v4tk_zlx03-3b83698f-a398-4b23-95e7-225c5eeb0340.jpg",
-          "caption": "",
-          "includeInClientDoc": true,
-          "ts": 1790287350852,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-572ac6f1-c47d-4f1b-a27e-67ba1f9b2516",
-          "projId": 27,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-572ac6f1-c47d-4f1b-a27e-67ba1f9b2516-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-572ac6f1-c47d-4f1b-a27e-67ba1f9b2516.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T20:19:34.9200051Z",
-          "pendingUpload": false
-        }
-      ]
+      "billingEvents": []
     },
     {
       "id": 28,
@@ -1944,7 +2031,7 @@
     {
       "id": 29,
       "name": "Waterspot Removal From Ceramtek Hull Coating",
-      "status": "complete",
+      "status": "in_progress",
       "include": true,
       "notes": "8/12 email\nWell, we are a full 18 months behind on the maintenance they recommend,  and we don't have the product they referenced that I am aware of.\n\nCan you get this corrected:\nBuy the product\nRemove all water stains\nApply the product\n\n\n\nPlease advise and/or confirm,",
       "estimateTotal": null,
@@ -1968,7 +2055,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3272a0fe-810d-4140-a598-de72eb1c9b1d-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3272a0fe-810d-4140-a598-de72eb1c9b1d.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:20.5861676Z",
@@ -1979,7 +2066,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3ab8b840-69bb-492c-b9c5-8ca11b7af27d-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3ab8b840-69bb-492c-b9c5-8ca11b7af27d.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:31.4262390Z",
@@ -1990,7 +2077,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-587fcd0f-c895-4d2b-ae42-edfdfb355b12-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-587fcd0f-c895-4d2b-ae42-edfdfb355b12.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:27.8316797Z",
@@ -2001,7 +2088,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6b21c7e5-9b83-4baf-8862-2497920e7965-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6b21c7e5-9b83-4baf-8862-2497920e7965.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:24.2910674Z",
@@ -2012,7 +2099,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-cdd7270b-fa65-4d68-8fcf-00c39ada651a-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-cdd7270b-fa65-4d68-8fcf-00c39ada651a.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:17.2506299Z",
@@ -2023,7 +2110,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-da757646-cecd-4f89-8d43-967a2cf1f62e-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-da757646-cecd-4f89-8d43-967a2cf1f62e.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:37.3703370Z",
@@ -2034,7 +2121,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f55ab225-2216-4265-9863-aac42b7863d2-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f55ab225-2216-4265-9863-aac42b7863d2.jpg",
-          "caption": "COMPLETE",
+          "caption": "",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:34.6873036Z",
@@ -2045,7 +2132,7 @@
     {
       "id": 30,
       "name": "Misc / Vessel Prep",
-      "status": "complete",
+      "status": "in_progress",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -2062,20 +2149,7 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": [],
-      "photos": [
-        {
-          "id": "sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639",
-          "projId": 30,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T22:12:35.1373846Z",
-          "pendingUpload": false
-        }
-      ]
+      "billingEvents": []
     },
     {
       "id": 31,
@@ -2186,6 +2260,63 @@
       "tasks": [],
       "cos": [],
       "billingEvents": []
+    },
+    {
+      "id": 37,
+      "name": "Dinghy Transducer Inop at Speed",
+      "status": "in_progress",
+      "include": true,
+      "notes": "",
+      "estimateTotal": null,
+      "isTM": true,
+      "scopeTasks": [
+        {
+          "id": 136,
+          "cat": "T",
+          "desc": "",
+          "hrs": 0,
+          "mat": 0,
+          "sub": 0
+        }
+      ],
+      "tasks": [],
+      "cos": [],
+      "billingEvents": [],
+      "photos": [
+        {
+          "id": "sandi-louise-2026-09-24-29cd2f21-90d6-49fd-a104-75958bb1cd39",
+          "projId": 37,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-29cd2f21-90d6-49fd-a104-75958bb1cd39-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-29cd2f21-90d6-49fd-a104-75958bb1cd39.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T20:19:28.9882220Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-3ff43e99-075e-425e-9c32-8a57ec8fe7dc",
+          "projId": 37,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3ff43e99-075e-425e-9c32-8a57ec8fe7dc-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3ff43e99-075e-425e-9c32-8a57ec8fe7dc.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T20:19:41.0343280Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-572ac6f1-c47d-4f1b-a27e-67ba1f9b2516",
+          "projId": 37,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-572ac6f1-c47d-4f1b-a27e-67ba1f9b2516-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-572ac6f1-c47d-4f1b-a27e-67ba1f9b2516.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T20:19:34.9200051Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 38,
@@ -2312,12 +2443,12 @@
       "date": "2026-05-20",
       "proj": "Boat Wash 5/20",
       "cat": "D",
-      "hrs": 1.25,
-      "desc": "Rinsed the vessel down to remove salt from the vessel. ",
+      "hrs": 0.75,
+      "desc": "Rinsed the vessel down to remove salt and ceramic coating buildup.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 0
     },
     {
@@ -2330,7 +2461,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 0
     },
     {
@@ -2408,7 +2539,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 0
     },
     {
@@ -2508,36 +2639,12 @@
       "proj": "Generator Raw Water Leak Repair & Clean Up",
       "cat": "T",
       "hrs": 2.5,
-      "desc": "Located and recorded photos of all corrosion on the genset On the genset, a raw water exhaust hose was improperly clamped, causing raw water to leak into the flywheel and spray salt water over the engine when it was running. Disassembled the genset encasing and tried to attach ch a second hose clamp to the leaking exhaust hose. Although the hose was too short to attach another hose clamp, properly secure the hose onto the engine and secured it down. Wire brushed the corrosion on the genset, cleaned the corroded areas with a vacuum and degreaser, applied Corroseal to all corroded exposed metat, and reassembled the genset encasing.",
+      "desc": "Located and recorded photos of all corrosion on the genset and starboard main engine. On the genset, a raw water exhaust hose was improperly clamped, causing raw water to leak into the flywheel and spray salt water over the engine when it was running. Disassembled the genset encasing and tried to attach ch a second hose clamp to the leaking exhaust hose. Although the hose was too short to attach another hose clamp, properly secure the hose onto the engine and secured it down. Wire brushed the corrosion on the genset, cleaned the corroded areas with a vacuum and degreaser, applied Corroseal to all corroded exposed metat, and reassembled the genset encasing.\n***There was much back and forth with Abe in order to properly relay information to NDP.***",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-2026-09-24-58c22dd7-c5ec-470f-ab68-f6073cb51c6d",
-          "projId": 3,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-58c22dd7-c5ec-470f-ab68-f6073cb51c6d-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-58c22dd7-c5ec-470f-ab68-f6073cb51c6d.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T22:32:31.9640106Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-9ce70518-7e83-4949-b203-28278961ea91",
-          "projId": 3,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-9ce70518-7e83-4949-b203-28278961ea91-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-9ce70518-7e83-4949-b203-28278961ea91.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T22:32:26.6966644Z",
-          "pendingUpload": false
-        }
-      ]
+      "mat": 0
     },
     {
       "id": 1084,
@@ -2563,108 +2670,7 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-2026-07-20-6be1b2d9-d70f-4b35-9681-d574ab05b700",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6be1b2d9-d70f-4b35-9681-d574ab05b700-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6be1b2d9-d70f-4b35-9681-d574ab05b700.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:13:45.2293512Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-7ae7ece8-0eca-4677-ac12-7e40dc7988e2",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7ae7ece8-0eca-4677-ac12-7e40dc7988e2-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7ae7ece8-0eca-4677-ac12-7e40dc7988e2.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:10.3485648Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-e92e4f22-21a6-430f-a196-6d44e057b8a6",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-e92e4f22-21a6-430f-a196-6d44e057b8a6-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-e92e4f22-21a6-430f-a196-6d44e057b8a6.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:13:37.4106272Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-80ac3979-844b-45c5-bca1-5098f009bd3a",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-80ac3979-844b-45c5-bca1-5098f009bd3a-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-80ac3979-844b-45c5-bca1-5098f009bd3a.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:13:29.0958961Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:24:12.2236325Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:34.0003077Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-7c7750fb-76fc-4f46-a4e7-deeac9404446",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7c7750fb-76fc-4f46-a4e7-deeac9404446-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7c7750fb-76fc-4f46-a4e7-deeac9404446.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:42.0283588Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-6fe9b728-194c-48e3-bd67-6f0b43d484ad",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6fe9b728-194c-48e3-bd67-6f0b43d484ad-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-6fe9b728-194c-48e3-bd67-6f0b43d484ad.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:02.7091416Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-710a3645-1aa2-4b45-8eae-062000ffa4da",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-710a3645-1aa2-4b45-8eae-062000ffa4da-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-710a3645-1aa2-4b45-8eae-062000ffa4da.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:19.9840826Z",
-          "pendingUpload": false
-        }
-      ]
+      "mat": 0
     },
     {
       "id": 1086,
@@ -2728,7 +2734,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 0
     },
     {
@@ -2754,7 +2760,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 0
     },
     {
@@ -2777,8 +2783,8 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Recorded photos of the Corroseal application on the genset and the source of the water leak.",
-      "posted": false,
-      "billingEventId": null,
+      "posted": true,
+      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -2888,19 +2894,6 @@
       "mat": 0
     },
     {
-      "id": 1147,
-      "date": "2026-06-10",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "T",
-      "hrs": 0,
-      "desc": "Inspected Main engines found corrosion blossoming. Cleared clean up with Hal.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "photos": []
-    },
-    {
       "id": 1103,
       "date": "2026-06-10",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
@@ -2945,36 +2938,12 @@
       "proj": "Generator Raw Water Leak Repair & Clean Up",
       "cat": "T",
       "hrs": 1.5,
-      "desc": "Disassembled the genset sound shield. Applied epoxy barrier coat to the Corrosealed areas on the genset. Reassembled sound shield",
+      "desc": "Disassembled the genset encasing. Applied epoxy barrier coat to the Corrosealed areas on the genset.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7",
-          "projId": 3,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-212cc51b-bb1d-4c61-8291-1106b5e838a7.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:26:43.9629259Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-03-fe600027-271b-4835-ae51-956648e7bbc0",
-          "projId": 3,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-fe600027-271b-4835-ae51-956648e7bbc0-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-fe600027-271b-4835-ae51-956648e7bbc0.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:26:50.1613676Z",
-          "pendingUpload": false
-        }
-      ]
+      "mat": 0
     },
     {
       "id": 1107,
@@ -3000,64 +2969,7 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": 639180058708457000,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": false,
-          "ts": 639180098635326100,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:25.4241849Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:13:52.4782541Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:17.8162591Z",
-          "pendingUpload": false
-        }
-      ]
+      "mat": 0
     },
     {
       "id": 1109,
@@ -3284,7 +3196,7 @@
       "id": 1126,
       "date": "2026-06-19",
       "proj": "Blackwater Discharge System",
-      "cat": "D",
+      "cat": "T",
       "hrs": 1.75,
       "desc": "Evacuated the holding tank with the dock pump out cart, rinsed down the evacuation port, and installed two new holding tank vent filters.",
       "posted": true,
@@ -3512,86 +3424,7 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-2026-07-20-69aa765e-67e5-4f34-9024-247c85bdc9c9",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-69aa765e-67e5-4f34-9024-247c85bdc9c9-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-69aa765e-67e5-4f34-9024-247c85bdc9c9.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:15:02.6130314Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-727dcc35-8a1f-46ec-b6dc-fbd8a2d83516",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-727dcc35-8a1f-46ec-b6dc-fbd8a2d83516-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-727dcc35-8a1f-46ec-b6dc-fbd8a2d83516.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:15:14.5991176Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-7f703cdf-cf11-4cdd-94bd-6a004a6a091c",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7f703cdf-cf11-4cdd-94bd-6a004a6a091c-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-7f703cdf-cf11-4cdd-94bd-6a004a6a091c.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:52.8756096Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-8b3ba2bc-7342-47b6-847c-e1a653a44734",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-8b3ba2bc-7342-47b6-847c-e1a653a44734-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-8b3ba2bc-7342-47b6-847c-e1a653a44734.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:56.6526796Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-91d0384a-22bd-4204-ae06-8ddc3b1be860",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-91d0384a-22bd-4204-ae06-8ddc3b1be860-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-91d0384a-22bd-4204-ae06-8ddc3b1be860.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:15:19.1352922Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-9ae6e71b-fd86-4d36-8ec8-0eae77a717b4",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9ae6e71b-fd86-4d36-8ec8-0eae77a717b4-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9ae6e71b-fd86-4d36-8ec8-0eae77a717b4.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:15:06.7325207Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-9bf3bcb3-8c2e-4d15-a960-2d2d9c4503cc",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9bf3bcb3-8c2e-4d15-a960-2d2d9c4503cc-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-9bf3bcb3-8c2e-4d15-a960-2d2d9c4503cc.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:15:11.4217526Z",
-          "pendingUpload": false
-        }
-      ]
+      "mat": 0
     },
     {
       "id": 1144,
@@ -3642,7 +3475,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 850.02
     },
     {
@@ -3993,7 +3826,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": true,
+      "graduated": false,
       "mat": 0
     },
     {
@@ -4151,53 +3984,7 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-2026-08-05-ad872e81-20ca-4a6d-a750-f63f9ba1fa47",
-          "projId": 25,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-ad872e81-20ca-4a6d-a750-f63f9ba1fa47-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-ad872e81-20ca-4a6d-a750-f63f9ba1fa47.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-05T18:07:01.7252825Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-05-781535f3-ea7b-4fa8-8d0e-0910fb4c187f",
-          "projId": 25,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-781535f3-ea7b-4fa8-8d0e-0910fb4c187f-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-781535f3-ea7b-4fa8-8d0e-0910fb4c187f.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-05T18:06:59.4959256Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-05-5c53ee25-0b87-48df-8ce1-228910dc7315",
-          "projId": 25,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-5c53ee25-0b87-48df-8ce1-228910dc7315-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-5c53ee25-0b87-48df-8ce1-228910dc7315.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-05T18:07:04.5322554Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-05-68c28e92-9a8b-4e2e-b528-ebf36c42c18c",
-          "projId": 25,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-68c28e92-9a8b-4e2e-b528-ebf36c42c18c-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-68c28e92-9a8b-4e2e-b528-ebf36c42c18c.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-05T18:06:56.7271224Z",
-          "pendingUpload": false
-        }
-      ]
+      "mat": 0
     },
     {
       "id": 1041,
@@ -4480,7 +4267,7 @@
       "proj": "Black Water Pump Inop",
       "cat": "T",
       "hrs": 3.25,
-      "desc": "Disconnected the black water overboard pump and confirmed 13V at the pump. Rewired, fitted a new intake hose, and pumped freshwater through it. After verifying operation, reconnected the black water hoses, secured wiring, and ran the pump — now evacuating tank contents; concluded it had been airlocked. \nRemoved, inspected, lubricated (Super Lube), and reinstalled the vented-loop duckbill. Ran the pump dry, filled the tank ~1/4 with freshwater, and retested. \n\nRecorded 12v amperage draw vs. manufacturer spec — pump drawing ~4A under spec, leaving the intermittent operation unexplained. Checked the vent filter for closed vent-line valves. Disinfected the workspace. ",
+      "desc": "Disconnected the black water overboard pump and confirmed 13V at the pump. Rewired, fitted a new intake hose, and pumped freshwater through it. After verifying operation, reconnected the black water hoses, secured wiring, and ran the pump — now evacuating tank contents; concluded it had been airlocked. Removed, inspected, lubricated (Super Lube), and reinstalled the vented-loop duckbill. Ran the pump dry, filled the tank ~1/4 with freshwater, and retested. Recorded amperage draw vs. manufacturer spec — pump drawing ~4A under spec, leaving the intermittent operation unexplained. Checked the vent filter for closed vent-line valves. Disinfected the workspace. Per Abe, letting the pump ride pending further troubleshooting if needed.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
@@ -4634,7 +4421,7 @@
   "nextProjId": 39,
   "nextTaskId": 138,
   "nextCOId": 100,
-  "nextTEId": 1148,
+  "nextTEId": 1147,
   "nextBillingId": 506,
   "settings": {
     "company": "Turn Point Marine",
@@ -4659,7 +4446,206 @@
     "ccFeePct": 2.99,
     "ccFeeName": ""
   },
-  "unassignedPhotos": [],
+  "unassignedPhotos": [
+    {
+      "id": "sandi-louise-2026-09-24-0de1dc74-ce99-4785-a7a3-1be4a3cca4de",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-0de1dc74-ce99-4785-a7a3-1be4a3cca4de-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-0de1dc74-ce99-4785-a7a3-1be4a3cca4de.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:41:00.6301828Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-16974ed0-aecd-42ce-a5f5-9950942be142",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-16974ed0-aecd-42ce-a5f5-9950942be142-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-16974ed0-aecd-42ce-a5f5-9950942be142.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:37.9995262Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-22ea77cf-8b24-43a3-9a36-98276b7426ee",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-22ea77cf-8b24-43a3-9a36-98276b7426ee-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-22ea77cf-8b24-43a3-9a36-98276b7426ee.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:46.6897093Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-270543e5-43d6-4798-86e5-4a66644bd512",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-270543e5-43d6-4798-86e5-4a66644bd512-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-270543e5-43d6-4798-86e5-4a66644bd512.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:38:30.6446855Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-313a03fd-1aa8-49dc-be11-02cd88d22395",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-313a03fd-1aa8-49dc-be11-02cd88d22395-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-313a03fd-1aa8-49dc-be11-02cd88d22395.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:43.8928682Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-5669cbe5-74de-4686-956f-bf9ef9d97734",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5669cbe5-74de-4686-956f-bf9ef9d97734-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5669cbe5-74de-4686-956f-bf9ef9d97734.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:25.6607545Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-5b7dfac6-2ef3-411d-acfb-cf306c805dd8",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5b7dfac6-2ef3-411d-acfb-cf306c805dd8-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-5b7dfac6-2ef3-411d-acfb-cf306c805dd8.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:41:02.9097121Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-6e41a806-4d9d-4ce9-a3bc-313c778140e5",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6e41a806-4d9d-4ce9-a3bc-313c778140e5-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6e41a806-4d9d-4ce9-a3bc-313c778140e5.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:50.6954385Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-7c5a1183-bec7-4d32-ae3b-5fb2512da2a8",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-7c5a1183-bec7-4d32-ae3b-5fb2512da2a8-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-7c5a1183-bec7-4d32-ae3b-5fb2512da2a8.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:41.3306496Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-96361825-58f0-422a-ab87-60eb7633e4e5",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-96361825-58f0-422a-ab87-60eb7633e4e5-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-96361825-58f0-422a-ab87-60eb7633e4e5.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:22.4998644Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-b2264e99-a4e7-421f-ac76-75762af320d2",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b2264e99-a4e7-421f-ac76-75762af320d2-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b2264e99-a4e7-421f-ac76-75762af320d2.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:41:05.4331998Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-b8f1bd57-3e53-4841-a1b6-d01ac7233d3f",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b8f1bd57-3e53-4841-a1b6-d01ac7233d3f-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-b8f1bd57-3e53-4841-a1b6-d01ac7233d3f.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:53.2340396Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-bce30cc1-13fd-401b-8f40-d37e4c6bb67c",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-bce30cc1-13fd-401b-8f40-d37e4c6bb67c-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-bce30cc1-13fd-401b-8f40-d37e4c6bb67c.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:58.4124152Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-e1faed6f-d780-4e8a-a95b-a24a94d78262",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-e1faed6f-d780-4e8a-a95b-a24a94d78262-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-e1faed6f-d780-4e8a-a95b-a24a94d78262.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:55.9367612Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-f5981c47-0403-4cf9-901e-fadb1fe9f20b",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f5981c47-0403-4cf9-901e-fadb1fe9f20b-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f5981c47-0403-4cf9-901e-fadb1fe9f20b.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:35.5402582Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-f799dd1e-6ddf-4173-aec5-0fac349e32e9",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f799dd1e-6ddf-4173-aec5-0fac349e32e9-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f799dd1e-6ddf-4173-aec5-0fac349e32e9.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:28.7396818Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-fe3ef391-f103-419a-8335-8e6ad217dd86",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-fe3ef391-f103-419a-8335-8e6ad217dd86-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-fe3ef391-f103-419a-8335-8e6ad217dd86.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:32.4220881Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-24-ff540de4-8555-440e-8852-0b5a55f20cdf",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-ff540de4-8555-440e-8852-0b5a55f20cdf-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-ff540de4-8555-440e-8852-0b5a55f20cdf.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-24T21:40:48.0414739Z",
+      "pendingUpload": false
+    }
+  ],
   "dismissedPhotoKeys": [
     "003fd8f3-cd6d-4d7a-86f6-f8be08b431c3",
     "85ee97b3-92f2-43a1-b65d-06970aacf347",
@@ -4754,10 +4740,7 @@
     "430e3682-98c8-4cb8-aa1e-9b8f882345c2",
     "f2f152eb-12f7-45d3-9c59-31dc07f71060",
     "fbe71cbf-23e6-409a-a702-ec90e06b2000",
-    "f76a0720-04d0-426e-8195-a21e9e67cc16",
-    "49fc1d36-cfb8-40fb-b296-1f6287a20186",
-    "3ff43e99-075e-425e-9c32-8a57ec8fe7dc",
-    "044ba5c5-720d-4530-9ba0-78de11935d3f"
+    "f76a0720-04d0-426e-8195-a21e9e67cc16"
   ],
   "uiState": {
     "secOpenState": {
@@ -4777,11 +4760,11 @@
       "est_22": true,
       "act_1": true,
       "act_15": true,
-      "act_6": true,
-      "est_6": false,
+      "act_6": false,
+      "est_6": true,
       "est_5": false,
       "est_2": true,
-      "act_3": true,
+      "act_3": false,
       "est_4": true,
       "act_5": true,
       "act_11": true,
@@ -4795,7 +4778,7 @@
       "est_16": true,
       "act_27": true,
       "est_20": true,
-      "est_17": false,
+      "est_17": true,
       "est_26": false,
       "est_25": true,
       "est_41": false,
@@ -4824,7 +4807,7 @@
       "estinfo_7": false,
       "estinfo_9": false,
       "est_9": false,
-      "act_9": true,
+      "act_9": false,
       "estinfo_10": false,
       "estinfo_14": true,
       "estinfo_17": true,
@@ -4837,16 +4820,14 @@
       "estinfo_26": false,
       "estinfo_25": false,
       "estinfo_2": true,
-      "_trv_14": false,
-      "_trv_4": true
+      "_trv_14": false
     },
     "openProjs": [
       36,
+      29,
+      17,
       38,
-      33,
-      37,
-      3,
-      25
+      33
     ],
     "closedReadyProjs": [
       15,
