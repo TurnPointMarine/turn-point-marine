@@ -538,7 +538,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-09-24s';
+const ENGINE_BUILD='2026-09-28f';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -618,6 +618,75 @@ let closedReadyProjs=new Set();
 // Composite key 'eventId:projectId' since the same project can appear under multiple events.
 let closedBilledProjs=new Set();
 let nextProjId=1,nextTaskId=100,nextCOId=100,nextTEId=1000,nextBillingId=500;
+/* ═══ PERMANENT PROJECT NUMBERS (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ══════════════════
+ * Abram: "project numbers are important as authorizations are tethered to them and create integrity
+ * with tracking cleared expenses..." Until this build a project's number was NOT a number at all — it
+ * was its POSITION in the list (projects.indexOf(p)+1, 18 separate places). Deleting a project or
+ * dragging one to a new spot silently renumbered every project below it, so an authorization that said
+ * "09" could come to mean a different job. And the PDF export (exportClientPDF) counted 01,02,… afresh
+ * within each section, so its numbers never matched the engine's at all.
+ * Now every project carries p.num, stamped ONCE and never changed:
+ *   • legacy data (no project has a num yet) → each project gets its CURRENT position, so every
+ *     number Abram already knows stays exactly what it is;
+ *   • a project without a num after that (a new one) → the next number up, from nextProjNum;
+ *   • nextProjNum only ever rises and is saved with the data, so a deleted or retired number is
+ *     NEVER reused — like a voided invoice number.
+ * Every surface reads projNumOf(p): engine card, day view, Time Entry picker, project pickers, client
+ * doc, authorization, confirmation data, and the PDF export. List ORDER is now free to change without
+ * touching a single number — which is what lets the wash group sort by date.
+ * Markers: PERMANENT PROJECT NUMBERS / projNumOf / ensureProjNums / nextProjNum.                  */
+let nextProjNum=0;
+function ensureProjNums(){
+  if(!Array.isArray(projects))return;
+  const ok=p=>p&&typeof p.num==='number'&&p.num>0;
+  if(!projects.some(ok))projects.forEach((p,i)=>{if(p)p.num=i+1;});   // legacy: freeze today's numbers
+  let hi=Math.max(0,(nextProjNum||0)-1);
+  projects.forEach(p=>{if(ok(p)&&p.num>hi)hi=p.num;});
+  projects.forEach(p=>{if(p&&!ok(p))p.num=++hi;});
+  nextProjNum=hi+1;
+}
+/* ═══ WASH GROUP (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ════════════════════════════════
+ * Abram: "there is no flow with the washes as they are tethered to the project number and their
+ * chronological creation" … "organize them under a generic wash tab and have them ordered by date of
+ * wash instead of by project number" — engine AND client doc (his choice). Each wash STAYS its own
+ * project with its own PERMANENT number; only where it is drawn changes. Any project whose name contains
+ * the word "wash" joins automatically, new ones included. Inside a status section, two or more washes are
+ * gathered at the spot where the first one sat and sorted by WASH DATE (their earliest non-travel entry;
+ * a wash with no time yet reads its date from its name, e.g. "Boat Wash 9/17"). In the engine they sit
+ * under one collapsible "Boat Washes" row (collapsed by default); in the client doc under a heading.
+ * Nothing about money, status, billing or numbering changes — this is display order only.
+ * Markers: WASH GROUP / isWashProject / washDateOf / washGroupOrder.                              */
+function isWashProject(p){return !!(p&&/\bwash\b/i.test(p.name||''));}
+function washDateOf(p){
+  const own=timeEntries.filter(t=>t&&t.proj===p.name&&!isTravelTE(t)&&t.date).map(t=>t.date).sort();
+  if(own.length)return own[0];
+  const m=(p.name||'').match(/(\d{1,2})\/(\d{1,2})(?:\/(\d{2,4}))?/);
+  if(m){
+    let y=m[3]?(m[3].length===2?'20'+m[3]:m[3]):'';
+    if(!y){const ds=timeEntries.map(t=>t&&t.date).filter(Boolean).sort();y=ds.length?ds[ds.length-1].slice(0,4):String(new Date().getFullYear());}
+    return y+'-'+m[1].padStart(2,'0')+'-'+m[2].padStart(2,'0');
+  }
+  return '9999-12-31';
+}
+// Returns the list with its washes gathered where the first one sat, sorted by wash date.
+function washGroupOrder(list){
+  const w=(list||[]).filter(isWashProject);
+  if(w.length<2)return {list:list||[],washes:[],firstId:null};
+  const at=list.findIndex(isWashProject);
+  const sorted=w.slice().sort((a,b)=>washDateOf(a).localeCompare(washDateOf(b))||((a.num||0)-(b.num||0)));
+  const rest=list.filter(p=>!isWashProject(p));
+  rest.splice(at,0,...sorted);
+  return {list:rest,washes:sorted,firstId:sorted[0].id};
+}
+function _washSpan(ws){
+  const f=s=>s&&s!=='9999-12-31'?String(parseInt(s.slice(5,7),10))+'/'+String(parseInt(s.slice(8,10),10)):'';
+  const a=f(washDateOf(ws[0])),b=f(washDateOf(ws[ws.length-1]));
+  return a&&b?(a===b?a:a+' – '+b):'';
+}
+function projNumOf(p){
+  if(p&&typeof p.num==='number'&&p.num>0)return String(p.num).padStart(2,'0');
+  const i=projects.indexOf(p);return i>=0?String(i+1).padStart(2,'0'):'??';
+}
 // Field-capture tray: photos that have arrived (e.g. via the catch-folder pipeline) but
 // are not yet tethered to a project. Drops onto a project card never land here.
 let unassignedPhotos=[];
@@ -736,6 +805,10 @@ function sortTEsForDisplay(list,opts){
     }
     const d=(a.date||'').localeCompare(b.date||'');
     if(d)return d;
+    // LABOR REORDERS WITHIN A DAY (28e): Abram's hand order inside a date; entries never reordered sort after, by id.
+    const aD=(a.daySort===undefined||a.daySort===null)?Number.MAX_SAFE_INTEGER:a.daySort;
+    const bD=(b.daySort===undefined||b.daySort===null)?Number.MAX_SAFE_INTEGER:b.daySort;
+    if(aD!==bD)return aD-bD;
     return (a.id||0)-(b.id||0);                        // stable tie-break within a day
   });
 }
@@ -815,6 +888,41 @@ function entryPhotos(te){return (te&&Array.isArray(te.photos))?te.photos:[];}
  * NEVER compare photos by .id again. Use photoKey(a)===photoKey(b).
  * Markers: PHOTO IDENTITY = BLOB GUID / photoKey / healDuplicatePhotos.                      */
 function photoKey(photo){return photoDismissKey(photo);}
+/* ═══ AN INTERNAL PHOTO DRAG IS NEVER A NEW FILE (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ═
+ * Abram: "when I click and drag this photo to a line entry I want it under it fails yet it
+ * duplicates the photo in the project. Help!"  Three identical tiles in one gallery.
+ * THE MECHANISM: the gallery tile's <img> was left NATIVELY draggable (an <img> is draggable by
+ * default — only tile.draggable was set false, and draggable does not inherit). So grabbing the
+ * PHOTO, which is the obvious gesture and the one Abram uses, started a plain browser IMAGE drag
+ * instead of the engine's: no photoId tag, photoDragSrcId still null. wireEntryPhotoDrop's
+ * hasPhoto() therefore said no and the row refused it — that is the "it fails".
+ * Then the DUPLICATION: WebKit puts the dragged image on the pasteboard AS A FILE, so if the drop
+ * landed on the Photos panel or its "Drop photos here" box instead of the row, dataTransfer.files
+ * held the picture and addPhotosToProject INGESTED IT AS A BRAND NEW PHOTO — new local id, new
+ * key, pendingUpload. A new key is why healDuplicatePhotos could never collapse it and why the
+ * copies survived every reload. Each failed attempt left one more tile. (Chromium hands over no
+ * file, which is why this reproduced for Abram in Safari and not in the build container — WebKit
+ * cannot be installed here. Measured in Chromium: files.length 0, types text/uri-list+text/html.)
+ * THE RULE NOW, two halves, both needed:
+ *   1. the image IS a drag source — see DRAG THE PHOTO ITSELF in buildPhotoTile/buildTrayTile, so
+ *      the gesture Abram performs carries the tags and lands on the entry the way he expects;
+ *   2. every file-ingest drop site asks this function first, so a drag that came from INSIDE the
+ *      engine can never be re-ingested as a new file even if a browser attaches one.
+ * Marker: AN INTERNAL PHOTO DRAG IS NEVER A NEW FILE / _dragIsEnginePhoto.                     */
+/* photoDragSrcId is cleared in dragend, and dragend does NOT fire if the source tile was removed
+ * from the DOM mid-drag (a re-render) — so on its own it can go stale and latch "a photo is in
+ * flight" forever, which would silently block ADDING photos from Finder. One document-level
+ * capture listener stamps every drag's start, and in-flight means set AND recent. A real drag is
+ * seconds long; 30s is generous and self-healing. */
+let _photoDragAt=0;
+document.addEventListener('dragstart',()=>{_photoDragAt=Date.now();},true);
+function _enginePhotoDragInFlight(){return photoDragSrcId!=null&&(Date.now()-_photoDragAt)<30000;}
+function _dragIsEnginePhoto(e){
+  if(_enginePhotoDragInFlight())return true;
+  try{const t=e&&e.dataTransfer&&e.dataTransfer.types;
+      if(t&&([].indexOf.call(t,'photoId')>=0||[].indexOf.call(t,'photoIds')>=0))return true;}catch(_){}
+  return false;
+}
 /* healDuplicatePhotos: idempotent cleanup of the damage the id-matching already did, run on
  * load and on import the way healBilledComplete and sealBilledEntries are. Within each project
  * gallery it keeps the FIRST copy of each key and drops later ones (lifting a caption off a
@@ -917,6 +1025,7 @@ function _stripSelPaint(el,on){
   el.style.outline=on?STRIP_SEL_RING:'';
   el.style.outlineOffset=on?'1px':'';
 }
+function _galSelPaint(tile,on){tile.style.boxShadow=on?'0 0 0 3px #b5822d':'';}   // SELECT SEVERAL IN THE GALLERY
 function entryPhotoStripRow(te,colspan,opts){
   opts=opts||{};
   const phs=entryPhotos(te);
@@ -1142,48 +1251,8 @@ function openStripMovePicker(te,anchorEl){
  * the other projects; movePhotoToProject does the work, so the NO DUPLICATE PHOTOS collapse and
  * PHOTO IDENTITY = BLOB GUID matching apply exactly as they do for the drag.
  * The drag is KEPT — it is faster where it works. This is the Safari-proof route beside it.
- * Marker: MOVE A GALLERY PHOTO WITHOUT DRAGGING / openPhotoMovePicker.                        */
-function openPhotoMovePicker(srcProj,photo,anchorEl){
-  closeEntryPhotoPicker();
-  const dests=(projects||[]).filter(p=>p&&p.id!==srcProj.id&&p.status!=='billed');
-  const panel=document.createElement('div');
-  panel.setAttribute('data-photo-move-panel','1');
-  panel.style.cssText='position:fixed;z-index:3000;background:#fff;border:1px solid #e2c07f;border-radius:10px;box-shadow:0 6px 24px rgba(0,0,0,0.18);padding:10px;width:300px;max-width:92vw;max-height:300px;overflow:auto';
-  const hdr=document.createElement('div');
-  hdr.style.cssText='font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:#b5822d;margin-bottom:8px';
-  hdr.textContent='Move this photo to\u2026';
-  panel.appendChild(hdr);
-  if(!dests.length){
-    const none=document.createElement('div');
-    none.style.cssText='font-size:12px;color:#888;line-height:1.45';
-    none.textContent='No other project can take it. A billed project is sealed.';
-    panel.appendChild(none);
-  }else dests.forEach(p=>{
-    const b=document.createElement('button');
-    b.type='button';
-    b.style.cssText='display:block;width:100%;text-align:left;border:1px solid #ececE6;background:#fff;border-radius:7px;padding:7px 9px;margin-bottom:5px;cursor:pointer;font-family:inherit;font-size:11.5px;color:#333';
-    b.textContent=String(projects.indexOf(p)+1).padStart(2,'0')+'  \u00b7  '+(p.name||'(unnamed)');
-    b.onmouseenter=()=>{b.style.background='#fffaf0';b.style.borderColor='#e2c07f';};
-    b.onmouseleave=()=>{b.style.background='#fff';b.style.borderColor='#ececE6';};
-    b.onclick=e=>{
-      e.stopPropagation();closeEntryPhotoPicker();
-      if(movePhotoToProject(photoKey(photo),p.id)){
-        openProjs.add(p.id);saveData();renderEstimate();
-        try{tpmNotice('\uD83D\uDCF7 Moved to '+(p.name||'project'),5000);}catch(e){}
-      }
-    };
-    panel.appendChild(b);
-  });
-  document.body.appendChild(panel);
-  const r=anchorEl.getBoundingClientRect();
-  const w=panel.offsetWidth,h=panel.offsetHeight;
-  let left=Math.min(Math.max(8,r.left),window.innerWidth-w-8);
-  let top=r.bottom+6;
-  if(top+h>window.innerHeight-8)top=Math.max(8,r.top-h-6);
-  panel.style.left=left+'px';panel.style.top=top+'px';
-  _entryPickerEl=panel;
-  setTimeout(()=>document.addEventListener('mousedown',_entryPickerAway,true),0);
-}
+ * Marker: MOVE A GALLERY PHOTO WITHOUT DRAGGING. (28a: the floating openPhotoMovePicker was
+ * replaced by an INLINE picker on the tile — see buildPhotoTile.)                            */
 /* Keeps every visible "Move N selected" button in step with stripSelected WITHOUT a re-render —
  * the selection is painted in place (24g) precisely so a shift-click never rebuilds the DOM. */
 function _stripSyncMoveBtns(){
@@ -2405,7 +2474,7 @@ function renderReadyForBillingBody(body){
     const proj=projects.find(p=>p.name===name);
     const projTEs=byProj[name];
     const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
-    const projNum=proj?String(projects.indexOf(proj)+1).padStart(2,'0'):'??';
+    const projNum=proj?projNumOf(proj):'??';
     const statusLabel=proj?(statusLabelMap[proj.status]||proj.status):'?';
     // Default OPEN — projects are expanded unless explicitly closed by the user.
     const isOpen=!proj||!closedReadyProjs.has(proj.id);
@@ -2521,7 +2590,7 @@ function renderBilledEventsBody(body){
       const proj=projects.find(p=>p.name===name);
       const projTEs=byProj[name];
       const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
-      const projNum=proj?String(projects.indexOf(proj)+1).padStart(2,'0'):'??';
+      const projNum=proj?projNumOf(proj):'??';
       const isClosed=proj&&proj.status==='billed';
       const unbilledTEs=timeEntries.filter(te=>!te.posted&&te.proj===name&&te.billingEventId===be.id); // attachUnbilledToEvent (01g)
       // Composite key — same project can appear under multiple billing events
@@ -2735,7 +2804,7 @@ function renderDayView(list){
       ph.style.cssText='display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 14px;background:#fcfcfa;border-bottom:1px solid #f2f2ee;font-size:12px';
       const pIdx=projects.findIndex(p=>p.name===n);
       ph.innerHTML='<span style="font-weight:600;color:#1a1a1a">'
-        +(pIdx>=0?'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:1px 5px;margin-right:7px">'+String(pIdx+1).padStart(2,'0')+'</span>':'')
+        +(pIdx>=0?'<span style="font-size:10px;font-weight:700;color:#fff;background:#1a1a1a;border-radius:4px;padding:1px 5px;margin-right:7px">'+projNumOf(projects[pIdx])+'</span>':'')
         +n.replace(/</g,'&lt;')+(proj?'':' <span style="font-size:9px;color:#b45309">(no such project)</span>')+'</span>'
         +'<span style="font-size:11px;color:#666">'+(proj?statusLabelOf(proj):'')+' &nbsp; <strong style="color:#1D9E75">'+fmt(mine.reduce((a,te)=>a+teAmount(te),0))+'</strong></span>';
       card.appendChild(ph);
@@ -3017,7 +3086,25 @@ function renderEstimate(){
         }
       });
     }
+    // WASH GROUP (28f): gather this section's washes by wash date under one collapsible row.
+    let _wg={list:projsToRender,washes:[],firstId:null};
+    if(sec.key!=='billed'){_wg=washGroupOrder(projsToRender);projsToRender=_wg.list;}
+    const _washKey='_wash_'+sec.key;
+    const _washOpen=secOpenState[_washKey]===true;   // collapsed by default
     projsToRender.forEach(proj=>{
+      if(_wg.firstId!==null&&proj.id===_wg.firstId){
+        const wh=document.createElement('div');
+        wh.setAttribute('data-wash-group',sec.key);
+        const _wt=_wg.washes.filter(p=>p.include!==false).reduce((a,p)=>a+projAllActualTotal(p),0);
+        wh.style.cssText='display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 12px 4px;padding:9px 14px;border:1px solid '+sec.color+';border-left:4px solid '+sec.color+';border-radius:8px;background:'+(sec.bg||'#f5f7fa')+';cursor:pointer;user-select:none;font-size:12px';
+        wh.innerHTML='<span style="display:flex;align-items:center;gap:10px"><span class="chev'+(_washOpen?' open':'')+'">&#9654;</span>'
+          +'<span style="font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#1a1a1a">\uD83E\uDDFD Boat Washes</span>'
+          +'<span style="color:#666">'+_wg.washes.length+' washes'+(_washSpan(_wg.washes)?' \u00b7 '+_washSpan(_wg.washes):'')+' \u00b7 by date</span></span>'
+          +'<span style="font-weight:700">'+(_wt>0?fmt(_wt):'\u2014')+'</span>';
+        wh.onclick=()=>{secOpenState[_washKey]=!_washOpen;saveData();renderEstimate();};
+        body.appendChild(wh);
+      }
+      if(_wg.firstId!==null&&!_washOpen&&isWashProject(proj))return;   // collapsed: the row stands for them
       // Inject billing event group header if this project starts a new group
       if(sec.key==='billed'&&projGroupHeaders.hasOwnProperty(proj.id)){
         const be=projGroupHeaders[proj.id];
@@ -3050,6 +3137,7 @@ function renderEstimate(){
       const pSec=SECTIONS.find(s=>s.key===proj.status)||sec;
       const pw=document.createElement('div');pw.className='project'+(proj.include===false?' excluded':'');
       pw.style.cssText='border:1px solid '+pSec.color+';border-radius:8px;margin:6px 12px;overflow:hidden;transition:border-color 0.15s';
+      if(_wg.firstId!==null&&isWashProject(proj))pw.style.marginLeft='34px';   // WASH GROUP: sits under its row
       const ph=document.createElement('div');ph.className='proj-hdr';
       ph.style.background=pSec.bg;
       // PROJECT TITLE ROW IS HIGHLIGHTED (9/24): a 4px accent in the status colour, so each
@@ -3070,7 +3158,7 @@ function renderEstimate(){
         showDocLbl.style.cssText='font-size:9px;color:#7c6f9f;font-weight:600;margin-left:2px;cursor:pointer';
         showDocLbl.onclick=e=>{e.stopPropagation();showDocChk.click();};
       }
-      const num=document.createElement('span');num.className='proj-num';num.textContent=String(pi+1).padStart(2,'0');
+      const num=document.createElement('span');num.className='proj-num';num.textContent=projNumOf(proj);
       const nameInp=document.createElement('input');nameInp.className='proj-name-inp';nameInp.value=proj.name;nameInp.title=proj.name;nameInp.onchange=()=>{
         const oldName=proj.name;
         const newName=nameInp.value.trim();
@@ -3307,7 +3395,26 @@ function renderEstimate(){
             };
           }
           const dhtd=document.createElement('td');dhtd.style.cssText='width:20px;padding:0 4px;cursor:'+(editable?'grab':'default')+';color:#ccc;text-align:center;font-size:14px';dhtd.textContent=editable?'⠿':'';if(editable)dhtd.title='Drag to reorder, or drop on another project\'s header to move it there';
-          if(editable){dhtd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};dhtd.onmouseup=()=>{tr.draggable=false;};}
+          /* ROW HANDLES LIFT IN SAFARI (KEEP IN EVERY BUILD, added 2026-09-28 per Abram — "Unable to drag line
+           * entries to re order them in a project"): the ⠿ handle used to flip tr.draggable=true inside mousedown,
+           * which Chrome honours and SAFARI IGNORES MID-CLICK — the exact trap the 23e PHOTO REORDER FIX found on
+           * photo tiles. So in Safari no scope line and no actual entry could ever be picked up. The handle cell is
+           * now draggable at BUILD TIME and is itself the drag source; it sets the same dataTransfer tags the row's
+           * dragstart set, so the row reorder and the project-header move (MOVE LINE ITEMS BETWEEN PROJECTS, 8/19)
+           * read exactly what they always did. The row stays draggable=false so its inputs select text normally.
+           * Marker: ROW HANDLES LIFT IN SAFARI.                                                              */
+          if(editable){
+            dhtd.onmousedown=e=>{e.stopPropagation();};
+            dhtd.draggable=true;
+            dhtd.addEventListener('dragstart',e=>{
+              e.stopPropagation();
+              e.dataTransfer.setData('taskProjId',String(proj.id));e.dataTransfer.setData('taskIdx',String(ti));
+              if(task.id)e.dataTransfer.setData('taskId',String(task.id));
+              e.dataTransfer.effectAllowed='move';
+              try{if(e.dataTransfer.setDragImage)e.dataTransfer.setDragImage(tr,20,12);}catch(_){}
+              setTimeout(()=>tr.style.opacity='0.4',0);
+            });
+          }
           tr.appendChild(dhtd);
           // Commit helper: every numeric/category edit persists AND refreshes all totals
           // (subtotal row, section header, project header, summary cards) via full re-render.
@@ -3512,8 +3619,17 @@ function renderEstimate(){
           dhTd.title='Drag to reorder or drop on another project header to reassign';
           const isDerivedTravel=isTravelDerived(te); // TRAVEL DAYS (8/25): derived rows follow their labor; not draggable
           if(!isBilled&&!isDerivedTravel){
-            dhTd.onmousedown=e=>{e.stopPropagation();tr.draggable=true;};
-            dhTd.onmouseup=()=>{tr.draggable=false;};
+            // ROW HANDLES LIFT IN SAFARI (28e): the handle is the drag source, set at build time — see the scope table.
+            dhTd.onmousedown=e=>{e.stopPropagation();};
+            dhTd.draggable=true;
+            dhTd.addEventListener('dragstart',e=>{
+              e.stopPropagation();
+              teDragSrcId=te.id;
+              e.dataTransfer.setData('teId',String(te.id));e.dataTransfer.setData('fromProjName',proj.name);
+              e.dataTransfer.effectAllowed='move';
+              try{if(e.dataTransfer.setDragImage)e.dataTransfer.setDragImage(tr,20,12);}catch(_){}
+              setTimeout(()=>tr.style.opacity='0.4',0);
+            });
           }else if(isDerivedTravel&&!isBilled){
             dhTd.textContent='🔗';dhTd.style.cursor='default';dhTd.style.fontSize='11px';dhTd.title='Derived from the '+(te.date||'')+' travel day — moves with its labor';
           }else{
@@ -3546,12 +3662,26 @@ function renderEstimate(){
               matList.forEach((t,i)=>{t.sortOrder=i+1;});
               saveData();renderEstimate();
             } else if(!isMatCat(srcTE.cat)&&!isMatCat(tgtTE.cat)){
-              // Both labor — reorder in array (mostly for visual but date-sort still wins on re-render)
-              const srcIdx=timeEntries.findIndex(t=>t.id===srcId);
-              const tgtIdx=timeEntries.findIndex(t=>t.id===te.id);
+              /* LABOR REORDERS WITHIN A DAY (KEEP IN EVERY BUILD, added 2026-09-28 per Abram, who chose "within a
+               * day" over "anywhere"): this branch used to splice timeEntries, which the display NEVER READ —
+               * sortTEsForDisplay orders labor by date then id — so every labor drop was silently thrown away.
+               * Now a drop onto another labor row ON THE SAME DATE writes te.daySort 1..n across that project's
+               * labor for that day, in the new order, and sortTEsForDisplay uses it as the tie-break inside a date,
+               * so the engine AND the client doc show it. Different dates are NOT reordered: CLIENT DOC IN DATE ORDER
+               * (24f) is Abram's rule, so the row says why instead of silently doing nothing. Change the entry's
+               * date to move it to another day (that clears its daySort). Travel lines are never in the list.
+               * Marker: LABOR REORDERS WITHIN A DAY / te.daySort.                                               */
+              if(srcTE.date!==tgtTE.date){
+                try{tpmNotice('Labor stays in date order \u2014 to move an entry to another day, change its date.',5000);}catch(_){}
+                return;
+              }
+              const dayList=postedTEs.filter(t=>!isMatCat(t.cat)&&!isTravelTE(t)&&t.date===te.date);
+              const srcIdx=dayList.findIndex(t=>t.id===srcId);
+              const tgtIdx=dayList.findIndex(t=>t.id===te.id);
               if(srcIdx<0||tgtIdx<0)return;
-              const moved=timeEntries.splice(srcIdx,1)[0];
-              timeEntries.splice(tgtIdx,0,moved);
+              const moved=dayList.splice(srcIdx,1)[0];
+              dayList.splice(tgtIdx,0,moved);
+              dayList.forEach((t,i)=>{t.daySort=i+1;});
               saveData();renderEstimate();
             }
             // Mixed drops (labor onto material, material onto labor) are ignored — materials always sort below labor
@@ -3587,7 +3717,7 @@ function renderEstimate(){
           const dateTd=document.createElement('td');dateTd.style.cssText='padding:0;text-align:right';
           const dateInp=document.createElement('input');dateInp.type='date';dateInp.value=te.date||'';dateInp.className='tinp r';dateInp.style.cssText='font-size:11px;color:#888;width:106px;text-align:right';
           if(isBilled||isDerivedTravel)dateInp.readOnly=true;
-          dateInp.onchange=()=>{if(isDerivedTravel)return;te.date=dateInp.value;saveData();renderTimeEntry();};
+          dateInp.onchange=()=>{if(isDerivedTravel)return;te.date=dateInp.value;delete te.daySort;saveData();renderTimeEntry();};
           dateTd.appendChild(dateInp);tr.appendChild(dateTd);
           // Hrs/Qty + Rate/Unit-cost — material rows use Qty × unit cost $
           const isMatCatLocal=isMatCat(te.cat);
@@ -3866,7 +3996,7 @@ function renderEstimate(){
       const coTasks=(p.scopeTasks||[]).filter(t=>t.co);
       const coTEs=projCoTEs(p);
       const coT=coTasks.reduce((a,t)=>a+taskTotal(t),0)+coTEs.reduce((a,te)=>a+teAmount(te),0);
-      const projNum=String(projects.indexOf(p)+1).padStart(2,'0');
+      const projNum=projNumOf(p);
       const row=document.createElement('div');row.style.cssText='border-top:1px solid #fde68a;padding:10px 16px;background:#fff';
       let inner='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">'
         +'<div style="display:flex;align-items:center;gap:8px">'
@@ -3940,6 +4070,11 @@ function ttMerged(proj){
   return html;
 }
 
+// WASH GROUP (28f): the client-doc heading above a section's washes — a label only, no totals of its own.
+function _washDocHead(ws,color){
+  const span=_washSpan(ws);
+  return '<div data-wash-group="1" style="margin:12px 0 4px;padding:6px 10px;font-family:Arial,sans-serif;font-size:8.5pt;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:'+color+';border-left:4px solid '+color+';background:#f3f5f8;border-radius:4px">Boat Washes \u00b7 '+ws.length+(span?' \u00b7 '+span:'')+'</div>';
+}
 function exportClientDoc(){
   const vessel=document.getElementById('vfVessel').value||'Vessel';
   const client=document.getElementById('vfClient').value||'Client';
@@ -3994,7 +4129,7 @@ function exportClientDoc(){
   const _ptotals={},_pnum={},_pbase={};
   projects.filter(p=>p.include!==false).forEach(p=>{
     _ptotals[p.name]=projDisplayTotal(p);
-    _pnum[p.name]=String(projects.indexOf(p)+1).padStart(2,'0');
+    _pnum[p.name]=projNumOf(p);
     _pbase[p.name]=projScopeLabor(p)+_scopeMat(p);
   });
   const _cototals={},_cobase={};
@@ -4232,7 +4367,7 @@ function exportClientDoc(){
       <div id="${pid}_head" style="padding:12px 14px;background:${_tint};border-left:4px solid ${_accent};${_hasDetail?'cursor:pointer':''}" ${_headClick}>
         <div style="display:flex;align-items:center;gap:14px">
           ${showCheck?`<input type="checkbox" name="proj_auth" value="${proj.id}" data-name="${proj.name}" style="width:18px;height:18px;accent-color:${accentColor};flex-shrink:0" onclick="event.stopPropagation()">`:''}
-          <span style="font-size:8.5pt;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0;font-family:Arial,sans-serif">${String(projects.indexOf(proj)+1).padStart(2,'0')}</span>
+          <span style="font-size:8.5pt;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0;font-family:Arial,sans-serif">${projNumOf(proj)}</span>
           <span style="flex:1;font-size:11pt;font-weight:700;color:#1a1a1a">${proj.name}</span>
           ${_cphotos.length?`<span title="${_cphotos.length} photo${_cphotos.length!==1?'s':''}" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;margin-right:2px"><svg width="28" height="20" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="${_accent}"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>`:''}
           ${totalsHtml}
@@ -4554,7 +4689,7 @@ function exportClientDoc(){
       html+=`<div style="border:1px solid #c9bfea;border-radius:8px;margin-top:8px;overflow:hidden;font-family:Arial,sans-serif">
         <div onclick="var d=document.getElementById('${fid}');var a=document.getElementById('${fid}arr');if(d.style.display==='none'){d.style.display='block';a.style.transform='rotate(90deg)';}else{d.style.display='none';a.style.transform='rotate(0deg)';}"
           style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#f3f0fa;cursor:pointer;user-select:none">
-          <span style="display:flex;align-items:center;gap:8px;min-width:0"><span style="font-size:8pt;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0;font-family:Arial,sans-serif">${String(projects.indexOf(proj)+1).padStart(2,'0')}</span><span style="font-size:10pt;font-weight:700;color:#4a3f6b">${proj.name}</span></span>
+          <span style="display:flex;align-items:center;gap:8px;min-width:0"><span style="font-size:8pt;font-weight:700;color:#fff;background:#1a1a1a;border-radius:5px;padding:2px 7px;flex-shrink:0;font-family:Arial,sans-serif">${projNumOf(proj)}</span><span style="font-size:10pt;font-weight:700;color:#4a3f6b">${proj.name}</span></span>
           <div style="display:flex;align-items:center;gap:12px">
             ${_cphotos.length?`<span title="${_cphotos.length} photo${_cphotos.length!==1?'s':''}" style="display:inline-flex;align-items:center;flex-shrink:0;line-height:0;margin-right:2px"><svg width="28" height="20" viewBox="0 0 76 56" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="0" y="0" width="76" height="56" rx="10" fill="#7c6f9f"/><g transform="translate(6,5)"><rect x="1" y="6" width="62" height="38" rx="5" fill="#cfd3d7" stroke="#9aa0a6" stroke-width="0.5"/><rect x="3" y="20" width="58" height="22" rx="3" fill="#1f1f1f"/><rect x="44" y="2" width="15" height="8" rx="2" fill="#c6cacf" stroke="#9aa0a6" stroke-width="0.5"/><circle cx="12" cy="6" r="4" fill="#b9bec3" stroke="#8b9096" stroke-width="0.5"/><circle cx="20" cy="4" r="2.5" fill="#aeb3b8"/><circle cx="50" cy="15" r="2.6" fill="#cc2b2b"/><circle cx="32" cy="27" r="14" fill="#c2c6ca" stroke="#8b9096" stroke-width="0.5"/><circle cx="32" cy="27" r="10" fill="#333333"/><circle cx="32" cy="27" r="6.5" fill="#0e0e0e"/><ellipse cx="29" cy="24" rx="2.6" ry="1.6" fill="#ffffff" opacity="0.5"/></g></svg></span>`:''}
             ${actualHeaderHtml(_fActT,fd,'10pt','no actuals yet')}
@@ -4649,7 +4784,9 @@ function exportClientDoc(){
     html+=sectionHdr('#6b7280','IN PROGRESS',inPP.length,fd(pt),'Authorized work currently underway',inPP_brk,null,'secbody_inprog','#6b7280',secHasPhotos(inPP));
     // Section frame encompasses individual project cards with gaps (mirrors Complete + Billing Event).
     html+='<div id="secbody_inprog" style="border:2px solid #6b7280;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
-    inPP.forEach(proj=>{
+    const _wgI=washGroupOrder(inPP);   // WASH GROUP (28f)
+    _wgI.list.forEach(proj=>{
+      if(proj.id===_wgI.firstId)html+=_washDocHead(_wgI.washes,'#6b7280');
       html+=projBlock(proj,'#6b7280',false,true,undefined,false); // In Progress: collapsed by default per user
     });
     html+='</div>';
@@ -4670,8 +4807,10 @@ function exportClientDoc(){
     html+=sectionHdr('#3d5a80','COMPLETE',completeP.length,fd(cpt),'Work finished — pending invoice',completeP_brk,null,'secbody_complete','#3d5a80',secHasPhotos(completeP));
     // Section frame encompasses individual project cards with gaps (mirrors the engine Complete + Billing Event layout).
     html+='<div id="secbody_complete" style="border:2px solid #3d5a80;border-top:none;border-radius:0 0 8px 8px;padding:6px 12px;margin-top:-2px">';
-    completeP.forEach((proj,bi)=>{
-      const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
+    const _wgC=washGroupOrder(completeP);   // WASH GROUP (28f)
+    _wgC.list.forEach((proj,bi)=>{
+      if(proj.id===_wgC.firstId)html+=_washDocHead(_wgC.washes,'#3d5a80');
+      const pnum=projNumOf(proj);
       // estActualSplit (9/1 per Abram): header = ACTUAL only; estimate on the sub-row beneath
       const _cActT=projClientDocActualTotal(proj);
       const teCount=docReadyTEs.filter(te=>te.proj===proj.name).length;
@@ -4729,7 +4868,7 @@ function exportClientDoc(){
       const rowBg=pSec?pSec.bg:'#fdf4ff';
       const nameColor=pSec?pSec.color:'#b232c2';
       const cardBorder=pSec?pSec.color:'#c354d6';
-      const pnum=String(projects.indexOf(proj)+1).padStart(2,'0');
+      const pnum=projNumOf(proj);
       const statusLabel=({needs_auth:'Authorization Needed',in_progress:'In Progress',complete:'Complete',holding:'Holding',billed:'Billed'})[proj.status]||proj.status;
       const projTEs=sortTEsForDisplay(docReadyTEs.filter(te=>te.proj===proj.name));   // CLIENT DOC IN DATE ORDER
       const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
@@ -4861,7 +5000,7 @@ function exportClientDoc(){
         const proj=projects.find(p=>p.name===pname);
         const projTEs=sortTEsForDisplay(byProj[pname]);   // CLIENT DOC IN DATE ORDER
         const projTotal=projTEs.reduce((a,te)=>a+teAmount(te),0);
-        const pnum=proj?String(projects.indexOf(proj)+1).padStart(2,'0'):'??';
+        const pnum=proj?projNumOf(proj):'??';
         const did='bev_'+ei+'_p'+pi;
         const asTasks=projTEs.map(te=>teAsTask(te));
         html+='<div style="border:1px solid #e5e7eb;border-radius:6px;margin:5px 0;overflow:hidden">'
@@ -5311,7 +5450,7 @@ function openAuthPicker(){
   if(cands.length===0){alert('No projects currently need authorization (no Authorization Needed projects or pending changes of scope).');return;}
   const list=document.getElementById('authPickList');list.innerHTML='';
   cands.forEach(p=>{
-    const pnum=String(projects.indexOf(p)+1).padStart(2,'0');
+    const pnum=projNumOf(p);
     const hasCO=(p.scopeTasks||[]).some(t=>t.co)||projCoTEs(p).length>0;
     const tag=p.status==='needs_auth'?'Authorization Needed':'Change of Scope';
     const row=document.createElement('label');
@@ -5451,7 +5590,7 @@ function exportClientPDF(){
         <input type="checkbox" id="chk${pi}" class="auth-chk" style="width:22px;height:22px;flex-shrink:0;margin-top:2px;accent-color:#1D9E75;cursor:pointer">
         <div style="flex:1" class="proj-toggle" data-pi="${pi}" style="cursor:pointer;touch-action:manipulation">
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="font-size:11pt;font-weight:700">${String(pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
+            <span style="font-size:11pt;font-weight:700">${projNumOf(proj)}&nbsp;&nbsp;${proj.name}</span>
             <span id="chev${pi}" style="font-size:18px;color:#5dba99;padding:4px 8px;flex-shrink:0">&#9654;</span>
           </div>
           ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
@@ -5471,7 +5610,7 @@ function exportClientPDF(){
     inProgRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div style="flex:1;min-width:200px">
-          <span style="font-size:11pt;font-weight:700">${String(authP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
+          <span style="font-size:11pt;font-weight:700">${projNumOf(proj)}&nbsp;&nbsp;${proj.name}</span>
           ${proj.notes?`<div style="font-size:8.5pt;color:#777;font-style:italic;margin-top:3px;white-space:pre-wrap">${nl2br(proj.notes)}</div>`:''}
         </div>
         ${totalsHtml}
@@ -5491,7 +5630,7 @@ function exportClientPDF(){
       <div class="proj-toggle comp-toggle" data-pi="comp${pi}" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;gap:10px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:200px">
           <span id="compchev${pi}" style="font-size:11px;color:#4a5e5a;display:inline-block;transition:transform 0.2s">&#9654;</span>
-          <span style="font-size:11pt;font-weight:700">${String(authP.length+inPP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name}</span>
+          <span style="font-size:11pt;font-weight:700">${projNumOf(proj)}&nbsp;&nbsp;${proj.name}</span>
         </div>
         <div style="display:flex;align-items:center;gap:0;white-space:nowrap;padding-left:12px">${totalsHtml}</div>
       </div>
@@ -5508,7 +5647,7 @@ function exportClientPDF(){
     const totalsHtml=actualHeaderHtml(actT,fd,'11pt','no actuals yet'); // estActualSplit (9/1)
     billRows+=`<div style="margin:8px 0;border:1px solid #e5e5e0;border-left:5px solid #6b7280;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.04)">
       <div style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-        <div style="font-size:11pt;font-weight:700;color:#555;flex:1;min-width:200px">${String(authP.length+inPP.length+compP.length+pi+1).padStart(2,'0')}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
+        <div style="font-size:11pt;font-weight:700;color:#555;flex:1;min-width:200px">${projNumOf(proj)}&nbsp;&nbsp;${proj.name} <span style="font-size:9pt;color:#1D9E75;font-weight:400">\u2713 Billed</span>${inv}</div>
         <div style="display:flex;align-items:center;white-space:nowrap;padding-left:12px">${totalsHtml}</div>
       </div>
       ${estimateSubRowHtml(proj,actT,fd)}
@@ -5788,7 +5927,7 @@ function _tpmExportJSON(){
       engineVersion:ENGINE_VERSION,
       engineBuild:ENGINE_BUILD
     },
-    projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,
+    projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextProjNum,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,
     dismissedPhotoKeys:[...dismissedPhotoKeys],
     uiState:serializeUiState()
   };
@@ -5963,6 +6102,7 @@ function importData(event){
       billingEvents=d.billingEvents||[];
       travelDays=Array.isArray(d.travelDays)?d.travelDays:[];if(d.nextTravelDayId)nextTravelDayId=d.nextTravelDayId;
       if(d.nextProjId)nextProjId=d.nextProjId;
+      nextProjNum=d.nextProjNum||0;ensureProjNums();   // PERMANENT PROJECT NUMBERS — never inherit another vessel's counter
       if(d.nextTaskId)nextTaskId=d.nextTaskId;
       if(d.nextCOId)nextCOId=d.nextCOId;
       if(d.nextTEId)nextTEId=d.nextTEId;
@@ -6024,7 +6164,7 @@ function populateTEDropdowns(){
     // teFilterProj is the view filter: show all projects so existing entries everywhere can be filtered.
     projects.forEach(p=>{
       if(id==='teProj'&&!canAcceptPosts(p))return;
-      const o=document.createElement('option');o.value=p.name;o.textContent=String(projects.indexOf(p)+1).padStart(2,'0')+' — '+p.name;sel.appendChild(o);
+      const o=document.createElement('option');o.value=p.name;o.textContent=projNumOf(p)+' — '+p.name;sel.appendChild(o);
     });
     if(cur)sel.value=cur;
   });
@@ -6106,8 +6246,8 @@ function renderTimeEntry(){
           ?'🔒 <span style="font-size:10px;color:#64748b">'+(flock&&flock.invoiceNum?flock.invoiceNum:(flock?flock.name:''))+'</span>'
           :'<select class="te-sel" '+flockSelectDisabled+' onchange="assignEntryToFlock('+te.id+',this.value)" style="font-size:10px;width:100%">'+flockOptionsHTML(te)+'</select>');
 
-      tr.innerHTML='<td style="'+lockedTextStyle+'"><input class="te-inp" value="'+(te.date||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].date=this.value;saveData();if(unlocked)renderEstimate();"></td>'
-        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].proj=this.value;saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+projects.map(p=>'<option value="'+p.name.replace(/"/g,'&quot;')+'"'+(p.name===te.proj?' selected':'')+'>'+String(projects.indexOf(p)+1).padStart(2,'0')+' — '+p.name.replace(/</g,'&lt;')+'</option>').join('')+'</select></td>'
+      tr.innerHTML='<td style="'+lockedTextStyle+'"><input class="te-inp" value="'+(te.date||'')+'" '+(isLocked?'readonly':'')+' onchange="timeEntries['+ri+'].date=this.value;delete timeEntries['+ri+'].daySort;saveData();if(unlocked)renderEstimate();"></td>'
+        +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="timeEntries['+ri+'].proj=this.value;saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+projects.map(p=>'<option value="'+p.name.replace(/"/g,'&quot;')+'"'+(p.name===te.proj?' selected':'')+'>'+projNumOf(p)+' — '+p.name.replace(/</g,'&lt;')+'</option>').join('')+'</select></td>'
         +'<td><select class="te-sel" '+(isLocked?'disabled':'')+' onchange="var t=timeEntries['+ri+'];t.cat=this.value;if(isMatCat(t.cat)&&(t.mat===undefined||t.mat===null)){t.mat=0;t.hrs=1;}saveData();renderTimeEntry();if(unlocked)renderEstimate();">'+Object.entries(CAT_LABELS).map(([v,l])=>'<option value="'+v+'"'+(v===te.cat?' selected':'')+'>'+l+'</option>').join('')+'</select></td>'
         +'<td class="desc-cell" data-desc-cell="1" style="'+lockedTextStyle+'"></td>'
         +(isMatRow
@@ -6471,7 +6611,7 @@ function renderProgress(){
   projects.forEach(proj=>{
     const eH=projEstHrs(proj);const aH=projActHrs(proj);const pct=eH>0?Math.min(aH/eH,1):0;const over=aH>eH;
     const sec=document.createElement('div');sec.style.cssText='background:#fff;border:1px solid #e5e5e0;border-radius:12px;margin-bottom:10px;overflow:hidden';
-    sec.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafaf8;border-bottom:1px solid #e5e5e0"><span style="font-size:11px;font-weight:700;color:#fff;background:'+(over?'#c0392b':'#1a1a1a')+';border-radius:5px;padding:2px 7px">'+String(projects.indexOf(proj)+1).padStart(2,'0')+'</span><span style="flex:1;font-weight:600">'+proj.name+'</span><div style="width:180px;margin-right:16px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:3px"><span>'+aH.toFixed(1)+'h actual</span><span>'+eH.toFixed(1)+'h est</span></div><div style="background:#f0f0ed;border-radius:4px;height:6px;overflow:hidden"><div style="height:6px;border-radius:4px;background:'+(over?'#c0392b':'#1D9E75')+';width:'+(pct*100).toFixed(1)+'%"></div></div></div><span style="font-size:12px;font-weight:700;color:'+(over?'#c0392b':'#1D9E75')+'">'+fmt(aH*(RATES['T']||135))+' / '+fmt(projDisplayTotal(proj))+'</span></div>';
+    sec.innerHTML='<div style="display:flex;align-items:center;gap:10px;padding:12px 16px;background:#fafaf8;border-bottom:1px solid #e5e5e0"><span style="font-size:11px;font-weight:700;color:#fff;background:'+(over?'#c0392b':'#1a1a1a')+';border-radius:5px;padding:2px 7px">'+projNumOf(proj)+'</span><span style="flex:1;font-weight:600">'+proj.name+'</span><div style="width:180px;margin-right:16px"><div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:3px"><span>'+aH.toFixed(1)+'h actual</span><span>'+eH.toFixed(1)+'h est</span></div><div style="background:#f0f0ed;border-radius:4px;height:6px;overflow:hidden"><div style="height:6px;border-radius:4px;background:'+(over?'#c0392b':'#1D9E75')+';width:'+(pct*100).toFixed(1)+'%"></div></div></div><span style="font-size:12px;font-weight:700;color:'+(over?'#c0392b':'#1D9E75')+'">'+fmt(aH*(RATES['T']||135))+' / '+fmt(projDisplayTotal(proj))+'</span></div>';
     list.appendChild(sec);
   });
 }
@@ -6550,7 +6690,7 @@ function renderLockBillingList(eligible){
   eligible.forEach(p=>{
     const unbilled=projUnbilledPostedTEs(p);
     const tot=unbilled.reduce((a,te)=>a+teAmount(te),0);
-    const projNum=String(projects.indexOf(p)+1).padStart(2,'0');
+    const projNum=projNumOf(p);
     const row=document.createElement('label');
     row.style.cssText='display:flex;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid #e5e5e0;cursor:pointer;background:#fff';
     row.onmouseover=()=>row.style.background='#f5f5f3';
@@ -6628,7 +6768,7 @@ function confirmClear(){
    * vessel silently inherited the previous vessel's LOCKED invoices and travel days. Everything vessel-specific goes;
    * settings (company, rates, tax, email) stay. dismissedPhotoKeys stay (they key on blob GUIDs, never a vessel). */
   projects=[];timeEntries=[];billingEvents=[];travelDays=[];unassignedPhotos=[];
-  nextProjId=1;nextTaskId=100;nextCOId=100;nextTEId=1000;nextBillingId=500;nextTravelDayId=9000;
+  nextProjId=1;nextProjNum=0;nextTaskId=100;nextCOId=100;nextTEId=1000;nextBillingId=500;nextTravelDayId=9000;
   openProjs.clear();
   if(typeof closedReadyProjs!=='undefined')closedReadyProjs.clear();
   if(typeof closedBilledProjs!=='undefined')closedBilledProjs.clear();
@@ -6655,9 +6795,10 @@ document.addEventListener('click',e=>{if(!e.target.closest('.nav-drop'))document
 function updateNavVessel(){document.getElementById('navVessel').textContent=document.getElementById('vfVessel').value||'New Vessel';}
 
 function saveData(){
+  try{ensureProjNums();}catch(e){console.error('ensureProjNums',e);}   // PERMANENT PROJECT NUMBERS — a new project gets its number before anything persists
   try{enforceSeals();}catch(e){console.error('enforceSeals',e);} // BILLED IS SEALED — latch before anything else writes
   try{if(syncTravelDays()>0&&!window._tdRerender){window._tdRerender=true;setTimeout(()=>{window._tdRerender=false;try{renderTimeEntry();renderProgress();if(unlocked)renderEstimate();}catch(e){}},0);}}catch(e){console.error('syncTravelDays',e);}
-  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
+  try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextProjNum,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}
 }
 function loadData(){
   try{
@@ -6667,6 +6808,7 @@ function loadData(){
     if(d.billingEvents)billingEvents=d.billingEvents;
     travelDays=Array.isArray(d.travelDays)?d.travelDays:[];if(d.nextTravelDayId)nextTravelDayId=d.nextTravelDayId;
     if(d.nextProjId)nextProjId=d.nextProjId;if(d.nextTaskId)nextTaskId=d.nextTaskId;
+    nextProjNum=d.nextProjNum||0;ensureProjNums();   // PERMANENT PROJECT NUMBERS
     if(d.nextCOId)nextCOId=d.nextCOId;if(d.nextTEId)nextTEId=d.nextTEId;
     if(d.nextBillingId)nextBillingId=d.nextBillingId;
     if(Array.isArray(d.unassignedPhotos))unassignedPhotos=d.unassignedPhotos;
@@ -6915,6 +7057,12 @@ function photoNote(proj,msg){
 }
 async function addPhotosToProject(proj,fileList){
   if(!fileList||!fileList.length)return;
+  /* AN INTERNAL PHOTO DRAG IS NEVER A NEW FILE — the last line of defence. The two drop sites
+   * above ask _dragIsEnginePhoto first, but a browser that strips our custom dataTransfer types
+   * while still attaching the image file would sail past a types check. photoDragSrcId is set by
+   * the engine's own dragstart and is still set while the drop runs, so it catches that case too:
+   * if one of our own photos is in flight, NOTHING is ingested. */
+  if(_enginePhotoDragInFlight())return;
   const all=Array.from(fileList);
   const isImg=f=>/^image\//.test(f.type)||/\.(heic|heif|jpe?g|png|webp|gif|tiff?)$/i.test(f.name)||!f.type;
   const files=all.filter(isImg);
@@ -7405,7 +7553,9 @@ function fillPhotoBlock(wrap,proj){
   // Accept dropped image files anywhere in the Photos section — and keep the drop from
   // bubbling up to the project-card wrapper, which would otherwise swallow it.
   wrap.ondragover=e=>{
-    if(photoDragSrcId!=null)return;                 // internal reorder is handled on the tiles
+    // AN INTERNAL PHOTO DRAG IS NEVER A NEW FILE: a tile being reordered, or a photo on its way
+    // to a line entry, is handled on the tiles and the rows — never ingested here.
+    if(_dragIsEnginePhoto(e))return;
     const dt=e.dataTransfer;if(!dt)return;
     const types=Array.from(dt.types||[]);
     if(!types.length)return;
@@ -7415,7 +7565,7 @@ function fillPhotoBlock(wrap,proj){
   };
   wrap.ondragleave=e=>{if(e.target===wrap)wrap.style.background='#fff';};
   wrap.ondrop=e=>{
-    if(photoDragSrcId!=null)return;
+    if(_dragIsEnginePhoto(e)){wrap.style.background='#fff';return;}   // never re-ingest our own photo
     const dt=e.dataTransfer;if(!dt)return;
     e.preventDefault();e.stopPropagation();
     wrap.style.background='#fff';
@@ -7457,6 +7607,17 @@ function fillPhotoBlock(wrap,proj){
   const lbl=document.createElement('span');
   lbl.textContent='Photos'+(photos.length?' \u00b7 '+photos.length:'');
   hdr.appendChild(caret);hdr.appendChild(lbl);
+  { /* SELECT SEVERAL IN THE GALLERY — the no-drag route (Safari). Same data-strip-move hook, so
+     * _stripSyncMoveBtns shows/hides and relabels it in place; the picker lists this project's line
+     * entries (a stand-in source {proj} equals no real entry, so none is excluded). */
+    const gmv=document.createElement('button');
+    gmv.type='button';gmv.setAttribute('data-strip-move','1');
+    gmv.textContent='Move '+stripSelected.size+' selected\u2026';
+    gmv.title='Attach the selected photos to a line entry \u2014 no dragging needed';
+    gmv.style.cssText='display:'+(stripSelected.size?'inline-block':'none')+';margin-left:auto;font-size:10px;font-weight:700;letter-spacing:0.03em;text-transform:none;color:#b5822d;background:#fffaf0;border:1px solid #e2c07f;border-radius:6px;padding:3px 8px;cursor:pointer;font-family:inherit';
+    gmv.onclick=e=>{e.preventDefault();e.stopPropagation();openStripMovePicker({proj:proj.name},gmv);};
+    hdr.appendChild(gmv);
+  }
   if(collapsed){const hint=document.createElement('span');hint.textContent='(hidden)';hint.style.cssText='font-weight:400;text-transform:none;letter-spacing:0;color:#bbb;font-size:10px';hdr.appendChild(hint);}
   hdr.onclick=()=>{if(photoBlockCollapsed.has(proj.id))photoBlockCollapsed.delete(proj.id);else photoBlockCollapsed.add(proj.id);fillPhotoBlock(wrap,proj);};
   wrap.appendChild(hdr);
@@ -7486,9 +7647,11 @@ function fillPhotoBlock(wrap,proj){
   fi.type='file';fi.accept='image/*,.heic,.heif';fi.multiple=true;fi.style.display='none';
   fi.onchange=()=>{addPhotosToProject(proj,fi.files);fi.value='';};
   dz.onclick=()=>fi.click();
-  dz.ondragover=e=>{e.preventDefault();e.stopPropagation();dz.style.borderColor='#1D9E75';dz.style.color='#1D9E75';};
+  // AN INTERNAL PHOTO DRAG IS NEVER A NEW FILE: this box had no guard at all, so a photo dragged
+  // out of the gallery and dropped an inch short of a line entry became a second copy of itself.
+  dz.ondragover=e=>{if(_dragIsEnginePhoto(e))return;e.preventDefault();e.stopPropagation();dz.style.borderColor='#1D9E75';dz.style.color='#1D9E75';};
   dz.ondragleave=()=>{dz.style.borderColor='#cfcfca';dz.style.color='#999';};
-  dz.ondrop=e=>{e.preventDefault();e.stopPropagation();dz.style.borderColor='#cfcfca';dz.style.color='#999';addPhotosToProject(proj,e.dataTransfer.files);};
+  dz.ondrop=e=>{if(_dragIsEnginePhoto(e)){dz.style.borderColor='#cfcfca';dz.style.color='#999';return;}e.preventDefault();e.stopPropagation();dz.style.borderColor='#cfcfca';dz.style.color='#999';addPhotosToProject(proj,e.dataTransfer.files);};
   dz.appendChild(fi);
   grid.appendChild(dz);
   photos.forEach(photo=>grid.appendChild(buildPhotoTile(proj,photo)));
@@ -7508,6 +7671,16 @@ function buildPhotoTile(proj,photo){
   const _startPhotoDrag=e=>{
     photoDragSrcId=photoKey(photo);   // PHOTO IDENTITY = BLOB GUID (the TAG NAMES are unchanged)
     e.dataTransfer.effectAllowed='move';
+    /* SELECT SEVERAL IN THE GALLERY (28d): dragging a SELECTED photo carries the whole selection
+     * as 'photoIds', exactly as a selected strip thumb does (PHOTOS DRAG BETWEEN ENTRIES, 24g).
+     * wireEntryPhotoDrop already reads that list and attaches each one. An unselected photo still
+     * carries just itself, and 'photoId' is always set, so reorder and the header drop are unchanged. */
+    {const _k=photoKey(photo);
+     if(stripSelected.size>1&&stripSelected.has(_k)){
+       try{e.dataTransfer.setData('photoIds',JSON.stringify([...stripSelected]));}catch(_){}
+       setTimeout(()=>{document.querySelectorAll('[data-gal-sel]').forEach(el=>{if(stripSelected.has(el.getAttribute('data-gal-sel')))el.style.opacity='0.4';});
+                       document.querySelectorAll('[data-strip-thumb]').forEach(el=>{if(stripSelected.has(el.getAttribute('data-strip-thumb')))el.style.opacity='0.4';});},0);
+     }}
     try{e.dataTransfer.setData('text/plain',String(photo.id));}catch(_){}
     // PHOTO MOVE BETWEEN PROJECTS (KEEP IN EVERY BUILD, added 8/24): tag the drag so a
     // project HEADER bar can accept it and reassign the photo (mirrors entry drag-reassign).
@@ -7517,6 +7690,7 @@ function buildPhotoTile(proj,photo){
   };
   const _endPhotoDrag=()=>{
     tile.style.opacity='1';photoDragSrcId=null;
+    document.querySelectorAll('[data-gal-sel],[data-strip-thumb]').forEach(el=>{el.style.opacity='1';});
     document.querySelectorAll('[data-photo-tile]').forEach(el=>{el.style.outline='';el.style.outlineOffset='';});
   };
   tile.ondragover=e=>{
@@ -7552,7 +7726,46 @@ function buildPhotoTile(proj,photo){
   img.title=(photo.caption?photo.caption+' — ':'')+'Click to view full size';
   setTileImg(img,photo);
   // ENGINE LIGHTBOX: the image opens it; the ⠿ handle, checkbox, × and caption keep their own handlers.
-  img.onclick=e=>{e.stopPropagation();const l=_elbProjList(proj);openEngineLightbox(l,_elbIndexOf(l,photo));};
+  /* ═══ SELECT SEVERAL IN THE GALLERY (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ═══════
+   * Abram: "when I click shift and select a photo it just expands I can't drag groups of them to a
+   * line item..." Shift-click selection (24g) only ever existed on the small strip thumbs UNDER a
+   * line entry — a photo still in the project gallery had no selection at all, so shift-click fell
+   * through to the lightbox. It now toggles the SAME stripSelected set (photoKeys, so gallery and
+   * strip photos can be selected together), painted as a box-shadow ring on the tile — box-shadow,
+   * NOT outline, because the reorder dragover/dragleave and _endPhotoDrag write tile.style.outline and
+   * would wipe a selection ring. Plain click still opens the lightbox. Dragging any selected photo
+   * carries the whole group (_startPhotoDrag above); the header's "Move N selected…" button is the
+   * click path for Safari, reusing openStripMovePicker with this project as the source.
+   * Markers: SELECT SEVERAL IN THE GALLERY / data-gal-sel.                                      */
+  img.onclick=e=>{
+    e.stopPropagation();
+    if(e.shiftKey){
+      e.preventDefault();
+      const k=photoKey(photo);
+      if(stripSelected.has(k))stripSelected.delete(k);else stripSelected.add(k);
+      _galSelPaint(tile,stripSelected.has(k));
+      _stripSyncMoveBtns();
+      return;
+    }
+    const l=_elbProjList(proj);openEngineLightbox(l,_elbIndexOf(l,photo));
+  };
+  img.title=(photo.caption?photo.caption+' — ':'')+'Click to view full size · shift-click to select several · drag onto a line entry';
+  tile.setAttribute('data-gal-sel',photoKey(photo));
+  if(stripSelected.has(photoKey(photo)))_galSelPaint(tile,true);   // survive a re-render
+  /* ═══ DRAG THE PHOTO ITSELF (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ════════════
+   * Abram: "I need the click and drag photos to new line entries functionality."
+   * The ⠿ handle was the ONLY drag source on the tile (23e, and it stays — it is the deliberate
+   * grip). But nobody aims for a 22px handle when the thing they want to move is the picture, and
+   * an <img> is draggable by DEFAULT, so grabbing the photo started a native browser image drag
+   * that carried none of the engine's tags: the entry row refused it and, in Safari, the Photos
+   * panel ingested it as a new file. See AN INTERNAL PHOTO DRAG IS NEVER A NEW FILE.
+   * So the image now runs the SAME _startPhotoDrag as the handle. Nothing else changes: it keeps
+   * cursor:zoom-in and its click→lightbox, because a drag that completes fires no click. Set at
+   * BUILD TIME, never flipped in mousedown — that is the 23e Safari lesson.
+   * Marker: DRAG THE PHOTO ITSELF.                                                           */
+  img.draggable=true;
+  img.addEventListener('dragstart',_startPhotoDrag);
+  img.addEventListener('dragend',_endPhotoDrag);
   imgWrap.appendChild(img);
   // Grab handle — arms the drag only while held, so clicks elsewhere behave normally
   const handle=document.createElement('div');
@@ -7588,14 +7801,58 @@ function buildPhotoTile(proj,photo){
   chk.onchange=()=>{photo.includeInClientDoc=chk.checked;saveData();};
   lbl.appendChild(chk);lbl.appendChild(document.createTextNode('In client doc'));
   body.appendChild(lbl);
-  /* MOVE A GALLERY PHOTO WITHOUT DRAGGING: the Safari-proof route to another project. */
+  /* MOVE A GALLERY PHOTO WITHOUT DRAGGING — the Safari-proof route to another project.
+   * 24q put the destination list in a FLOATING panel; 28a makes it INLINE on the tile instead,
+   * the same shape as the tray tile's "Assign to project…". Two reasons, both learned the hard
+   * way: the floating panel shipped a plain button list with no filter, unusable at Abram's
+   * project count ("the search bar is missing in the move function"); and the searchable picker
+   * cannot live inside it, because buildProjectPicker opens its OWN fixed panel on document.body
+   * — which is outside the move panel, so the move panel's dismiss-on-outside-click handler
+   * closes everything the moment you touch the list. Nesting one floating dismiss-on-outside
+   * panel inside another is fragile by construction; inline has neither problem.
+   * Marker: MOVE A GALLERY PHOTO WITHOUT DRAGGING.                                             */
+  const mvRow=document.createElement('div');
+  mvRow.style.cssText='display:none;margin-top:8px';
   const mv=document.createElement('button');
   mv.type='button';
   mv.textContent='Move\u2026';
   mv.title='Move this photo to another project \u2014 no dragging needed';
   mv.style.cssText='margin-top:8px;width:100%;font-size:10px;font-weight:700;letter-spacing:0.03em;color:#b5822d;background:#fffaf0;border:1px solid #e2c07f;border-radius:6px;padding:4px 8px;cursor:pointer;font-family:inherit';
-  mv.onclick=e=>{e.preventDefault();e.stopPropagation();openPhotoMovePicker(proj,photo,mv);};
+  mv.onclick=e=>{
+    e.preventDefault();e.stopPropagation();
+    const open=mvRow.style.display!=='none';
+    mvRow.style.display=open?'none':'block';
+    mv.textContent=open?'Move\u2026':'Cancel';
+  };
+  {
+    const sel=buildProjectPicker({placeholder:'Search projects\u2026',options:projectPickerOptions({excludeId:proj.id}),style:'display:block;width:100%'});
+    mvRow.appendChild(sel);
+    const note=document.createElement('div');
+    note.style.cssText='font-size:10.5px;color:#a05a00;margin-top:6px;display:none;line-height:1.35';
+    const go=document.createElement('button');
+    go.type='button';go.textContent='Move';go.className='btn-sm blue';
+    go.style.cssText='margin-top:6px;width:100%';
+    go.onclick=e=>{
+      e.preventDefault();e.stopPropagation();
+      if(!sel.value)return;
+      const dest=projects.find(x=>x.id===parseInt(sel.value,10));
+      if(!dest)return;
+      const k=photoKey(photo);
+      // A MOVE MUST NEVER EAT A PHOTO: say so rather than consuming the source copy.
+      if(projHoldsPhotoKey(dest,k)){
+        note.textContent='\u201c'+(dest.name||'That project')+'\u201d already has this photo \u2014 in its gallery or on one of its line entries. Nothing was moved.';
+        note.style.display='block';
+        return;
+      }
+      if(movePhotoToProject(k,dest.id)){
+        openProjs.add(dest.id);saveData();renderEstimate();
+        try{tpmNotice('\uD83D\uDCF7 Moved to '+(dest.name||'project'),5000);}catch(e){}
+      }
+    };
+    mvRow.appendChild(note);mvRow.appendChild(go);
+  }
   body.appendChild(mv);
+  body.appendChild(mvRow);
   tile.appendChild(body);
   return tile;
 }
@@ -7885,7 +8142,7 @@ function projectPickerOptions(o){
   o=o||{};
   let xs=projects.map((p,i)=>({p,i})).filter(x=>x.p.status!=='billed'&&x.p.id!==o.excludeId);
   if(o.reverse!==false)xs=xs.slice().reverse();
-  return xs.map(({p,i})=>({value:String(p.id),label:String(i+1).padStart(2,'0')+' — '+p.name}));
+  return xs.map(({p,i})=>({value:String(p.id),label:projNumOf(p)+' — '+p.name}));
 }
 function buildTrayTile(photo){
   const tile=document.createElement('div');
@@ -7899,6 +8156,21 @@ function buildTrayTile(photo){
   img.onclick=e=>{e.stopPropagation();
     const l=[...(unassignedPhotos||[])].sort((a,b)=>photoSortMs(a)-photoSortMs(b));
     openEngineLightbox(l,_elbIndexOf(l,photo));};
+  /* DRAG THE PHOTO ITSELF — the tray half. A tray tile had NO drag source at all, so dragging one
+   * onto a line entry did nothing (the click route is the row's 📷 picker, which lists tray photos,
+   * and the tile's own Assign button). Same tags as a gallery tile minus fromPhotoProjId, since a
+   * tray photo belongs to no project yet; wireEntryPhotoDrop resolves it through findPhotoRefById,
+   * which searches the tray, and attachPhotoToEntry lifts it out of unassignedPhotos. */
+  img.draggable=true;
+  img.addEventListener('dragstart',e=>{
+    photoDragSrcId=photoKey(photo);
+    e.dataTransfer.effectAllowed='move';
+    try{e.dataTransfer.setData('photoId',photoKey(photo));}catch(_){}
+    try{e.dataTransfer.setData('text/plain',String(photo.id||''));}catch(_){}
+    try{if(e.dataTransfer.setDragImage)e.dataTransfer.setDragImage(img,24,24);}catch(_){}
+    setTimeout(()=>{tile.style.opacity='0.4';},0);
+  });
+  img.addEventListener('dragend',()=>{tile.style.opacity='1';photoDragSrcId=null;});
   imgWrap.appendChild(img);
   const selChk=document.createElement('input');selChk.type='checkbox';selChk.checked=traySelected.has(photo);selChk.title='Select';
   selChk.style.cssText='position:absolute;top:6px;left:6px;width:18px;height:18px;cursor:pointer;accent-color:#1255a0;z-index:2';
@@ -7916,15 +8188,29 @@ function buildTrayTile(photo){
   const sel=buildProjectPicker({placeholder:'Assign to project\u2026',options:projectPickerOptions(),style:'display:block;width:100%'});
   body.appendChild(sel);
   const btn=document.createElement('button');btn.textContent='Assign';btn.className='btn-sm blue';btn.style.cssText='margin-top:8px;width:100%';
-  btn.onclick=()=>{if(sel.value)assignCaptureToProject(photo.id,parseInt(sel.value));};
+  btn.onclick=()=>{if(sel.value)assignCaptureToProject(photoKey(photo),parseInt(sel.value));};
   body.appendChild(btn);
   tile.appendChild(body);
   return tile;
 }
-function assignCaptureToProject(photoId,projId){
-  const idx=unassignedPhotos.findIndex(p=>p.id===photoId);if(idx<0)return;
+/* assignCaptureToProject: the tray tile's own "Assign" button. THIS WAS THE LAST PLACE IN THE APP
+ * STILL MATCHING A PHOTO BY .id (PHOTO IDENTITY = BLOB GUID, 9/24, missed in that sweep) — and
+ * field ids collide: one id ("sandi-louise-") covered five different pictures in Abram's 9/24
+ * file. So pressing Assign on a tile moved whichever photo that id hit FIRST, not the one under
+ * the button. It then pushed blind, with none of NO DUPLICATE PHOTOS' checks, so a photo the
+ * project already held in its gallery — or on one of its line entries, where fillPhotoBlock hides
+ * it — landed a second time. Both halves are fixed here: match on photoKey, and refuse a photo
+ * the destination already holds (projHoldsPhotoKey) while still clearing it from the tray, which
+ * is exactly what assignSelectedTrayPhotos does for the bulk path.                             */
+function assignCaptureToProject(photoKeyStr,projId){
+  const k=String(photoKeyStr);
+  const idx=unassignedPhotos.findIndex(p=>photoKey(p)===k);if(idx<0)return;
   const proj=projects.find(p=>p.id===projId);if(!proj)return;
   const photo=unassignedPhotos.splice(idx,1)[0];
+  traySelected.delete(photo);
+  if(projHoldsPhotoKey(proj,k)){                  // already there — just clear it from the tray
+    saveData();renderEstimate();return;
+  }
   photo.projId=proj.id;
   proj.photos=proj.photos||[];proj.photos.push(photo);
   saveData();
@@ -8067,6 +8353,14 @@ function findTaskById(taskId){
  * The IDB thumbnail cache is untouched by design: photoCacheKey() keys on the blob GUID / photo
  * id, never the project, so the cached thumb stays valid across the move. Ids compared as
  * strings (local photos use numeric-ish ids, field photos use "<vessel>-…" strings). */
+/* Does this project already hold that photo anywhere a move would collide with — its gallery, or
+ * one of its line entries (which is where a photo hides from the gallery, since fillPhotoBlock
+ * subtracts entryHeldPhotoIds)? See A MOVE MUST NEVER EAT A PHOTO. */
+function projHoldsPhotoKey(proj,k){
+  if(!proj||!k)return false;
+  if((proj.photos||[]).some(ph=>photoKey(ph)===k))return true;
+  return (timeEntries||[]).some(te=>te&&te.proj===proj.name&&entryPhotos(te).some(ph=>photoKey(ph)===k));
+}
 function movePhotoToProject(photoId,destProjId){
   /* PHOTO IDENTITY = BLOB GUID (9/24): photoId is a photoKey(), not a .id. Matching on .id
    * moved whichever photo the colliding id hit first — usually NOT the one dragged. */
@@ -8078,13 +8372,28 @@ function movePhotoToProject(photoId,destProjId){
     const idx=arr.findIndex(ph=>photoKey(ph)===k);
     if(idx<0)continue;
     if(src.id===dest.id)return false; // same project — the in-strip reorder handles that
+    /* ═══ A MOVE MUST NEVER EAT A PHOTO (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ═════
+     * Abram: "I am moving a photo to a project and it disappears from view and doesnt show up on
+     * the project."
+     * REPRODUCED, TWO WAYS, AND BOTH WERE THIS FUNCTION'S DOING:
+     *  (a) the destination already held the same blob in its GALLERY. The old code spliced the
+     *      photo out of the source, found the twin, merged the caption and returned true — so
+     *      the source copy was destroyed and the destination looked unchanged. From the outside:
+     *      the photo vanished.
+     *  (b) the destination held it on a LINE ENTRY. The old code spliced it out of the source and
+     *      pushed it into dest.photos — but fillPhotoBlock subtracts entryHeldPhotoIds(), so the
+     *      gallery never drew it. Measured: photo gone from A, present in B.photos, VISIBLE COUNT
+     *      IN B'S GALLERY = 0. It also left the photo in two places at once, so the next load's
+     *      healDuplicatePhotos would drop the gallery copy and make the loss permanent.
+     * THE RULE NOW: check the destination BEFORE touching the source, counting its gallery AND its
+     * entries. If the photo is already there, DO NOTHING — leave it where it is and report it.
+     * A move that cannot complete must be a no-op, never a deletion. The old "collapse onto the
+     * twin" behaviour is deliberately gone: de-duplicating is healDuplicatePhotos's job, and it
+     * is not worth a silently destroyed photo.
+     * Marker: A MOVE MUST NEVER EAT A PHOTO / projHoldsPhotoKey.                                */
+    if(projHoldsPhotoKey(dest,k))return false;   // already there — never consume the source copy
     const [moved]=arr.splice(idx,1);
     if(!dest.photos)dest.photos=[];
-    // NO DUPLICATE PHOTOS: the destination may already hold this exact photo. Collapse onto the
-    // copy that is already there rather than pushing a second one (this is how 17 redundant
-    // copies accumulated in Abram's 9/24 file); keep whichever caption exists.
-    const twin=dest.photos.find(ph=>photoKey(ph)===k);
-    if(twin){if(!twin.caption&&moved.caption)twin.caption=moved.caption;return true;}
     moved.projId=dest.id;
     dest.photos.push(moved);
     return true;
@@ -8122,11 +8431,53 @@ function openMoveItemsModal(projId){
     const coTag=document.createElement('span');coTag.textContent='CO';coTag.title=co.title||'';coTag.style.cssText='font-size:9px;font-weight:700;color:#d97706;flex-shrink:0';
     mkRow('task',t.id,(co.title?co.title+' — ':'')+(t.desc||''),fmt(taskTotal(t)),coTag);
   }));
-  timeEntries.filter(te=>te.proj===proj.name&&!isEntryBilled(te)&&!isTravelDerived(te)).forEach(te=>{ // derived travel follows its labor (8/25)
+  /* ═══ TRAVEL FOLDED IN THE MOVE MODAL (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ═════
+   * Abram: "When moving line items can the travel times be hidden mostly or selected with a box
+   * to check if I want to see or access them?"
+   * The modal already skipped DERIVED travel (it follows its labour and must never be moved by
+   * hand). What it could not skip is a HAND-TYPED cat-'V' entry — isTravelDerived is false for
+   * those, so they listed as ordinary line items and, on a wash project with two drives, the
+   * travel outnumbered the work. Same complaint TRAVEL FOLDED IN PROJECT VIEW (23b) answered on
+   * the project card: travel is detail, not the thing you are looking for.
+   * Work rows render first; travel rows go behind a "Show N travel line(s)" checkbox, muted in
+   * the same gray-violet the folded travel line uses. HIDING ALSO UNCHECKS THEM — a row you
+   * cannot see must never ride along in a move you did not intend.
+   * Derived travel stays excluded outright; only hand-typed travel is revealable, because only
+   * hand-typed travel can actually be moved.
+   * Marker: TRAVEL FOLDED IN THE MOVE MODAL.                                                   */
+  const _mvTEs=timeEntries.filter(te=>te.proj===proj.name&&!isEntryBilled(te)&&!isTravelDerived(te));
+  const _mvWork=_mvTEs.filter(te=>!isTravelTE(te));
+  const _mvTrav=_mvTEs.filter(te=>isTravelTE(te));
+  const _mkTE=te=>{
     let tag=null;
     if(!te.posted){tag=document.createElement('span');tag.textContent='draft';tag.style.cssText='font-size:9px;font-weight:700;color:#b45309;flex-shrink:0';}
     mkRow('te',te.id,(te.date?te.date+' · ':'')+(te.desc||''),fmt(teAmount(te)),tag);
-  });
+    return list.lastElementChild;
+  };
+  _mvWork.forEach(_mkTE);
+  if(_mvTrav.length){
+    const toggle=document.createElement('label');
+    toggle.style.cssText='display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid #f2f2ee;cursor:pointer;font-size:11.5px;color:#7c6f9f;background:#fbfaff;font-style:italic';
+    const tchk=document.createElement('input');tchk.type='checkbox';
+    tchk.style.cssText='width:14px;height:14px;flex-shrink:0';
+    const tlbl=document.createElement('span');
+    tlbl.textContent='🔗 Show '+_mvTrav.length+' travel line'+(_mvTrav.length!==1?'s':'');
+    toggle.appendChild(tchk);toggle.appendChild(tlbl);
+    list.appendChild(toggle);
+    const rows=_mvTrav.map(te=>{
+      const r=_mkTE(te);
+      r.style.display='none';
+      r.style.background='#fbfaff';
+      r.querySelectorAll('span').forEach(sp=>{if(!/ACTUAL|draft/.test(sp.textContent))sp.style.color='#7c6f9f';});
+      return r;
+    });
+    tchk.onchange=()=>{
+      rows.forEach(r=>{
+        r.style.display=tchk.checked?'flex':'none';
+        if(!tchk.checked){const cb=r.querySelector('input[type=checkbox]');if(cb)cb.checked=false;}
+      });
+    };
+  }
   if(!list.children.length){const em=document.createElement('div');em.style.cssText='padding:16px;font-size:12px;color:#999;font-style:italic';em.textContent='No movable line items (billed entries are locked to their invoice).';list.appendChild(em);}
   // Searchable destination picker (8/20): rebuilt each open; replaceWith keeps the
   // id, so confirmMoveItems' getElementById('moveItemsDest').value read is unchanged.

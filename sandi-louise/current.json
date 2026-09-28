@@ -2,9 +2,9 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-09-24T22:40:26.256Z",
+    "exportedAt": "2026-09-28T21:41:11.047Z",
     "engineVersion": 8,
-    "engineBuild": "2026-09-24s"
+    "engineBuild": "2026-09-28f"
   },
   "projects": [
     {
@@ -28,174 +28,9 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "photos": [
-        {
-          "id": "sandi-louise-",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--adb63e99-e603-4d49-986c-11a901553851-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--adb63e99-e603-4d49-986c-11a901553851.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": false,
-          "ts": 639180091226286500,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--c2c63f72-99b0-41fd-a45f-f24ba8111570-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--c2c63f72-99b0-41fd-a45f-f24ba8111570.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": false,
-          "ts": 639180187970012200,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--8405a29d-8846-4c76-80b1-07e32be973c2-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--8405a29d-8846-4c76-80b1-07e32be973c2.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": false,
-          "ts": 639180189741360500,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-03-dcf32dba-6424-4ba7-bcae-02c847b0c1eb",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-dcf32dba-6424-4ba7-bcae-02c847b0c1eb-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-dcf32dba-6424-4ba7-bcae-02c847b0c1eb.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:26:35.6417565Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-03-079631d9-cc2a-4f71-a677-63378a24d125",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-079631d9-cc2a-4f71-a677-63378a24d125-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-079631d9-cc2a-4f71-a677-63378a24d125.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:26:12.1457006Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-03-7e5cca2d-9d59-4bb3-a8f4-a98f5225a76e",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-7e5cca2d-9d59-4bb3-a8f4-a98f5225a76e-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-7e5cca2d-9d59-4bb3-a8f4-a98f5225a76e.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:26:32.4111979Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-06-28-0681a067-8d2f-4858-a634-d5f281a12244",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-0681a067-8d2f-4858-a634-d5f281a12244-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-06-28-0681a067-8d2f-4858-a634-d5f281a12244.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-06-28T13:01:06.2576525Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-17-94fbb043-699e-4157-a204-c98daf838873",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-17-94fbb043-699e-4157-a204-c98daf838873-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-17-94fbb043-699e-4157-a204-c98daf838873.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-17T18:26:07.4402262Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-17-cd89cf00-4a38-4452-889d-0e6304491c89",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-17-cd89cf00-4a38-4452-889d-0e6304491c89-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-17-cd89cf00-4a38-4452-889d-0e6304491c89.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-17T18:26:33.1112742Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-08-17-d40c0d86-e7c3-42e9-8ae3-271f7f131f2a",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-17-d40c0d86-e7c3-42e9-8ae3-271f7f131f2a-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-17-d40c0d86-e7c3-42e9-8ae3-271f7f131f2a.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-17T18:24:48.2513215Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-14-2cbc4970-e5c4-4992-be41-9ccc77a2dfe4",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-14-2cbc4970-e5c4-4992-be41-9ccc77a2dfe4-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-14-2cbc4970-e5c4-4992-be41-9ccc77a2dfe4.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-14T23:06:25.0123413Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-22-a8e7425b-5143-4f14-9188-95c581e48fdc",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-a8e7425b-5143-4f14-9188-95c581e48fdc-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-a8e7425b-5143-4f14-9188-95c581e48fdc.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-22T17:45:45.6992523Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-22-db4ef346-827b-4618-988f-ea15df62a351",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-db4ef346-827b-4618-988f-ea15df62a351-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-db4ef346-827b-4618-988f-ea15df62a351.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-22T17:45:23.3246907Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-22-f8d59e56-0e2c-4fa1-ab6b-85208a6664e2",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-f8d59e56-0e2c-4fa1-ab6b-85208a6664e2-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-f8d59e56-0e2c-4fa1-ab6b-85208a6664e2.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-22T17:45:35.0240922Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-22-74a31537-451a-435c-9d20-807ee9ad3945",
-          "projId": 1,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-74a31537-451a-435c-9d20-807ee9ad3945-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-74a31537-451a-435c-9d20-807ee9ad3945.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-22T17:58:53.0977306Z",
-          "pendingUpload": false
-        }
-      ],
-      "actualsInClientDoc": false
+      "photos": [],
+      "actualsInClientDoc": true,
+      "num": 1
     },
     {
       "id": 2,
@@ -217,7 +52,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 2
     },
     {
       "id": 3,
@@ -240,7 +76,8 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "photos": []
+      "photos": [],
+      "num": 3
     },
     {
       "id": 4,
@@ -262,12 +99,13 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 4
     },
     {
       "id": 5,
       "name": "Icemaker Not Making Ice",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "Brought to Suremarine the Dometic marine distributor to have the ice maker module replaced. The one they had in stock had an incorrectly pinned harness plug. Placed special order for ice maker module and returned ice maker to vessel. ",
       "estimateTotal": null,
@@ -284,11 +122,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 5
     },
     {
       "id": 6,
-      "name": "Generator Sea Strainer",
+      "name": "Generator Sea Strainer Deep Clean",
       "status": "complete",
       "include": true,
       "notes": "\nGenerator seastrainer bowl clean strainer and green buildup in the strainer bowl.\n",
@@ -306,7 +145,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 6
     },
     {
       "id": 7,
@@ -328,12 +168,13 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 7
     },
     {
       "id": 8,
       "name": "Track FW Leak Pooled In Engine Room Bilge Sump",
-      "status": "in_progress",
+      "status": "complete",
       "include": true,
       "notes": "",
       "estimateTotal": null,
@@ -396,7 +237,8 @@
           "ts": "2026-06-30T13:45:29.8924829Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 8
     },
     {
       "id": 9,
@@ -420,7 +262,8 @@
       "cos": [],
       "billingEvents": [],
       "photos": [],
-      "actualsInClientDoc": true
+      "actualsInClientDoc": true,
+      "num": 9
     },
     {
       "id": 10,
@@ -442,7 +285,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 10
     },
     {
       "id": 11,
@@ -631,7 +475,8 @@
           "ts": "2026-09-24T20:18:38.5407772Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 11
     },
     {
       "id": 12,
@@ -689,7 +534,8 @@
           "pendingUpload": false
         }
       ],
-      "showInDoc": true
+      "showInDoc": true,
+      "num": 12
     },
     {
       "id": 13,
@@ -933,7 +779,8 @@
           "ts": "2026-07-20T13:20:49.3776877Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 13
     },
     {
       "id": 14,
@@ -956,30 +803,8 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "photos": [
-        {
-          "id": "sandi-louise-2026-07-16-f83f7ad7-d0ef-4981-9f00-c9a46bade013",
-          "projId": 14,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-16-f83f7ad7-d0ef-4981-9f00-c9a46bade013-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-16-f83f7ad7-d0ef-4981-9f00-c9a46bade013.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-16T19:31:28.7349076Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514",
-          "projId": 14,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T21:57:42.1377696Z",
-          "pendingUpload": false
-        }
-      ]
+      "photos": [],
+      "num": 14
     },
     {
       "id": 15,
@@ -1013,8 +838,31 @@
           "includeInClientDoc": true,
           "ts": "2026-09-23T20:15:49.3926308Z",
           "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-28-6df0dc0d-fcc5-43a9-bcbd-af281240f7bc",
+          "projId": 15,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-6df0dc0d-fcc5-43a9-bcbd-af281240f7bc-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-6df0dc0d-fcc5-43a9-bcbd-af281240f7bc.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-28T10:30:50.0640035Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-28-e2e1edb6-e1b6-4bb1-8e0b-f9bc3ab847ea",
+          "projId": 15,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-e2e1edb6-e1b6-4bb1-8e0b-f9bc3ab847ea-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-e2e1edb6-e1b6-4bb1-8e0b-f9bc3ab847ea.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-28T10:13:58.8421615Z",
+          "pendingUpload": false
         }
-      ]
+      ],
+      "num": 15
     },
     {
       "id": 16,
@@ -1082,7 +930,8 @@
           "ts": "2026-08-04T01:34:27.2100722Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 16
     },
     {
       "id": 17,
@@ -1183,7 +1032,8 @@
           "ts": "2026-09-24T21:28:46.2320518Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 17
     },
     {
       "id": 18,
@@ -1350,7 +1200,8 @@
           "ts": "2026-08-04T01:23:41.6589332Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 18
     },
     {
       "id": 19,
@@ -1372,7 +1223,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 19
     },
     {
       "id": 20,
@@ -1407,7 +1259,8 @@
           "ts": "2026-08-03T22:05:54.7423213Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 20
     },
     {
       "id": 21,
@@ -1443,7 +1296,8 @@
           "pendingUpload": false
         }
       ],
-      "showInDoc": true
+      "showInDoc": true,
+      "num": 21
     },
     {
       "id": 22,
@@ -1479,7 +1333,8 @@
           "pendingUpload": false
         }
       ],
-      "showInDoc": true
+      "showInDoc": true,
+      "num": 22
     },
     {
       "id": 23,
@@ -1525,7 +1380,8 @@
           "ts": "2026-08-04T04:35:55.1679504Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 23
     },
     {
       "id": 24,
@@ -1560,7 +1416,8 @@
           "ts": "2026-08-03T21:53:27.8470435Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 24
     },
     {
       "id": 25,
@@ -1596,22 +1453,11 @@
           "pendingUpload": false
         },
         {
-          "id": "sandi-louise-2026-08-05-252d37c3-c5b8-4872-908c-24b22edf7e21",
-          "projId": 25,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-252d37c3-c5b8-4872-908c-24b22edf7e21-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-252d37c3-c5b8-4872-908c-24b22edf7e21.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-05T18:06:54.6103014Z",
-          "pendingUpload": false
-        },
-        {
           "id": "sandi-louise-2026-08-05-411937ff-197b-48f0-9941-93defc2f8d2a",
           "projId": 25,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-411937ff-197b-48f0-9941-93defc2f8d2a-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-411937ff-197b-48f0-9941-93defc2f8d2a.jpg",
-          "caption": "",
+          "caption": "8/26 text request",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-08-05T18:06:50.6461111Z",
@@ -1629,6 +1475,17 @@
           "pendingUpload": false
         },
         {
+          "id": "sandi-louise-2026-08-05-252d37c3-c5b8-4872-908c-24b22edf7e21",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-252d37c3-c5b8-4872-908c-24b22edf7e21-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-252d37c3-c5b8-4872-908c-24b22edf7e21.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-05T18:06:54.6103014Z",
+          "pendingUpload": false
+        },
+        {
           "id": "sandi-louise-2026-08-05-b205846b-2b5e-418a-99ea-5bb30a464992",
           "projId": 25,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-05-b205846b-2b5e-418a-99ea-5bb30a464992-thumb.jpg",
@@ -1638,8 +1495,97 @@
           "includeInClientDoc": true,
           "ts": "2026-08-05T18:06:48.0586663Z",
           "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-30855b04-3759-4043-85c5-79b4105118ba",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-30855b04-3759-4043-85c5-79b4105118ba-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-30855b04-3759-4043-85c5-79b4105118ba.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:24.6420356Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-6097aa81-139e-44db-98bb-2ca2fd580beb",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6097aa81-139e-44db-98bb-2ca2fd580beb-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6097aa81-139e-44db-98bb-2ca2fd580beb.jpg",
+          "caption": "8/26 text request",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:26.3153313Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-c6990aed-245b-4424-8ff4-eb85582b99cf",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-c6990aed-245b-4424-8ff4-eb85582b99cf-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-c6990aed-245b-4424-8ff4-eb85582b99cf.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:45.5136914Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-e8114fdc-11c6-48b3-aee4-7e8f42720ec6",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-e8114fdc-11c6-48b3-aee4-7e8f42720ec6-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-e8114fdc-11c6-48b3-aee4-7e8f42720ec6.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:42.3790949Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-092ba796-1b0a-41de-a42e-30f382a346e8",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-092ba796-1b0a-41de-a42e-30f382a346e8-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-092ba796-1b0a-41de-a42e-30f382a346e8.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:40.3977805Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-a5323f47-d4b0-494f-8965-f511563a2da8",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-a5323f47-d4b0-494f-8965-f511563a2da8-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-a5323f47-d4b0-494f-8965-f511563a2da8.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:37.1232498Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-148f7932-3e5c-4d8d-b829-35b14a082c95",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-148f7932-3e5c-4d8d-b829-35b14a082c95-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-148f7932-3e5c-4d8d-b829-35b14a082c95.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:28.6287783Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-24-6eb80b90-f1b5-4b0a-92f6-87b63adc745e",
+          "projId": 25,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6eb80b90-f1b5-4b0a-92f6-87b63adc745e-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6eb80b90-f1b5-4b0a-92f6-87b63adc745e.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:40:31.7988511Z",
+          "pendingUpload": false
         }
-      ]
+      ],
+      "num": 25
     },
     {
       "id": 26,
@@ -1860,8 +1806,31 @@
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:40:48.0414739Z",
           "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-28-08b13b90-6316-491f-9c14-1243d40c0d4b",
+          "projId": 26,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-08b13b90-6316-491f-9c14-1243d40c0d4b-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-08b13b90-6316-491f-9c14-1243d40c0d4b.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-28T18:29:04.0797565Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-28-4821b3e3-b48f-406f-bc16-1e88f51c57d6",
+          "projId": 26,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-4821b3e3-b48f-406f-bc16-1e88f51c57d6-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-4821b3e3-b48f-406f-bc16-1e88f51c57d6.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-28T18:29:02.5010827Z",
+          "pendingUpload": false
         }
-      ]
+      ],
+      "num": 26
     },
     {
       "id": 27,
@@ -1917,7 +1886,8 @@
           "ts": "2026-09-24T20:19:34.9200051Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 27
     },
     {
       "id": 28,
@@ -1939,7 +1909,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 28
     },
     {
       "id": 29,
@@ -1968,7 +1939,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3272a0fe-810d-4140-a598-de72eb1c9b1d-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3272a0fe-810d-4140-a598-de72eb1c9b1d.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:20.5861676Z",
@@ -1979,7 +1950,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3ab8b840-69bb-492c-b9c5-8ca11b7af27d-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-3ab8b840-69bb-492c-b9c5-8ca11b7af27d.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:31.4262390Z",
@@ -1990,7 +1961,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-587fcd0f-c895-4d2b-ae42-edfdfb355b12-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-587fcd0f-c895-4d2b-ae42-edfdfb355b12.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:27.8316797Z",
@@ -2001,7 +1972,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6b21c7e5-9b83-4baf-8862-2497920e7965-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-6b21c7e5-9b83-4baf-8862-2497920e7965.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:24.2910674Z",
@@ -2012,7 +1983,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-cdd7270b-fa65-4d68-8fcf-00c39ada651a-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-cdd7270b-fa65-4d68-8fcf-00c39ada651a.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:17.2506299Z",
@@ -2023,7 +1994,7 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-da757646-cecd-4f89-8d43-967a2cf1f62e-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-da757646-cecd-4f89-8d43-967a2cf1f62e.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:37.3703370Z",
@@ -2034,13 +2005,14 @@
           "projId": 29,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f55ab225-2216-4265-9863-aac42b7863d2-thumb.jpg",
           "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f55ab225-2216-4265-9863-aac42b7863d2.jpg",
-          "caption": "COMPLETE",
+          "caption": "COMPLETE Starboard Side",
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-09-24T21:21:34.6873036Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 29
     },
     {
       "id": 30,
@@ -2063,19 +2035,8 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "photos": [
-        {
-          "id": "sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639",
-          "projId": 30,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-09-24T22:12:35.1373846Z",
-          "pendingUpload": false
-        }
-      ]
+      "photos": [],
+      "num": 30
     },
     {
       "id": 31,
@@ -2097,11 +2058,12 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 31
     },
     {
       "id": 32,
-      "name": "Boat Wash 7/16/26 (after Sea Trial)",
+      "name": "Boat Wash 7/16 (after Volvo Tech Sea Trial)",
       "status": "complete",
       "include": true,
       "notes": "",
@@ -2119,7 +2081,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 32
     },
     {
       "id": 33,
@@ -2141,7 +2104,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 33
     },
     {
       "id": 34,
@@ -2163,7 +2127,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 34
     },
     {
       "id": 35,
@@ -2185,7 +2150,8 @@
       ],
       "tasks": [],
       "cos": [],
-      "billingEvents": []
+      "billingEvents": [],
+      "num": 35
     },
     {
       "id": 38,
@@ -2264,7 +2230,8 @@
           "ts": "2026-09-24T21:36:23.5785089Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "num": 36
     }
   ],
   "timeEntries": [
@@ -2274,11 +2241,11 @@
       "proj": "Tender Bilge Pump",
       "cat": "T",
       "hrs": 1.75,
-      "desc": "Inspected the tender bilge pump after noticing it was power cycling every few minutes. Cleaned the pump and housing with degreaser to eliminate the possibility of false sensor readings, and inspected all wiring for loose connections. Disconnected power to the pump temporarily in an attempt to reset the sensor, but the pump continued to cycle intermittently. Determined the pump required replacement and left it disconnected from power until a new pump can be installed.",
+      "desc": "Inspected the tender bilge pump after notification that it was momentarily running every 5 minutes and not pumping any water. \nCleaned the pump and sump screen with degreaser to eliminate the possibility of false sensor readings from the impeller. \nDisconnected power to the pump temporarily in an attempt to reset the electronic sensor. When the pump was provided power again it continued to cycle every 5 minutes. Disconnected pump from power until a new pump could be installed.\n\nPer the pump manufacture guidelines this model is run with electronic sensing of the current it expends when running the impeller. (See below image of manufacturer wiring diagram and explanation of electronic sensing function). It should be on a 2.5 minute cycle where it doesn't run the pump impeller enough to notice or consume wattage from the battery enough to be an issue. ",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0,
       "photos": [
         {
@@ -2291,21 +2258,19 @@
           "includeInClientDoc": true,
           "ts": "2026-08-17T18:24:12.1601341Z",
           "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-22-74a31537-451a-435c-9d20-807ee9ad3945",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-74a31537-451a-435c-9d20-807ee9ad3945-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-74a31537-451a-435c-9d20-807ee9ad3945.jpg",
+          "caption": "Seaflo OEM Install Diagram",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-22T17:58:53.0977306Z",
+          "pendingUpload": false
         }
       ]
-    },
-    {
-      "id": 1059,
-      "date": "2026-05-20",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 0.88,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1.25 hr round-trip travel on 5/20 is prorated across the 2 projects worked that day by labor hours: this project's 1.75 of 2.5 labor hrs = 0.88 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
     },
     {
       "id": 1060,
@@ -2321,42 +2286,16 @@
       "mat": 0
     },
     {
-      "id": 1061,
-      "date": "2026-05-20",
-      "proj": "Boat Wash 5/20",
-      "cat": "V",
-      "hrs": 0.37,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1.25 hr round-trip travel on 5/20 is prorated across the 2 projects worked that day by labor hours: this project's 0.75 of 2.5 labor hrs = 0.37 hr travel.",
+      "id": 1062,
+      "date": "2026-06-02",
+      "proj": "Misc / Vessel Prep",
+      "cat": "T",
+      "hrs": 4,
+      "desc": "Met the diver at the boat and discussed dive findings.\nInspect tender bilge pump and battery. Spoke with Guyer Boatworks about the particular bilge pump and the issues they deal with regarding these pumps. Ran a new cabling plan for the bilge Provided the most expedient repair solution\nInspected strainers and checked engine oil levels. Inspected main engines, generator, watermaker and electrical. \n\nFound SME raw water leak and generator raw water leak. The generator raw water leak took some close inspection to track the origin of the source of the raw water on the back of the genset with the sound shield off. Correspondence with Hal to clear corrosion fallout repairs.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": true,
-      "mat": 0
-    },
-    {
-      "id": 1062,
-      "date": "2026-06-02",
-      "proj": "Boat Wash 7/16/26 (after Sea Trial)",
-      "cat": "T",
-      "hrs": 4,
-      "desc": "Met the diver at the boat and discussed dive findings.\nInspect tender bilge pump and battery. Spoke with Guyer Boatworks about the particular bilge pump and the issues they deal with regarding these pumps. Ran a new cabling plan for the bilge Provided the most expedient repair solution\nInspected strainers and checked engine oil levels.\nFound SME raw water leak and generator raw water leak. The generator raw water leak took some close inspection to track the origin of the source of the raw water on the back of the genset with the sound shield off. Cleared repairs of the leaks with Hal.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1063,
-      "date": "2026-06-02",
-      "proj": "Boat Wash 7/16/26 (after Sea Trial)",
-      "cat": "V",
-      "hrs": 1.25,
-      "desc": "Travel — Bellingham ↔ Blaine (1.25 hr round trip) for the work above on 6/2.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
       "mat": 0
     },
     {
@@ -2365,9 +2304,9 @@
       "proj": "Tender Bilge Pump",
       "cat": "T",
       "hrs": 0.75,
-      "desc": "Picked up hardware and a new Water Witch switch at LFS for the new bilge pump. Picked up the old tender bilge pump housing and hardware along with ethanol free fuel to top off the tender.\n",
-      "posted": true,
-      "billingEventId": 505,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -2377,31 +2316,42 @@
       "date": "2026-06-03",
       "proj": "Tender Bilge Pump",
       "cat": "T",
-      "hrs": 6.5,
-      "desc": "Inspected and created two different schematics of the old tender bilge pump wiring  in order to establish the best route to install a new bilge pump with an external switch. Noticed the old bilge pump was wired incorrectly in how the internal float switch was wired to the manual helm switch rather than the battery, causing the pump to power cycle and engage the sensor when it would test for water presence every five minute. Formulated a plan to test to properly wire the new bilge pump to prevent power cycling. Dryfit the new pump and Water Witch, secured them down, wired the pump assembly to the existing wire run for the bilge pump circuit, temporarily secure the wiring with zip ties as the Water Witch location in the sump was still to be determined, and cleaned the work area.\n***There was a lot of back in forth to establish a solution as the old pump/switch was cabled up incorrectly the . I also needed to backtrack in wiring the new pump as the original solution led to back feed, constantly engaging the manual switch which, making is unusable.***",
+      "hrs": 5,
+      "desc": "\nFound the old bilge pump was wired incorrectly in that the float switch power (Brown wire with White stripe) was wired to the manual helm switch rather than the battery. This had been causing the pump to power its momentary run cycles every 5 minutes without any water in the sump to pump.\n\nFormulated a plan to test to properly wire the new bilge pump to prevent power cycling. Dryfit the new pump and Water Witch float switch., secured them down, wired the pump assembly to the existing wire run for the bilge pump circuit, temporarily secure the wiring with zip ties as the float switch location in the sump was still to be determined.\n\n***There was substantive time tracking down the reason the new bilge pump install was not functioning properly. \n\nAfter installing a new pump with the factory harness we were getting voltage back feeding, constantly engaging the manual switch rendering any float switch inop.\n\nWe needed to track OEM cabling and open up the wiring harnesses to see where the cables were run from and to. \n\nA quick diagram demonstrated the root issue we were trying to untangle. \n\n*Note the switched power on the terminal strip in the photo of the Brown with White stripe wire. \n\nDue to the builder's wiring harness cabling up the original pump incorrectly (They cabled up the float switch power brown with white stripe to the manual power) (manual power switching/control should always be the brown wire). It was causing improper operation of the original pump as well as the new pumps functionality. \n***",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1074,
-      "date": "2026-06-03",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 0.76,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/3 is prorated across the 3 projects worked that day by labor hours: this project's 7.25 of 9.5 labor hrs = 0.76 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "graduated": true,
+      "mat": 0,
+      "photos": [
+        {
+          "id": "sandi-louise-2026-09-22-f8d59e56-0e2c-4fa1-ab6b-85208a6664e2",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-f8d59e56-0e2c-4fa1-ab6b-85208a6664e2-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-f8d59e56-0e2c-4fa1-ab6b-85208a6664e2.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-22T17:45:35.0240922Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-09-22-a8e7425b-5143-4f14-9188-95c581e48fdc",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-a8e7425b-5143-4f14-9188-95c581e48fdc-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-22-a8e7425b-5143-4f14-9188-95c581e48fdc.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-22T17:45:45.6992523Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 1075,
       "date": "2026-06-03",
-      "proj": "Generator Sea Strainer",
+      "proj": "Generator Sea Strainer Deep Clean",
       "cat": "T",
       "hrs": 0.5,
       "desc": "Cleaned out the inside of the genset sea strainer along with the strainer filter.",
@@ -2412,38 +2362,12 @@
       "mat": 0
     },
     {
-      "id": 1076,
-      "date": "2026-06-03",
-      "proj": "Generator Sea Strainer",
-      "cat": "V",
-      "hrs": 0.05,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/3 is prorated across the 3 projects worked that day by labor hours: this project's 0.5 of 9.5 labor hrs = 0.05 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1077,
       "date": "2026-06-03",
       "proj": "Boat Wash 6/3",
       "cat": "D",
       "hrs": 1.75,
       "desc": "Washed the vessel and wiped out all locker drains.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1078,
-      "date": "2026-06-03",
-      "proj": "Boat Wash 6/3",
-      "cat": "V",
-      "hrs": 0.19,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/3 is prorated across the 3 projects worked that day by labor hours: this project's 1.75 of 9.5 labor hrs = 0.19 hr travel.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
@@ -2464,19 +2388,6 @@
       "mat": 0
     },
     {
-      "id": 1080,
-      "date": "2026-06-09",
-      "proj": "Track FW Leak Pooled In Engine Room Bilge Sump",
-      "cat": "V",
-      "hrs": 0.19,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 1.75 of 9 labor hrs = 0.19 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1081,
       "date": "2026-06-09",
       "proj": "Blackwater Discharge System",
@@ -2486,20 +2397,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1082,
-      "date": "2026-06-09",
-      "proj": "Blackwater Discharge System",
-      "cat": "V",
-      "hrs": 0.08,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 0.75 of 9 labor hrs = 0.08 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -2507,12 +2405,12 @@
       "date": "2026-06-09",
       "proj": "Generator Raw Water Leak Repair & Clean Up",
       "cat": "T",
-      "hrs": 2.5,
-      "desc": "Located and recorded photos of all corrosion on the genset On the genset, a raw water exhaust hose was improperly clamped, causing raw water to leak into the flywheel and spray salt water over the engine when it was running. Disassembled the genset encasing and tried to attach ch a second hose clamp to the leaking exhaust hose. Although the hose was too short to attach another hose clamp, properly secure the hose onto the engine and secured it down. Wire brushed the corrosion on the genset, cleaned the corroded areas with a vacuum and degreaser, applied Corroseal to all corroded exposed metat, and reassembled the genset encasing.",
+      "hrs": 3,
+      "desc": "Located and recorded photos of all corrosion on the genset On the genset, a raw water exhaust hose was improperly clamped, causing raw water to leak into the flywheel and spray salt water over the engine when it was running. \n\nPulled genset sound shield for access. Attempted to attach a second hose clamp to the leaking exhaust hose. Although the hose was too short to attach another hose clamp, was able to properly position the hose onto the engine and secured it with one hose clamp. \n\nWire brushed the corrosion on the genset, cleaned the corroded areas with a vacuum and degreaser, applied Corroseal to all corroded exposed metal, and reassembled the genset sound shield.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0,
       "photos": [
         {
@@ -2540,29 +2438,16 @@
       ]
     },
     {
-      "id": 1084,
-      "date": "2026-06-09",
-      "proj": "Generator Raw Water Leak Repair & Clean Up",
-      "cat": "V",
-      "hrs": 0.28,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 2.5 of 9 labor hrs = 0.28 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1085,
-      "date": "2026-06-09",
+      "date": "2026-06-10",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
-      "hrs": 1,
-      "desc": "After inspecting the starboard main engine and removing the cover panel on the engine, two hoses connected to the turbo were found leaking, causing the turbo and components below to rust. Recorded photos and reassembled the cover panel on the starboard main engine.\n***Im not  sure what the leaking hoses on the turbo were for. Recorded many photos and videos of the rust on the turbo.***",
+      "hrs": 2.5,
+      "desc": "Removed the top cover of the engine in order to get visual access to what could be the source of the raw water. Recorded photos and reassembled the cover panel on the starboard main engine.\n\nRemoved the rust on the starboard main engine aft inboard engine mount using a wire brush and On/Off hull cleaner. \n\nRinsed remaining saltwater deposits from that side of the engine.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0,
       "photos": [
         {
@@ -2610,17 +2495,6 @@
           "pendingUpload": false
         },
         {
-          "id": "sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-08-03T22:24:12.2236325Z",
-          "pendingUpload": false
-        },
-        {
           "id": "sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d",
           "projId": 9,
           "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-5b689148-4b4a-4840-b6af-2afecd32bb9d-thumb.jpg",
@@ -2663,21 +2537,19 @@
           "includeInClientDoc": true,
           "ts": "2026-07-20T18:14:19.9840826Z",
           "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-0c035a88-85bc-4f4c-8bf0-18a7858b3249.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:24:12.2236325Z",
+          "pendingUpload": false
         }
       ]
-    },
-    {
-      "id": 1086,
-      "date": "2026-06-09",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.11,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 1 of 9 labor hrs = 0.11 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
     },
     {
       "id": 1087,
@@ -2689,8 +2561,21 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "graduated": true,
+      "mat": 0,
+      "photos": [
+        {
+          "id": "sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639",
+          "projId": 30,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-72d138fc-da3d-4785-b170-dc00d63eb639.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T22:12:35.1373846Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 1088,
@@ -2698,24 +2583,11 @@
       "proj": "Misc / Vessel Prep",
       "cat": "B",
       "hrs": 0.5,
-      "desc": "Removed the rust bleed under the port color cutting port using On/Off hull cleaner.\n***removed the rust bleed around the handrails under the cutting board on the port side in the cockpit.***",
+      "desc": "Removed the rust bleed under the port rail cutting board using On/Off hull cleaner.\nRemoved the rust bleed around the handrails under the cutting board on the port side in the cockpit.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1089,
-      "date": "2026-06-09",
-      "proj": "Misc / Vessel Prep",
-      "cat": "V",
-      "hrs": 0.08,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 0.75 of 9 labor hrs = 0.08 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -2724,24 +2596,11 @@
       "proj": "Watermaker Strainers/Filter Clean",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Removed and cleaned out two dirty Watermaker pre-filters along with the strainer bowls for the filters.",
+      "desc": "Removed and cleaned out two dirty Watermaker sea strainers (under genset) and the pre-filter on the watermaker. ",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": true,
-      "mat": 0
-    },
-    {
-      "id": 1091,
-      "date": "2026-06-09",
-      "proj": "Watermaker Strainers/Filter Clean",
-      "cat": "V",
-      "hrs": 0.06,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 0.5 of 9 labor hrs = 0.06 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
       "mat": 0
     },
     {
@@ -2749,25 +2608,12 @@
       "date": "2026-06-09",
       "proj": "Vessel Wash 6/9",
       "cat": "D",
-      "hrs": 1.75,
+      "hrs": 2,
       "desc": "Washed the vessel.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": true,
-      "mat": 0
-    },
-    {
-      "id": 1093,
-      "date": "2026-06-09",
-      "proj": "Vessel Wash 6/9",
-      "cat": "V",
-      "hrs": 0.2,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/9 is prorated across the 7 projects worked that day by labor hours: this project's 1.75 of 9 labor hrs = 0.2 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
       "mat": 0
     },
     {
@@ -2779,19 +2625,6 @@
       "desc": "Recorded photos of the Corroseal application on the genset and the source of the water leak.",
       "posted": false,
       "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1095,
-      "date": "2026-06-10",
-      "proj": "Generator Raw Water Leak Repair & Clean Up",
-      "cat": "V",
-      "hrs": 0.06,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 4.5 labor hrs = 0.06 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -2823,19 +2656,6 @@
       "mat": 0
     },
     {
-      "id": 1098,
-      "date": "2026-06-10",
-      "proj": "Misc / Vessel Prep",
-      "cat": "V",
-      "hrs": 0.44,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 5 projects worked that day by labor hours: this project's 2 of 4.5 labor hrs = 0.44 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1099,
       "date": "2026-06-10",
       "proj": "Blackwater Discharge System",
@@ -2844,19 +2664,6 @@
       "desc": "Researched holding tank vent filter pricing and determined Marine Sanitation as the best vendor for ordering.",
       "posted": false,
       "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1100,
-      "date": "2026-06-10",
-      "proj": "Blackwater Discharge System",
-      "cat": "V",
-      "hrs": 0.06,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 4.5 labor hrs = 0.06 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -2875,29 +2682,16 @@
       "mat": 0
     },
     {
-      "id": 1102,
-      "date": "2026-06-10",
-      "proj": "Icemaker Not Making Ice",
-      "cat": "V",
-      "hrs": 0.17,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 5 projects worked that day by labor hours: this project's 0.75 of 4.5 labor hrs = 0.17 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1147,
-      "date": "2026-06-10",
+      "date": "2026-06-09",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
       "hrs": 0,
-      "desc": "Inspected Main engines found corrosion blossoming. Cleared clean up with Hal.",
+      "desc": "Inspected main engines found corrosion blossoming around the starboard main engine turbo. Cleared clean up with Hal.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "photos": []
     },
     {
@@ -2905,26 +2699,14 @@
       "date": "2026-06-10",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
-      "hrs": 1.25,
-      "desc": "Removed the rust on the starboard main engine aft inboard engine mount using a wire brush and On/Off hull cleaner. Rinsed the saltwater buildup from the engine.\n***I left the corrosion near the turbo as the leak needed to be sealed first.***",
-      "posted": true,
-      "billingEventId": 505,
+      "hrs": 2.25,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1104,
-      "date": "2026-06-10",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.27,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 5 projects worked that day by labor hours: this project's 1.25 of 4.5 labor hrs = 0.27 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "mat": 0,
+      "photos": []
     },
     {
       "id": 1105,
@@ -2945,11 +2727,11 @@
       "proj": "Generator Raw Water Leak Repair & Clean Up",
       "cat": "T",
       "hrs": 1.5,
-      "desc": "Disassembled the genset sound shield. Applied epoxy barrier coat to the Corrosealed areas on the genset. Reassembled sound shield",
+      "desc": "Pulled genset sound shield for access. Applied epoxy barrier coat to the Corrosealed areas on the genset. Reassembled sound shield",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0,
       "photos": [
         {
@@ -2977,100 +2759,18 @@
       ]
     },
     {
-      "id": 1107,
-      "date": "2026-06-16",
-      "proj": "Generator Raw Water Leak Repair & Clean Up",
-      "cat": "V",
-      "hrs": 0.35,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 4 projects worked that day by labor hours: this project's 1.5 of 4.25 labor hrs = 0.35 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1108,
       "date": "2026-06-16",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
-      "hrs": 1.75,
-      "desc": "Disassembled the stables main engine cover. Wire brushed the corrosion around the starboard main engine turbo, vacuumed the workspace, and rinsed the salt from the starboard engine.",
+      "hrs": 2.25,
+      "desc": "Pulled up the starboard main engine cover. Wire brushed the corrosion around the starboard main engine turbo, vacuumed the workspace, and rinsed the salt from the starboard engine.\nWiped up the water around the starboard main engine and evacuated the bilges that contained water from rinsing the salt off of the engine.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0,
-      "photos": [
-        {
-          "id": "sandi-louise-",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": 639180058708457000,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": false,
-          "ts": 639180098635326100,
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:25.4241849Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:13:52.4782541Z",
-          "pendingUpload": false
-        },
-        {
-          "id": "sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f",
-          "projId": 9,
-          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f-thumb.jpg",
-          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f.jpg",
-          "caption": "",
-          "capturedAt": "",
-          "includeInClientDoc": true,
-          "ts": "2026-07-20T18:14:17.8162591Z",
-          "pendingUpload": false
-        }
-      ]
-    },
-    {
-      "id": 1109,
-      "date": "2026-06-16",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.41,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 4 projects worked that day by labor hours: this project's 1.75 of 4.25 labor hrs = 0.41 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "photos": []
     },
     {
       "id": 1110,
@@ -3086,40 +2786,14 @@
       "mat": 0
     },
     {
-      "id": 1111,
-      "date": "2026-06-16",
-      "proj": "Icemaker Not Making Ice",
-      "cat": "V",
-      "hrs": 0.18,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 4 projects worked that day by labor hours: this project's 0.75 of 4.25 labor hrs = 0.18 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1112,
       "date": "2026-06-16",
       "proj": "Tender Bilge Pump",
       "cat": "T",
       "hrs": 0.25,
-      "desc": "Dry-fitted the new Water Witch switch for the tender bilge pump to capture reference photos and verify the switch could be mounted close to the pump, as the sensor must be installed at a specific height to prevent airlocks and sump overflow.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1113,
-      "date": "2026-06-16",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 0.06,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 4 projects worked that day by labor hours: this project's 0.25 of 4.25 labor hrs = 0.06 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "desc": "Dry-fitted the new float switch for the bilge pump verify the switch could be mounted close to the pump, as the sensor must be installed at a specific height to prevent airlocks and sump overflow.",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3130,9 +2804,9 @@
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Wiped up the water around the starboard main engine and evacuated the bilges that contained water from rinsing the salt off of the engine.",
-      "posted": true,
-      "billingEventId": 505,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3143,24 +2817,11 @@
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
       "hrs": 3,
-      "desc": "Removed a cover plate for the starboard main engine turbo and wire brushed the corrosion and flaking paint from the turbo and surrounding components that contained corrosion. Vacuumed the work area, and applied Corroseal to all exposed metal.\n**There was many areas I could not reach with a wire brush. Tried to be as thorough as possible which took some time.***",
+      "desc": "Removed cover plate for the starboard main engine turbo and wire brushed the corrosion and flaking paint from the turbo and surrounding components that contained corrosion. Vacuumed the work area, and applied Corroseal to all exposed metal.\n**There were small areas I could not reach with a wire brush. Tried to be as thorough as possible which took some time.***",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1116,
-      "date": "2026-06-17",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.41,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/17 is prorated across the 2 projects worked that day by labor hours: this project's 3.5 of 8.5 labor hrs = 0.41 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3170,21 +2831,8 @@
       "cat": "T",
       "hrs": 5,
       "desc": "Temporarily mounted a Water Witch switch near the tender bilge pump and tested its operation. Found the switch was mounted too low, preventing the pump from fully evacuating water and causing the pump to airlock. Temporarily installed a spacer to raise the switch above the pump’s evacuation level, but found the switch would still not engage the pump to evacuate water, whereas the manual switch functioned properly at the same water level in the sump, indicating a fault with the Water Witch. Tested the amperage draw when the Water Witch was engaged and recorded 0.67 A, which was insufficient to fully engage the pump and evacuate water from the bilge, causing the pump to turn on but fail to operate properly. Opened the wiring run, inspected available cable length, and created a wiring diagram incorporating a solenoid in the Water Witch output circuit to provide sufficient current-carrying capacity to fully engage the pump and allow proper water evacuation. Researched specification for a diagram’s pump to replace the bilge pump and proposed a pump mounting location under the settee.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1118,
-      "date": "2026-06-17",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 0.59,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/17 is prorated across the 2 projects worked that day by labor hours: this project's 5 of 8.5 labor hrs = 0.59 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3196,21 +2844,8 @@
       "cat": "T",
       "hrs": 4,
       "desc": "Picked up a new Water Witch switch from LFS to determine if the original bilge pump switch was malfunctioning, as it would only provide enough current to run the pump intermittently. Installed the new Water Witch in the tender and tested operation at various sensor heights to ensure the pump was not airlocked. Found the same issue as with the original switch: it would activate the pump but did not provide sufficient power to expel sump water. Contacted Water Witch customer service to troubleshoot the issue, but no resolution was identified as the issue had never been found. Researched Water Witch specifications to verify that back feeding was not a contributing factor. Returned the Water Witch and concluded that a diaphragm pump would be the best solution.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1120,
-      "date": "2026-06-18",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 0.5,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/18 is prorated across the 3 projects worked that day by labor hours: this project's 4 of 8 labor hrs = 0.5 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3242,43 +2877,74 @@
       "mat": 0
     },
     {
-      "id": 1123,
-      "date": "2026-06-18",
-      "proj": "Icemaker Not Making Ice",
-      "cat": "V",
-      "hrs": 0.28,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/18 is prorated across the 3 projects worked that day by labor hours: this project's 2.25 of 8 labor hrs = 0.28 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1124,
       "date": "2026-06-18",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
-      "hrs": 1.75,
-      "desc": "Noticed several areas on the starboard main engine turbo where the Corroseal had not fully encapsulated the rust. Wire-brushed the affected areas and applied a second coat of Corroseal.",
+      "hrs": 2,
+      "desc": "Found several areas on the turbo where the Corroseal had not fully encapsulated the rust. Used a wire brush then sanded the affected area with 120-grit sandpaper the affected areas to get the scale up and prepped for sealing. Applied a second coat of Corroseal.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1125,
-      "date": "2026-06-18",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.22,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/18 is prorated across the 3 projects worked that day by labor hours: this project's 1.75 of 8 labor hrs = 0.22 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "graduated": true,
+      "mat": 0,
+      "photos": [
+        {
+          "id": "sandi-louise-",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--b7819fe2-99a6-47e8-a328-3059b601f143.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": 639180058708457000,
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-451181c5-df2a-4278-8599-3aad27cfc33f.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:17.8162591Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-d4ed7e88-fab4-433c-9c46-65fa6a37007f.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:13:52.4782541Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-20-72f09a62-a6d6-4f5b-a3cd-80ef6cbbbda4.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-20T18:14:25.4241849Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-",
+          "projId": 9,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise--47ad69e2-3494-4521-b238-93dc43f8aa21.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": false,
+          "ts": 639180098635326100,
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 1126,
@@ -3290,20 +2956,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1127,
-      "date": "2026-06-19",
-      "proj": "Blackwater Discharge System",
-      "cat": "V",
-      "hrs": 0.64,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/19 is prorated across the 3 projects worked that day by labor hours: this project's 1.75 of 2.75 labor hrs = 0.64 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3312,22 +2965,9 @@
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
       "hrs": 0.5,
-      "desc": "Recorded photos of the Corroseal application on the starboard main engine turbo. Noticed flaking paint on the turbo, sanded the affected area with 120-grit sandpaper, and touched up a small section on the forward end of the turbo with Corroseal where coverage was incomplete.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1129,
-      "date": "2026-06-19",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.18,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/19 is prorated across the 3 projects worked that day by labor hours: this project's 0.5 of 2.75 labor hrs = 0.18 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3337,25 +2977,12 @@
       "date": "2026-06-19",
       "proj": "Generator Raw Water Leak Repair & Clean Up",
       "cat": "T",
-      "hrs": 0.5,
+      "hrs": 0.25,
       "desc": "Ran the generator and inspected for raw water leaks to prevent further corrosion.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1131,
-      "date": "2026-06-19",
-      "proj": "Generator Raw Water Leak Repair & Clean Up",
-      "cat": "V",
-      "hrs": 0.18,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/19 is prorated across the 3 projects worked that day by labor hours: this project's 0.5 of 2.75 labor hrs = 0.18 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3365,8 +2992,8 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Picked up a strainer and hose at LFS for the new tender bilge diaphragm pump.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3376,26 +3003,48 @@
       "date": "2026-06-22",
       "proj": "Tender Bilge Pump",
       "cat": "T",
-      "hrs": 9,
-      "desc": "Wired and tested a new Diaphragm pump for the tender bilge to ensure it functioned properly. Located the optimal mounting location for the pump on the starboard face inside the settee compartment. Installed a strainer inside the sump, dry-fitted the pump, and adjusted the inlet and outlet hose orientation on the pump to prevent the hoses from kinking. Marked the pump’s placement, scuffed the gelcoat where the weld-mount studs would land, cleaned the area with acetone, and mounted the pump using weld mounts. Added wire to the Water Witch sensor wire run as it was necessary to reach the pump wiring under the settee. Mounted the Water Witch in the sump, installed split loom on all wiring, wired the new pump and Water Witch, and secured the wiring with zip ties. Installed new inlet and outlet hoses for the pump, secured them with new hose clamps, tested the system several more times, and cleaned the work area.\n***There was a lot of back and forth regarding pump and detainer location.***",
+      "hrs": 6,
+      "desc": "\nDetermined optimal mounting location for new bilge pump on the starboard face inside the settee compartment. \n\nInstalled intake strainer, dry-fit pump, installed new intake and outlet hoses for the diaphragm pump, secured with new hose clamps. \n\nAdjusted the inlet and outlet hose orientation on the pump to prevent the hoses from kinking. Marked the pump’s placement and mounted the pump with weld mounts. \n\nExtended the OEM cabling for the float switch wire run to pull power (proper wiring required switching the Brown and Brown with White stripe wires).\n\nSealed up OEM fastener holes with epoxy barrier coat. \n\nThrough bolted float switch with stainless hardware in the sump, wired the new pump switch. Secured cabling with zip ties and installed split loom on all wiring,\n\nTested the system 10 ways to Sunday and couldn't get it to fail. Cleaned the work area.\n",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1134,
-      "date": "2026-06-22",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 1,
-      "desc": "Travel — Bellingham ↔ Blaine (1 hr round trip) for the work above on 6/22.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "graduated": true,
+      "mat": 0,
+      "photos": [
+        {
+          "id": "sandi-louise-2026-08-03-079631d9-cc2a-4f71-a677-63378a24d125",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-079631d9-cc2a-4f71-a677-63378a24d125-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-079631d9-cc2a-4f71-a677-63378a24d125.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:12.1457006Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-7e5cca2d-9d59-4bb3-a8f4-a98f5225a76e",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-7e5cca2d-9d59-4bb3-a8f4-a98f5225a76e-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-7e5cca2d-9d59-4bb3-a8f4-a98f5225a76e.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:32.4111979Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-08-03-dcf32dba-6424-4ba7-bcae-02c847b0c1eb",
+          "projId": 1,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-dcf32dba-6424-4ba7-bcae-02c847b0c1eb-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-08-03-dcf32dba-6424-4ba7-bcae-02c847b0c1eb.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-08-03T22:26:35.6417565Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 1135,
@@ -3404,8 +3053,8 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Picked up new hose at LFS for the tender bilge pump.\n*** The 5/8” hose Abe picked up did not fit onto the 3/4” fitting no matter how much heat or finagling.***",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3416,9 +3065,9 @@
       "proj": "Tender Bilge Pump",
       "cat": "T",
       "hrs": 2,
-      "desc": "Applied a coat of epoxy barrier coat to the fastener holes from the previous tender bilge pump installation to seal the exposed metal and prevent corrosion. Installed a new discharge hose on the new bilge pump, added split loom to a couple wires for the pump, and retested the pump. Secured the mooring light wiring to the new bilge pump wiring. Through-bolted the Water Witch sensor to better secure and prevent misplacement.\n***Also needed to install another grommet on the pump as I misplaced the original one.***",
-      "posted": true,
-      "billingEventId": 505,
+      "desc": "Applied a coat of epoxy barrier coat to the fastener holes from the previous tender bilge pump installation to seal the exposed metal and prevent corrosion. \n\nInstalled a new discharge hose on the new bilge pump, added split loom to a couple wires for the pump, and retested the pump. Secured the mooring light wiring to the new bilge pump wiring. Through-bolted the Water Witch sensor to better secure it.\n",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3430,21 +3079,8 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Tracked down where the malfunctioning Rule bilge pump was purchased in order to return.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1138,
-      "date": "2026-06-23",
-      "proj": "Tender Bilge Pump",
-      "cat": "V",
-      "hrs": 0.25,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 4 projects worked that day by labor hours: this project's 2.25 of 9 labor hrs = 0.25 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3476,27 +3112,14 @@
       "mat": 0
     },
     {
-      "id": 1141,
-      "date": "2026-06-23",
-      "proj": "Icemaker Not Making Ice",
-      "cat": "V",
-      "hrs": 0.22,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 4 projects worked that day by labor hours: this project's 2 of 9 labor hrs = 0.22 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1142,
       "date": "2026-06-23",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
       "hrs": 0.25,
       "desc": "Fastened the coolant line for the starboard main engine turbo after noticing it was leaking.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3506,12 +3129,12 @@
       "date": "2026-06-23",
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
-      "hrs": 3.5,
-      "desc": "Masked off the components surrounding the starboard main engine turbo and applied a coat of epoxy barrier coat to the corroded area on the turbo, adjacent corroded components, and the two aft engine mounts. Removed all tape and cleaned up overspray with acetone.",
+      "hrs": 5,
+      "desc": "Masked off the components surrounding the starboard main engine turbo and applied a coat of white epoxy barrier coat to the corroded area on the turbo, adjacent corroded components, and the two aft engine mounts. Removed all tape and cleaned up with acetone.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0,
       "photos": [
         {
@@ -3594,19 +3217,6 @@
       ]
     },
     {
-      "id": 1144,
-      "date": "2026-06-23",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.42,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 4 projects worked that day by labor hours: this project's 3.75 of 9 labor hrs = 0.42 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1145,
       "date": "2026-06-23",
       "proj": "Generator Raw Water Leak Repair & Clean Up",
@@ -3616,20 +3226,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1146,
-      "date": "2026-06-23",
-      "proj": "Generator Raw Water Leak Repair & Clean Up",
-      "cat": "V",
-      "hrs": 0.11,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 4 projects worked that day by labor hours: this project's 1 of 9 labor hrs = 0.11 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3651,11 +3248,11 @@
       "proj": "Port Gear Oil Level Alarm Repair",
       "cat": "S",
       "hrs": 1,
-      "desc": "",
+      "desc": "NWDP",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3665,8 +3262,8 @@
       "cat": "T",
       "hrs": 0.25,
       "desc": "Located the purchase date and returned the broken bilge pump (would not evacuate water) to LFS.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3677,25 +3274,25 @@
       "proj": "Port Gear Oil Level Alarm Repair",
       "cat": "T",
       "hrs": 2.5,
-      "desc": "Prepped the vessel for relocation to new slip until the port main engine transmission oil sensor read \"overfilled\". Contacted Volvo mechanic and set up a time to plug the port main engine into the computer and clear the code or address the issue. Scheduled them. ",
+      "desc": "Abe and Nik arrived and prepped to move Sandi Louise to a new slip. When firing up the mains we got a prompt on the MFD that the port main engine transmission oil sensor read \"overfilled\". \n\nShut everything down and contacted Volvo mechanic to plug in their computer into the port main engine for information on what is going on in order to address the issue and/or clear the code. ",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1004,
-      "date": "2026-07-09",
-      "proj": "Port Gear Oil Level Alarm Repair",
-      "cat": "V",
-      "hrs": 0.29,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/9 is prorated across the 3 projects worked that day by labor hours: this project's 1.75 of 6 labor hrs = 0.29 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "graduated": true,
+      "mat": 0,
+      "photos": [
+        {
+          "id": "sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514",
+          "projId": 14,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-24-f0439e75-5d74-4a6f-8c0b-aa1d2b21b514.jpg",
+          "caption": "",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-09-24T21:57:42.1377696Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 1005,
@@ -3707,20 +3304,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1006,
-      "date": "2026-07-09",
-      "proj": "Boat Wash 7/9",
-      "cat": "V",
-      "hrs": 0.46,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/9 is prorated across the 3 projects worked that day by labor hours: this project's 2.75 of 6 labor hrs = 0.46 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3729,22 +3313,9 @@
       "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
       "cat": "T",
       "hrs": 1.5,
-      "desc": "Touched up all lightly coated areas around the starboard main turbo and cleaned overspray with acetone.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1008,
-      "date": "2026-07-09",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.25,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/9 is prorated across the 3 projects worked that day by labor hours: this project's 1.5 of 6 labor hrs = 0.25 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "desc": "Cleaned up all lightly coated areas around the starboard main turbo and cleaned overspray with acetone.",
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3755,24 +3326,11 @@
       "proj": "Misc / Vessel Prep",
       "cat": "D",
       "hrs": 0.25,
-      "desc": "Topped off the tender fuel tank.",
+      "desc": "Picked up ethanol free fuel and topped off the tender.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1010,
-      "date": "2026-07-10",
-      "proj": "Misc / Vessel Prep",
-      "cat": "V",
-      "hrs": 0.17,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 2.25 hr round-trip travel on 7/10 is prorated across the 3 projects worked that day by labor hours: this project's 0.25 of 3.25 labor hrs = 0.17 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3782,21 +3340,8 @@
       "cat": "T",
       "hrs": 1,
       "desc": "Cleaned remaining overspray on the starboard main turbo, recorded photos, and reassembled the engine and turbo covers on the port main engine.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1012,
-      "date": "2026-07-10",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.69,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 2.25 hr round-trip travel on 7/10 is prorated across the 3 projects worked that day by labor hours: this project's 1 of 3.25 labor hrs = 0.69 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
+      "posted": false,
+      "billingEventId": null,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3811,46 +3356,33 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1014,
-      "date": "2026-07-10",
-      "proj": "Port Gear Oil Level Alarm Repair",
-      "cat": "V",
-      "hrs": 1.39,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 2.25 hr round-trip travel on 7/10 is prorated across the 3 projects worked that day by labor hours: this project's 2 of 3.25 labor hrs = 1.39 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
+      "graduated": true,
+      "mat": 0,
+      "photos": [
+        {
+          "id": "sandi-louise-2026-07-16-f83f7ad7-d0ef-4981-9f00-c9a46bade013",
+          "projId": 14,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-16-f83f7ad7-d0ef-4981-9f00-c9a46bade013-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-07-16-f83f7ad7-d0ef-4981-9f00-c9a46bade013.jpg",
+          "caption": "Oil Sample Report from port pod drive",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-07-16T19:31:28.7349076Z",
+          "pendingUpload": false
+        }
+      ]
     },
     {
       "id": 1016,
       "date": "2026-07-16",
-      "proj": "Boat Wash 7/16/26 (after Sea Trial)",
+      "proj": "Boat Wash 7/16 (after Volvo Tech Sea Trial)",
       "cat": "D",
-      "hrs": 2,
-      "desc": "Washed the vessel upon sea trial.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1017,
-      "date": "2026-07-16",
-      "proj": "Boat Wash 7/16/26 (after Sea Trial)",
-      "cat": "V",
       "hrs": 1,
-      "desc": "Travel — Bellingham ↔ Blaine (1 hr round trip) for the work above on 7/16.",
+      "desc": "Washed the vessel after sea trial. \n*Pulled some time off the wash to make it more reasonable to get the salt off the boat. ",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3858,25 +3390,12 @@
       "date": "2026-07-19",
       "proj": "Boat Wash 7/19",
       "cat": "D",
-      "hrs": 3.75,
-      "desc": "Boat wash (Abe), 10:00–2:45 including travel.",
+      "hrs": 3.25,
+      "desc": "Boat wash Sunday before arrival. The boat had been hammered by birds excrement and shells.\n\nSpecial attention paid to the sunroof slider tracks. Was quite amazed at how many small bits of shell I was able to flush out of the sunroof track system. We'll stay on top of this. ",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1019,
-      "date": "2026-07-19",
-      "proj": "Boat Wash 7/19",
-      "cat": "V",
-      "hrs": 1,
-      "desc": "Travel — Bellingham ↔ Blaine (1 hr round trip) for the work above on 7/19.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -3901,19 +3420,6 @@
       "desc": "Discussed vessel work and priorities with Abe.",
       "posted": false,
       "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1022,
-      "date": "2026-08-04",
-      "proj": "Misc / Vessel Prep",
-      "cat": "V",
-      "hrs": 0.09,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/4 is prorated across the 5 projects worked that day by labor hours: this project's 0.75 of 8.25 labor hrs = 0.09 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -3945,19 +3451,6 @@
       "mat": 0
     },
     {
-      "id": 1025,
-      "date": "2026-08-04",
-      "proj": "Volvo D6 Services",
-      "cat": "V",
-      "hrs": 0.36,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/4 is prorated across the 5 projects worked that day by labor hours: this project's 3 of 8.25 labor hrs = 0.36 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1026,
       "date": "2026-08-04",
       "proj": "Wifi Breaker Inop",
@@ -3971,42 +3464,16 @@
       "mat": 0
     },
     {
-      "id": 1027,
-      "date": "2026-08-04",
-      "proj": "Wifi Breaker Inop",
-      "cat": "V",
-      "hrs": 0.03,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/4 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 8.25 labor hrs = 0.03 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1028,
       "date": "2026-08-04",
       "proj": "Boat Wash 8/3",
       "cat": "D",
-      "hrs": 3,
+      "hrs": 2.75,
       "desc": "Washed the vessel and tender.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": true,
-      "mat": 0
-    },
-    {
-      "id": 1029,
-      "date": "2026-08-04",
-      "proj": "Boat Wash 8/3",
-      "cat": "V",
-      "hrs": 0.36,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/4 is prorated across the 5 projects worked that day by labor hours: this project's 3 of 8.25 labor hrs = 0.36 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
       "mat": 0
     },
     {
@@ -4016,19 +3483,6 @@
       "cat": "T",
       "hrs": 1.25,
       "desc": "Inspected the black water tank and overboard pump (pump not functioning). Tank was empty; added freshwater and tested — pump runs but will not discharge tank contents, indicating a probable airlock.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1031,
-      "date": "2026-08-04",
-      "proj": "Black Water Pump Inop",
-      "cat": "V",
-      "hrs": 0.16,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/4 is prorated across the 5 projects worked that day by labor hours: this project's 1.25 of 8.25 labor hrs = 0.16 hr travel.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
@@ -4062,19 +3516,6 @@
       "mat": 0
     },
     {
-      "id": 1034,
-      "date": "2026-08-05",
-      "proj": "Misc / Vessel Prep",
-      "cat": "V",
-      "hrs": 0.09,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/5 is prorated across the 5 projects worked that day by labor hours: this project's 0.75 of 8.5 labor hrs = 0.09 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1035,
       "date": "2026-08-05",
       "proj": "Gel Coat Chip Repair x2",
@@ -4089,38 +3530,12 @@
       "photos": []
     },
     {
-      "id": 1036,
-      "date": "2026-08-05",
-      "proj": "Gel Coat Chip Repair x2",
-      "cat": "V",
-      "hrs": 0.03,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/5 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 8.5 labor hrs = 0.03 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1037,
       "date": "2026-08-05",
       "proj": "Black Water Pump Inop",
       "cat": "T",
       "hrs": 1.75,
       "desc": "Removed the hoses from the black water overboard pump and inspected the duckbills to confirm they were not inverted (pump bubbles the tank but will not discharge). Duckbills correct. Reattached the output hose, plugged the inlet hose and pump inlet, and disinfected the workspace pending a bucket for freshwater testing.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1038,
-      "date": "2026-08-05",
-      "proj": "Black Water Pump Inop",
-      "cat": "V",
-      "hrs": 0.21,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/5 is prorated across the 5 projects worked that day by labor hours: this project's 1.75 of 8.5 labor hrs = 0.21 hr travel.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
@@ -4200,19 +3615,6 @@
       ]
     },
     {
-      "id": 1041,
-      "date": "2026-08-05",
-      "proj": "Sealant Replacement Request 8/26",
-      "cat": "V",
-      "hrs": 0.38,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/5 is prorated across the 5 projects worked that day by labor hours: this project's 3.25 of 8.5 labor hrs = 0.38 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1042,
       "date": "2026-08-05",
       "proj": "Cockpit Sink Basin, Seal to Countertop",
@@ -4221,19 +3623,6 @@
       "desc": "",
       "posted": false,
       "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1043,
-      "date": "2026-08-05",
-      "proj": "Track FW Leak Pooled In Engine Room Bilge Sump",
-      "cat": "V",
-      "hrs": 0.29,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/5 is prorated across the 5 projects worked that day by labor hours: this project's 2.5 of 8.5 labor hrs = 0.29 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false,
       "mat": 0
@@ -4248,20 +3637,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1045,
-      "date": "2026-08-06",
-      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
-      "cat": "V",
-      "hrs": 0.03,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/6 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 7.25 labor hrs = 0.03 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -4287,20 +3663,7 @@
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1048,
-      "date": "2026-08-06",
-      "proj": "Misc / Vessel Prep",
-      "cat": "V",
-      "hrs": 0.1,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/6 is prorated across the 5 projects worked that day by labor hours: this project's 0.75 of 7.25 labor hrs = 0.1 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
+      "graduated": true,
       "mat": 0
     },
     {
@@ -4462,38 +3825,12 @@
       ]
     },
     {
-      "id": 1050,
-      "date": "2026-08-06",
-      "proj": "Cockpit Sink Basin, Seal to Countertop",
-      "cat": "V",
-      "hrs": 0.03,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/6 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 7.25 labor hrs = 0.03 hr travel.",
-      "posted": false,
-      "billingEventId": null,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
       "id": 1051,
       "date": "2026-08-06",
       "proj": "Black Water Pump Inop",
       "cat": "T",
       "hrs": 3.25,
       "desc": "Disconnected the black water overboard pump and confirmed 13V at the pump. Rewired, fitted a new intake hose, and pumped freshwater through it. After verifying operation, reconnected the black water hoses, secured wiring, and ran the pump — now evacuating tank contents; concluded it had been airlocked. \nRemoved, inspected, lubricated (Super Lube), and reinstalled the vented-loop duckbill. Ran the pump dry, filled the tank ~1/4 with freshwater, and retested. \n\nRecorded 12v amperage draw vs. manufacturer spec — pump drawing ~4A under spec, leaving the intermittent operation unexplained. Checked the vent filter for closed vent-line valves. Disinfected the workspace. ",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
-    },
-    {
-      "id": 1052,
-      "date": "2026-08-06",
-      "proj": "Black Water Pump Inop",
-      "cat": "V",
-      "hrs": 0.45,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/6 is prorated across the 5 projects worked that day by labor hours: this project's 3.25 of 7.25 labor hrs = 0.45 hr travel.",
       "posted": true,
       "billingEventId": 505,
       "includeInClientDoc": true,
@@ -4524,19 +3861,6 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false
-    },
-    {
-      "id": 1054,
-      "date": "2026-08-06",
-      "proj": "Icemaker Not Making Ice",
-      "cat": "V",
-      "hrs": 0.39,
-      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/6 is prorated across the 5 projects worked that day by labor hours: this project's 2.75 of 7.25 labor hrs = 0.39 hr travel.",
-      "posted": true,
-      "billingEventId": 505,
-      "includeInClientDoc": true,
-      "graduated": false,
-      "mat": 0
     },
     {
       "id": 1015,
@@ -4575,6 +3899,640 @@
       "billingEventId": 505,
       "includeInClientDoc": true,
       "graduated": false
+    },
+    {
+      "id": 1148,
+      "date": "2026-09-28",
+      "proj": "Port Gear Oil Level Alarm Repair",
+      "cat": "M",
+      "hrs": 1,
+      "mat": 0,
+      "desc": "Oil Sample Analysis",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": true
+    },
+    {
+      "id": 1149,
+      "date": "2026-05-20",
+      "proj": "Tender Bilge Pump",
+      "cat": "V",
+      "hrs": 0.73,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1.25 hr round-trip travel on 5/20 is prorated across the 2 projects worked that day by labor hours: this project's 1.75 of 3 labor hrs = 0.73 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9000,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1150,
+      "date": "2026-05-20",
+      "proj": "Boat Wash 5/20",
+      "cat": "V",
+      "hrs": 0.52,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1.25 hr round-trip travel on 5/20 is prorated across the 2 projects worked that day by labor hours: this project's 1.25 of 3 labor hrs = 0.52 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9000,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1151,
+      "date": "2026-06-02",
+      "proj": "Misc / Vessel Prep",
+      "cat": "V",
+      "hrs": 1.25,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1.25 hr round-trip travel on 6/02 is prorated across the 1 project worked that day by labor hours: this project's 4 of 4 labor hrs = 1.25 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9001,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1152,
+      "date": "2026-06-03",
+      "proj": "Tender Bilge Pump",
+      "cat": "V",
+      "hrs": 0.69,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/03 is prorated across the 3 projects worked that day by labor hours: this project's 5 of 7.25 labor hrs = 0.69 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9002,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1153,
+      "date": "2026-06-03",
+      "proj": "Generator Sea Strainer Deep Clean",
+      "cat": "V",
+      "hrs": 0.07,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/03 is prorated across the 3 projects worked that day by labor hours: this project's 0.5 of 7.25 labor hrs = 0.07 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9002,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1154,
+      "date": "2026-06-03",
+      "proj": "Boat Wash 6/3",
+      "cat": "V",
+      "hrs": 0.24,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/03 is prorated across the 3 projects worked that day by labor hours: this project's 1.75 of 7.25 labor hrs = 0.24 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9002,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1155,
+      "date": "2026-06-09",
+      "proj": "Track FW Leak Pooled In Engine Room Bilge Sump",
+      "cat": "V",
+      "hrs": 0.19,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/09 is prorated across the 6 projects worked that day by labor hours: this project's 1.75 of 9 labor hrs = 0.19 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9003,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1156,
+      "date": "2026-06-09",
+      "proj": "Blackwater Discharge System",
+      "cat": "V",
+      "hrs": 0.08,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/09 is prorated across the 6 projects worked that day by labor hours: this project's 0.75 of 9 labor hrs = 0.08 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9003,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1157,
+      "date": "2026-06-09",
+      "proj": "Generator Raw Water Leak Repair & Clean Up",
+      "cat": "V",
+      "hrs": 0.33,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/09 is prorated across the 6 projects worked that day by labor hours: this project's 3 of 9 labor hrs = 0.33 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9003,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1159,
+      "date": "2026-06-09",
+      "proj": "Misc / Vessel Prep",
+      "cat": "V",
+      "hrs": 0.11,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/09 is prorated across the 6 projects worked that day by labor hours: this project's 1 of 9 labor hrs = 0.11 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9003,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1160,
+      "date": "2026-06-09",
+      "proj": "Watermaker Strainers/Filter Clean",
+      "cat": "V",
+      "hrs": 0.06,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/09 is prorated across the 6 projects worked that day by labor hours: this project's 0.5 of 9 labor hrs = 0.06 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9003,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1161,
+      "date": "2026-06-09",
+      "proj": "Vessel Wash 6/9",
+      "cat": "V",
+      "hrs": 0.23,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/09 is prorated across the 6 projects worked that day by labor hours: this project's 2 of 9 labor hrs = 0.23 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9003,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1162,
+      "date": "2026-06-10",
+      "proj": "Icemaker Not Making Ice",
+      "cat": "V",
+      "hrs": 0.29,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 2 projects worked that day by labor hours: this project's 1 of 3.5 labor hrs = 0.29 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9004,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1163,
+      "date": "2026-06-10",
+      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+      "cat": "V",
+      "hrs": 0.71,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/10 is prorated across the 2 projects worked that day by labor hours: this project's 2.5 of 3.5 labor hrs = 0.71 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9004,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1164,
+      "date": "2026-06-16",
+      "proj": "Generator Raw Water Leak Repair & Clean Up",
+      "cat": "V",
+      "hrs": 0.33,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 3 projects worked that day by labor hours: this project's 1.5 of 4.5 labor hrs = 0.33 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9005,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1165,
+      "date": "2026-06-16",
+      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+      "cat": "V",
+      "hrs": 0.5,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 3 projects worked that day by labor hours: this project's 2.25 of 4.5 labor hrs = 0.5 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9005,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1166,
+      "date": "2026-06-16",
+      "proj": "Icemaker Not Making Ice",
+      "cat": "V",
+      "hrs": 0.17,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/16 is prorated across the 3 projects worked that day by labor hours: this project's 0.75 of 4.5 labor hrs = 0.17 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9005,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1167,
+      "date": "2026-06-17",
+      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+      "cat": "V",
+      "hrs": 1,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/17 is prorated across the 1 project worked that day by labor hours: this project's 3 of 3 labor hrs = 1 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9006,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1168,
+      "date": "2026-06-18",
+      "proj": "Icemaker Not Making Ice",
+      "cat": "V",
+      "hrs": 0.53,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/18 is prorated across the 2 projects worked that day by labor hours: this project's 2.25 of 4.25 labor hrs = 0.53 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9007,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1169,
+      "date": "2026-06-18",
+      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+      "cat": "V",
+      "hrs": 0.47,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/18 is prorated across the 2 projects worked that day by labor hours: this project's 2 of 4.25 labor hrs = 0.47 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9007,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1170,
+      "date": "2026-06-19",
+      "proj": "Blackwater Discharge System",
+      "cat": "V",
+      "hrs": 0.88,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/19 is prorated across the 2 projects worked that day by labor hours: this project's 1.75 of 2 labor hrs = 0.88 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9008,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1172,
+      "date": "2026-06-19",
+      "proj": "Generator Raw Water Leak Repair & Clean Up",
+      "cat": "V",
+      "hrs": 0.12,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/19 is prorated across the 2 projects worked that day by labor hours: this project's 0.25 of 2 labor hrs = 0.12 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9008,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1173,
+      "date": "2026-06-22",
+      "proj": "Tender Bilge Pump",
+      "cat": "V",
+      "hrs": 1,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/22 is prorated across the 1 project worked that day by labor hours: this project's 6 of 6 labor hrs = 1 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9009,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1174,
+      "date": "2026-06-23",
+      "proj": "Icemaker Not Making Ice",
+      "cat": "V",
+      "hrs": 0.27,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 3 projects worked that day by labor hours: this project's 2.25 of 8.25 labor hrs = 0.27 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9010,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1175,
+      "date": "2026-06-23",
+      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+      "cat": "V",
+      "hrs": 0.61,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 3 projects worked that day by labor hours: this project's 5 of 8.25 labor hrs = 0.61 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9010,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1176,
+      "date": "2026-06-23",
+      "proj": "Generator Raw Water Leak Repair & Clean Up",
+      "cat": "V",
+      "hrs": 0.12,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 6/23 is prorated across the 3 projects worked that day by labor hours: this project's 1 of 8.25 labor hrs = 0.12 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9010,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1177,
+      "date": "2026-07-09",
+      "proj": "Port Gear Oil Level Alarm Repair",
+      "cat": "V",
+      "hrs": 0.48,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/09 is prorated across the 2 projects worked that day by labor hours: this project's 2.5 of 5.25 labor hrs = 0.48 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9011,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1178,
+      "date": "2026-07-09",
+      "proj": "Boat Wash 7/9",
+      "cat": "V",
+      "hrs": 0.52,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/09 is prorated across the 2 projects worked that day by labor hours: this project's 2.75 of 5.25 labor hrs = 0.52 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9011,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1180,
+      "date": "2026-07-10",
+      "proj": "Misc / Vessel Prep",
+      "cat": "V",
+      "hrs": 0.45,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 2.25 hr round-trip travel on 7/10 is prorated across the 2 projects worked that day by labor hours: this project's 0.25 of 1.25 labor hrs = 0.45 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9012,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1182,
+      "date": "2026-07-10",
+      "proj": "Port Gear Oil Level Alarm Repair",
+      "cat": "V",
+      "hrs": 1.8,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 2.25 hr round-trip travel on 7/10 is prorated across the 2 projects worked that day by labor hours: this project's 1 of 1.25 labor hrs = 1.8 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9012,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1183,
+      "date": "2026-07-16",
+      "proj": "Boat Wash 7/16 (after Volvo Tech Sea Trial)",
+      "cat": "V",
+      "hrs": 1,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/16 is prorated across the 1 project worked that day by labor hours: this project's 1 of 1 labor hrs = 1 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9013,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1184,
+      "date": "2026-07-19",
+      "proj": "Boat Wash 7/19",
+      "cat": "V",
+      "hrs": 1,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 7/19 is prorated across the 1 project worked that day by labor hours: this project's 3.25 of 3.25 labor hrs = 1 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9014,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1185,
+      "date": "2026-08-04",
+      "proj": "Volvo D6 Services",
+      "cat": "V",
+      "hrs": 0.41,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/04 is prorated across the 4 projects worked that day by labor hours: this project's 3 of 7.25 labor hrs = 0.41 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9015,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1186,
+      "date": "2026-08-04",
+      "proj": "Wifi Breaker Inop",
+      "cat": "V",
+      "hrs": 0.03,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/04 is prorated across the 4 projects worked that day by labor hours: this project's 0.25 of 7.25 labor hrs = 0.03 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9015,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1187,
+      "date": "2026-08-04",
+      "proj": "Boat Wash 8/3",
+      "cat": "V",
+      "hrs": 0.38,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/04 is prorated across the 4 projects worked that day by labor hours: this project's 2.75 of 7.25 labor hrs = 0.38 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9015,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1188,
+      "date": "2026-08-04",
+      "proj": "Black Water Pump Inop",
+      "cat": "V",
+      "hrs": 0.18,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/04 is prorated across the 4 projects worked that day by labor hours: this project's 1.25 of 7.25 labor hrs = 0.18 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9015,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1189,
+      "date": "2026-08-05",
+      "proj": "Gel Coat Chip Repair x2",
+      "cat": "V",
+      "hrs": 0.03,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/05 is prorated across the 4 projects worked that day by labor hours: this project's 0.25 of 7.75 labor hrs = 0.03 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9016,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1190,
+      "date": "2026-08-05",
+      "proj": "Black Water Pump Inop",
+      "cat": "V",
+      "hrs": 0.23,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/05 is prorated across the 4 projects worked that day by labor hours: this project's 1.75 of 7.75 labor hrs = 0.23 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9016,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1191,
+      "date": "2026-08-05",
+      "proj": "Sealant Replacement Request 8/26",
+      "cat": "V",
+      "hrs": 0.42,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/05 is prorated across the 4 projects worked that day by labor hours: this project's 3.25 of 7.75 labor hrs = 0.42 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9016,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1192,
+      "date": "2026-08-05",
+      "proj": "Track FW Leak Pooled In Engine Room Bilge Sump",
+      "cat": "V",
+      "hrs": 0.32,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/05 is prorated across the 4 projects worked that day by labor hours: this project's 2.5 of 7.75 labor hrs = 0.32 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9016,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1193,
+      "date": "2026-08-06",
+      "proj": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+      "cat": "V",
+      "hrs": 0.04,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/06 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 7 labor hrs = 0.04 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9017,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1194,
+      "date": "2026-08-06",
+      "proj": "Misc / Vessel Prep",
+      "cat": "V",
+      "hrs": 0.04,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/06 is prorated across the 5 projects worked that day by labor hours: this project's 0.25 of 7 labor hrs = 0.04 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": true,
+      "travelDayId": 9017,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1195,
+      "date": "2026-08-06",
+      "proj": "Track FW Leak Pooled In Engine Room Bilge Sump",
+      "cat": "V",
+      "hrs": 0.07,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/06 is prorated across the 5 projects worked that day by labor hours: this project's 0.5 of 7 labor hrs = 0.07 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9017,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1196,
+      "date": "2026-08-06",
+      "proj": "Black Water Pump Inop",
+      "cat": "V",
+      "hrs": 0.46,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/06 is prorated across the 5 projects worked that day by labor hours: this project's 3.25 of 7 labor hrs = 0.46 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9017,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1197,
+      "date": "2026-08-06",
+      "proj": "Icemaker Not Making Ice",
+      "cat": "V",
+      "hrs": 0.39,
+      "desc": "Travel — Bellingham ↔ Blaine. The day's 1 hr round-trip travel on 8/06 is prorated across the 5 projects worked that day by labor hours: this project's 2.75 of 7 labor hrs = 0.39 hr travel.",
+      "includeInClientDoc": true,
+      "graduated": false,
+      "travelDayId": 9017,
+      "posted": true,
+      "billingEventId": 505
+    },
+    {
+      "id": 1198,
+      "date": "2026-09-28",
+      "proj": "Misc / Vessel Prep",
+      "cat": "D",
+      "hrs": 0.25,
+      "desc": "Picked up ethanol free fuel and topped off the tender.",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": true
+    },
+    {
+      "id": 1199,
+      "date": "2026-09-28",
+      "proj": "Misc / Vessel Prep",
+      "cat": "T",
+      "hrs": 0,
+      "desc": "",
+      "posted": false,
+      "billingEventId": null,
+      "includeInClientDoc": true,
+      "graduated": false
+    },
+    {
+      "id": 1200,
+      "date": "2026-09-28",
+      "proj": "Boat Check: Response to Report of Pump Running Onboard",
+      "cat": "T",
+      "hrs": 0.25,
+      "desc": "Boarded the boat, checked all bilges, including the dinghy bilge (dinghy battery was off as it should be). Returned Hal's call and locked up.",
+      "posted": true,
+      "billingEventId": 505,
+      "includeInClientDoc": true,
+      "graduated": true
     }
   ],
   "billingEvents": [
@@ -4629,12 +4587,194 @@
       "history": []
     }
   ],
-  "travelDays": [],
-  "nextTravelDayId": 9000,
+  "travelDays": [
+    {
+      "id": 9000,
+      "date": "2026-05-20",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1.25,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Boat Wash 5/20=1.25|Tender Bilge Pump=1.75"
+    },
+    {
+      "id": 9001,
+      "date": "2026-06-02",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1.25,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Misc / Vessel Prep=4"
+    },
+    {
+      "id": 9002,
+      "date": "2026-06-03",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Boat Wash 6/3=1.75|Generator Sea Strainer Deep Clean=0.5|Tender Bilge Pump=5"
+    },
+    {
+      "id": 9003,
+      "date": "2026-06-09",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Blackwater Discharge System=0.75|Generator Raw Water Leak Repair & Clean Up=3|Misc / Vessel Prep=1|Track FW Leak Pooled In Engine Room Bilge Sump=1.75|Vessel Wash 6/9=2|Watermaker Strainers/Filter Clean=0.5"
+    },
+    {
+      "id": 9004,
+      "date": "2026-06-10",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Icemaker Not Making Ice=1|SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts=2.5"
+    },
+    {
+      "id": 9005,
+      "date": "2026-06-16",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Generator Raw Water Leak Repair & Clean Up=1.5|Icemaker Not Making Ice=0.75|SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts=2.25"
+    },
+    {
+      "id": 9006,
+      "date": "2026-06-17",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts=3"
+    },
+    {
+      "id": 9007,
+      "date": "2026-06-18",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Icemaker Not Making Ice=2.25|SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts=2"
+    },
+    {
+      "id": 9008,
+      "date": "2026-06-19",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Blackwater Discharge System=1.75|Generator Raw Water Leak Repair & Clean Up=0.25"
+    },
+    {
+      "id": 9009,
+      "date": "2026-06-22",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Tender Bilge Pump=6"
+    },
+    {
+      "id": 9010,
+      "date": "2026-06-23",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Generator Raw Water Leak Repair & Clean Up=1|Icemaker Not Making Ice=2.25|SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts=5"
+    },
+    {
+      "id": 9011,
+      "date": "2026-07-09",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Boat Wash 7/9=2.75|Port Gear Oil Level Alarm Repair=2.5"
+    },
+    {
+      "id": 9012,
+      "date": "2026-07-10",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 2.25,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Misc / Vessel Prep=0.25|Port Gear Oil Level Alarm Repair=1"
+    },
+    {
+      "id": 9013,
+      "date": "2026-07-16",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Boat Wash 7/16 (after Volvo Tech Sea Trial)=1"
+    },
+    {
+      "id": 9014,
+      "date": "2026-07-19",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Boat Wash 7/19=3.25"
+    },
+    {
+      "id": 9015,
+      "date": "2026-08-04",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Black Water Pump Inop=1.25|Boat Wash 8/3=2.75|Volvo D6 Services=3|Wifi Breaker Inop=0.25"
+    },
+    {
+      "id": 9016,
+      "date": "2026-08-05",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Black Water Pump Inop=1.75|Gel Coat Chip Repair x2=0.25|Sealant Replacement Request 8/26=3.25|Track FW Leak Pooled In Engine Room Bilge Sump=2.5"
+    },
+    {
+      "id": 9017,
+      "date": "2026-08-06",
+      "route": "Bellingham ↔ Blaine",
+      "hrs": 1,
+      "basis": "hours",
+      "manual": {},
+      "flag": false,
+      "laborSig": "Black Water Pump Inop=3.25|Icemaker Not Making Ice=2.75|Misc / Vessel Prep=0.25|SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts=0.25|Track FW Leak Pooled In Engine Room Bilge Sump=0.5"
+    }
+  ],
+  "nextTravelDayId": 9018,
   "nextProjId": 39,
+  "nextProjNum": 37,
   "nextTaskId": 138,
   "nextCOId": 100,
-  "nextTEId": 1148,
+  "nextTEId": 1201,
   "nextBillingId": 506,
   "settings": {
     "company": "Turn Point Marine",
@@ -4659,7 +4799,96 @@
     "ccFeePct": 2.99,
     "ccFeeName": ""
   },
-  "unassignedPhotos": [],
+  "unassignedPhotos": [
+    {
+      "id": "sandi-louise-2026-09-28-5f5ed9ca-33a7-48aa-81a0-baa52f533837",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-5f5ed9ca-33a7-48aa-81a0-baa52f533837-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-5f5ed9ca-33a7-48aa-81a0-baa52f533837.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:28:59.9228235Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-b959d533-44ca-42d7-952d-be4251704b71",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-b959d533-44ca-42d7-952d-be4251704b71-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-b959d533-44ca-42d7-952d-be4251704b71.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:29:11.0808531Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-f3ebb9cf-c517-4b0f-b18d-b73c594b8b68",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-f3ebb9cf-c517-4b0f-b18d-b73c594b8b68-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-f3ebb9cf-c517-4b0f-b18d-b73c594b8b68.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:29:07.6610667Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-35257075-9c33-4348-9968-dc1c8cc69a55",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-35257075-9c33-4348-9968-dc1c8cc69a55-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-35257075-9c33-4348-9968-dc1c8cc69a55.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:59:13.7180952Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-48fbed15-01ca-4672-ab00-9d582ef74d68",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-48fbed15-01ca-4672-ab00-9d582ef74d68-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-48fbed15-01ca-4672-ab00-9d582ef74d68.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:59:26.5528366Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-b98dd25f-8cd8-420a-a5e7-a81d72b57399",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-b98dd25f-8cd8-420a-a5e7-a81d72b57399-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-b98dd25f-8cd8-420a-a5e7-a81d72b57399.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:59:18.9370059Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-daee47b0-d560-4b7e-99b8-e0cdf6a5fe2f",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-daee47b0-d560-4b7e-99b8-e0cdf6a5fe2f-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-daee47b0-d560-4b7e-99b8-e0cdf6a5fe2f.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:59:31.4108963Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-09-28-eff8e5ee-522c-4e04-855a-0d8169fa8189",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-eff8e5ee-522c-4e04-855a-0d8169fa8189-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-09-28-eff8e5ee-522c-4e04-855a-0d8169fa8189.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-09-28T18:59:22.8036086Z",
+      "pendingUpload": false
+    }
+  ],
   "dismissedPhotoKeys": [
     "003fd8f3-cd6d-4d7a-86f6-f8be08b431c3",
     "85ee97b3-92f2-43a1-b65d-06970aacf347",
@@ -4757,7 +4986,20 @@
     "f76a0720-04d0-426e-8195-a21e9e67cc16",
     "49fc1d36-cfb8-40fb-b296-1f6287a20186",
     "3ff43e99-075e-425e-9c32-8a57ec8fe7dc",
-    "044ba5c5-720d-4530-9ba0-78de11935d3f"
+    "044ba5c5-720d-4530-9ba0-78de11935d3f",
+    "10a948ac-bc6c-4a5f-bddc-8315c40b6cf2",
+    "81465f4a-c706-44a3-b8ed-44f685e07106",
+    "266e0744-972f-4619-9c74-cc8e8fc25c86",
+    "9d7de7b3-95b8-4b7f-b5df-caa2c295c4f2",
+    "cd89cf00-4a38-4452-889d-0e6304491c89",
+    "94fbb043-699e-4157-a204-c98daf838873",
+    "8405a29d-8846-4c76-80b1-07e32be973c2",
+    "c2c63f72-99b0-41fd-a45f-f24ba8111570",
+    "db4ef346-827b-4618-988f-ea15df62a351",
+    "adb63e99-e603-4d49-986c-11a901553851",
+    "d40c0d86-e7c3-42e9-8ae3-271f7f131f2a",
+    "2cbc4970-e5c4-4992-be41-9ccc77a2dfe4",
+    "9e57242a-f0fa-4b99-ad2b-e2f9d0fbb1b6"
   ],
   "uiState": {
     "secOpenState": {
@@ -4808,7 +5050,7 @@
       "estinfo_6": false,
       "est_7": false,
       "act_7": true,
-      "_tray": true,
+      "_tray": false,
       "estinfo_23": true,
       "estinfo_31": true,
       "est_35": false,
@@ -4838,15 +5080,16 @@
       "estinfo_25": false,
       "estinfo_2": true,
       "_trv_14": false,
-      "_trv_4": true
+      "_trv_4": true,
+      "_trv_7": true,
+      "_trv_32": true,
+      "_wash_complete": false
     },
     "openProjs": [
       36,
-      38,
-      33,
       37,
-      3,
-      25
+      25,
+      15
     ],
     "closedReadyProjs": [
       15,
