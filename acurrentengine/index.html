@@ -182,6 +182,7 @@ tr.te-proj-drag-over td{border-top:2px solid #1D9E75}
       <div class="nav-drop-menu" id="dropClientMenu">
         <button class="nav-drop-item" onclick="displayClientDoc();closeDrop('dropClient')">&#128065; Display Client Doc</button>
         <button class="nav-drop-item" onclick="exportClientDoc();closeDrop('dropClient')">&#11015; Export Client Doc</button>
+        <button class="nav-drop-item" onclick="exportSampleClientDoc();closeDrop('dropClient')">&#128373; Export Sample Doc (redacted)</button>
         <button class="nav-drop-item" onclick="openAuthPicker();closeDrop('dropClient')">&#9997; Authorization Only&hellip;</button>
         <button class="nav-drop-item" onclick="emailClient();closeDrop('dropClient')">&#128279; Copy Client Doc Address</button>
         <div style="height:1px;background:#333;margin:2px 0"></div>
@@ -538,7 +539,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-09-30c';
+const ENGINE_BUILD='2026-10-01b';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -5510,6 +5511,28 @@ function exportClientDoc(){
   <\/script>`;
   html+='</body></html>';
 
+  /* SAMPLE CLIENT DOC — REDACTED (2026-10-01a, rule-4 OK): the sample export reuses this builder and
+   * downloads a redacted copy instead — no router marker, no push toast. Normal paths untouched. */
+  if(window._clientDocSampleMode){
+    window._clientDocSampleMode=false;
+    const _sHtml=_sampleRedactHtml(html,vessel,client);
+    const _sa=document.createElement('a');_sa.href=URL.createObjectURL(new Blob([_sHtml],{type:'text/html'}));
+    _sa.download=SAMPLE_DOC_FILE;   // fixed name → fixed address (2026-10-01b)
+    let _sCopied=false;
+    try{navigator.clipboard.writeText(SAMPLE_DOC_URL).then(()=>{_sCopied=true;}).catch(()=>{});}catch(e){}
+    _sa.click();setTimeout(()=>URL.revokeObjectURL(_sa.href),4000);
+    try{
+      const _t=document.createElement('div');
+      _t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;font-size:13px;font-weight:700;padding:13px 22px;border-radius:10px;z-index:99999;box-shadow:0 4px 18px rgba(0,0,0,0.35);font-family:inherit;max-width:90vw;text-align:center;user-select:text';
+      const _l1=document.createElement('div');_l1.textContent='\u{1F575} Sample saved as '+SAMPLE_DOC_FILE+' \u2014 move it into the TPM folder, then Push Through GitHub';
+      const _l2=document.createElement('div');_l2.style.cssText='font-weight:400;margin-top:6px;font-size:12px;opacity:.9';
+      _l2.textContent='Address copied: '+SAMPLE_DOC_URL;
+      _t.appendChild(_l1);_t.appendChild(_l2);document.body.appendChild(_t);
+      setTimeout(()=>{if(!_sCopied)_l2.textContent='Address: '+SAMPLE_DOC_URL;},400);
+      setTimeout(()=>{_t.remove();},12000);
+    }catch(e){}
+    return;
+  }
   const blob=new Blob([html],{type:'text/html'});
   if(window._clientDocDisplayMode){
     window._clientDocDisplayMode=false;
@@ -5581,6 +5604,96 @@ function runAuthExport(display){
 function displayClientDoc(){
   window._clientDocDisplayMode=true;
   exportClientDoc();
+}
+
+/* ═══ SAMPLE CLIENT DOC — REDACTED (KEEP IN EVERY BUILD, added 2026-10-01 per Abram, build 2026-10-01a,
+ * Cowork chat "Redacted sample client doc" — RULE-4 OK given BEFORE the code was written for the one
+ * hand-off branch at the end of exportClientDoc()) ════════════════════════════════════════════════════
+ * Abram: "export a client doc version sans client name and $totals removed? labor hours are fine. I don't
+ * want rates or material costs to show, just leave blank. I want to share the format for feedback."
+ * Client menu → "Export Sample Doc (redacted)" → exportSampleClientDoc() sets window._clientDocSampleMode
+ * and runs the NORMAL exportClientDoc(); its tail hands the finished HTML to _sampleRedactHtml() instead
+ * of downloading it. So the sample is always the current format — no second builder to drift.
+ * WHAT THE REDACTION DOES:
+ *   · client name → "Client", vessel name → "Vessel" (Abram's choice), everywhere: text, attributes and
+ *     the baked script data (WL_CLIENT, sig_name, PDF lines, payload). Client email settings too.
+ *   · every $ figure blanked in visible text and attributes (rates, materials, subtotals, totals, fees);
+ *     hours and quantities stay. __PTOTALS/__PBASE/__COTOTALS/__COBASE emptied so View Source shows none.
+ *   · a load-time + MutationObserver pass blanks any $ the doc's own scripts draw later.
+ *   · the Authorize submit is DISABLED (PA_URL emptied, buttons disabled) so a reviewer can't sign/POST.
+ *   · <title> is "Sample Format — Turn Point Marine": it deliberately does NOT carry the
+ *     "<title>Client Account &mdash;" marker, so the Client Doc router never files it into a vessel
+ *     folder or overwrites a live client-doc.html. No "Push Through GitHub" toast for the sample.
+ *   · filename TPM_Sample_ClientDoc_<date>.html. A SAMPLE banner sits at the top of the page.
+ * NOT REDACTED (by design / can't know): photos and their blob URLs (the URL names carry the vessel slug),
+ * project titles / notes / descriptions that mention people by other names. Review before sharing.
+ * The normal Export / Display paths are unchanged. Markers: exportSampleClientDoc, _sampleRedactHtml,
+ * _clientDocSampleMode, SAMPLE CLIENT DOC — REDACTED.                                                  */
+/* SAMPLE LINK (2026-10-01b per Abram — "is there a link for an address for it?" … "why not just another page?"):
+ * the sample always downloads as sample-client-doc.html, its address is copied to the clipboard, and a toast
+ * says where to put it. Abram drops the file into the TPM repo ROOT (beside the vessel folders) and pushes →
+ * https://client.turnpointmarine.com/sample-client-doc.html. The Client Doc router still ignores it (no title
+ * marker); no Mac agent changed. A new sample export replaces the old one at the same address. */
+const SAMPLE_DOC_FILE='sample-client-doc.html';
+const SAMPLE_DOC_URL='https://client.turnpointmarine.com/'+SAMPLE_DOC_FILE;
+function exportSampleClientDoc(){
+  window._clientDocDisplayMode=false;
+  window._clientDocSampleMode=true;
+  try{exportClientDoc();}finally{window._clientDocSampleMode=false;}
+}
+const _SAMPLE_MONEY_RE=/[−\-–]?\s?\(?\$\s?\d[\d,]*(?:\.\d+)?\)?(?:\s?\/\s?(?:hr|hour|ea|day))?/g;
+function _sampleRedactHtml(html,vessel,client){
+  const esc=x=>(''+x).replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const swaps=[];
+  const addSwap=(from,to,ci)=>{from=(''+(from||'')).trim();if(from.length<2)return;swaps.push([new RegExp(esc(from),ci?'gi':'g'),to]);};
+  // longest first so "Hannah Mae" goes before "Hannah"
+  addSwap(client,'Client',true);
+  addSwap(vessel,'Vessel',true);
+  try{addSwap(settings.clientEmail,'client@example.com',true);addSwap(settings.clientEmail2,'client@example.com',true);}catch(e){}
+  const _stop=new Set(['the','and','of','family','inc','llc','co','trust','mr','mrs','ms','dr','jr','sr','client','vessel']);
+  (''+(client||'')).split(/[\s,&\/]+/).forEach(w=>{w=w.replace(/[^A-Za-z'\-]/g,'');if(w.length>=3&&!_stop.has(w.toLowerCase()))swaps.push([new RegExp('\\b'+esc(w)+'\\b','g'),'Client']);});
+  const swapNames=t=>{swaps.forEach(([re,to])=>{t=t.replace(re,to);});return t;};
+  const blankMoney=t=>t.replace(_SAMPLE_MONEY_RE,'');
+  // 1) title — never the router's "Client Account &mdash;" marker
+  html=html.replace(/<title>[\s\S]*?<\/title>/i,'<title>Sample Format — Turn Point Marine<\/title>');
+  // 2) DOM pass: names + money out of every visible text node and attribute
+  const doc=new DOMParser().parseFromString(html,'text/html');
+  const walker=doc.createTreeWalker(doc.body||doc.documentElement,NodeFilter.SHOW_TEXT,null);
+  const texts=[];while(walker.nextNode())texts.push(walker.currentNode);
+  texts.forEach(n=>{const p=n.parentNode&&n.parentNode.nodeName;if(p==='SCRIPT'||p==='STYLE')return;const v=blankMoney(swapNames(n.nodeValue));if(v!==n.nodeValue)n.nodeValue=v;});
+  doc.querySelectorAll('*').forEach(el=>{
+    if(el.nodeName==='SCRIPT'||el.nodeName==='STYLE')return;
+    Array.from(el.attributes).forEach(a=>{
+      const nm=a.name.toLowerCase();
+      if(nm==='src'||nm==='href'||nm==='style'||nm.indexOf('on')===0||nm==='data-full'||nm==='data-thumb'||nm==='data-video')return;
+      const v=blankMoney(swapNames(a.value));if(v!==a.value)el.setAttribute(a.name,v);
+    });
+  });
+  // 3) script data: names swapped; dollar tables emptied; the authorization POST disabled
+  doc.querySelectorAll('script').forEach(sc=>{
+    let t=sc.textContent;if(!t)return;
+    t=swapNames(t);
+    t=t.replace(/(const __(?:PTOTALS|PBASE|COTOTALS|COBASE)=)[^\n]*?;/g,'$1{};');
+    t=t.replace(/(const PA_URL=)'[^']*'/g,"$1''");
+    if(t!==sc.textContent)sc.textContent=t;
+  });
+  // 4) SAMPLE banner + live blanker (catches any $ the doc's scripts draw after load) + submit disabled
+  const banner=doc.createElement('div');
+  banner.className='tpe-sample-banner';
+  banner.setAttribute('style','background:#fff7e6;border:2px dashed #b5822d;color:#7a5512;font-family:Arial,sans-serif;font-size:10pt;font-weight:700;padding:10px 14px;border-radius:6px;margin:0 0 18px;text-align:center');
+  banner.textContent='SAMPLE FORMAT — client name and all dollar figures removed for review. Signing and submitting are disabled.';
+  const wrap=doc.querySelector('.wrap')||doc.body;
+  wrap.insertBefore(banner,wrap.firstChild);
+  const live=doc.createElement('script');
+  live.textContent='(function(){var RE='+_SAMPLE_MONEY_RE.toString()+';'
+    +'function scrub(root){var w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,null),n;while((n=w.nextNode())){var p=n.parentNode&&n.parentNode.nodeName;if(p==="SCRIPT"||p==="STYLE")continue;var v=n.nodeValue.replace(RE,"");if(v!==n.nodeValue)n.nodeValue=v;}}'
+    +'function lock(){Array.prototype.forEach.call(document.querySelectorAll(".submit-btn"),function(b){if(!b.disabled)b.disabled=true;if(b.textContent!=="Disabled in sample")b.textContent="Disabled in sample";});}'
+    +'function run(){scrub(document.body);lock();}'
+    +'if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",run);else run();'
+    +'try{new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData"){var p=m.target.parentNode&&m.target.parentNode.nodeName;if(p!=="SCRIPT"&&p!=="STYLE"){var v=m.target.nodeValue.replace(RE,"");if(v!==m.target.nodeValue)m.target.nodeValue=v;}}else{Array.prototype.forEach.call(m.addedNodes,function(a){if(a.nodeType===3){var v=a.nodeValue.replace(RE,"");if(v!==a.nodeValue)a.nodeValue=v;}else if(a.nodeType===1&&a.nodeName!=="SCRIPT"&&a.nodeName!=="STYLE")scrub(a);});}});lock();}).observe(document.documentElement,{subtree:true,childList:true,characterData:true});}catch(e){}'
+    +'})();';
+  doc.body.appendChild(live);
+  return '<!DOCTYPE html>\n'+doc.documentElement.outerHTML;
 }
 
 
