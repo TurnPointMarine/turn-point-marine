@@ -2,9 +2,9 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-10-01T18:48:19.745Z",
+    "exportedAt": "2026-10-01T19:04:50.086Z",
     "engineVersion": 8,
-    "engineBuild": "2026-10-01c"
+    "engineBuild": "2026-10-01d"
   },
   "projects": [
     {
@@ -5406,6 +5406,17 @@
       "capturedAt": "",
       "includeInClientDoc": true,
       "ts": "2026-10-01T18:20:13.1317757Z",
+      "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-10-01-b56a95b8-3c63-47b5-b3ec-930106e1fead",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-b56a95b8-3c63-47b5-b3ec-930106e1fead-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-b56a95b8-3c63-47b5-b3ec-930106e1fead.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-10-01T18:59:04.5942331Z",
       "pendingUpload": false
     }
   ],
