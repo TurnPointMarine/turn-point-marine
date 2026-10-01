@@ -2,9 +2,9 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-10-01T18:25:46.256Z",
+    "exportedAt": "2026-10-01T18:39:30.740Z",
     "engineVersion": 8,
-    "engineBuild": "2026-10-01a"
+    "engineBuild": "2026-10-01c"
   },
   "projects": [
     {
@@ -2400,7 +2400,7 @@
       "name": "Vessel Canvas Porous Growing Mildew",
       "status": "needs_auth",
       "include": true,
-      "notes": "Recommend replacing settee and dinghy canvas covers. Happy to field an estimate with Oyster Creek canvas. I have done lots of projects with them. ",
+      "notes": "Feedback from Nik on the canvas is that washing and applying waterproofing coating on the canvas will really help. It is worth noting that waterproofing light canvas is a short term several month long solution regarding mildew growth. \n\nRecommend replacing settee and dinghy canvas covers. Happy to field an estimate with Oyster Creek canvas. I have done lots of projects with them. ",
       "estimateTotal": null,
       "isTM": false,
       "scopeTasks": [
@@ -5363,6 +5363,17 @@
       "includeInClientDoc": true,
       "ts": "2026-09-28T21:34:22.8779284Z",
       "pendingUpload": false
+    },
+    {
+      "id": "sandi-louise-2026-10-01-ccdca8a2-d82a-42d9-aea1-3f773d579a3b",
+      "projId": null,
+      "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-ccdca8a2-d82a-42d9-aea1-3f773d579a3b-thumb.jpg",
+      "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-ccdca8a2-d82a-42d9-aea1-3f773d579a3b.jpg",
+      "caption": "",
+      "capturedAt": "",
+      "includeInClientDoc": true,
+      "ts": "2026-10-01T18:20:13.1317757Z",
+      "pendingUpload": false
     }
   ],
   "dismissedPhotoKeys": [
@@ -5585,7 +5596,8 @@
     "openProjs": [
       36,
       37,
-      9
+      9,
+      40
     ],
     "closedReadyProjs": [
       15,
