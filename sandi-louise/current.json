@@ -2,7 +2,7 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-10-01T18:39:30.740Z",
+    "exportedAt": "2026-10-01T18:48:19.745Z",
     "engineVersion": 8,
     "engineBuild": "2026-10-01c"
   },
@@ -2148,6 +2148,39 @@
           "capturedAt": "",
           "includeInClientDoc": true,
           "ts": "2026-10-01T18:19:21.6636219Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-10-01-4bd2c505-c5c1-45d3-a035-b1c70e43ccc4",
+          "projId": 29,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-4bd2c505-c5c1-45d3-a035-b1c70e43ccc4-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-4bd2c505-c5c1-45d3-a035-b1c70e43ccc4.jpg",
+          "caption": "BEFORE Photo Notice there was no sign of ceramic coating on the transom, nor was there any gel coat protection on the transom. The canvas saved this from oxidation thankfully. ",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-10-01T18:45:29.3596620Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-10-01-e48ca270-b8a6-4acd-8811-f7b827bbdd90",
+          "projId": 29,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-e48ca270-b8a6-4acd-8811-f7b827bbdd90-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-e48ca270-b8a6-4acd-8811-f7b827bbdd90.jpg",
+          "caption": "BEFORE",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-10-01T18:45:31.2378704Z",
+          "pendingUpload": false
+        },
+        {
+          "id": "sandi-louise-2026-10-01-f3fd75e2-a3a2-4512-b2b5-bd9776f89ee4",
+          "projId": 29,
+          "thumb": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-f3fd75e2-a3a2-4512-b2b5-bd9776f89ee4-thumb.jpg",
+          "full": "https://tpmphotos.blob.core.windows.net/tpm-photos/sandi-louise-2026-10-01-f3fd75e2-a3a2-4512-b2b5-bd9776f89ee4.jpg",
+          "caption": "BEFORE Photo Notice there was no sign of ceramic coating on the transom, nor was there any gel coat protection on the transom. The canvas saved this from oxidation thankfully. ",
+          "capturedAt": "",
+          "includeInClientDoc": true,
+          "ts": "2026-10-01T18:45:35.0854966Z",
           "pendingUpload": false
         }
       ],
@@ -5597,7 +5630,7 @@
       36,
       37,
       9,
-      40
+      29
     ],
     "closedReadyProjs": [
       15,
