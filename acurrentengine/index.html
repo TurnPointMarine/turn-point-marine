@@ -540,7 +540,7 @@ function autosizeTA(ta){if(_taRO)_taRO.observe(ta);else requestAnimationFrame(()
  * ENGINE_VERSION stays at the data-schema number — bumping it fires a bogus "data will be
  * migrated" warning on every import when no migration exists. Every build of v8 looked
  * identical before this, which made "is this the current engine?" unanswerable.            */
-const ENGINE_BUILD='2026-10-01d';
+const ENGINE_BUILD='2026-10-01e';
 function _stampBuild(){
   const el=document.getElementById('navBuild');
   if(el)el.textContent='v'+ENGINE_VERSION+' · build '+ENGINE_BUILD;
@@ -646,6 +646,62 @@ function ensureProjNums(){
   projects.forEach(p=>{if(ok(p)&&p.num>hi)hi=p.num;});
   projects.forEach(p=>{if(p&&!ok(p))p.num=++hi;});
   nextProjNum=hi+1;
+}
+/* ═══ AUTHORIZED TITLE ON RECORD (KEEP IN EVERY BUILD, added 2026-10-01 per Abram) ═══════════════════
+ * Abram: "Are you able to make sure the title of the project matches the authorizations? Is there a history
+ * of that in the index html?" There was none: a title could be retyped at any time, even after the client
+ * signed, and the old title was simply gone. The signed record names projects by TITLE (submitAuth's
+ * authorizedProjects) and the signed PDF by NUMBER + TITLE, so a later rename silently breaks the tie.
+ * He chose "Stamp + warn":
+ *   - p.authAs = {num,name,at,basis}: stamped when a project moves OUT of Needs Auth into In Progress /
+ *     Complete / Billed (basis 'authorized'). A project that is already past Needs Auth the first time this
+ *     runs, or gets there without passing through Needs Auth, is stamped with its current title as a
+ *     baseline (basis 'on-record'). Every stamp is also kept in p.authLog. A project that goes back to
+ *     Needs Auth and out again is re-stamped — that is a new authorization.
+ *   - Renaming a project that is past Needs Auth to anything but its stamped title asks first
+ *     (authTitleRenameOk). Every rename of ANY project is logged in p.titleLog {from,to,at}.
+ *   - The engine card shows an amber "Signed as …" / "On record as …" chip beside the title whenever the
+ *     two differ (authTitleChip). The client doc is unchanged.
+ * Detection lives in saveData (ensureAuthStamps, after ensureProjNums) by comparing each project's last
+ * seen status p._st, so EVERY way a status changes is caught, not just the dropdown.
+ * The engine does not receive the client's signature, so `at` is the day the status changed in the engine.
+ * Markers: AUTHORIZED TITLE ON RECORD / ensureAuthStamps / authTitleRenameOk / authTitleChip.            */
+const AUTH_DONE_STATUSES=['in_progress','complete','billed'];
+function _authYMD(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function _authMDY(ymd){const m=/^(\d{4})-(\d\d)-(\d\d)$/.exec(ymd||'');return m?(+m[2])+'/'+(+m[3])+'/'+m[1].slice(2):(ymd||'');}
+function _authStamp(p,basis){const s={num:projNumOf(p),name:p.name,at:_authYMD(),basis:basis};p.authAs=s;if(!Array.isArray(p.authLog))p.authLog=[];p.authLog.push(Object.assign({},s));}
+function ensureAuthStamps(){
+  if(!Array.isArray(projects))return;
+  projects.forEach(p=>{
+    if(!p)return;
+    const post=AUTH_DONE_STATUSES.indexOf(p.status)>=0;
+    if(post&&p._st==='needs_auth')_authStamp(p,'authorized');
+    else if(post&&!p.authAs)_authStamp(p,'on-record');
+    p._st=p.status;
+  });
+}
+function _authHolds(p){return !!(p&&p.authAs&&AUTH_DONE_STATUSES.indexOf(p.status)>=0);}
+function authTitleRenameOk(p,newName){
+  if(!_authHolds(p)||newName===p.authAs.name)return true;
+  const a=p.authAs;
+  const msg='#'+a.num+' was '+(a.basis==='authorized'?'authorized':'on record')+' as “'+a.name+'” ('+_authMDY(a.at)+').\n\n'
+    +'The client’s signed authorization names that title. Rename it to “'+newName+'” anyway?\n\n'
+    +'The original title stays on record and shows beside the new one on this card.';
+  try{return window.confirm(msg);}catch(e){return true;}
+}
+function logProjTitle(p,from,to){if(!p)return;if(!Array.isArray(p.titleLog))p.titleLog=[];p.titleLog.push({from:from,to:to,at:_authYMD()});}
+function authTitleChip(p){
+  if(!_authHolds(p)||p.authAs.name===p.name)return null;
+  const a=p.authAs,signed=a.basis==='authorized';
+  const c=document.createElement('span');c.className='auth-title-chip';
+  c.textContent=(signed?'Signed as “':'On record as “')+a.name+'”';
+  let tip=(signed?'Authorized ':'Title on record ')+_authMDY(a.at)+' as #'+a.num+' “'+a.name+'”. Renamed since:';
+  (p.titleLog||[]).forEach(t=>{tip+='\n'+_authMDY(t.at)+': “'+t.from+'” → “'+t.to+'”';});
+  if(!signed)tip+='\n(On record = the title when this check started, not from a signature.)';
+  c.title=tip;
+  c.style.cssText='font-size:10px;font-weight:700;color:#92400e;background:#fef3c7;border:1px solid #f59e0b;border-radius:9px;padding:1px 7px;white-space:nowrap;max-width:240px;overflow:hidden;text-overflow:ellipsis;flex-shrink:1;cursor:help';
+  c.onclick=e=>e.stopPropagation();c.onmousedown=e=>e.stopPropagation();
+  return c;
 }
 /* ═══ WASH GROUP (KEEP IN EVERY BUILD, added 2026-09-28 per Abram) ════════════════════════════════
  * Abram: "there is no flow with the washes as they are tethered to the project number and their
@@ -3175,10 +3231,14 @@ function renderEstimate(){
         const oldName=proj.name;
         const newName=nameInp.value.trim();
         if(!newName||newName===oldName)return;
+        // AUTHORIZED TITLE ON RECORD: a project past Needs Auth asks before leaving its stamped title
+        if(!authTitleRenameOk(proj,newName)){nameInp.value=oldName;return;}
+        logProjTitle(proj,oldName,newName);
         // Relink all time entries pointing to old name
         timeEntries.forEach(te=>{if(te.proj===oldName)te.proj=newName;});
         proj.name=newName;
         populateTEDropdowns();saveData();
+        if(proj.authAs)setTimeout(()=>{try{renderEstimate();}catch(e){}},0);   // redraw the "Signed as" chip
       };nameInp.onclick=e=>e.stopPropagation();nameInp.onmousedown=e=>e.stopPropagation();nameInp.onfocus=e=>e.stopPropagation();
       const ssel=document.createElement('select');ssel.className='status-sel';
       [{v:'holding',l:'Holding Pattern'},{v:'needs_auth',l:'Needs Auth'},{v:'in_progress',l:'In Progress'},{v:'complete',l:'Complete'},{v:'billed',l:'Billed'}].forEach(({v,l})=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===proj.status)o.selected=true;ssel.appendChild(o);});
@@ -3246,7 +3306,7 @@ function renderEstimate(){
       }
       const _camCount=(proj.photos||[]).length;
       const camIcon=_camCount>0?makeCameraIcon(pSec.color,_camCount):null;
-      ph.appendChild(num);ph.appendChild(nameInp);if(camIcon)ph.appendChild(camIcon);ph.appendChild(ssel);ph.appendChild(invWrap);if(gradBadge)ph.appendChild(gradBadge);ph.appendChild(badge);ph.appendChild(chev);
+      ph.appendChild(num);ph.appendChild(nameInp);{const _atc=authTitleChip(proj);if(_atc)ph.appendChild(_atc);}if(camIcon)ph.appendChild(camIcon);ph.appendChild(ssel);ph.appendChild(invWrap);if(gradBadge)ph.appendChild(gradBadge);ph.appendChild(badge);ph.appendChild(chev);
       ph.addEventListener('click',()=>{if(openProjs.has(proj.id))openProjs.delete(proj.id);else openProjs.add(proj.id);saveData();renderEstimate();});
       // Drop target for TE drag-reassign
       ph.addEventListener('dragover',e=>{if(e.dataTransfer.types.includes('teid'))e.preventDefault();else if(e.dataTransfer.getData('teId')||true){e.preventDefault();}ph.style.background='#e8f8f0';});
@@ -7029,6 +7089,7 @@ function updateNavVessel(){document.getElementById('navVessel').textContent=docu
 
 function saveData(){
   try{ensureProjNums();}catch(e){console.error('ensureProjNums',e);}   // PERMANENT PROJECT NUMBERS — a new project gets its number before anything persists
+  try{ensureAuthStamps();}catch(e){console.error('ensureAuthStamps',e);} // AUTHORIZED TITLE ON RECORD — stamp a title when a project leaves Needs Auth
   try{enforceSeals();}catch(e){console.error('enforceSeals',e);} // BILLED IS SEALED — latch before anything else writes
   try{if(syncTravelDays()>0&&!window._tdRerender){window._tdRerender=true;setTimeout(()=>{window._tdRerender=false;try{renderTimeEntry();renderProgress();if(unlocked)renderEstimate();}catch(e){}},0);}}catch(e){console.error('syncTravelDays',e);}
   try{const v=document.getElementById('vfVessel');const c=document.getElementById('vfClient');localStorage.setItem(STORAGE_KEY,JSON.stringify({projects,timeEntries,billingEvents,travelDays,nextTravelDayId,nextProjId,nextProjNum,nextTaskId,nextCOId,nextTEId,nextBillingId,settings,unassignedPhotos,dismissedPhotoKeys:[...dismissedPhotoKeys],vessel:v?v.value:'',client:c?c.value:'',uiState:serializeUiState()}));}catch(e){}

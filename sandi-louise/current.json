@@ -2,9 +2,9 @@
   "_meta": {
     "vessel": "Sandi Louise",
     "client": "Hal Stober",
-    "exportedAt": "2026-10-01T21:04:46.755Z",
+    "exportedAt": "2026-10-02T17:00:25.675Z",
     "engineVersion": 8,
-    "engineBuild": "2026-10-01d"
+    "engineBuild": "2026-10-01e"
   },
   "projects": [
     {
@@ -30,7 +30,22 @@
       "billingEvents": [],
       "photos": [],
       "actualsInClientDoc": true,
-      "num": 1
+      "num": 1,
+      "authAs": {
+        "num": "01",
+        "name": "Tender Bilge Pump",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "01",
+          "name": "Tender Bilge Pump",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 2,
@@ -53,7 +68,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 2
+      "num": 2,
+      "authAs": {
+        "num": "02",
+        "name": "Blackwater Discharge System",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "02",
+          "name": "Blackwater Discharge System",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 3,
@@ -77,7 +107,22 @@
       "cos": [],
       "billingEvents": [],
       "photos": [],
-      "num": 3
+      "num": 3,
+      "authAs": {
+        "num": "03",
+        "name": "Generator Raw Water Leak Repair & Clean Up",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "03",
+          "name": "Generator Raw Water Leak Repair & Clean Up",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 4,
@@ -100,7 +145,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 4
+      "num": 4,
+      "authAs": {
+        "num": "04",
+        "name": "Boat Wash 5/20",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "04",
+          "name": "Boat Wash 5/20",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 5,
@@ -123,7 +183,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 5
+      "num": 5,
+      "authAs": {
+        "num": "05",
+        "name": "Icemaker Not Making Ice",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "05",
+          "name": "Icemaker Not Making Ice",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 6,
@@ -146,7 +221,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 6
+      "num": 6,
+      "authAs": {
+        "num": "06",
+        "name": "Generator Sea Strainer Deep Clean",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "06",
+          "name": "Generator Sea Strainer Deep Clean",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 7,
@@ -169,7 +259,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 7
+      "num": 7,
+      "authAs": {
+        "num": "07",
+        "name": "Vessel Wash 6/9",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "07",
+          "name": "Vessel Wash 6/9",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 8,
@@ -238,7 +343,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 8
+      "num": 8,
+      "authAs": {
+        "num": "08",
+        "name": "Track FW Leak Pooled In Engine Room Bilge Sump",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "08",
+          "name": "Track FW Leak Pooled In Engine Room Bilge Sump",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 9,
@@ -263,7 +383,22 @@
       "billingEvents": [],
       "photos": [],
       "actualsInClientDoc": true,
-      "num": 9
+      "num": 9,
+      "authAs": {
+        "num": "09",
+        "name": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "09",
+          "name": "SME Raw Water Leak on Aft Engine, Turbo and Both Engine Mounts",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 10,
@@ -286,7 +421,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 10
+      "num": 10,
+      "authAs": {
+        "num": "10",
+        "name": "Watermaker Strainers/Filter Clean",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "10",
+          "name": "Watermaker Strainers/Filter Clean",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 11,
@@ -465,7 +615,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 11
+      "num": 11,
+      "authAs": {
+        "num": "11",
+        "name": "Cockpit Sink Basin, Seal to Countertop",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "11",
+          "name": "Cockpit Sink Basin, Seal to Countertop",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 12,
@@ -524,7 +689,8 @@
         }
       ],
       "showInDoc": true,
-      "num": 12
+      "num": 12,
+      "_st": "needs_auth"
     },
     {
       "id": 13,
@@ -769,7 +935,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 13
+      "num": 13,
+      "authAs": {
+        "num": "13",
+        "name": "Dive/Inspection Replace Depleted Anodes 7/2026",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "13",
+          "name": "Dive/Inspection Replace Depleted Anodes 7/2026",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 14,
@@ -793,7 +974,22 @@
       "cos": [],
       "billingEvents": [],
       "photos": [],
-      "num": 14
+      "num": 14,
+      "authAs": {
+        "num": "14",
+        "name": "Port Gear Oil Level Alarm Repair",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "14",
+          "name": "Port Gear Oil Level Alarm Repair",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 15,
@@ -873,7 +1069,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 15
+      "num": 15,
+      "authAs": {
+        "num": "15",
+        "name": "Shelf installation over SeaKeeper",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "15",
+          "name": "Shelf installation over SeaKeeper",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 16,
@@ -943,7 +1154,8 @@
         }
       ],
       "num": 16,
-      "showInDoc": true
+      "showInDoc": true,
+      "_st": "holding"
     },
     {
       "id": 17,
@@ -1046,7 +1258,22 @@
         }
       ],
       "num": 17,
-      "actualsInClientDoc": false
+      "actualsInClientDoc": false,
+      "authAs": {
+        "num": "17",
+        "name": "Black Water Pump Inop",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "17",
+          "name": "Black Water Pump Inop",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 18,
@@ -1358,7 +1585,8 @@
         }
       ],
       "num": 18,
-      "showInDoc": true
+      "showInDoc": true,
+      "_st": "holding"
     },
     {
       "id": 19,
@@ -1381,7 +1609,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 19
+      "num": 19,
+      "authAs": {
+        "num": "19",
+        "name": "Boat Wash 8/3",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "19",
+          "name": "Boat Wash 8/3",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 20,
@@ -1417,7 +1660,8 @@
           "pendingUpload": false
         }
       ],
-      "num": 20
+      "num": 20,
+      "_st": "holding"
     },
     {
       "id": 21,
@@ -1454,7 +1698,8 @@
         }
       ],
       "showInDoc": true,
-      "num": 21
+      "num": 21,
+      "_st": "holding"
     },
     {
       "id": 22,
@@ -1491,7 +1736,8 @@
         }
       ],
       "showInDoc": true,
-      "num": 22
+      "num": 22,
+      "_st": "holding"
     },
     {
       "id": 23,
@@ -1538,7 +1784,8 @@
           "pendingUpload": false
         }
       ],
-      "num": 23
+      "num": 23,
+      "_st": "holding"
     },
     {
       "id": 24,
@@ -1575,7 +1822,22 @@
         }
       ],
       "num": 24,
-      "actualsInClientDoc": false
+      "actualsInClientDoc": false,
+      "authAs": {
+        "num": "24",
+        "name": "Volvo D6 Services",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "24",
+          "name": "Volvo D6 Services",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 25,
@@ -1611,7 +1873,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 25
+      "num": 25,
+      "authAs": {
+        "num": "25",
+        "name": "Sealant Replacement Request 8/26",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "25",
+          "name": "Sealant Replacement Request 8/26",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 26,
@@ -1881,7 +2158,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 26
+      "num": 26,
+      "authAs": {
+        "num": "26",
+        "name": "Helm side window wiper – very noisy, replace (?)",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "26",
+          "name": "Helm side window wiper – very noisy, replace (?)",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 27,
@@ -1938,7 +2230,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 27
+      "num": 27,
+      "authAs": {
+        "num": "27",
+        "name": "Tender, Depth Sounder",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "27",
+          "name": "Tender, Depth Sounder",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 28,
@@ -1961,7 +2268,8 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 28
+      "num": 28,
+      "_st": "needs_auth"
     },
     {
       "id": 29,
@@ -2140,7 +2448,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 29
+      "num": 29,
+      "authAs": {
+        "num": "29",
+        "name": "Waterspot Removal From Ceramtek Hull Coating",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "29",
+          "name": "Waterspot Removal From Ceramtek Hull Coating",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 30,
@@ -2164,7 +2487,22 @@
       "cos": [],
       "billingEvents": [],
       "photos": [],
-      "num": 30
+      "num": 30,
+      "authAs": {
+        "num": "30",
+        "name": "Misc / Vessel Prep",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "30",
+          "name": "Misc / Vessel Prep",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 31,
@@ -2187,7 +2525,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 31
+      "num": 31,
+      "authAs": {
+        "num": "31",
+        "name": "Boat Wash 7/9",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "31",
+          "name": "Boat Wash 7/9",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 32,
@@ -2210,7 +2563,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 32
+      "num": 32,
+      "authAs": {
+        "num": "32",
+        "name": "Boat Wash 7/16 (after Volvo Tech Sea Trial)",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "32",
+          "name": "Boat Wash 7/16 (after Volvo Tech Sea Trial)",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 33,
@@ -2233,7 +2601,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 33
+      "num": 33,
+      "authAs": {
+        "num": "33",
+        "name": "Boat Wash 7/19",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "33",
+          "name": "Boat Wash 7/19",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 34,
@@ -2256,7 +2639,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 34
+      "num": 34,
+      "authAs": {
+        "num": "34",
+        "name": "Boat Check: Response to Report of Pump Running Onboard",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "34",
+          "name": "Boat Check: Response to Report of Pump Running Onboard",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 35,
@@ -2279,7 +2677,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 35
+      "num": 35,
+      "authAs": {
+        "num": "35",
+        "name": "Boat Wash 6/3",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "35",
+          "name": "Boat Wash 6/3",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "complete"
     },
     {
       "id": 38,
@@ -2359,7 +2772,22 @@
           "pendingUpload": false
         }
       ],
-      "num": 36
+      "num": 36,
+      "authAs": {
+        "num": "36",
+        "name": "Boat Wash 9/17",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "36",
+          "name": "Boat Wash 9/17",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 39,
@@ -2382,7 +2810,22 @@
       "tasks": [],
       "cos": [],
       "billingEvents": [],
-      "num": 37
+      "num": 37,
+      "authAs": {
+        "num": "37",
+        "name": "Windshield Windows Polish and Treated with Magic Blue (Hydrophobic Coating)",
+        "at": "2026-10-02",
+        "basis": "on-record"
+      },
+      "authLog": [
+        {
+          "num": "37",
+          "name": "Windshield Windows Polish and Treated with Magic Blue (Hydrophobic Coating)",
+          "at": "2026-10-02",
+          "basis": "on-record"
+        }
+      ],
+      "_st": "in_progress"
     },
     {
       "id": 40,
@@ -2440,7 +2883,8 @@
           "ts": "2026-09-30T16:51:41.0847405Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "_st": "needs_auth"
     },
     {
       "id": 41,
@@ -2476,7 +2920,8 @@
           "ts": "2026-10-01T18:59:04.5942331Z",
           "pendingUpload": false
         }
-      ]
+      ],
+      "_st": "needs_auth"
     }
   ],
   "timeEntries": [
